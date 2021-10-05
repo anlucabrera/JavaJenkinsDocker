@@ -76,6 +76,8 @@ public final class DtoEgresados {
     @Getter @Setter private List<DTOActividadEconomicaEgresadoG> listaActividadEconomicaEgresado;
     @Getter @Setter private List<DTONivelOcupacionEgresadosG> listaNivelOcupacionEgresado;
     @Getter @Setter private List<DTONivelIngresoEgresadosG> listaNivelIngresoEgresado;
+    
+    @Getter @Setter private Integer claveTrabajador;
 
     public DtoEgresados() {
         setRegTipoActividadEgresado(new RegistrosTipo((short)21));

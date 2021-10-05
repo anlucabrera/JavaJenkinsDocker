@@ -506,10 +506,10 @@ public class ServicioReporteVINExcel implements EjbReportesVINExcel{
     }
 
     @Override
-    public String getReporteGeneralEgresados(Short ejercicio) throws Throwable {
+    public String getReporteGeneralEgresados(Short ejercicio, Integer claveTrabajador) throws Throwable {
         String plantilla = crearDirectorioReporte(ejes[2]).concat(REPORTE_EGRESADOS_PLANTILLA );
         String plantillaCopia = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_EGRESADOS_COPIA);
-        String plantillaCompleto = crearDirectorioReporteCompleto(ejes[2]).concat(REPORTE_EGRESADOS_ACTUALIZADO);
+        String plantillaCompleto = crearDirectorioReporteCompleto(ejes[2]).concat(String.valueOf(claveTrabajador)).concat("-").concat(REPORTE_EGRESADOS_ACTUALIZADO);
         
         try {
             Files.copy(FileSystems.getDefault().getPath(plantilla), FileSystems.getDefault().getPath(plantillaCopia), StandardCopyOption.REPLACE_EXISTING);

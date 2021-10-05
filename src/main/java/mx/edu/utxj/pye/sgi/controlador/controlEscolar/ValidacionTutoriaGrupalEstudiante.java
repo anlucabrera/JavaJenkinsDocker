@@ -68,7 +68,7 @@ public class ValidacionTutoriaGrupalEstudiante extends ViewScopedRol implements 
                 setVistaControlador(ControlEscolarVistaControlador.TUTORIAS_GRUPALES_ESTUDIANTE);
                 ResultadoEJB<Estudiante> resAcceso = ejb.validarEstudiante(logonMB.getCurrentUser());
                 if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}
-                rol = new ValidacionTutoriaGrupalRolEstudiante(packer.packEstudiante(resAcceso.getValor()).getValor());
+                rol = new ValidacionTutoriaGrupalRolEstudiante(packer.packEstudianteGeneral(resAcceso.getValor()).getValor());
                 tieneAcceso = rol.tieneAcceso(rol.getDtoEstudiante(), UsuarioTipo.ESTUDIANTE19);
                 rol.setNivelRol(NivelRol.CONSULTA);
                 ResultadoEJB<EventosRegistros> resEventoRegistro = ejbPeriodoEventoRegistro.getEventoRegistro();

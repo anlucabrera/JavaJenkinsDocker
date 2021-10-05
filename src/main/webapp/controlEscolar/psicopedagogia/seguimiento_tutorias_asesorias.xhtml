@@ -846,25 +846,6 @@
 
                                                             <p:rowExpansion>
                                                                 <p:panelGrid style="width: 100%">
-                                                                    
-                                                                    <p:row>
-                                                                        <p:column>
-                                                                            <h:outputText value="Orden del día:" style="font-weight: 600;"/>
-                                                                        </p:column>
-                                                                        <p:column colspan="4" style="font-weight: 600;">
-                                                                            <h:outputText value="#{tutoriaGrupal.ordenDia}"/>
-                                                                        </p:column>
-                                                                    </p:row>
-
-                                                                    <p:row>
-                                                                        <p:column>
-                                                                            <h:outputText value="Acuerdos:" style="font-weight: 600;"/>
-                                                                        </p:column>
-                                                                        <p:column colspan="4" style="font-weight: 600;">
-                                                                            <h:outputText value="#{tutoriaGrupal.acuerdos}"/>
-                                                                        </p:column>
-                                                                    </p:row>
-
                                                                     <p:row>
                                                                         <p:column>
                                                                             <h:outputText value="Observaciones:" style="font-weight: 600;"/>
@@ -873,7 +854,37 @@
                                                                             <h:outputText value="#{tutoriaGrupal.observaciones}"/>
                                                                         </p:column>
                                                                     </p:row>
-                                                                    
+                                                                    <p:row>
+                                                                        <p:column colspan="5">
+                                                                            <div class="card">
+                                                                                <p:textEditor value="#{tutoriaGrupal.ordenDia}"
+                                                                                              placeholder="Ejemplo de orden del día de la tutoría grupal *"
+                                                                                              height="200"
+                                                                                              readonly="true"
+                                                                                              >
+                                                                                    <f:facet name="toolbar">
+                                                                                        <h:outputText value="Orden del día:" style="font-weight: 600;"/>
+                                                                                    </f:facet>
+                                                                                </p:textEditor>
+                                                                            </div>
+                                                                        </p:column>
+                                                                    </p:row>
+
+                                                                    <p:row>
+                                                                        <p:column colspan="5">
+                                                                            <div class="card">
+                                                                                <p:textEditor value="#{tutoriaGrupal.acuerdos}"
+                                                                                              placeholder="Ejemplo de acuerdos de la tutoría grupal *"
+                                                                                              height="200"
+                                                                                              readonly="true"
+                                                                                              >
+                                                                                    <f:facet name="toolbar">
+                                                                                        <h:outputText value="Acuerdos:" style="font-weight: 600;"/>
+                                                                                    </f:facet>
+                                                                                </p:textEditor>
+                                                                            </div>
+                                                                        </p:column>
+                                                                    </p:row>
                                                                 </p:panelGrid>
                                                             </p:rowExpansion>
 

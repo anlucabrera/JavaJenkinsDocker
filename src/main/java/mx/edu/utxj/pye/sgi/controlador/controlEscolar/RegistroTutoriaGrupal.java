@@ -466,7 +466,7 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
     }
     
     public void abriDialogoRegistroCasoCritico(){
-        ResultadoEJB<DtoEstudiante> dtoEstudiante = ejbPacker.packEstudiante(rol.getEstudiante());
+        ResultadoEJB<DtoEstudiante> dtoEstudiante = ejbPacker.packEstudianteGeneral(rol.getEstudiante());
         if(dtoEstudiante.getCorrecto()){
             rol.setDtoEstudiante(dtoEstudiante.getValor());
             ResultadoEJB<DtoCasoCritico> generarNuevo = ejbCritico.generarNuevoDesdeTutoriaGrupal(rol.getDtoEstudiante(), CasoCriticoTipo.SISTEMA_TUTORIA_GRUPAL, rol.getDocenteLogueado().getPersonal().getClave());

@@ -242,34 +242,7 @@
                                                                             <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.jefeGrupo.aspirante.idPersona.apellidoPaterno} #{participanteTutoriaGrupal.tutoriasGrupales.jefeGrupo.aspirante.idPersona.apellidoMaterno} #{participanteTutoriaGrupal.tutoriasGrupales.jefeGrupo.aspirante.idPersona.nombre}"/>
                                                                         </p:column>
                                                                     </p:row>
-
-                                                                    <p:row>
-                                                                        <p:column>
-                                                                            <h:outputText value="Orden del día:" style="font-weight: 600;"/>
-                                                                        </p:column>
-                                                                        <p:column colspan="4" style="font-weight: 600;">
-                                                                            <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.ordenDia}"/>
-                                                                        </p:column>
-                                                                    </p:row>
-
-                                                                    <p:row>
-                                                                        <p:column>
-                                                                            <h:outputText value="Acuerdos:" style="font-weight: 600;"/>
-                                                                        </p:column>
-                                                                        <p:column colspan="4" style="font-weight: 600;">
-                                                                            <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.acuerdos}"/>
-                                                                        </p:column>
-                                                                    </p:row>
-
-                                                                    <p:row>
-                                                                        <p:column>
-                                                                            <h:outputText value="Observaciones:" style="font-weight: 600;"/>
-                                                                        </p:column>
-                                                                        <p:column colspan="4" style="font-weight: 600;">
-                                                                            <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.observaciones}"/>
-                                                                        </p:column>
-                                                                    </p:row>
-
+                                                                    
                                                                     <p:row>
                                                                         <p:column>
                                                                             <h:outputText value="Grado:" style="font-weight: 600;"/>
@@ -294,6 +267,47 @@
                                                                         </p:column>
                                                                         <p:column colspan="4" style="font-weight: 600;">
                                                                             <h:outputText value="#{caster.getNombreCarrera(participanteTutoriaGrupal.estudiante1.grupo.idPe).nombre}"/>
+                                                                        </p:column>
+                                                                    </p:row> 
+                                                                    
+                                                                    <p:row>
+                                                                        <p:column>
+                                                                            <h:outputText value="Observaciones:" style="font-weight: 600;"/>
+                                                                        </p:column>
+                                                                        <p:column colspan="4" style="font-weight: 600;">
+                                                                            <h:outputText value="#{participanteTutoriaGrupal.tutoriasGrupales.observaciones}"/>
+                                                                        </p:column>
+                                                                    </p:row>
+                                                                    
+                                                                    <p:row>
+                                                                        <p:column colspan="5">
+                                                                            <div class="card">
+                                                                                <p:textEditor value="#{participanteTutoriaGrupal.tutoriasGrupales.ordenDia}"
+                                                                                              placeholder="Ejemplo de orden del día de la tutoría grupal *"
+                                                                                              height="200"
+                                                                                              readonly="true"
+                                                                                              >
+                                                                                    <f:facet name="toolbar">
+                                                                                        <h:outputText value="Orden del día:" style="font-weight: 600;"/>
+                                                                                    </f:facet>
+                                                                                </p:textEditor>
+                                                                            </div>
+                                                                        </p:column>
+                                                                    </p:row>
+
+                                                                    <p:row>
+                                                                        <p:column colspan="5">
+                                                                            <div class="card">
+                                                                                <p:textEditor value="#{participanteTutoriaGrupal.tutoriasGrupales.acuerdos}"
+                                                                                              placeholder="Ejemplo de acuerdos de la tutoría grupal *"
+                                                                                              height="200"
+                                                                                              readonly="true"
+                                                                                              >
+                                                                                    <f:facet name="toolbar">
+                                                                                        <h:outputText value="Acuerdos:" style="font-weight: 600;"/>
+                                                                                    </f:facet>
+                                                                                </p:textEditor>
+                                                                            </div>
                                                                         </p:column>
                                                                     </p:row>
                                                                 </p:panelGrid>

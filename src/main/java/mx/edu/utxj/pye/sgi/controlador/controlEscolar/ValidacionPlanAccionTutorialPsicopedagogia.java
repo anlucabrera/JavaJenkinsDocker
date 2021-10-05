@@ -231,15 +231,20 @@ public class ValidacionPlanAccionTutorialPsicopedagogia extends ViewScopedRol im
     }
     
     public void validaCoordinadorTutores(){
-        ResultadoEJB<CordinadoresTutores> cordinadorTutores = ejbAsignacionTutores.buscarCordinadorTutorActual(rol.getPeriodoSeleccionado().getPeriodo(), rol.getPsicopedagogia().getAreaOperativa().getAreaSuperior());
-        if (!cordinadorTutores.getCorrecto()) {
-            rol.setValidaCT(false);
-        }else{
-            if(cordinadorTutores.getValor().getPersonal() == rol.getPsicopedagogia().getPersonal().getClave()){
-                rol.setValidaCT(true);
-            }else{
+        try {
+            ResultadoEJB<CordinadoresTutores> cordinadorTutores = ejbAsignacionTutores.buscarCordinadorTutorActual(rol.getPeriodoSeleccionado().getPeriodo(), rol.getPsicopedagogia().getAreaOperativa().getAreaSuperior());
+            if (!cordinadorTutores.getCorrecto()) {
                 rol.setValidaCT(false);
+            }else{
+                if(cordinadorTutores.getValor().getPersonal() == rol.getPsicopedagogia().getPersonal().getClave()){
+                    rol.setValidaCT(true);
+                }else{
+                    rol.setValidaCT(false);
+                }
             }
+        } catch (Exception e) {
+            rol.setValidaCT(false);
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ValidacionPlanAccionTutorialPsicopedagogia.validaCoordinadorTutores()" + "EL usuario ingreso como secretaría académica" + e.getMessage());
         }
     }
     

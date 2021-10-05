@@ -145,7 +145,7 @@ public class EjbCasoCritico implements Serializable {
     public ResultadoEJB<List<DtoCasoCritico>> identificarPorEsdudiante(Estudiante estudiante){
         try{
 //            Empaquetado de estudiantes:
-            ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudiante(estudiante);
+            ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudianteGeneral(estudiante);
             if (dtoEstudiante.getCorrecto()) {
 //                List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante and cc.estado in :estadosAbiertos order by cc.fechaRegistro desc", CasoCritico.class)
                 List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante.matricula = :matricula AND cc.idEstudiante.periodo = :periodo order by cc.fechaRegistro desc", CasoCritico.class)
@@ -185,7 +185,7 @@ public class EjbCasoCritico implements Serializable {
     public ResultadoEJB<List<DtoCasoCriticoAlineacion>> identificarPorEsdudianteAlineacion(Estudiante estudiante){
         try{
 //            Empaquetado de estudiantes:
-            ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudiante(estudiante);
+            ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudianteGeneral(estudiante);
             if (dtoEstudiante.getCorrecto()) {
 //                List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante and cc.estado in :estadosAbiertos order by cc.fechaRegistro desc", CasoCritico.class)
                 List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante.matricula = :matricula AND cc.idEstudiante.periodo = :periodo order by cc.fechaRegistro desc", CasoCritico.class)
@@ -228,7 +228,7 @@ public class EjbCasoCritico implements Serializable {
     public ResultadoEJB<List<DtoCasoCritico>> identificarPorEsdudianteCaso(Estudiante estudiante, Integer caso){
         try{
 //            Empaquetado de estudiantes:
-            ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudiante(estudiante);
+            ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudianteGeneral(estudiante);
             if (dtoEstudiante.getCorrecto()) {
                 //lista de casos críticos del estudiante
 //                List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante AND cc.caso = :caso and cc.estado in :estadosAbiertos order by cc.fechaRegistro desc", CasoCritico.class)
@@ -273,7 +273,7 @@ public class EjbCasoCritico implements Serializable {
     public ResultadoEJB<List<DtoCasoCriticoAlineacion>> identificarPorEsdudianteCasoAlineacion(Estudiante estudiante, Integer caso){
         try{
 //            Empaquetado de estudiantes:
-            ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudiante(estudiante);
+            ResultadoEJB<DtoEstudiante> dtoEstudiante = packer.packEstudianteGeneral(estudiante);
             if (dtoEstudiante.getCorrecto()) {
                 //lista de casos críticos del estudiante
 //                List<CasoCritico> casosCriticos = em.createQuery("select cc from CasoCritico cc where cc.idEstudiante=:estudiante AND cc.caso = :caso and cc.estado in :estadosAbiertos order by cc.fechaRegistro desc", CasoCritico.class)
@@ -326,7 +326,7 @@ public class EjbCasoCritico implements Serializable {
                     .collect(Collectors.toList());
 
             List<ResultadoEJB<DtoCasoCritico>> resultadoEJBS = casosCriticos.stream()
-                    .map(casoCritico -> packer.packCasoCriticoEstudiante(casoCritico, packer.packEstudiante(casoCritico.getIdEstudiante()).getValor()))
+                    .map(casoCritico -> packer.packCasoCriticoEstudiante(casoCritico, packer.packEstudianteGeneral(casoCritico.getIdEstudiante()).getValor()))
                     .collect(Collectors.toList());
             ResultadoEJB.logErroresEnLista(resultadoEJBS, DtoCasoCritico.class);
 
@@ -364,7 +364,7 @@ public class EjbCasoCritico implements Serializable {
                     .collect(Collectors.toList());
 
             List<ResultadoEJB<DtoCasoCriticoAlineacion>> resultadoEJBS = casosCriticos.stream()
-                    .map(casoCritico -> packer.packCasoCriticoEstudianteAlineacion(casoCritico, packer.packEstudiante(casoCritico.getIdEstudiante()).getValor()))
+                    .map(casoCritico -> packer.packCasoCriticoEstudianteAlineacion(casoCritico, packer.packEstudianteGeneral(casoCritico.getIdEstudiante()).getValor()))
                     .collect(Collectors.toList());
             ResultadoEJB.logErroresEnLista(resultadoEJBS, DtoCasoCriticoAlineacion.class);
 

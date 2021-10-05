@@ -88,6 +88,7 @@ public class ControladorEgresados implements Serializable{
     
     public void consultaAreaRegistro() {
         try {
+            dto.setClaveTrabajador(controladorEmpleado.getNuevoOBJListaPersonal().getClave());
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 26);
             if (areaRegistro == null) {

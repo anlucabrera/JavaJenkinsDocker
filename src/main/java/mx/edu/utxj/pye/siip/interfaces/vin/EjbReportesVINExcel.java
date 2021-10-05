@@ -18,7 +18,7 @@ public interface EjbReportesVINExcel {
     
     public String getReporteServiciosTecnologicos(Short ejercicio) throws Throwable;
     
-    public String getReporteGeneralEgresados(Short ejercicio) throws Throwable;
+    public String getReporteGeneralEgresados(Short ejercicio, Integer claveTrabajador) throws Throwable;
     
     public String getReporteOrganismosVinculados(Short ejercicio) throws Throwable;
     

@@ -329,19 +329,20 @@
                                                         </f:facet>
                                                     </p:toolbar>
                                                     <center>
+                                                            
                                                         <p:dataTable id="dtSesionesGrupales" 
-                                                                     var="sesionGrupal" 
-                                                                     value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.listaSesionesGrupalesTutorias}"
-                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                                     resizeMode="expand"
-                                                                     emptyMessage="Aún no se han registrado sesiones grupales de tutoría"
-                                                                     >
+                                                                             var="sesionGrupal" 
+                                                                             value="#{consultaPlanesAccionTutoralCoordinadorTutores.rol.listaSesionesGrupalesTutorias}"
+                                                                             tableStyleClass="table table-condensed table-responsive"
+                                                                             scrollable="true" scrollHeight="600"
+                                                                             resizeMode="expand" style="margin-top:0"
+                                                                             emptyMessage="Aún no se han registrado sesiones grupales de tutoría">
                                                             <p:columnGroup type="header">
                                                                 <p:row class="sucess">
                                                                     <p:column headerText="No. de Sesión" width="50"/>
-                                                                    <p:column headerText="Actividad Programada" width="300"/>
                                                                     <p:column headerText="Fecha Programada" width="100"/>
-                                                                    <p:column headerText="Objetivos" width="300"/>
+                                                                    <p:column headerText="Actividad Programada" width="500"/>
+                                                                    <p:column headerText="Objetivos" width="500"/>
                                                                     <p:column headerText="Observaciones ó Recomendaciones/Alguna Situación Emergente" width="300"/>
                                                                     <p:column headerText="Cumplimiento" width="80"/>
                                                                     <p:column headerText="Justificación" width="300"/>
@@ -351,10 +352,6 @@
                                                             <p:column style="text-align: center;">
                                                                 <h:outputText value="#{sesionGrupal.noSesion}" />
                                                             </p:column>
-
-                                                            <p:column style="text-align: center;">
-                                                                <h:outputText value="#{sesionGrupal.actividadProgramada}" />
-                                                            </p:column>
                                                             
                                                             <p:column style="text-align: center;">
                                                                 <h:outputText value="#{sesionGrupal.fechaProgramada}">
@@ -363,7 +360,31 @@
                                                             </p:column>
 
                                                             <p:column style="text-align: center;">
-                                                                <h:outputText value="#{sesionGrupal.objetivos}" />
+                                                                <div class="card">
+                                                                    <p:textEditor value="#{sesionGrupal.actividadProgramada}"
+                                                                                  placeholder="Ejemplo de actividad programada de la sesión grupal *"
+                                                                                  height="200"
+                                                                                  readonly="true"
+                                                                                  >
+                                                                        <f:facet name="toolbar">
+                                                                            <h:outputText value="Orden del día:" style="font-weight: 600;"/>
+                                                                        </f:facet>
+                                                                    </p:textEditor>
+                                                                </div>
+                                                            </p:column>
+
+                                                            <p:column style="text-align: center;">
+                                                                <div class="card">
+                                                                    <p:textEditor value="#{sesionGrupal.objetivos}"
+                                                                                  placeholder="Ejemplo de objetivos de la sesión grupal *"
+                                                                                  height="200"
+                                                                                  readonly="true"
+                                                                                  >
+                                                                        <f:facet name="toolbar">
+                                                                            <h:outputText value="Objetivos:" style="font-weight: 600;"/>
+                                                                        </f:facet>
+                                                                    </p:textEditor>
+                                                                </div>
                                                             </p:column>
                                                             
                                                             <p:column style="text-align: center;">

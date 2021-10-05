@@ -229,7 +229,7 @@ public class EjbAsignacionTutores {
      * @param area
      * @return 
      */
-    public ResultadoEJB<CordinadoresTutores> buscarCordinadorTutorActual(@NonNull Integer periodoEscolar, @NonNull Short area){
+    public ResultadoEJB<CordinadoresTutores> buscarCordinadorTutorActual(Integer periodoEscolar, Short area){
         try {
             List<CordinadoresTutores> lista = em.createQuery("SELECT c FROM CordinadoresTutores c WHERE c.periodo = :periodo AND c.areaAcademica = :areaAcademica")
                     .setParameter("periodo", periodoEscolar)

@@ -286,58 +286,81 @@
                                                         <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;"></div>
 
                                                         <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
-                                                            <div class="ui-material">
-                                                                <p:inputTextarea id="rtgOrdenDia"
-                                                                                 rows="3" 
-                                                                                 cols="80"
-                                                                                 counter="displayOrdenDia" 
-                                                                                 maxlength="3000" 
-                                                                                 counterTemplate="{0} caracteres en total." 
-                                                                                 autoResize="true"
-                                                                                 required="true"
-                                                                                 class="form-control"
-                                                                                 requiredMessage="Es requerido el campo de orden del día"
-                                                                                 value="#{registroTutoriaGrupal.rol.tutoriaGrupal.ordenDia}"
-
-                                                                                 />
-                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
-                                                                <h:outputText id="displayOrdenDia" />
-                                                                <p:watermark for="rtgOrdenDia" value="Ejemplo de orden del día *" />
-                                                                <p:message for="rtgOrdenDia" />
-                                                                <p:outputLabel for="rtgOrdenDia" value="Orden del día" />
+                                                            <p:outputLabel for="rtgOrdenDia" value="Orden del día:" />
+                                                            <div class="card">
+                                                                <p:textEditor widgetVar="rtgOrdenDia" 
+                                                                              id="rtgOrdenDia"
+                                                                              value="#{registroTutoriaGrupal.rol.tutoriaGrupal.ordenDia}"
+                                                                              placeholder="Ejemplo de ordén del día de la tutoria grupal *"
+                                                                              required="true"
+                                                                              requiredMessage="Es requerido el campo de orden del día"
+                                                                              height="300"
+                                                                              >
+                                                                    <f:facet name="toolbar">
+                                                                        <span class="ql-formats">
+                                                                            <select class="ql-size"></select>
+                                                                        </span>
+                                                                        <span class="ql-formats">
+                                                                            <button class="ql-bold"></button>
+                                                                            <button class="ql-italic"></button>
+                                                                            <button class="ql-underline"></button>
+                                                                            <button class="ql-strike"></button>
+                                                                        </span>
+                                                                        <span class="ql-formats">
+                                                                            <button class="ql-list" value="ordered" />
+                                                                            <button class="ql-list" value="bullet" />
+                                                                            <button class="ql-indent" value="-1" />
+                                                                            <button class="ql-indent" value="+1" />
+                                                                        </span>
+                                                                        <span class="ql-formats">
+                                                                            <button class="ql-clean" />
+                                                                        </span>
+                                                                    </f:facet>
+                                                                </p:textEditor>
                                                             </div>
-                                                            <p:message for="rtgOrdenDia" />
                                                         </div>
 
                                                         <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
-                                                            <div class="ui-material">
-                                                                <p:inputTextarea id="rtgAcuerdos"
-                                                                                 rows="3" 
-                                                                                 cols="80"
-                                                                                 counter="displayAcuerdos" 
-                                                                                 maxlength="3000" 
-                                                                                 counterTemplate="{0} caracteres en total." 
-                                                                                 autoResize="true"
-                                                                                 required="true"
-                                                                                 class="form-control"
-                                                                                 requiredMessage="Es requerido el campo de acuerdos"
-                                                                                 value="#{registroTutoriaGrupal.rol.tutoriaGrupal.acuerdos}"
-
-                                                                                 />
-                                                                <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
-                                                                <h:outputText id="displayAcuerdos" />
-                                                                <p:watermark for="rtgAcuerdos" value="Ejemplo de acuerdos *" />
-                                                                <p:message for="rtgAcuerdos" />
-                                                                <p:outputLabel for="rtgAcuerdos" value="Acuerdos" />
+                                                            <p:outputLabel for="rtgAcuerdos" value="Acuerdos:" />
+                                                            <div class="card">
+                                                                <p:textEditor widgetVar="rtgAcuerdos" 
+                                                                              id="rtgAcuerdos"
+                                                                              value="#{registroTutoriaGrupal.rol.tutoriaGrupal.acuerdos}"
+                                                                              placeholder="Ejemplo de acuerdos de la tutoria grupal *"
+                                                                              required="true"
+                                                                              requiredMessage="Es requerido el campo de acuerdos"
+                                                                              height="300"
+                                                                              >
+                                                                    <f:facet name="toolbar">
+                                                                        <span class="ql-formats">
+                                                                            <select class="ql-size"></select>
+                                                                        </span>
+                                                                        <span class="ql-formats">
+                                                                            <button class="ql-bold"></button>
+                                                                            <button class="ql-italic"></button>
+                                                                            <button class="ql-underline"></button>
+                                                                            <button class="ql-strike"></button>
+                                                                        </span>
+                                                                        <span class="ql-formats">
+                                                                            <button class="ql-list" value="ordered" />
+                                                                            <button class="ql-list" value="bullet" />
+                                                                            <button class="ql-indent" value="-1" />
+                                                                            <button class="ql-indent" value="+1" />
+                                                                        </span>
+                                                                        <span class="ql-formats">
+                                                                            <button class="ql-clean" />
+                                                                        </span>
+                                                                    </f:facet>
+                                                                </p:textEditor>
                                                             </div>
-                                                            <p:message for="rtgAcuerdos" />
                                                         </div>
 
                                                         <div class="col-sm-12 col-md-12 col-lg-6" style="margin-bottom: 15px;">
+                                                            <p:outputLabel for="rtgAcuerdos" value="Observaciones:" />
                                                             <div class="ui-material">
                                                                 <p:inputTextarea id="rtgObservaciones"
-                                                                                 rows="3" 
-                                                                                 cols="80"
+                                                                                 rows="4" 
+                                                                                 cols="130"
                                                                                  counter="displayObservaciones" 
                                                                                  maxlength="3000" 
                                                                                  counterTemplate="{0} caracteres en total." 
@@ -353,11 +376,11 @@
                                                                 <p:watermark for="rtgObservaciones" value="Ejemplo de observaciones *" />
                                                                 <p:message for="rtgObservaciones" />
                                                                 <p:outputLabel for="rtgObservaciones" value="Observaciones" />
+                                                                <p:message for="rtgObservaciones" />
                                                             </div>
-                                                            <p:message for="rtgObservaciones" />
                                                         </div>
 
-                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;margin-bottom: 15px;">
                                                             <p:commandButton id="btnGuardarTutoriaGrupal" 
                                                                              value="Guardar tutoría grupal" 
                                                                              action="#{registroTutoriaGrupal.guardarTutoriaGrupal}" 
@@ -571,57 +594,93 @@
 
                                                                 <!--Orden del día-->
                                                                 <p:column>
-                                                                    <p:inputTextarea rows="3" 
-                                                                                     cols="76"
-                                                                                     maxlength="3000" 
-                                                                                     autoResize="false"
-                                                                                     required="true"
-                                                                                     requiredMessage="Es requerido el campo de observaciones"
-                                                                                     class="form-control"
-                                                                                     title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                     value="#{tutoriaGrupal.tutoriaGrupal.ordenDia}"
-                                                                                     valueChangeListener="#{registroTutoriaGrupal.actualizarOrdenDia}"
-
-                                                                                     >
-                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
-                                                                        <p:ajax process="@this" 
-                                                                                update="dtTutoriasGrupales" 
-                                                                                global="false"
-                                                                                /> 
-                                                                        <f:attribute name="tutoriaGrupal" 
-                                                                                     value="#{tutoriaGrupal.tutoriaGrupal}" 
-                                                                                     />
-                                                                    </p:inputTextarea>
+                                                                    <div class="card">
+                                                                        <p:textEditor value="#{tutoriaGrupal.tutoriaGrupal.ordenDia}"
+                                                                                      valueChangeListener="#{registroTutoriaGrupal.actualizarOrdenDia}"
+                                                                                      placeholder="Ejemplo de Orden del día de la tutoría grupal *"
+                                                                                      required="true"
+                                                                                      requiredMessage="Es requerido el campo de orden del día"
+                                                                                      height="200"
+                                                                                      >
+                                                                            <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                            <f:facet name="toolbar">
+                                                                                <span class="ql-formats">
+                                                                                    <select class="ql-size"></select>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-bold"></button>
+                                                                                    <button class="ql-italic"></button>
+                                                                                    <button class="ql-underline"></button>
+                                                                                    <button class="ql-strike"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-list" value="ordered" />
+                                                                                    <button class="ql-list" value="bullet" />
+                                                                                    <button class="ql-indent" value="-1" />
+                                                                                    <button class="ql-indent" value="+1" />
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-clean" />
+                                                                                </span>
+                                                                            </f:facet>
+                                                                            <p:ajax event="blur" 
+                                                                                    process="@this" 
+                                                                                    update="dtTutoriasGrupales"
+                                                                                    global="false"
+                                                                                    /> 
+                                                                            <f:attribute name="tutoriaGrupal" 
+                                                                                         value="#{tutoriaGrupal.tutoriaGrupal}"
+                                                                                         />
+                                                                        </p:textEditor>
+                                                                    </div>
                                                                 </p:column>
 
                                                                 <!--Acuerdos-->
                                                                 <p:column>
-                                                                    <p:inputTextarea rows="3" 
-                                                                                     cols="76"
-                                                                                     maxlength="3000" 
-                                                                                     autoResize="false"
-                                                                                     required="true"
-                                                                                     requiredMessage="Es requerido el campo de acuerdos"
-                                                                                     class="form-control"
-                                                                                     title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                     value="#{tutoriaGrupal.tutoriaGrupal.acuerdos}"
-                                                                                     valueChangeListener="#{registroTutoriaGrupal.actualizarAcuerdos}"
-
-                                                                                     >
-                                                                        <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
-                                                                        <p:ajax process="@this" 
-                                                                                update="dtTutoriasGrupales" 
-                                                                                global="false"
-                                                                                /> 
-                                                                        <f:attribute name="tutoriaGrupal" 
-                                                                                     value="#{tutoriaGrupal.tutoriaGrupal}" 
-                                                                                     />
-                                                                    </p:inputTextarea>
+                                                                    <div class="card">
+                                                                        <p:textEditor value="#{tutoriaGrupal.tutoriaGrupal.acuerdos}"
+                                                                                      valueChangeListener="#{registroTutoriaGrupal.actualizarAcuerdos}"
+                                                                                      placeholder="Ejemplo de acuerdos de la tutoría grupal *"
+                                                                                      required="true"
+                                                                                      requiredMessage="Es requerido el campo de acuerdos de la tutoría grupal"
+                                                                                      height="200"
+                                                                                      >
+                                                                            <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                                            <f:facet name="toolbar">
+                                                                                <span class="ql-formats">
+                                                                                    <select class="ql-size"></select>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-bold"></button>
+                                                                                    <button class="ql-italic"></button>
+                                                                                    <button class="ql-underline"></button>
+                                                                                    <button class="ql-strike"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-list" value="ordered" />
+                                                                                    <button class="ql-list" value="bullet" />
+                                                                                    <button class="ql-indent" value="-1" />
+                                                                                    <button class="ql-indent" value="+1" />
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-clean" />
+                                                                                </span>
+                                                                            </f:facet>
+                                                                            <p:ajax event="blur" 
+                                                                                    process="@this" 
+                                                                                    update="dtTutoriasGrupales"
+                                                                                    global="false"
+                                                                                    /> 
+                                                                            <f:attribute name="tutoriaGrupal" 
+                                                                                         value="#{tutoriaGrupal.tutoriaGrupal}"
+                                                                                         />
+                                                                        </p:textEditor>
+                                                                    </div>
                                                                 </p:column>
 
                                                                 <!--Observaciones-->
                                                                 <p:column>
-                                                                    <p:inputTextarea rows="3" 
+                                                                    <p:inputTextarea rows="9" 
                                                                                      cols="76"
                                                                                      maxlength="3000" 
                                                                                      autoResize="false"

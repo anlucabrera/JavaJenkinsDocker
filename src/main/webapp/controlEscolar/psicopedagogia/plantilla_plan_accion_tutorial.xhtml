@@ -309,48 +309,76 @@
                                                                 <p></p>
                                                                 <p></p>
                                                                 <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
-                                                                    <div class="ui-material">
-                                                                        <p:inputTextarea id="sgtActividadProgramada"
-                                                                                         rows="2" 
-                                                                                         cols="100" 
-                                                                                         counter="displaySgtActividadProgramada" 
-                                                                                         maxlength="20000" 
-                                                                                         counterTemplate="{0} caracteres en total." 
-                                                                                         autoResize="true"
-                                                                                         required="true"
-                                                                                         class="form-control"
-                                                                                         requiredMessage="Es requerido el campo de actividad programada"
-                                                                                         value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.sesionGrupalTutoriaPlantilla.actividadProgramada}"
-                                                                                         rendered="#{plantillaPlanAccionTutorialPsicopedagogia.rol.tab3}"
-                                                                                         disabled="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}"
-                                                                                         />
-                                                                        <h:outputText id="displaySgtActividadProgramada" />
-                                                                        <p:watermark for="sgtActividadProgramada" value="Ejemplo de actividad programada en el registro de la sesión grupal de la tutoria *" />
-                                                                        <p:message for="sgtActividadProgramada" />
-                                                                        <p:outputLabel for="sgtObjetivos" value="Actividad Programada de la sesión grupal de la tutoría" />
+                                                                    <p:outputLabel for="sgtActividadProgramada" value="Actividad programada de la sesión grupal de la tutoría:" />
+                                                                    <div class="card">
+                                                                        <p:textEditor widgetVar="sgtActividadProgramada" 
+                                                                                      id="sgtActividadProgramada"
+                                                                                      value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.sesionGrupalTutoriaPlantilla.actividadProgramada}" 
+                                                                                      placeholder="Ejemplo de actividad programada en el registro de la sesión grupal de la tutoria *"
+                                                                                      required="true"
+                                                                                      requiredMessage="Es requerido el campo de actividad programada"
+                                                                                      height="300"
+                                                                                      rendered="#{plantillaPlanAccionTutorialPsicopedagogia.rol.tab3}" 
+                                                                                      readonly="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}"
+                                                                                      >
+                                                                            <f:facet name="toolbar">
+                                                                                <span class="ql-formats">
+                                                                                    <select class="ql-size"></select>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-bold"></button>
+                                                                                    <button class="ql-italic"></button>
+                                                                                    <button class="ql-underline"></button>
+                                                                                    <button class="ql-strike"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-list" value="ordered" />
+                                                                                    <button class="ql-list" value="bullet" />
+                                                                                    <button class="ql-indent" value="-1" />
+                                                                                    <button class="ql-indent" value="+1" />
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-clean" />
+                                                                                </span>
+                                                                            </f:facet>
+                                                                        </p:textEditor>
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 15px;">
-                                                                    <div class="ui-material">
-                                                                        <p:inputTextarea id="sgtObjetivos"
-                                                                                         rows="2" 
-                                                                                         cols="100"
-                                                                                         counter="displaySgtObjetivos" 
-                                                                                         maxlength="5000" 
-                                                                                         counterTemplate="{0} caracteres en total." 
-                                                                                         autoResize="true"
-                                                                                         required="true"
-                                                                                         class="form-control"
-                                                                                         requiredMessage="Es requerido el campo de objetivos"
-                                                                                         value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.sesionGrupalTutoriaPlantilla.objetivos}"
-                                                                                         rendered="#{plantillaPlanAccionTutorialPsicopedagogia.rol.tab3}"
-                                                                                         disabled="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}"
-                                                                                         />
-                                                                        <h:outputText id="displaySgtObjetivos" />
-                                                                        <p:watermark for="sgtObjetivos" value="Ejemplo de objetivos en el regsistro de la sesión grupal de la tutoria *" />
-                                                                        <p:message for="sgtObjetivos" />
-                                                                        <p:outputLabel for="sgtObjetivos" value="Objetivos de la sesión grupal de la tutoría" />
+                                                                    <p:outputLabel for="sgtObjetivos" value="Objetivos de la sesión grupal de la tutoría:" />
+                                                                    <div class="card">
+                                                                        <p:textEditor widgetVar="sgtObjetivos" 
+                                                                                      id="sgtObjetivos"
+                                                                                      value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.sesionGrupalTutoriaPlantilla.objetivos}"
+                                                                                      placeholder="Ejemplo de objetivos en el regsistro de la sesión grupal de la tutoria *"
+                                                                                      required="true"
+                                                                                      requiredMessage="Es requerido el campo de objetivos"
+                                                                                      height="300"
+                                                                                      rendered="#{plantillaPlanAccionTutorialPsicopedagogia.rol.tab3}" 
+                                                                                      readonly="#{plantillaPlanAccionTutorialPsicopedagogia.rol.planRegistrado}"
+                                                                                      >
+                                                                            <f:facet name="toolbar">
+                                                                                <span class="ql-formats">
+                                                                                    <select class="ql-size"></select>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-bold"></button>
+                                                                                    <button class="ql-italic"></button>
+                                                                                    <button class="ql-underline"></button>
+                                                                                    <button class="ql-strike"></button>
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-list" value="ordered" />
+                                                                                    <button class="ql-list" value="bullet" />
+                                                                                    <button class="ql-indent" value="-1" />
+                                                                                    <button class="ql-indent" value="+1" />
+                                                                                </span>
+                                                                                <span class="ql-formats">
+                                                                                    <button class="ql-clean" />
+                                                                                </span>
+                                                                            </f:facet>
+                                                                        </p:textEditor>
                                                                     </div>
                                                                 </div>
 
@@ -382,8 +410,9 @@
                                                                 <p:dataTable id="dtSesionesGrupales" 
                                                                              var="sesionGrupal" 
                                                                              value="#{plantillaPlanAccionTutorialPsicopedagogia.rol.listaSesionesGrupalesTutoriaPlantilla}"
-                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                                             resizeMode="expand"
+                                                                             tableStyleClass="table table-condensed table-responsive"
+                                                                             scrollable="true" scrollHeight="600"
+                                                                             resizeMode="expand" style="margin-top:0"
                                                                              emptyMessage="Aún no se han registrado sesiones grupales de tutoría"
                                                                              >
                                                                     <p:columnGroup type="header">
@@ -416,40 +445,72 @@
                                                                     </p:column>
 
                                                                     <p:column>
-                                                                        <div class="ui-material">
-                                                                            <p:inputTextarea rows="1" 
-                                                                                             cols="100"
-                                                                                             maxlength="20000" 
-                                                                                             autoResize="true"
-                                                                                             required="true"
-                                                                                             requiredMessage="Es requerido el campo de actividad programada"
-                                                                                             class="form-control"
-                                                                                             title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                             value="#{sesionGrupal.actividadProgramada}"
-                                                                                             valueChangeListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizaActividadProgramada}"
-                                                                                             >
-                                                                                <p:ajax process="@this" oncomplete="actualizar();" global="false"/> 
+                                                                        <div class="card">
+                                                                            <p:textEditor value="#{sesionGrupal.actividadProgramada}" 
+                                                                                          valueChangeListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizaActividadProgramada}"
+                                                                                          placeholder="Ejemplo de actividad programada en el registro de la sesión grupal de la tutoria *"
+                                                                                          required="true"
+                                                                                          requiredMessage="Es requerido el campo de actividad programada"
+                                                                                          height="300"
+                                                                                          >
+                                                                                <f:facet name="toolbar">
+                                                                                    <span class="ql-formats">
+                                                                                        <select class="ql-size"></select>
+                                                                                    </span>
+                                                                                    <span class="ql-formats">
+                                                                                        <button class="ql-bold"></button>
+                                                                                        <button class="ql-italic"></button>
+                                                                                        <button class="ql-underline"></button>
+                                                                                        <button class="ql-strike"></button>
+                                                                                    </span>
+                                                                                    <span class="ql-formats">
+                                                                                        <button class="ql-list" value="ordered" />
+                                                                                        <button class="ql-list" value="bullet" />
+                                                                                        <button class="ql-indent" value="-1" />
+                                                                                        <button class="ql-indent" value="+1" />
+                                                                                    </span>
+                                                                                    <span class="ql-formats">
+                                                                                        <button class="ql-clean" />
+                                                                                    </span>
+                                                                                </f:facet>
+                                                                                <p:ajax event="blur" process="@this" oncomplete="actualizar();" global="false"/> 
                                                                                 <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
-                                                                            </p:inputTextarea>
+                                                                            </p:textEditor>
                                                                         </div>
                                                                     </p:column>
 
                                                                     <p:column>
-                                                                        <div class="ui-material">
-                                                                            <p:inputTextarea rows="1" 
-                                                                                             cols="100"
-                                                                                             maxlength="5000" 
-                                                                                             autoResize="true"
-                                                                                             required="true"
-                                                                                             requiredMessage="Es requerido el campo de objetivos"
-                                                                                             class="form-control"
-                                                                                             title="Si desea actualizar dar clic aqui y editar el texto y presionar TAB, ó bien colocar el cursor en el siguiente campo"
-                                                                                             value="#{sesionGrupal.objetivos}"
-                                                                                             valueChangeListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizaObjetivos}"
-                                                                                             >
-                                                                                <p:ajax process="@this" oncomplete="actualizar();" global="false"/> 
+                                                                        <div class="card">
+                                                                            <p:textEditor value="#{sesionGrupal.objetivos}"
+                                                                                          valueChangeListener="#{plantillaPlanAccionTutorialPsicopedagogia.actualizaObjetivos}"
+                                                                                          placeholder="Ejemplo de objetivos en el registro de la sesión grupal de la tutoria *"
+                                                                                          required="true"
+                                                                                          requiredMessage="Es requerido el campo de objetivos"
+                                                                                          height="300"
+                                                                                          >
+                                                                                <f:facet name="toolbar">
+                                                                                    <span class="ql-formats">
+                                                                                        <select class="ql-size"></select>
+                                                                                    </span>
+                                                                                    <span class="ql-formats">
+                                                                                        <button class="ql-bold"></button>
+                                                                                        <button class="ql-italic"></button>
+                                                                                        <button class="ql-underline"></button>
+                                                                                        <button class="ql-strike"></button>
+                                                                                    </span>
+                                                                                    <span class="ql-formats">
+                                                                                        <button class="ql-list" value="ordered" />
+                                                                                        <button class="ql-list" value="bullet" />
+                                                                                        <button class="ql-indent" value="-1" />
+                                                                                        <button class="ql-indent" value="+1" />
+                                                                                    </span>
+                                                                                    <span class="ql-formats">
+                                                                                        <button class="ql-clean" />
+                                                                                    </span>
+                                                                                </f:facet>
+                                                                                <p:ajax event="blur" process="@this" oncomplete="actualizar();" global="false"/> 
                                                                                 <f:attribute name="sesionGrupal" value="#{sesionGrupal}" />
-                                                                            </p:inputTextarea>
+                                                                            </p:textEditor>
                                                                         </div>
                                                                     </p:column>
 

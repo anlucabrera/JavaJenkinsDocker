@@ -1353,13 +1353,13 @@ public class EjbRegistroAsesoriaTutoria {
                    if(ti.getCasoCritico() == null){
                        DtoTutoriaIndividualCE dto = new DtoTutoriaIndividualCE(
                                ti
-                               ,pack.packEstudiante(ti.getEstudiante()).getValor()
+                               ,pack.packEstudianteGeneral(ti.getEstudiante()).getValor()
                        );
                        listaDto.add(dto);
                    }else{
                        DtoTutoriaIndividualCE dto = new DtoTutoriaIndividualCE(
                                ti
-                               ,pack.packEstudiante(ti.getEstudiante()).getValor()
+                               ,pack.packEstudianteGeneral(ti.getEstudiante()).getValor()
                                ,cc.identificarPorEsdudianteCaso(ti.getEstudiante(), ti.getCasoCritico().getCaso()).getValor().get(0)
                        );
                        listaDto.add(dto);

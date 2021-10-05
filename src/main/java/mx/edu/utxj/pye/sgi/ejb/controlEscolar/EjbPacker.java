@@ -1172,4 +1172,97 @@ public class EjbPacker {
             return ResultadoEJB.crearErroneo(1, "Ocurrió un error al empaquetar DtoSatisfaccionServiciosEstudiante (EjbPacker.packDtoSatisfaccionServiciosEstudiante)", e, DtoSatisfaccionServiciosEstudiante.class);
         }
     }
+    
+    
+    /**
+     * Empaquetado de estudiante para modulos de tutoría, asesorías y casos críticos
+     * @param estudiante
+     * @return 
+     */
+    public ResultadoEJB<DtoEstudiante> packEstudianteGeneral(Estudiante estudiante){
+        if(estudiante == null) return ResultadoEJB.crearErroneo(1, "El estudiante es nulo y no se puede empaquetar", DtoEstudiante.class);
+        return packEstudianteGeneral(estudiante.getMatricula());
+    }
+    
+    /**
+     * Permite empaquetar un estudiante segun su matricula
+     * @param matricula Matricula del estudiante
+     * @return Estudiante empaquetado o código de error de lo contrario
+     */
+    public ResultadoEJB<DtoEstudiante> packEstudianteGeneral(Integer matricula){
+        try{
+            //empaquetar estudiante
+            List<DtoInscripcion> dtoInscripciones = em.createQuery("select e from Estudiante e where e.matricula=:matricula order by e.periodo desc", Estudiante.class)
+                    .setParameter("matricula", matricula)
+                    .getResultStream()
+                    .map(estudiante -> packInscripcionGeneral(estudiante))
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .collect(Collectors.toList());
+            if(dtoInscripciones.isEmpty()) return ResultadoEJB.crearErroneo(2, "No se pudo identificar ninguna inscripción de estudiante con la matrícula proporcionada.", DtoEstudiante.class);
+            Aspirante aspirante = dtoInscripciones.get(0).getInscripcion().getAspirante();
+            Persona persona = aspirante.getIdPersona();
+            DtoInscripcion dtoInscripcionActiva = dtoInscripciones.stream()
+                    .filter(DtoInscripcion::getActivo).max(Comparator.comparingInt(value -> value.getPeriodo().getPeriodo()))
+                    .orElse(null);
+            if(dtoInscripcionActiva == null) return ResultadoEJB.crearErroneo(2, "El estudiante no tiene inscripción activa.", DtoEstudiante.class);
+            DtoEstudiante dtoEstudiante = new DtoEstudiante(persona, aspirante, dtoInscripciones, dtoInscripcionActiva);
+//            System.out.println("dtoEstudiante = " + dtoEstudiante);
+            return ResultadoEJB.crearCorrecto(dtoEstudiante, "Estudiante empaquetado");
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el estudiante a partir de su mattricula (EjbPacker.packEstudiante).", e, DtoEstudiante.class);
+        }
+    }
+    
+    /**
+     * Permite empaquetar la inscripión a un grupo y periodo de un estudiante
+     * @param estudiante Instancia de la inscipción a empaquetar
+     * @return Regresa el empaquetado de la inscripción o código de error
+     */
+    public ResultadoEJB<DtoInscripcion> packInscripcionGeneral(Estudiante estudiante){
+        try{
+            //empaquetar inscripción del estudiante
+            if(estudiante == null) return  ResultadoEJB.crearErroneo(2, "No se pudo identificar al estudiante con la matricula y grupo proporcionados.", DtoInscripcion.class);
+
+            Grupo grupo = estudiante.getGrupo();
+            ResultadoEJB<PeriodosEscolares> resPeriodoActivo = getPeriodoActivoGeneral();
+            if(!resPeriodoActivo.getCorrecto()) return ResultadoEJB.crearErroneo(3, resPeriodoActivo.getMensaje(), DtoInscripcion.class);
+
+            PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+            Generaciones generacion = em.find(Generaciones.class, grupo.getGeneracion());
+            DtoInscripcion dto = new DtoInscripcion(estudiante, grupo, periodo, generacion, periodo.equals(resPeriodoActivo.getValor()));
+            return ResultadoEJB.crearCorrecto(dto, "Estudiante empaquetado");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la inscripción del estudiante a partir de su mattricula (EjbPacker.packInscripcionGeneral).", e, DtoInscripcion.class);
+        }
+    }
+    
+    /**
+     * Permite obtener el periodo activo intentando leer la propiedad de configuración periodoActivo, en caso de no encontrarla se intenta obtener el periodo activo por sus fechas de inicio y fin declaradas en la tabla periodo_escolar_fechas
+     * @return Regresa valor del periodo o código de error de lo contrario
+     */
+    public ResultadoEJB<PeriodosEscolares> getPeriodoActivoGeneral(){
+        try{
+            PeriodoEscolarFechas periodoEscolarFechas = em.createQuery("select f from PeriodoEscolarFechas f where current_date between f.inicio and f.fin", PeriodoEscolarFechas.class)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if(periodoEscolarFechas == null){ 
+                PeriodosEscolares periodoUltimo = em.createQuery("SELECT p FROM PeriodosEscolares p ORDER BY p.periodo DESC", PeriodosEscolares.class)
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);                
+                if(periodoUltimo == null){
+                    return ResultadoEJB.crearErroneo(3, "No se pudo obtener el ultimo periodo registrado en la base de datos", PeriodosEscolares.class);
+                }else{
+                    return ResultadoEJB.crearCorrecto(periodoUltimo, "Ultimo periodo escolar obtenido en la base de datos");
+                }
+            }else{
+                return ResultadoEJB.crearCorrecto(periodoEscolarFechas.getPeriodosEscolares(), "Periodo escolar calculado por fechas");
+            }
+        }catch (Exception e){
+            return  ResultadoEJB.crearErroneo(1, "No se pudo obtener el periodo activo (EjbPacker.getPeriodoActivoGeneral).", e, PeriodosEscolares.class);
+        }
+    }
 }
