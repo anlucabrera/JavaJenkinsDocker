@@ -96,6 +96,14 @@ public class EjbReportesAcademicos {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
+            else if (p.getPersonal().getAreaOperativa() == 9 && p.getPersonal().getStatus()!='B') {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }
+            else if (p.getPersonal().getAreaOperativa() == 6 && p.getPersonal().getStatus()!='B') {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal con acceso a reportes académicos.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbReportesAcademicos.validarRolesReportesAcademicos)", e, null);
@@ -208,7 +216,7 @@ public class EjbReportesAcademicos {
                 listaProgramasEducativos.add(programaPK);
             });
             
-            if(personal.getAreaOperativa()!=10){
+            if(personal.getAreaOperativa()!=10 && personal.getAreaOperativa()!=6 && personal.getAreaOperativa()!=9){
                 listaProgramasEducativosFinal = listaProgramasEducativos.stream().filter(p->p.getAreaSuperior().equals(personal.getAreaOperativa())).collect(Collectors.toList());
             }else{
                 listaProgramasEducativosFinal = listaProgramasEducativos;
@@ -1196,9 +1204,15 @@ public class EjbReportesAcademicos {
     public String getReporteEstIrregulares(PeriodosEscolares periodo, PersonalActivo personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
         String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, personal.getAreaOperativa().getSiglas());
+       
         if(personal.getPersonal().getAreaOperativa()==10){
             rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, "ServEsc");
+        }else if(personal.getPersonal().getAreaOperativa()==6){
+            rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, "PlanEval");
+        }else if(personal.getPersonal().getAreaOperativa()==9){
+            rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, "InfEst");
         }
+        
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteEstIrreg.xlsx";
         
         String plantillaC = rutaPlantillaC.concat("reporteEstudiantesIrregulares.xlsx");
@@ -1222,6 +1236,12 @@ public class EjbReportesAcademicos {
     public String getReporteAprovEscolar(PeriodosEscolares periodo, Personal personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
         String areaGeneraReporte = "ServEsc";
+        
+        if(personal.getAreaOperativa()==6){
+            areaGeneraReporte = "PlanEval";
+        }else if(personal.getAreaOperativa()==9){
+            areaGeneraReporte = "InfEst";
+        }
         
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteAprovEscolar.xlsx";
         String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
@@ -1247,6 +1267,13 @@ public class EjbReportesAcademicos {
     public String getReporteAprovEstudiantes(PeriodosEscolares periodo, Personal personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
         String areaGeneraReporte = "ServEsc";
+        
+        if(personal.getAreaOperativa()==6){
+            areaGeneraReporte = "PlanEval";
+        }else if(personal.getAreaOperativa()==9){
+            areaGeneraReporte = "InfEst";
+        }
+        
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reportesAprovEst.xlsx";
         String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
 
@@ -1271,6 +1298,13 @@ public class EjbReportesAcademicos {
     public String getReporteRepAsignatura(PeriodosEscolares periodo, Personal personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
         String areaGeneraReporte = "ServEsc";
+        
+        if(personal.getAreaOperativa()==6){
+            areaGeneraReporte = "PlanEval";
+        }else if(personal.getAreaOperativa()==9){
+            areaGeneraReporte = "InfEst";
+        }
+        
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reportesRepAsig.xlsx";
         String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
 
@@ -1295,9 +1329,15 @@ public class EjbReportesAcademicos {
     public String getReportePlaneacionDoc(PeriodosEscolares periodo, PersonalActivo personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
         String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, personal.getAreaOperativa().getSiglas());
+        
         if(personal.getPersonal().getAreaOperativa()==10){
             rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, "ServEsc");
+        }else if(personal.getPersonal().getAreaOperativa()==6){
+            rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, "PlanEval");
+        }else if(personal.getPersonal().getAreaOperativa()==9){
+            rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, "InfEst");
         }
+        
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reportePlanDoc.xlsx";
 
         String plantillaC = rutaPlantillaC.concat("reportePlaneacionDocente.xlsx");
@@ -1321,6 +1361,13 @@ public class EjbReportesAcademicos {
     public String getReporteMatricula(PeriodosEscolares periodo, Personal personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
         String areaGeneraReporte = "ServEsc";
+        
+        if(personal.getAreaOperativa()==6){
+            areaGeneraReporte = "PlanEval";
+        }else if(personal.getAreaOperativa()==9){
+            areaGeneraReporte = "InfEst";
+        }
+        
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteMatricula.xlsx";
         String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
 
@@ -1345,6 +1392,13 @@ public class EjbReportesAcademicos {
     public String getReporteDistMatricula(PeriodosEscolares periodo, Personal personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
         String areaGeneraReporte = "ServEsc";
+        
+        if(personal.getAreaOperativa()==6){
+            areaGeneraReporte = "PlanEval";
+        }else if(personal.getAreaOperativa()==9){
+            areaGeneraReporte = "InfEst";
+        }
+        
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteDisMat.xlsx";
         String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
 
@@ -1369,6 +1423,13 @@ public class EjbReportesAcademicos {
     public String getReporteDesercionAcad(PeriodosEscolares periodo, Personal personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
         String areaGeneraReporte = "ServEsc";
+        
+        if(personal.getAreaOperativa()==6){
+            areaGeneraReporte = "PlanEval";
+        }else if(personal.getAreaOperativa()==9){
+            areaGeneraReporte = "InfEst";
+        }
+        
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\reporteDesercionAcad.xlsx";
         String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
 
@@ -1488,6 +1549,13 @@ public class EjbReportesAcademicos {
     public String getReportePromediosMateriaEstudiante(PeriodosEscolares periodo, Personal personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
         String areaGeneraReporte = "ServEsc";
+        
+        if(personal.getAreaOperativa()==6){
+            areaGeneraReporte = "PlanEval";
+        }else if(personal.getAreaOperativa()==9){
+            areaGeneraReporte = "InfEst";
+        }
+        
         String rutaPlantilla = "C:\\archivos\\formatosEscolares\\baseDatosPromediosEstudiante.xlsx";
         String rutaPlantillaC = ejbCarga.crearDirectorioReportesAcademicos(periodoEscolar, areaGeneraReporte);
 

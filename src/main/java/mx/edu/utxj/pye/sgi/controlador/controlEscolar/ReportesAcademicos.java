@@ -153,9 +153,9 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(rol.getNivel()== null) return;
         ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativosNivel(rol.getPeriodo(), rol.getNivel());
         if(res.getCorrecto()){
-            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+            if((rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getPersonal().getAreaSuperior()==2) || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48  && rol.getUsuario().getPersonal().getAreaSuperior()==2)){
                 rol.setProgramas(res.getValor().stream().filter(p->p.getAreaSuperior().equals(rol.getUsuario().getAreaOperativa().getArea())).collect(Collectors.toList()));
-            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
+            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getAreaOperativa()==6 || rol.getUsuario().getPersonal().getAreaOperativa()==9){
                 rol.setProgramas(res.getValor());
             }
             if(!rol.getProgramas().isEmpty()){
@@ -173,11 +173,11 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
     public void listaReportes(){
         List<String> listaReportes = new ArrayList<>();
         
-        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+        if((rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getPersonal().getAreaSuperior()==2) || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48  && rol.getUsuario().getPersonal().getAreaSuperior()==2)){
             listaReportes.add("Estudiantes irregulares");
             listaReportes.add("Planeación docente");
         }
-        else if(rol.getUsuario().getPersonal().getAreaOperativa()==10){
+        else if(rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getAreaOperativa()==6 || rol.getUsuario().getPersonal().getAreaOperativa()==9){
             listaReportes.add("Estudiantes irregulares");
             listaReportes.add("Planeación docente");
             listaReportes.add("Aprovechamiento escolar");
@@ -317,7 +317,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
      * @throws java.io.IOException
      */
      public void descargarPromediosMateriaEstudiante() throws IOException, Throwable{
-        if(rol.getUsuario().getPersonal().getAreaOperativa()==10){     
+        if(rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getAreaOperativa()==6 || rol.getUsuario().getPersonal().getAreaOperativa()==9){     
             File f = new File(ejb.getReportePromediosMateriaEstudiante(rol.getPeriodo(), rol.getUsuario().getPersonal()));
             Faces.sendFile(f, true);
         }
