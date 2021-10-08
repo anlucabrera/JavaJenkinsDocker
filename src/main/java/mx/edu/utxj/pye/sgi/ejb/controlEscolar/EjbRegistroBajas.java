@@ -496,7 +496,14 @@ public class EjbRegistroBajas {
         try{
                 DtoRegistroBajaEstudiante dtoRegistroBajaEstudiante = buscarRegistroBajaEstudiante(registro.getEstudiante().getIdEstudiante()).getValor();
                 List<DtoMateriaReprobada> listaDtoMateriaReprobada = buscarMateriasReprobadas(registro).getValor();
-                List<DtoDocumentosEstudiante> listaDocumentosEstudiante = buscarDocumentosEstudiante(registro.getEstudiante().getIdEstudiante()).getValor();
+                List<DtoDocumentosEstudiante> listaDocumentosEstudiante = new ArrayList<>();
+                
+                if(dtoRegistroBajaEstudiante.getProgramaEducativo().getNivelEducativo().getNivel().equals("TSU")){
+                    listaDocumentosEstudiante = buscarDocumentosEstudiante(registro.getEstudiante().getIdEstudiante()).getValor();
+                }else{
+                    listaDocumentosEstudiante = buscarDocumentosEstudianteIngLic(registro.getEstudiante().getIdEstudiante()).getValor();
+                }
+                        
                 AreasUniversidad areaSuperior = em.find(AreasUniversidad.class, dtoRegistroBajaEstudiante.getProgramaEducativo().getAreaSuperior());
                 Personal director = em.find(Personal.class, areaSuperior.getResponsable());
                 Personal tutor = em.find(Personal.class, registro.getEstudiante().getGrupo().getTutor());
@@ -522,7 +529,7 @@ public class EjbRegistroBajas {
     }
     
      /**
-     * Permite obtener la lista de documentos entregados por el estudiante
+     * Permite obtener la lista de documentos entregados por el estudiante de nivel técnico
      * @param estudiante Clave del estudiante
      * @return Resultado del proceso
      */
@@ -560,9 +567,57 @@ public class EjbRegistroBajas {
             DtoDocumentosEstudiante copias = new DtoDocumentosEstudiante(estudiante, "Copias Varias");
             listaDocumentosEstudiante.add(copias);
             
-            return ResultadoEJB.crearCorrecto(listaDocumentosEstudiante, "Lista de documento del estudiante.");
+            return ResultadoEJB.crearCorrecto(listaDocumentosEstudiante, "Lista de documento del estudiante  de nivel técnico.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de documentos del estudiante. (EjbRegistroBajas.buscarDocumentosEstudiante)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de documentos del estudiante  de nivel técnico. (EjbRegistroBajas.buscarDocumentosEstudiante)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de documentos entregados por el estudiante de nivel ingeniería o licenciatura
+     * @param estudiante Clave del estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoDocumentosEstudiante>> buscarDocumentosEstudianteIngLic(Integer estudiante) {
+        try{
+            List<DtoDocumentosEstudiante> listaDocumentosEstudiante = new ArrayList<>();
+            
+//            Estudiante estudianteDoc = buscarClaveEstudiante(estudiante).getValor();
+
+            Estudiante estudianteBD = em.find(Estudiante.class, estudiante);
+            
+            List<Integer> listaEstudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.aspirante.idAspirante =:aspirante", Estudiante.class)
+                     .setParameter("matricula", estudianteBD.getMatricula())
+                     .setParameter("aspirante", estudianteBD.getAspirante().getIdAspirante())
+                     .getResultStream()
+                     .map(l -> l.getIdEstudiante())
+                     .collect(Collectors.toList());
+            
+            List<DocumentoEstudianteProceso> documentosEstudiante = em.createQuery("SELECT de FROM DocumentoEstudianteProceso de WHERE de.estudiante IN :estudiante ORDER BY de.estudiante.idEstudiante DESC", DocumentoEstudianteProceso.class)
+                    .setParameter("estudiante", listaEstudiantes)
+                    .getResultStream().collect(Collectors.toList());
+            
+            documentosEstudiante.forEach(documento -> {
+                if (documento.getDocumento().getDocumento().getDocumento()==42) {
+                   DtoDocumentosEstudiante acta = new DtoDocumentosEstudiante(estudiante, "Copia Acta de Nacimiento");
+                   listaDocumentosEstudiante.add(acta);
+                }
+                if (documento.getDocumento().getDocumento().getDocumento()==43) {
+                   DtoDocumentosEstudiante cert = new DtoDocumentosEstudiante(estudiante, "Copia Certificado de Bachillerato");
+                   listaDocumentosEstudiante.add(cert);
+                }
+                if (documento.getDocumento().getDocumento().getDocumento()==2) {
+                   DtoDocumentosEstudiante curp = new DtoDocumentosEstudiante(estudiante, "CURP");
+                   listaDocumentosEstudiante.add(curp);
+                }
+            });
+            
+            DtoDocumentosEstudiante dtoCopiasVarias = new DtoDocumentosEstudiante(estudiante, "Copias Varias");
+            listaDocumentosEstudiante.add(dtoCopiasVarias);
+            
+            return ResultadoEJB.crearCorrecto(listaDocumentosEstudiante, "Lista de documento del estudiante de nivel ingeniería o licenciatura.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de documentos del estudiante de nivel ingeniería o licenciatura. (EjbRegistroBajas.buscarDocumentosEstudianteIngLic)", e, null);
         }
     }
     
