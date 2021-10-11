@@ -599,11 +599,11 @@ public class EjbRegistroBajas {
             
             documentosEstudiante.forEach(documento -> {
                 if (documento.getDocumento().getDocumento().getDocumento()==42) {
-                   DtoDocumentosEstudiante acta = new DtoDocumentosEstudiante(estudiante, "Copia Acta de Nacimiento");
+                   DtoDocumentosEstudiante acta = new DtoDocumentosEstudiante(estudiante, "Acta de Nacimiento");
                    listaDocumentosEstudiante.add(acta);
                 }
                 if (documento.getDocumento().getDocumento().getDocumento()==43) {
-                   DtoDocumentosEstudiante cert = new DtoDocumentosEstudiante(estudiante, "Copia Certificado de Bachillerato");
+                   DtoDocumentosEstudiante cert = new DtoDocumentosEstudiante(estudiante, "Certificado de Bachillerato");
                    listaDocumentosEstudiante.add(cert);
                 }
                 if (documento.getDocumento().getDocumento().getDocumento()==2) {
