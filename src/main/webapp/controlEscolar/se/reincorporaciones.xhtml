@@ -45,6 +45,29 @@
             <div class="contenedor">
                 <c:if test="#{reincorporacionServiciosEscolares.tieneAcceso}">
                     <!-- zona de importación de enums -->
+                    <h:form id="frmAreaEvaluada" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div id="main-buttons">
+                                <p:panel header="Nivel de Reincorporación">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-6 col-lg-6 ">
+                                            <p:outputLabel for="anio" value="Nivel" />
+                                            <p:selectOneMenu  id="anio" value="#{reincorporacionServiciosEscolares.rol.nivelRi}" valueChangeListener="#{reincorporacionServiciosEscolares.asignarNivelRein}">
+                                                <f:selectItem itemValue="#{'TSU'}" itemLabel="Técnico Superior Universitario" />
+                                                <f:selectItem itemValue="#{'LIN'}" itemLabel="Ingeniería o Licenciatura" />
+                                                <p:ajax listener="#{cuadroMandoIntegralConsulta.imprimirValores()}" process="anio" update="@form"/>
+                                            </p:selectOneMenu >
+                                        </div> 
+                                        <div class="col-sm-12 col-md-4 col-lg-4">
+                                            <p:commandButton id="btnBuscaRegistro" value="Nueva Reincorporación" icon="fa fa-search"
+                                                             class="btn-primary btn-block col-md-3" process="@form" disabled="#{reincorporacionServiciosEscolares.rol.curpBusqueda eq ''?true:false}" update="@form" actionListener="#{reincorporacionServiciosEscolares.inicializarValoresEscolares()}" onclick="PF('panel-solid').toggle()" ajax="false"/>
+                                        </div>
+                                    </div>
+                                </p:panel>                   
+                            </div>
+                        </div>
+                    </h:form>
+
                     <h:form>
                         <p:panel id="toggleable-solid" header="Deseas recuperar tu registro da clic en icono +" toggleable="true" toggleSpeed="500"
                                  closeSpeed="500" widgetVar="panel-solid" collapsed="true" rendered="#{reincorporacionServiciosEscolares.rol.esEscolares}">
@@ -350,7 +373,7 @@
                                                                         <div class="form-group">
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                 <p:outputLabel for="telFijo" style="font-size: large" value="Teléfono fijo"/>
-                                                                                <p:inputMask mask="(99)(999)999-9999" id="telFijo" class="form-control" placeholder="(99)(999)-999-9999" value="#{reincorporacionServiciosEscolares.rol.comunicacion.telefonoFijo}"/>
+                                                                                <p:inputMask mask="(999)999-9999" id="telFijo" class="form-control" placeholder="(999)-999-9999" value="#{reincorporacionServiciosEscolares.rol.comunicacion.telefonoFijo}"/>
                                                                                 <p:message for="telFijo"><p:autoUpdate/></p:message>
                                                                             </div>
                                                                             <div class="col-sm-3 col-md-3 col-lg-3">
@@ -1147,33 +1170,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!--c:if test="# {reincorporacionServiciosEscolares.rol.finalizado}">
-                                                <div class="row">
-                                                    <div class="form-group">
-                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                                        <div class="col-sm-4 col-md-4 col-lg-4">
-                                                            <p>Estimado(a) # {reincorporacionServiciosEscolares.rol.persona.nombre}</p>
-
-                                                            <p style="text-align:  justify">Gracias por elegir a la Universidad Tecnológica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior.</p>
-                                                            <p style="text-align:  justify">Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entrega la documentación necesaria</p>
-                                                            <br />
-                                                            <ul>
-                                                                <li>Formato de Ficha de Admisión.</li>
-                                                                <li>Copia de CURP (nuevo formato).</li>
-                                                                <li>Copia de Acta de Nacimiento.</li>
-                                                                <li>Copia de Certificado de Nivel Medio Superior o Constancia de Estudios Original reciente con tira de materias y calificaciones (aprobatorias) del 1o. al 5o. semestre; indicando el promedio general y firmado por el titular de la Institución</li>
-                                                                <li>Referencia bancaria del pago de ficha y examen de admisión.</li>
-                                                            </ul>
-                                                            <br/>
-                                                            <p style="text-align:  justify">Se enviará su ficha de admisión al correo <strong># {reincorporacionServiciosEscolares.rol.medioComunicacion.email}</strong> al dar clic en el botón Descargar Formato de Ficha</p>
-                                                            <p:commandButton id="btnDatosAca" value="Descargar Formato de Ficha" icon="fa fa-download"
-                                                                             class="btn-primary btn-block col-md-3" update=":tabw1" action="# {reincorporacionServiciosEscolares.rol.downloadFichaAdmin()}" ajax="false"/>
-                                                            <p:commandButton id="btnDatoClear" value="Nuevo Registro" icon="fa fa-address-card"
-                                                                             class="btn-primary btn-block col-md-3" update=":tabw1" action="# {reincorporacionServiciosEscolares.rol.nuevoRegistro()}"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </c:if-->
                                         </h:form>
                                     </p:tab>
                                     <p:tab title="Inscripcion Oficial" rendered="#{reincorporacionServiciosEscolares.rol.esEscolares}">
@@ -1183,225 +1179,160 @@
                                                     <div class="box box-widget widget-user-2">
                                                         <div class="row">
                                                             <div class="form-group">
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="folioI" style="font-size: large;text-align: right;" value="Folio ficha de admisión:" />
-                                                                    <p:inputText id="folioI" class="form-control" value="#{reincorporacionServiciosEscolares.rol.aspirante.aspirante.folioAspirante}"  placeholder="Ingresa tu folio de ficha de admisión" required="true" requiredMessage="Es necesario que ingrese su el folio de ficha de admisión" readonly="true"/>
-                                                                    <p:message for="folioI"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="nombre" style="font-size: large;text-align: right;" value="Nombre:" />
-                                                                    <p:inputText id="nombre" class="form-control" value="#{reincorporacionServiciosEscolares.rol.personaD.persona.nombre}" readonly="true"/>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="ap" style="font-size: large;text-align: right;" value="Apellido Paterno" />
-                                                                    <p:inputText id="ap" class="form-control" value="#{reincorporacionServiciosEscolares.rol.personaD.persona.apellidoPaterno}" readonly="true"/>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="am" style="font-size: large;text-align: right;" value="Apellido Materno" />
-                                                                    <p:inputText id="am" class="form-control" value="#{reincorporacionServiciosEscolares.rol.personaD.persona.apellidoMaterno}" readonly="true"/>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="promedio" style="font-size: large" value="Promedio:*"/>
-                                                                    <p:inputText id="promedio" class="form-control" placeholder="0.0" value="#{reincorporacionServiciosEscolares.rol.dacademicos.academicos.promedio}" readonly="true" required="true" requiredMessage="Dede de indicar el promedio de su bachillerato">
-                                                                        <f:convertNumber pattern="#0.00" />
-                                                                        <f:validateDoubleRange maximum="10.00" minimum="6.00"/>
-                                                                    </p:inputText>
-                                                                    <p:message for="promedio"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="tipoS" style="font-size: large" value="Tipo Sangre*"/>                                                                                
-                                                                    <p:selectOneMenu id="tipoS" value="#{reincorporacionServiciosEscolares.rol.dmedico.sangre}" disabled="true" converter="entityConverter" required="true" requiredMessage="Es nesesario que ingrese su tipo de sangre">
-                                                                        <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.tipoSangres}" var="sangre" itemValue="#{sangre}" itemLabel="#{sangre.nombre}" />
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="tipoS"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-8 col-md-8 col-lg-8">
-                                                                    <p:outputLabel for="pe1" style="font-size: large" value="Carrera Principal*"/>
-                                                                    <p:selectOneMenu id="pe1" required="true" value="#{reincorporacionServiciosEscolares.rol.dacademicos.academicos.primeraOpcion}" disabled="true" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
-                                                                        <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.programasEducativosPo}"  var="pe" itemValue="#{pe.area}" itemLabel="#{pe.nombre}"/>
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="pe1"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                    <p:outputLabel for="sistema1" style="font-size: large" value="Sistema Principal*"/>
-                                                                    <p:selectOneMenu id="sistema1" required="true" value="#{reincorporacionServiciosEscolares.rol.dacademicos.sistemaPo}" disabled="true" converter="reincorporacionConverter" requiredMessage="Debe de indicar el turno del programa educativo">
-                                                                        <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.sistemas}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaPO.idSistema == 2 and reincorporacionServiciosEscolares.rol.dacademicos.universidad1.area == 25)}"/>
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="sistema1"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-8 col-md-8 col-lg-8">
-                                                                    <p:outputLabel for="pe2" style="font-size: large" value="Carrera Opcional*"/>
-                                                                    <p:selectOneMenu id="pe2" required="true" value="#{reincorporacionServiciosEscolares.rol.dacademicos.academicos.segundaOpcion}" disabled="true" requiredMessage="Debe de indicar el programa educativo de la carrera de segunda opción">
-                                                                        <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.programasEducativosSo}"  var="pe" itemValue="#{pe.area}" itemLabel="#{pe.nombre}"/>
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="pe2"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                    <p:outputLabel for="sistema2" style="font-size: large" value="Sistema Opcional*"/>
-                                                                    <p:selectOneMenu id="sistema2" required="true" value="#{reincorporacionServiciosEscolares.rol.dacademicos.sistemaSo}" disabled="true" converter="reincorporacionConverter" requiredMessage="Debe de indicar el turno del programa educativo">
-                                                                        <f:selectItem itemValue="#{null}"/>
-                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.sistemas}" var="sistemaSO" itemValue="#{sistemaSO}" itemLabel="#{sistemaSO.nombre}" itemDisabled="#{(sistemaSO.idSistema == 2 and reincorporacionServiciosEscolares.rol.dacademicos.universidad1.area == 25)}"/>
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="sistema2"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                    <p:outputLabel for="tipoRegistro" style="font-size: large" value="Sub tipo de estudiante*"/>
-                                                                    <p:selectOneMenu id="tipoRegistro" required="true" value="#{reincorporacionServiciosEscolares.rol.tipo}" requiredMessage="Debe de indicar el turno del programa educativo">
-                                                                        <f:selectItem itemValue="0" itemLabel="Seleccione Un Tipo"/>
-                                                                        <f:selectItem itemValue="1" itemLabel="Cambio de grupo"/>
-                                                                        <f:selectItem itemValue="2" itemLabel="Cambio de carrera"/>
-                                                                        <f:selectItem itemValue="3" itemLabel="Reincorporación otra UT"/>
-                                                                        <f:selectItem itemValue="4" itemLabel="Equivalencia"/>
-                                                                        <f:selectItem itemValue="5" itemLabel="Reincorporación otra generación"/>
-                                                                        <p:ajax listener="#{reincorporacionServiciosEscolares.tipoDeRegistro()}" update="histoEst"/>
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="tipoRegistro"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <br/>
-                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                    <p:dataTable id="histoEst" var="est" value="#{reincorporacionServiciosEscolares.rol.estudianteR}" editable="true" editMode="row">
-                                                                        <f:facet name="header">
-                                                                            Historial del Estudiante
-                                                                        </f:facet>
+                                                                <p:panel header="Datos del Aspirante"  class="box box-primary" >
+                                                                    <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                        <p:outputLabel for="folioI" style="font-size: large;text-align: right;" value="Folio ficha de admisión:" />
+                                                                        <p:inputText id="folioI" class="form-control" value="#{reincorporacionServiciosEscolares.rol.aspirante.aspirante.folioAspirante}"  placeholder="Ingresa tu folio de ficha de admisión" required="true" requiredMessage="Es necesario que ingrese su el folio de ficha de admisión" readonly="true"/>
+                                                                        <p:message for="folioI"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                    <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                        <p:outputLabel for="nombre" style="font-size: large;text-align: right;" value="Nombre:" />
+                                                                        <p:inputText id="nombre" class="form-control" value="#{reincorporacionServiciosEscolares.rol.personaD.persona.nombre}" readonly="true"/>
+                                                                    </div>
+                                                                    <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                        <p:outputLabel for="ap" style="font-size: large;text-align: right;" value="Apellido Paterno" />
+                                                                        <p:inputText id="ap" class="form-control" value="#{reincorporacionServiciosEscolares.rol.personaD.persona.apellidoPaterno}" readonly="true"/>
+                                                                    </div>
+                                                                    <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                        <p:outputLabel for="am" style="font-size: large;text-align: right;" value="Apellido Materno" />
+                                                                        <p:inputText id="am" class="form-control" value="#{reincorporacionServiciosEscolares.rol.personaD.persona.apellidoMaterno}" readonly="true"/>
+                                                                    </div>
+                                                                    <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                        <p:outputLabel for="promedio" style="font-size: large" value="Promedio:*"/>
+                                                                        <p:inputText id="promedio" class="form-control" placeholder="0.0" value="#{reincorporacionServiciosEscolares.rol.dacademicos.academicos.promedio}" readonly="true" required="true" requiredMessage="Dede de indicar el promedio de su bachillerato">
+                                                                            <f:convertNumber pattern="#0.00" />
+                                                                            <f:validateDoubleRange maximum="10.00" minimum="6.00"/>
+                                                                        </p:inputText>
+                                                                        <p:message for="promedio"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                    <div class="col-sm-2 col-md-2 col-lg-2">
+                                                                        <p:outputLabel for="tipoS" style="font-size: large" value="Tipo Sangre*"/>                                                                                
+                                                                        <p:selectOneMenu id="tipoS" value="#{reincorporacionServiciosEscolares.rol.dmedico.sangre}" disabled="true" converter="entityConverter" required="true" requiredMessage="Es nesesario que ingrese su tipo de sangre">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.tipoSangres}" var="sangre" itemValue="#{sangre}" itemLabel="#{sangre.nombre}" />
+                                                                        </p:selectOneMenu>
+                                                                        <p:message for="tipoS"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                    <div class="col-sm-8 col-md-8 col-lg-8">
+                                                                        <p:outputLabel for="pe1" style="font-size: large" value="Carrera Principal*"/>
+                                                                        <p:selectOneMenu id="pe1" required="true" value="#{reincorporacionServiciosEscolares.rol.dacademicos.academicos.primeraOpcion}" disabled="true" requiredMessage="Debe de indicar el programa educativo de la carrera de primera opción">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.programasEducativosPo}"  var="pe" itemValue="#{pe.area}" itemLabel="#{pe.nombre}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:message for="pe1"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                        <p:outputLabel for="sistema1" style="font-size: large" value="Sistema Principal*"/>
+                                                                        <p:selectOneMenu id="sistema1" required="true" value="#{reincorporacionServiciosEscolares.rol.dacademicos.sistemaPo}" disabled="true" converter="reincorporacionConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.sistemas}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="#{(sistemaPO.idSistema == 2 and reincorporacionServiciosEscolares.rol.dacademicos.universidad1.area == 25)}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:message for="sistema1"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                    <div class="col-sm-8 col-md-8 col-lg-8">
+                                                                        <p:outputLabel for="pe2" style="font-size: large" value="Carrera Opcional*"/>
+                                                                        <p:selectOneMenu id="pe2" required="true" value="#{reincorporacionServiciosEscolares.rol.dacademicos.academicos.segundaOpcion}" disabled="true" requiredMessage="Debe de indicar el programa educativo de la carrera de segunda opción">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.programasEducativosSo}"  var="pe" itemValue="#{pe.area}" itemLabel="#{pe.nombre}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:message for="pe2"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                        <p:outputLabel for="sistema2" style="font-size: large" value="Sistema Opcional*"/>
+                                                                        <p:selectOneMenu id="sistema2" required="true" value="#{reincorporacionServiciosEscolares.rol.dacademicos.sistemaSo}" disabled="true" converter="reincorporacionConverter" requiredMessage="Debe de indicar el turno del programa educativo">
+                                                                            <f:selectItem itemValue="#{null}"/>
+                                                                            <f:selectItems value="#{reincorporacionServiciosEscolares.rol.sistemas}" var="sistemaSO" itemValue="#{sistemaSO}" itemLabel="#{sistemaSO.nombre}" itemDisabled="#{(sistemaSO.idSistema == 2 and reincorporacionServiciosEscolares.rol.dacademicos.universidad1.area == 25)}"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:message for="sistema2"><p:autoUpdate/></p:message>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                        <p:outputLabel for="tipoRegistro" style="font-size: large" value="Sub tipo de estudiante*"/>
+                                                                        <p:selectOneRadio id="tipoRegistro" required="true" value="#{reincorporacionServiciosEscolares.rol.tipo}" requiredMessage="Debe de indicar el turno del programa educativo">
+                                                                            <f:selectItem itemValue="0" itemLabel="Seleccione Un Tipo"/>
+                                                                            <f:selectItem itemValue="1" itemLabel="Cambio de grupo"/>
+                                                                            <f:selectItem itemValue="2" itemLabel="Cambio de carrera"/>
+                                                                            <f:selectItem itemValue="3" itemLabel="Reincorporación otra UT"/>
+                                                                            <f:selectItem itemValue="4" itemLabel="Equivalencia"/>
+                                                                            <f:selectItem itemValue="5" itemLabel="Reincorporación otra generación"/>
+                                                                            <p:ajax listener="#{reincorporacionServiciosEscolares.tipoDeRegistro()}" update="histoEst"/>
+                                                                        </p:selectOneRadio>
+                                                                        <p:message for="tipoRegistro"/>
+                                                                    </div>
+                                                                </p:panel>
 
-                                                                        <p:columnGroup type="header">
-                                                                            <p:row>
-                                                                                <p:column colspan="4" style="width: 40%;" headerText="Datos de Estudiante" />
-                                                                                <p:column rowspan="2" headerText="Carrera" />
-                                                                                <p:column colspan="2" style="width: 20%;" headerText="Datos de Carrera" />
-                                                                                <p:column rowspan="2" headerText="" style="width: 32px;"/> 
-                                                                            </p:row>
-                                                                            <p:row>
-                                                                                <p:column headerText="Matrícula" />
-                                                                                <p:column headerText="Estatus" />
-                                                                                <p:column headerText="Tipo de Registro" />
-                                                                                <p:column headerText="¿Inscrito en Primera Opcion?" />
-                                                                                <p:column headerText="Grupo" />
-                                                                                <p:column headerText="Modalidad" />
-                                                                            </p:row>
-                                                                        </p:columnGroup>
+                                                                <p:panel header="Historial Estudiante de nivel" visible="#{reincorporacionServiciosEscolares.rol.estudianteR.size() eq 0?false:true}" class="box box-primary" >
+                                                                    <div class="ui-g-12 ui-sm-12">
+                                                                        <div class="ui-material">
+                                                                            <p:dataTable id="histoEst" var="est" value="#{reincorporacionServiciosEscolares.rol.estudianteR}" editable="true" editMode="row">
+                                                                                <p:columnGroup type="header">
+                                                                                    <p:row>
+                                                                                        <p:column colspan="4" style="width: 40%;" headerText="Datos de Estudiante" />
+                                                                                        <p:column rowspan="2" headerText="Carrera" />
+                                                                                        <p:column colspan="2" style="width: 20%;" headerText="Datos de Carrera" />
+                                                                                        <p:column rowspan="2" headerText="" style="width: 32px;"/> 
+                                                                                    </p:row>
+                                                                                    <p:row>
+                                                                                        <p:column headerText="Matrícula" />
+                                                                                        <p:column headerText="Estatus" />
+                                                                                        <p:column headerText="Tipo de Registro" />
+                                                                                        <p:column headerText="¿Inscrito en Primera Opcion?" />
+                                                                                        <p:column headerText="Grupo" />
+                                                                                        <p:column headerText="Modalidad" />
+                                                                                    </p:row>
+                                                                                </p:columnGroup>
 
-                                                                        <p:ajax event="rowEdit" listener="#{reincorporacionServiciosEscolares.actualizarUltimoGrupo}" update="histoEst" />
-                                                                        <p:ajax event="rowEditCancel" listener="#{reincorporacionServiciosEscolares.onRowCancel}" update="histoEst" />
+                                                                                <p:ajax event="rowEdit" listener="#{reincorporacionServiciosEscolares.actualizarUltimoGrupo}" update="histoEst" />
+                                                                                <p:ajax event="rowEditCancel" listener="#{reincorporacionServiciosEscolares.onRowCancel}" update="histoEst" />
 
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.estudiante.matricula}" />
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.tipoEstudiante.descripcion}" />
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.estudiante.tipoRegistro}" />
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.primeraOpcion ?'Si':'No'}" />
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.nombrePe}" />
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <p:cellEditor>
-                                                                                <f:facet name="output"><h:outputText value="#{est.grupo.grado}° #{est.grupo.literal}" /></f:facet>
-                                                                                <f:facet name="input">
-                                                                                    <p:selectOneMenu id="grupo" value="#{est.grupo}" style="width:100%" converter="reincorporacionConverter">
-                                                                                        <f:selectItems value="#{reincorporacionServiciosEscolares.rol.grupos}" var="grup" itemValue="#{grup}" itemLabel="#{grup.grado}°#{grup.literal}, #{grup.periodo}--#{grup.idSistema.nombre}"/>
-                                                                                    </p:selectOneMenu>
-                                                                                </f:facet>
-                                                                            </p:cellEditor>   
-                                                                        </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{est.grupo.idSistema.nombre}" />
-                                                                        </p:column>
-                                                                        <p:column style="width:32px">
-                                                                            <p:rowEditor rendered="#{est.editable}"/>
-                                                                        </p:column>
-                                                                    </p:dataTable>
-                                                                    <p:blockUI widgetVar="bui" block="histoEst" blocked="true">
-                                                                        Seleccione la acción a realizar
-                                                                    </p:blockUI>
-                                                                </div>                                                                
+                                                                                <p:column>
+                                                                                    <h:outputText value="#{est.estudiante.matricula}" />
+                                                                                </p:column>
+                                                                                <p:column>
+                                                                                    <h:outputText value="#{est.tipoEstudiante.descripcion}" />
+                                                                                </p:column>
+                                                                                <p:column>
+                                                                                    <h:outputText value="#{est.estudiante.tipoRegistro}" />
+                                                                                </p:column>
+                                                                                <p:column>
+                                                                                    <h:outputText value="#{est.primeraOpcion ?'Si':'No'}" />
+                                                                                </p:column>
+                                                                                <p:column>
+                                                                                    <h:outputText value="#{est.nombrePe}" />
+                                                                                </p:column>
+                                                                                <p:column>
+                                                                                    <p:cellEditor>
+                                                                                        <f:facet name="output"><h:outputText value="#{est.grupo.grado}° #{est.grupo.literal}" /></f:facet>
+                                                                                        <f:facet name="input">
+                                                                                            <p:selectOneMenu id="grupo" value="#{est.grupo}" style="width:100%" converter="reincorporacionConverter">
+                                                                                                <f:selectItems value="#{reincorporacionServiciosEscolares.rol.grupos}" var="grup" itemValue="#{grup}" itemLabel="#{grup.grado}°#{grup.literal}, #{grup.periodo}--#{grup.idSistema.nombre}"/>
+                                                                                            </p:selectOneMenu>
+                                                                                        </f:facet>
+                                                                                    </p:cellEditor>   
+                                                                                </p:column>
+                                                                                <p:column>
+                                                                                    <h:outputText value="#{est.grupo.idSistema.nombre}" />
+                                                                                </p:column>
+                                                                                <p:column style="width:32px">
+                                                                                    <p:rowEditor rendered="#{est.editable}"/>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                            <p:blockUI  widgetVar="bui" block="histoEst" blocked="true">
+                                                                                Seleccione la acción a realizar
+                                                                            </p:blockUI>
+                                                                        </div>
+                                                                    </div>
+                                                                </p:panel>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div>  
                                             </div>                                                                                                                                                                                                
                                         </h:form>
                                     </p:tab>
-                                    <!--p:tab title="Alineacion de calificaciones">
-                                        <h:form id="capturaCalificaciones">
-                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                <div class="col-md-12">
-                                                    <div class="box box-widget widget-user-2">
-                                                        <div class="row">
-                                                            <div class="form-group">
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="folioI" style="font-size: large;text-align: right;" value="Matrícula:" />
-                                                                    <p:inputText id="folioI" class="form-control" value="# {reincorporacionServiciosEscolares.rol.rein.matricula}"  placeholder="Ingresa tu folio de ficha de admisión" required="true" requiredMessage="Es necesario que ingrese su el folio de ficha de admisión" readonly="true"/>
-                                                                    <p:message for="folioI"><p:autoUpdate/></p:message>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="nombre" style="font-size: large;text-align: right;" value="Nombre:" />
-                                                                    <p:inputText id="nombre" class="form-control" value="# {reincorporacionServiciosEscolares.rol.personaD.persona.nombre}" readonly="true"/>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="ap" style="font-size: large;text-align: right;" value="Apellido Paterno" />
-                                                                    <p:inputText id="ap" class="form-control" value="# {reincorporacionServiciosEscolares.rol.personaD.persona.apellidoPaterno}" readonly="true"/>
-                                                                </div>
-                                                                <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                    <p:outputLabel for="am" style="font-size: large;text-align: right;" value="Apellido Materno" />
-                                                                    <p:inputText id="am" class="form-control" value="# {reincorporacionServiciosEscolares.rol.personaD.persona.apellidoMaterno}" readonly="true"/>
-                                                                </div>        
-                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                    <p:outputLabel for="pe" style="font-size: large;text-align: right;" value="Programa Educativo" />
-                                                                    <p:inputTextarea id="pe" class="form-control" value="# {reincorporacionServiciosEscolares.rol.rein.opcionIncripcion eq true?reincorporacionServiciosEscolares.rol.rein.primeraOp:reincorporacionServiciosEscolares.rol.rein.segundaOP}" readonly="true"/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                    <p:panelGrid columns="3">                                                                        
-                                                                        <c:forEach var="i" begin="0" end="# {reincorporacionServiciosEscolares.rol.calificacionesR.size()-1}">
-                                                                            <c:set var="t" value="# {reincorporacionServiciosEscolares.rol.calificacionesR.get(i)}"/>
-                                                                            <p:panelGrid columns="2">
-                                                                                <f:facet name="header"># {t.grupo.grado}° # {t.grupo.literal}</f:facet>
-                                                                                <c:forEach var="h" begin="0" end="# {t.calificacionesReincorporacions.size()-1}">
-                                                                                    <c:set var="j" value="# {t.calificacionesReincorporacions.get(h)}"/>
-                                                                                    <p:outputLabel value="# {j.estudioMateria.claveMateria}# {j.materia.nombre}" />
-                                                                                    <p:inputNumber id="cal-# {j.academica.carga}-# {t.estudiante.idEstudiante}" 
-                                                                                                   placeholder="0" decimalPlaces="2" minValue="0" maxValue="10"
-                                                                                                   valueChangeListener="# {reincorporacionServiciosEscolares.guardaCalificaciones}" value="# {j.calificacionPromedio.valor}"  
-                                                                                                   disabled="# {!j.editable}">
-                                                                                        <p:ajax update="@this" process="@this" listener="# {areaPoaProgramacion.imprimirValores()}"/>
-                                                                                    </p:inputNumber>                                                                                                                                                                        
-                                                                                </c:forEach>
-                                                                            </p:panelGrid>
-                                                                        </c:forEach>
-                                                                    </p:panelGrid>                                                                    
-                                                                </div>                                                                
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="form-group">
-                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                        <p:outputPanel>
-                                                                            <p:autoUpdate/> 
-                                                                            <p:commandButton id="btnGuardaGrupos" value="Validar Reincorporacion" icon="fa fa-floppy-o" rendered="# {reincorporacionServiciosEscolares.rol.esEscolares}"
-                                                                                             class="btn-primary btn-block col-md-3" process="@this" update="@form" actionListener="# {reincorporacionServiciosEscolares.guardaCalificacionesValidadas()}" disabled="# {!reincorporacionServiciosEscolares.rol.puedeValidar}"/>
-                                                                        </p:outputPanel>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </h:form>
-                                    </p:tab-->
                                 </p:tabView>
                             </div>
                         </div>
-                    </div>
+                    </div>                                           
 
 
 
@@ -1410,18 +1341,21 @@
                         <h:form id="frmActualizaActividad">
                             <div class="row">
                                 <div class="col-sm-12 col-md-12 col-lg-12">
-                                    <p:outputPanel>
-                                        <p:autoUpdate/>
-                                        <p:outputLabel style="font-size: large" value="Opción uno: #{reincorporacionServiciosEscolares.rol.rein.primeraOp}"/>
-                                        <hr/>
-                                        <p:outputLabel style="font-size: large" value="Opción dos: #{reincorporacionServiciosEscolares.rol.rein.segundaOP}"/>
-                                        <hr/>
-                                        <p:outputLabel style="font-size: large" value="Ultimo grupo activo: #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.grado}° #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.literal}, #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.periodo}"/>
-                                        <hr/>
-                                    </p:outputPanel>
+                                    <p:panelGrid style="width: 100%;" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid" styleClass="ui-fluid card">
+
+                                        <p:outputLabel style="font-size: large" value="Opción uno:"/>
+                                        <p:outputLabel style="font-size: large" value="#{reincorporacionServiciosEscolares.rol.rein.primeraOp}"/>
+
+                                        <p:outputLabel style="font-size: large" value="Opción dos:"/>
+                                        <p:outputLabel style="font-size: large" value="#{reincorporacionServiciosEscolares.rol.rein.segundaOP}"/>
+
+                                        <p:outputLabel style="font-size: large" value="Ultimo grupo activo:"/>
+                                        <p:outputLabel style="font-size: large" value="#{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.grado}° #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.literal}, #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.periodo}"/>
+                                    </p:panelGrid>
                                 </div>
+                                <br/>
                                 <div class="col-sm-12 col-md-12 col-lg-6">
-                                    <p:outputLabel for="prgP" style="font-size: large" value="Selecciona Opción de Inscripción"/>
+                                    <p:outputLabel for="prgP" style="font-size: large;text-align: center;" value="Selecciona Opción de Inscripción"/>
                                     <p:selectOneRadio id="prgP" layout="responsive" columns="2" value="#{reincorporacionServiciosEscolares.rol.rein.opcionIncripcion}">
                                         <f:selectItem itemValue="#{true}" itemLabel="Primera Opción"/>
                                         <f:selectItem itemValue="#{false}" itemLabel="Segunda Opción"/>
@@ -1429,13 +1363,13 @@
                                     </p:selectOneRadio>
                                 </div>
                                 <div class="col-sm-6 col-md-6 col-lg-6">
-                                    <p:outputLabel for="matricula" style="font-size: large;text-align: right;" value="Matrícula" />
+                                    <p:outputLabel for="matricula" style="font-size: large;text-align: center;" value="Matrícula" />
                                     <p:inputText id="matricula" class="form-control" value="#{reincorporacionServiciosEscolares.rol.rein.matricula}"/>
                                 </div>
                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                     <p:outputPanel>
                                         <p:autoUpdate/>
-                                        <p:outputLabel for="grupo"  style="font-size: large;text-align: right;" value="Grupo" />
+                                        <p:outputLabel for="grupo"  style="font-size: large;text-align: center;" value="Grupo" />
                                         <p:selectManyCheckbox id="grupo" required="true" value="#{reincorporacionServiciosEscolares.rol.rein.grupos}" layout="responsive"
                                                               columns="3" converter="reincorporacionConverter"  requiredMessage="Debe de indicar el turno del programa educativo">
                                             <f:selectItems value="#{reincorporacionServiciosEscolares.rol.grupos}" var="grup" itemValue="#{grup}" itemLabel="#{grup.grado}°-- #{grup.literal}, #{grup.periodo} -- #{grup.idSistema.nombre}"/>
@@ -1446,7 +1380,7 @@
                             <hr/>
                             <div class="row">
                                 <center>
-                                    <p:panelGrid style="width: 70%;" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                                    <p:panelGrid style="width: 100%;" columns="4" columnClasses="ui-grid-col-4,ui-grid-col-2,ui-grid-col-4,ui-grid-col-2"
                                                  layout="grid" styleClass="ui-fluid card">
                                         <f:facet name="header">
                                             Documentos a entregar

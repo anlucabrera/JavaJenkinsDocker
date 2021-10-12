@@ -227,4 +227,26 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull        Operacion operacion;
         @Getter        @Setter        @NonNull        Boolean econtrado;
     }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode
+    public static class HistorialTsu {
+        @Getter        @Setter        @NonNull        Persona persona;
+        @Getter        @Setter        @NonNull        Aspirante aspirante;
+        @Getter        @Setter        @NonNull        Estudiante estudiante;
+        @Getter        @Setter        @NonNull        UniversidadEgresoAspirante egresoAspirante;
+        @Getter        @Setter        @NonNull        Boolean universidadEncontrada;
+        @Getter        @Setter        @NonNull        EstudianteHistorialTsu historialTsu;
+        @Getter        @Setter        @NonNull        PlanesEstudioExternos externos;
+        @Getter        @Setter        @NonNull        List<CalificacionesHistorialTsu> historialCalificacionesTsus;
+        @Getter        @Setter        @NonNull        List<Calificacionestsuotrasaiiut> historialCalificacionesSaiiuts;
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode
+    public static class PlanesDeEstudioConsulta {
+        @Getter        @Setter        @NonNull        String ideCompuesto;
+        @Getter        @Setter        @NonNull        Integer id;
+        @Getter        @Setter        @NonNull        String nombre;
+        @Getter        @Setter        @NonNull        Short anioplan;
+        @Getter        @Setter        @NonNull        String tipo;
+    }
 }

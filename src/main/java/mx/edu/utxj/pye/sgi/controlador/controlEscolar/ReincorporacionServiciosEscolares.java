@@ -115,15 +115,18 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             }
             
             ResultadoEJB<EventoEscolar> resEvento = ejb.verificarEvento();
-            if(!resEvento.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
+            if(!resEvento.getCorrecto()) tieneAcceso = false;
+            ResultadoEJB<ProcesosInscripcion> resproceso = ejb.getProcesosInscripcionActivo();
+            if(!resproceso.getCorrecto()) tieneAcceso = false;//debe negarle el acceso si no hay un periodo activo para que no se cargue en menú
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if(resEvento.getValor().getPeriodo()!=resproceso.getValor().getIdPeriodo())tieneAcceso = false;
             if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
             if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
             rol.setNivelRol(NivelRol.OPERATIVO);
             rol.setEventoActivo(resEvento.getValor());
             
-            
+            rol.setNivelRi("TSU");
             rol.setComunicacion(new MedioComunicacion());
             rol.setPersonaD(new DtoReincorporacion.PersonaR(new Persona(), new MedioComunicacion(), new Pais(), Operacion.PERSISTIR, Operacion.PERSISTIR, Boolean.FALSE));
             rol.setAspirante(new DtoReincorporacion.AspiranteR(new Aspirante(), new TipoAspirante(), new ProcesosInscripcion(), Operacion.PERSISTIR, Boolean.FALSE));
@@ -134,6 +137,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             rol.setDacademicos(new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE));
             rol.setEncuesta(new DtoReincorporacion.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE));
             rol.setRein(new DtoReincorporacion.ProcesoInscripcionRein("", "", 0, Boolean.TRUE, 0, "", new ArrayList<>(), new Documentosentregadosestudiante()));
+            rol.setTsu(new DtoReincorporacion.HistorialTsu(new Persona(), new Aspirante(), new Estudiante(), new UniversidadEgresoAspirante(), Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos(), new ArrayList<>(), new ArrayList<>()));
             rol.setEstudianteR(new ArrayList<>());
             rol.setCalificacionesR(new ArrayList<>());
             rol.setEstudiantesReincorporaciones(new ArrayList<>());
@@ -145,6 +149,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             rol.setNombreR("Seleccione Un Tipo");
             rol.setTipoCal("Regulatoria");
             rol.setPuedeValidar(Boolean.FALSE); 
+            
             if(!rol.getEsEscolares()){
                 buscarReincorporacionPorDirector();
             }else{
@@ -156,6 +161,8 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     }
     
     public void inicializarValoresEscolares() {
+        rol.setNivelRi("TSU");
+        rol.setCurpBusqueda("");
         rol.setTipoSangres(ejb.getTiposSangre().getValor());
         rol.setTipoDiscapacidads(ejb.getTipoDiscapacidad().getValor());
         rol.setTipoAspirantes(ejb.getTipoAspirante().getValor());
@@ -183,6 +190,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         rol.setDacademicos(new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE));
         rol.setEncuesta(new DtoReincorporacion.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE));
         rol.setRein(new DtoReincorporacion.ProcesoInscripcionRein("", "", 0, Boolean.TRUE, 0, "", new ArrayList<>(), new Documentosentregadosestudiante()));
+        rol.setTsu(new DtoReincorporacion.HistorialTsu(new Persona(), new Aspirante(), new Estudiante(), new UniversidadEgresoAspirante(), Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos(), new ArrayList<>(), new ArrayList<>()));
         rol.setEstudianteR(new ArrayList<>());
         rol.setCalificacionesR(new ArrayList<>());
         rol.setEstudiantesReincorporaciones(new ArrayList<>());
@@ -262,11 +270,17 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
 
     //Postulacion
     public void programasEducativosAcPo() {
-        rol.setProgramasEducativosPo(ejb.getProgramasEducativos().getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getDacademicos().getUniversidad1().getArea())).collect(Collectors.toList()));
+        rol.setProgramasEducativosPo(ejb.getProgramasEducativosReincorporacion(rol.getNivelRi()).getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getDacademicos().getUniversidad1().getArea())).collect(Collectors.toList()));
     }
 
     public void programasEducativosAcSo() {
-        rol.setProgramasEducativosSo(ejb.getProgramasEducativos().getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getDacademicos().getUniversidad2().getArea())).collect(Collectors.toList()));
+        rol.setProgramasEducativosSo(ejb.getProgramasEducativosReincorporacion(rol.getNivelRi()).getValor().stream().filter(t -> Objects.equals(t.getAreaSuperior(), rol.getDacademicos().getUniversidad2().getArea())).collect(Collectors.toList()));
+    }
+    
+    public void asignarNivelRein(ValueChangeEvent event) {
+        rol.setNivelRi("");
+        rol.setNivelRi(event.getNewValue().toString());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.asignarNivelRein()"+rol.getNivelRi());
     }
     
 // Validadores
@@ -395,10 +409,10 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     public void optenerGrupos(Short carrera, Integer gradp) {
         rol.getRein().setGrupos(new ArrayList<>());
         rol.setGrupos(new ArrayList<>());
-        List<Grupo> gs=ejb.getGrupos(carrera).getValor();
+        List<Grupo> gs=ejb.getGrupos(carrera,rol.getEventoActivo().getPeriodo()).getValor();
         gs.forEach((t) -> {
-            System.out.println("Grado Grupo "+t.getGrado()+" Gado Filtro "+gradp+" valida "+(t.getGrado()>gradp));
-            if(t.getGrado()>gradp){
+//            System.out.println("Grado Grupo "+t.getGrado()+" Gado Filtro "+gradp+" valida "+(t.getGrado()>gradp));
+            if((t.getGrado()>gradp) && (t.getGrado()!=1)){
                 rol.getGrupos().add(t);
             }
         });
@@ -419,7 +433,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     }
 
      public void buscarRegistro(){
-         inicializarValoresEscolares();
+//         inicializarValoresEscolares();
         ResultadoEJB<DtoReincorporacion.General> resAcceso = ejb.getDtoReincorporacion(rol.getCurpBusqueda(),rol.getEsEscolares()); 
         if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}
         rol.setGeneral(resAcceso.getValor());        
@@ -464,7 +478,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             }
             if (!rol.getEstudianteR().isEmpty()) {
                 DtoReincorporacion.EstudianteR er = rol.getEstudianteR().get(rol.getEstudianteR().size() - 1);
-                rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera()).getValor());
+                rol.setGrupos(ejb.getGrupos(er.getEstudiante().getCarrera(),rol.getEventoActivo().getPeriodo()).getValor());
                 llenarProceso();
             }
             if (!rol.getCalificacionesR().isEmpty()) {
@@ -665,17 +679,16 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     }
     
     public void guardaEstudiante() {   
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.guardaEstudiante()"+rol.getRein().getGrupos().size());
         rol.getRein().setTrabajadorInscribe(rol.getPersonalActivoSe().getPersonal().getClave());            
 //        prepararCoreo(null);
-        ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> rejb =ejb.operacionesEstudianteR(rol.getRein(),rol.getAspirante().getAspirante(),rol.getEventoActivo());
+        ejb.operacionesEstudiantesA(rol.getRein(),rol.getAspirante().getAspirante(),rol.getNivelRi());
+        ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> rejb =ejb.operacionesEstudianteR(rol.getRein(),rol.getAspirante().getAspirante(),rol.getEventoActivo(),rol.getNivelRi());
         if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
         rol.setRein(rejb.getValor());
-        
-//        ResultadoEJB<List<DtoReincorporacion.AlineacionCalificaciones>> eJB =ejb.getAlineacionCalificaciones(rol.getAspirante().getAspirante(),rol.getEsEscolares(),);
-//        if(!eJB.getCorrecto()){ mostrarMensajeResultadoEJB(eJB);return;}
-//        rol.setCalificacionesR(eJB.getValor());
+
         buscarRegistro();
-        rol.setPaso(7);
+        rol.setPaso(6);
     }
 
     public void actualizarUltimoGrupo(RowEditEvent event) {
@@ -691,29 +704,6 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalWarn("¡Operación cancelada!!");
-    }
-    
-    public void guardaCalificaciones(ValueChangeEvent event) {
-        String idC=event.getComponent().getId();
-        String[] parts=idC.split("-");
-        ResultadoEJB<CalificacionPromedio> rejb =ejb.registrarCalificacionesPorPromedio(Integer.parseInt(parts[2]),Integer.parseInt(parts[1]),Double.parseDouble(event.getNewValue().toString()),rol.getTipoCal());
-        if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
-        buscarRegistro();
-        rol.setPaso(8);
-    }
-    
-    public void guardaCalificacionesValidadas() {
-        if (!rol.getCalificacionesR().isEmpty()) {
-            rol.getCalificacionesR().forEach((t) -> {
-                if (!t.getCalificacionesReincorporacions().isEmpty()) {
-                    t.getCalificacionesReincorporacions().forEach((ca) -> {
-                        ResultadoEJB<CalificacionPromedio> rejb = ejb.registrarCalificacionesPorPromedio(ca.getCalificacionPromedio().getCalificacionPromedioPK().getIdEstudiante(), ca.getCalificacionPromedio().getCalificacionPromedioPK().getCarga(), ca.getCalificacionPromedio().getValor(), "Oficial");
-                    });
-                }
-            });
-        } 
-        buscarRegistro();
-        rol.setPaso(8);
     }
   
     public void prepararCoreo(DtoReincorporacion.EstudianteR er) {

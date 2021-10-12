@@ -657,6 +657,7 @@ public class RegistrolDelEstudiante extends ViewScopedRol implements Desarrollab
             case "p19": numeroP=19; valor=event.getNewValue().toString();  break;
             case "p20": numeroP=20; valor=event.getNewValue().toString();  break;
             case "p21": numeroP=21; valor=event.getNewValue().toString();  break;
+            case "p25": numeroP=25; valor=event.getNewValue().toString();  break;
         }      
         ResultadoEJB<DtoReincorporacion.EncuestaR> rejb =ejb.operacionesEncuestaR(rol.getAspirante().getAspirante(),valor,numeroP);
         if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}

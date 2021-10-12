@@ -60,6 +60,8 @@ public class PlanEstudioMateria implements Serializable {
     private List<MetasPropuestas> metasPropuestasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
+    private List<Calificacionestsuotrasaiiut> calificacionestsuotrasaiiutList;
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Materia idMateria;
@@ -114,7 +116,16 @@ public class PlanEstudioMateria implements Serializable {
     public void setGrado(int grado) {
         this.grado = grado;
     }
+    
+    @XmlTransient
+    public List<Calificacionestsuotrasaiiut> getCalificacionestsuotrasaiiutList() {
+        return calificacionestsuotrasaiiutList;
+    }
 
+    public void setCalificacionestsuotrasaiiutList(List<Calificacionestsuotrasaiiut> calificacionestsuotrasaiiutList) {
+        this.calificacionestsuotrasaiiutList = calificacionestsuotrasaiiutList;
+    }
+    
     @XmlTransient
     public List<Competencia> getCompetenciaList() {
         return competenciaList;
@@ -200,11 +211,11 @@ public class PlanEstudioMateria implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria[ idPlanMateria=" + idPlanMateria + " ]";
     }
-
+    
     @XmlTransient
     public List<CriterioDesempenio> getCriterioDesempenioList() {
         return criterioDesempenioList;
-    }
+}
 
     public void setCriterioDesempenioList(List<CriterioDesempenio> criterioDesempenioList) {
         this.criterioDesempenioList = criterioDesempenioList;

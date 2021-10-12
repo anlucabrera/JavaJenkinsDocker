@@ -105,7 +105,7 @@ public class Estudiante implements Serializable {
     @JoinColumn(name = "grupo", referencedColumnName = "id_grupo")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Grupo grupo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
+     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<TareaIntegradoraPromedio> tareaIntegradoraPromedioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante", fetch = FetchType.LAZY)
     private List<CasoCritico> casoCriticoList;
@@ -139,6 +139,8 @@ public class Estudiante implements Serializable {
     private List<CalificacionEvidenciaInstrumento> calificacionEvidenciaInstrumentoList;
     @OneToMany(cascade = CascadeType.ALL,mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<DocumentoEstudianteProceso> documentoEstudianteProcesoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
+    private List<EstudianteHistorialTsu> estudianteHistorialTsuList;
 
     public Estudiante() {
     }
@@ -305,6 +307,15 @@ public class Estudiante implements Serializable {
 
     public void setGrupo(Grupo grupo) {
         this.grupo = grupo;
+    }
+
+    @XmlTransient
+    public List<EstudianteHistorialTsu> getEstudianteHistorialTsuList() {
+        return estudianteHistorialTsuList;
+    }
+
+    public void setEstudianteHistorialTsuList(List<EstudianteHistorialTsu> estudianteHistorialTsuList) {
+        this.estudianteHistorialTsuList = estudianteHistorialTsuList;
     }
 
     @XmlTransient
@@ -482,5 +493,5 @@ public class Estudiante implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante[ idEstudiante=" + idEstudiante + " ]";
     }
-
-    }
+    
+}
