@@ -45,113 +45,336 @@
             <div class="contenedor">
                 <c:if test="#{reincorporacionCalificacionesServiciosEscolares.tieneAcceso}">
                     <!-- zona de importación de enums -->
-
-                    <h:form>
-                        <p:panel id="toggleable-solid" header="Desea recuperar una reincorporacion da clic en icono +" toggleable="true" toggleSpeed="500"
-                                 closeSpeed="500" widgetVar="panel-solid">
-                            <div class="row" oncontextmenu="return false">
-                                <div class="col-md-12">
-                                    <div class="box box-widget widget-user-2">
-                                        <div class="row">
-                                            <div class="form-group">
-                                                <div class="col-sm-12 col-md-15 col-lg-12">
-                                                    <p:outputLabel for="estuR" style="font-size: large" value="Seleccione un estudiante" />
-                                                    <p:selectOneMenu id="estuR" value="#{reincorporacionCalificacionesServiciosEscolares.rol.estudiante}"
-                                                                     filter="true" filterMatchMode="contains" converter="reincorporacionConverter">
-                                                        <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
-                                                        <f:selectItems value="#{reincorporacionCalificacionesServiciosEscolares.rol.estudiantesReincorporaciones}" var="estur" 
-                                                                       itemValue="#{estur}"
-                                                                       itemLabel="#{estur.matricula}--#{estur.aspirante.idPersona.nombre}--#{estur.aspirante.idPersona.apellidoPaterno}--#{estur.aspirante.idPersona.apellidoMaterno}---#{estur.tipoRegistro} " />                                                                                    
-
-                                                        <p:ajax process="@this" update=":regCal" listener="#{reincorporacionCalificacionesServiciosEscolares.asignaEstudianteconsulta}"/>
-
-                                                    </p:selectOneMenu>
-                                                    <hr/>
-                                                </div>
-                                            </div>
+                    <h:form id="frmAreaEvaluada" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div id="main-buttons">
+                                <p:panel header="Estudiantes Reincorporados">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-3 col-lg-3">            
+                                            <p:autoUpdate/>
+                                            <p:outputLabel value="Selecciona el estudiante a consultar" />
+                                            <p:selectOneMenu id="estuR" value="#{reincorporacionCalificacionesServiciosEscolares.rol.estudiante}" converter="entityConverter" filter="true"  filterMatchMode="contains">
+                                                <f:selectItem itemValue="#{null}" itemLabel="Seleccione uno"/>
+                                                <f:selectItems value="#{reincorporacionCalificacionesServiciosEscolares.rol.estudiantesReincorporaciones}" var="estur" 
+                                                               itemValue="#{estur}"
+                                                               itemLabel="#{estur.matricula}--#{estur.aspirante.idPersona.nombre}--#{estur.aspirante.idPersona.apellidoPaterno}--#{estur.aspirante.idPersona.apellidoMaterno}---#{estur.tipoRegistro} " />
+                                                <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.estudianteConsultado()}" update=":frmHistorialCalificaciones, :frm2" process="@this"/>
+                                            </p:selectOneMenu>
                                         </div>
+                                    </div>
+                                </p:panel>                   
+                            </div>
+                        </div>
+                    </h:form>
+
+
+                    <h:form id="frm2" prependId="false" class="form-inline" >
+                        <p:panel header="Historial Egreso TSU" visible="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesTSU.size() ne 0?false:true}" class="box box-primary">
+                            <div class="box-header with-border">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                            <p:outputLabel for="uniEgreso"  value="Universidad de Egreso" />
+                                            <p:selectOneMenu id="uniEgreso" value="#{reincorporacionCalificacionesServiciosEscolares.rol.universidadActiva}"
+                                                             filter="true" filterMatchMode="contains" required="true" requiredMessage="Universidad" disabled="false">
+                                                <f:selectItem itemValue="#{0}" itemLabel="Seleccione uno"/>
+                                                <f:selectItems value="#{reincorporacionCalificacionesServiciosEscolares.rol.universidades}" var="uni" itemValue="#{uni.cveUniversidad}" itemLabel="#{uni.nombre}"/>
+                                                <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.imprimirValores()}" process="uniEgreso" global="false"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="uniEgreso"/>
+                                        </div>
+                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                            <p:outputLabel for="actividad"  value="Tipo de Egresado" />
+                                            <p:selectOneMenu id="actividad" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.egresoAspirante.tipoEgreso}" 
+                                                             required="true"  requiredMessage="Se debe especificar que jerarquía tiene la actividad a registrar."
+                                                             valueChangeListener="#{reincorporacionCalificacionesServiciosEscolares.imprimirValores}">
+                                                <f:selectItem itemValue="Titulado" itemLabel="Titulado"/>
+                                                <f:selectItem itemValue="No Titulado" itemLabel="No Titulado"/>
+                                                <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.imprimirValores()}" process="actividad" global="false" />
+                                            </p:selectOneMenu> 
+                                            <p:message for="actividad" display="tooltip" />
+                                        </div>
+                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                            <p:outputLabel for="generacion"  value="Generacion" />
+                                            <p:inputText id="generacion" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.historialTsu.generacion}" style="height:100%; width: 100%;" placeholder="Generacion" >
+                                                <p:ajax update="generacion" global="false"/>
+                                            </p:inputText>
+                                            <p:message for="generacion" display="tooltip"/>     
+                                        </div> 
+                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                            <p:outputLabel for="promedioe"  value="Promedio de Egreso" />
+                                            <p:inputNumber id="promedioe" minValue="8.0" decimalPlaces="2" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.historialTsu.promedioEgreso}" style="height:100%; width: 100%;" placeholder="8.0" >
+                                                <p:ajax update="promedioe" global="false"/>
+                                            </p:inputNumber>
+                                            <p:message for="promedioe" display="tooltip"/>      
+                                        </div> 
+                                        <div class="col-sm-2 col-md-2 col-lg-2">
+                                            <p:outputLabel for="periodoE"  value="Periodo de carrera" />
+                                            <p:inputText id="periodoE" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.historialTsu.periodoCarrera}" style="height:100%; width: 100%;" placeholder="Sep 2014-Ago 2016">
+                                                <p:ajax update="periodoE" global="false"/>
+                                            </p:inputText>
+                                            <p:message for="periodoE" display="tooltip"/>  
+                                        </div> 
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-sm-6 col-md-6 col-lg-6">
+                                            <p:outputLabel for="planEgreso"  value="Programa Educativo de Egreso" />
+                                            <p:selectOneMenu id="planEgreso" value="#{reincorporacionCalificacionesServiciosEscolares.rol.idPlanEstudio}"
+                                                             filter="true" filterMatchMode="contains" required="true">
+                                                <f:selectItem itemValue="#{''}" itemLabel="Seleccione uno"/>
+                                                <f:selectItems value="#{reincorporacionCalificacionesServiciosEscolares.rol.planesDeEstudioConsultas}" var="planesC" itemValue="#{planesC.ideCompuesto}" itemLabel="#{planesC.nombre} - #{planesC.anioplan} "/>
+                                                <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.imprimirValores()}" process="planEgreso" global="false"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="planEgreso"/>
+                                        </div>
+                                        <p:outputPanel>
+                                            <p:autoUpdate/>
+                                            <div class="col-sm-4 col-md-4 col-lg-4" style="#{reincorporacionCalificacionesServiciosEscolares.rol.idPlanEstudio eq '0-E'? 'visibility:visible':'visibility:collapse'}">                                         
+                                                <p:outputLabel for="unidad"  value="Nombre del Programa Educativo" />
+                                                <p:inputText id="unidad" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.externos.nombre}" style="height:100%; width: 100%;" >
+                                                    <p:ajax update="unidad" global="false"/>
+                                                </p:inputText>
+                                                <p:message for="unidad" display="tooltip" />
+                                            </div>
+                                            <div class="col-sm-2 col-md-2 col-lg-2" style="#{reincorporacionCalificacionesServiciosEscolares.rol.idPlanEstudio eq '0-E'? 'visibility:visible':'visibility:collapse'}">                                         
+                                                <p:outputLabel for="aniop"  value="Año del Plan" />
+                                                <p:inputText id="aniop" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.externos.anio}" style="height:100%; width: 100%;" >
+                                                    <p:ajax update="aniop" global="false"/>
+                                                </p:inputText>
+                                                <p:message for="aniop" display="tooltip" />
+                                            </div>
+                                        </p:outputPanel>
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                            <br/>
+                                            <p:commandButton value="Actualizar" id="btnSiguiente" 
+                                                             actionListener="#{reincorporacionCalificacionesServiciosEscolares.historialTSUEstudiante()}"  
+                                                             process="@this" icon="fa fa-plus" 
+                                                             styleClass="btn-primary" update=":frm2 :frmHistorialCalificaciones"/>
+                                        </div>
+                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
                                     </div>
                                 </div>
                             </div>
                         </p:panel>
                     </h:form>
-                    <hr/>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="nav-tabs-custom">
-                                <p:outputPanel id="regCal">
-                                    <h:form id="capturaCalificaciones">
-                                        <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                            <div class="col-md-12">
-                                                <div class="box box-widget widget-user-2">
-                                                    <div class="row">
-                                                        <div class="form-group">
-                                                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                <p:outputLabel for="folioI" style="font-size: large;text-align: right;" value="Matrícula:" />
-                                                                <p:inputText id="folioI" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.estudiante.matricula}"  placeholder="Ingresa tu folio de ficha de admisión" required="true" requiredMessage="Es necesario que ingrese su el folio de ficha de admisión" readonly="true"/>
-                                                                <p:message for="folioI"><p:autoUpdate/></p:message>
-                                                            </div>
-                                                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                <p:outputLabel for="nombre" style="font-size: large;text-align: right;" value="Nombre:" />
-                                                                <p:inputText id="nombre" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.estudiante.aspirante.idPersona.nombre}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                <p:outputLabel for="ap" style="font-size: large;text-align: right;" value="Apellido Paterno" />
-                                                                <p:inputText id="ap" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.estudiante.aspirante.idPersona.apellidoPaterno}" readonly="true"/>
-                                                            </div>
-                                                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                <p:outputLabel for="am" style="font-size: large;text-align: right;" value="Apellido Materno" />
-                                                                <p:inputText id="am" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.estudiante.aspirante.idPersona.apellidoMaterno}" readonly="true"/>
-                                                            </div>        
-                                                            <!--div class="col-sm-4 col-md-4 col-lg-4">
-                                                                <p:outputLabel for="pe" style="font-size: large;text-align: right;" value="Programa Educativo" />
-                                                                <p:inputTextarea id="pe" class="form-control" value="# {reincorporacionCalificacionesServiciosEscolares.rol.rein.opcionIncripcion eq true?reincorporacionCalificacionesServiciosEscolares.rol.rein.primeraOp:reincorporacionCalificacionesServiciosEscolares.rol.rein.segundaOP}" readonly="true"/>
-                                                            </div-->
-                                                            <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                <br/>
-                                                                <br/>
-                                                                <p:panelGrid columns="3">                                                                        
-                                                                    <c:forEach var="i" begin="0" end="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesR.size()-1}">
-                                                                        <c:set var="t" value="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesR.get(i)}"/>
-                                                                        <p:panelGrid columns="2">
-                                                                            <f:facet name="header">#{t.grupo.grado}° #{t.grupo.literal}-- #{t.grupo.plan.descripcion} -- #{t.estudiante.tipoEstudiante.descripcion}</f:facet>
-                                                                            <c:forEach var="h" begin="0" end="#{t.calificacionesReincorporacions.size()-1}">
-                                                                                <c:set var="j" value="#{t.calificacionesReincorporacions.get(h)}"/>
-                                                                                <p:outputLabel value="#{j.estudioMateria.claveMateria}  #{j.materia.nombre}" />
-                                                                                <p:inputNumber id="cal-#{j.academica.carga}-#{t.estudiante.idEstudiante}" 
-                                                                                               placeholder="0" decimalPlaces="2" minValue="0" maxValue="10"
-                                                                                               valueChangeListener="#{reincorporacionCalificacionesServiciosEscolares.guardaCalificaciones}" value="#{j.calificacionPromedio.valor}"  
-                                                                                               disabled="#{!j.editable}">
-                                                                                    <p:ajax update="@this" process="@this" listener="#{areaPoaProgramacion.imprimirValores()}"/>
-                                                                                </p:inputNumber>                                                                                                                                                                        
-                                                                            </c:forEach>
-                                                                        </p:panelGrid>
-                                                                    </c:forEach>
-                                                                </p:panelGrid>                                                                    
-                                                            </div>                                                                
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="form-group">
-                                                                <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                    <p:outputPanel>
-                                                                        <p:autoUpdate/> 
-                                                                        <p:commandButton id="btnGuardaGrupos" value="Validar Reincorporacion" icon="fa fa-floppy-o" class="btn-primary btn-block col-md-3" process="@this" update="@form" 
-                                                                                         actionListener="#{reincorporacionCalificacionesServiciosEscolares.guardaCalificacionesValidadas()}" 
-                                                                                         />
-                                                                    </p:outputPanel>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </h:form>
-                                </p:outputPanel>
+
+                    <h:form id="frmHistorialCalificaciones" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                <p:panel  header="Historial Academico">
+                                    <p:tabView id="resultadosTSU" activeIndex="#{reincorporacionCalificacionesServiciosEscolares.rol.pestaniaActiva}">
+                                        <p:tab title="TSU Externo" rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesTSU.size() ne 0?false:true}">
+                                            <p:dataTable rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.historialCalificacionesTsus.size() eq 0 ?false:true}" id="calificacionTSUExterno" var="promediosTSU" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.historialCalificacionesTsus}" editable="true" sortBy="#{promediosTSU.grado}">
+                                                <p:headerRow>
+                                                    <p:column colspan="4" styleClass="lac" style="text-align: left">
+                                                        <h:outputText value="#{promediosTSU.grado}-- #{promediosTSU.idplanEstudio.nombre} -- #{promediosTSU.idplanEstudio.anio}"/>
+                                                    </p:column>
+                                                </p:headerRow>  
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column rowspan="2" headerText="Materia" style="width: 30%;"/> 
+                                                        <p:column rowspan="2" headerText="Horas" style="width: 30%;"/>
+                                                        <p:column rowspan="2" headerText="Promedio" style="width: 30%;"/>
+                                                        <p:column style="width:10%" class="noprint" />
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <f:facet name="header">
+                                                    <p:commandButton value="Agregar Calificacion" id="btnSiguiente" 
+                                                                     process="@this" icon="fa fa-plus" 
+                                                                     styleClass="btn-primary" onclick="PF('dlgActualizacionActividad').show();"/>
+                                                </f:facet>
+
+                                                <p:ajax event="rowEdit" listener="#{reincorporacionCalificacionesServiciosEscolares.onRowEditCalificacionExterno}" update="calificacionTSUExterno" />
+                                                <p:ajax event="rowEditCancel" listener="#{reincorporacionCalificacionesServiciosEscolares.onRowCancel}" update="calificacionTSUExterno" />
+
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{promediosTSU.materia}" />  </f:facet>
+                                                        <f:facet name="input"><p:inputText value="#{promediosTSU.materia}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{promediosTSU.horas}" />  </f:facet>
+                                                        <f:facet name="input"><p:inputNumber value="#{promediosTSU.horas}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{promediosTSU.valor}" /></f:facet>
+                                                        <f:facet name="input"><p:inputNumber minValue="8.0" decimalPlaces="2" value="#{promediosTSU.valor}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:rowEditor />
+                                                </p:column>
+                                            </p:dataTable>
+
+                                            <p:dataTable rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.historialCalificacionesSaiiuts.size() eq 0 ?false:true}" id="calificacionTSUESaiiut" var="promediosTSUInt" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.historialCalificacionesSaiiuts}" editable="true" sortBy="#{promediosTSUInt.idPlanMateria.grado}">
+                                                <p:headerRow>
+                                                    <p:column colspan="4" styleClass="lac" style="text-align: left">
+                                                        <h:outputText value="#{promediosTSUInt.idPlanMateria.grado}"/>
+                                                    </p:column>
+                                                </p:headerRow>  
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column rowspan="2" headerText="Clave Materia" style="width: 30%;"/> 
+                                                        <p:column rowspan="2" headerText="Materia" style="width: 30%;"/>
+                                                        <p:column rowspan="2" headerText="Promedio" style="width: 30%;"/>
+                                                        <p:column style="width:10%" class="noprint" />
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:ajax event="rowEdit" listener="#{reincorporacionCalificacionesServiciosEscolares.onRowEditCalificacionInterno}" update="calificacionTSUESaiiut" />
+                                                <p:ajax event="rowEditCancel" listener="#{reincorporacionCalificacionesServiciosEscolares.onRowCancel}" update="calificacionTSUESaiiut" />
+
+                                                <p:column>
+                                                    <h:outputText value="#{promediosTSUInt.idPlanMateria.claveMateria}" />  
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{promediosTSUInt.idPlanMateria.idMateria.nombre}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{promediosTSUInt.valor}" /></f:facet>
+                                                        <f:facet name="input"><p:inputNumber minValue="8.0" decimalPlaces="2" value="#{promediosTSUInt.valor}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:rowEditor />
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+                                        <p:tab title="TSU Interno" rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesTSU.size() eq 0?false:true}">
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasPersonal.metodoBase()}" update="calificacionTSU" />
+                                            <p:dataTable id="calificacionTSU" var="promedios" value="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesTSU}" editable="true" sortBy="#{promedios.academica.cveGrupo.grado}">
+                                                <p:headerRow>
+                                                    <p:column colspan="4" styleClass="lac" style="text-align: left">
+                                                        <h:outputText value="#{promedios.academica.cveGrupo.grado}° #{promedios.academica.cveGrupo.literal}, #{promedios.academica.cveGrupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                </p:headerRow>  
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column rowspan="2" headerText="Clave materia" style="width: 30%;"/> 
+                                                        <p:column rowspan="2" headerText="Materia" style="width: 30%;"/>
+                                                        <p:column rowspan="2" headerText="Valor" style="width: 30%;"/>
+                                                        <p:column style="width:10%" class="noprint" />
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:ajax event="rowEdit" listener="#{reincorporacionCalificacionesServiciosEscolares.onRowEditCalificacion}" update="calificacionTSU" />
+                                                <p:ajax event="rowEditCancel" listener="#{reincorporacionCalificacionesServiciosEscolares.onRowCancel}" update="calificacionTSU" />
+
+                                                <p:column>
+                                                    <h:outputText value="#{promedios.estudioMateria.claveMateria}" />  
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{promedios.materia.nombre}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{promedios.calificacionPromedio.valor}" /></f:facet>
+                                                        <f:facet name="input"><p:inputNumber minValue="8.0" decimalPlaces="2" value="#{promedios.calificacionPromedio.valor}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:rowEditor style="visibility: #{promedios.calificacionPromedio.tipo eq 'Regulatoria'?'visible':'hidden'}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+                                        <p:tab title="ING / LIC" rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesLIN.size() eq 0?false:true}">
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasPersonal.metodoBase()}" update="calificacionTSU" />
+                                            <p:dataTable id="calificacionLIN" var="promedios" value="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesLIN}" editable="true" sortBy="#{promedios.academica.cveGrupo.grado}">
+
+                                                <p:headerRow>
+                                                    <p:column colspan="4" styleClass="lac" style="text-align: left">
+                                                        <h:outputText value="#{promedios.academica.cveGrupo.grado}° #{promedios.academica.cveGrupo.literal}, #{promedios.academica.cveGrupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                </p:headerRow> 
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column rowspan="2" headerText="Clave materia" style="width: 30%;"/> 
+                                                        <p:column rowspan="2" headerText="Materia" style="width: 30%;"/>
+                                                        <p:column rowspan="2" headerText="Valor" style="width: 30%;"/>
+                                                        <p:column style="width:10%" class="noprint" />
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:ajax event="rowEdit" listener="#{reincorporacionCalificacionesServiciosEscolares.onRowEditCalificacion}" update="calificacionLIN" />
+                                                <p:ajax event="rowEditCancel" listener="#{reincorporacionCalificacionesServiciosEscolares.onRowCancel}" update="calificacionLIN" />
+
+
+
+                                                <p:column>
+                                                    <h:outputText value="#{promedios.estudioMateria.claveMateria}" />  
+                                                </p:column>
+                                                <p:column>
+                                                    <h:outputText value="#{promedios.materia.nombre}" />
+                                                </p:column>
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{promedios.calificacionPromedio.valor}" /></f:facet>
+                                                        <f:facet name="input"><p:inputNumber minValue="8.0" decimalPlaces="2" value="#{promedios.calificacionPromedio.valor}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column>
+                                                    <p:rowEditor style="visibility: #{promedios.calificacionPromedio.tipo eq 'Regulatoria'?'visible':'hidden'}"/>
+                                                </p:column>
+                                            </p:dataTable>
+                                        </p:tab>
+                                    </p:tabView>
+                                </p:panel>
                             </div>
                         </div>
-                    </div>                    
+                    </h:form>
+
+                    <p:dialog id="dlgActualizacionActividad" header="Parámetros de registro que ya cuentan con registros" widgetVar="dlgActualizacionActividad" modal="true" 
+                              showEffect="fade" hideEffect="fade" resizable="false" width="800" closeOnEscape="true">
+                        <h:form id="frmActualizaCalificacion">
+                            <div class="row">
+                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                    <p:outputLabel for="materia" style="font-size: large;text-align: center;" value="Nombre de la Materia" />
+                                    <p:inputText id="materia" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.historialTsu.materia}">
+                                        <p:ajax update="materia" global="false"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                    <p:outputLabel for="hora" style="font-size: large;text-align: center;" value="Horas totales" />
+                                    <p:inputText id="hora" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.historialTsu.horas}">
+                                        <p:ajax update="hora" global="false"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                    <p:outputLabel for="promedio" style="font-size: large;text-align: center;" value="Promedio" />
+                                    <p:inputText id="promedio" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.historialTsu.valor}">
+                                        <p:ajax update="promedio" global="false"/>
+                                    </p:inputText>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                    <p:outputLabel for="grado" style="font-size: large;text-align: center;" value="Grado" />
+                                    <p:inputText id="grado" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.historialTsu.grado}">
+                                        <p:ajax update="grado" global="false"/>
+                                    </p:inputText>
+                                </div>
+                            </div> 
+                            <hr/>
+                            <p:commandButton value="Guardar promedio" id="btnActualiza" actionListener="#{reincorporacionCalificacionesServiciosEscolares.guardaCalificacion()}"  update="@form"  oncomplete="PF('dlgActualizacionActividad').hide()"  process="@this" icon="fa fa-edit" styleClass="btn-primary" />
+                            <p:commandButton value="Cancelar" id="btnCancelar" actionListener="#{reincorporacionCalificacionesServiciosEscolares.imprimirValores()}"  oncomplete="PF('dlgActualizacionActividad').hide()" process="@this" icon="fa fa-times" styleClass="btn-primary" update="@this" />
+                        </h:form>
+                    </p:dialog>   
+
                 </c:if>
                 <c:if test="#{!reincorporacionCalificacionesServiciosEscolares.tieneAcceso}">
                     <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">

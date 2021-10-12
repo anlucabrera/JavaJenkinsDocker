@@ -43,7 +43,7 @@ public class ReincorporacionRolServiciosEscolares extends AbstractRol {
      */
     @Getter @NonNull private AreasUniversidad areaSe;
     
-    @Getter @Setter private String curpBusqueda,nombreR,tipoCal,mensaje;
+    @Getter @Setter private String curpBusqueda,nombreR,tipoCal,mensaje,nivelRi;
     @Getter @Setter private Integer paso,tipo;
     @Getter @Setter private Part fileCurp;
     
@@ -61,6 +61,7 @@ public class ReincorporacionRolServiciosEscolares extends AbstractRol {
     @Getter @Setter @NonNull private DtoReincorporacion.AcademicosR dacademicos;    
     @Getter @Setter @NonNull private DtoReincorporacion.EncuestaR encuesta;
     @Getter @Setter @NonNull private DtoReincorporacion.TutorR tutor;
+    @Getter @Setter @NonNull private DtoReincorporacion.HistorialTsu tsu;
     @Getter @Setter @NonNull private DtoReincorporacion.ProcesoInscripcionRein rein;
     @Getter @Setter @NonNull private List<DtoReincorporacion.EstudianteR> estudianteR;
     @Getter @Setter @NonNull private List<DtoReincorporacion.AlineacionCalificaciones> calificacionesR;

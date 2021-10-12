@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -21,6 +22,10 @@ import java.io.Serializable;
     , @NamedQuery(name = "UniversidadEgresoAspirante.findByAspirante", query = "SELECT u FROM UniversidadEgresoAspirante u WHERE u.universidadEgresoAspirantePK.aspirante = :aspirante")
     , @NamedQuery(name = "UniversidadEgresoAspirante.findByUniversidadEgreso", query = "SELECT u FROM UniversidadEgresoAspirante u WHERE u.universidadEgresoAspirantePK.universidadEgreso = :universidadEgreso")})
 public class UniversidadEgresoAspirante implements Serializable {
+
+    @Size(max = 11)
+    @Column(name = "tipoEgreso")
+    private String tipoEgreso;
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -79,6 +84,14 @@ public class UniversidadEgresoAspirante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.UniversidadEgresoAspirante[ universidadEgresoAspirantePK=" + universidadEgresoAspirantePK + " ]";
+    }
+
+    public String getTipoEgreso() {
+        return tipoEgreso;
+    }
+
+    public void setTipoEgreso(String tipoEgreso) {
+        this.tipoEgreso = tipoEgreso;
     }
     
 }
