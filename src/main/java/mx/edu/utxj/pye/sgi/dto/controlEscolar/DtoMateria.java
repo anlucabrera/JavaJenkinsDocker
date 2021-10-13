@@ -13,6 +13,7 @@ public class DtoMateria implements Serializable {
     @Getter @Setter @NonNull private Materia materia;
     @Getter @Setter private DtoCargaAcademica dtoCargaAcademica;
     @Getter private Integer horasPorSemana = 0;
+    @Getter @Setter private Boolean activa = true;
 
     public void setHorasPorSemana(Integer horasPorSemana) {
         this.horasPorSemana = horasPorSemana;
