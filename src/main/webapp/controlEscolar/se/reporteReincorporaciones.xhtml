@@ -128,7 +128,12 @@
                                                                         <p:outputLabel value="Mostrar solo registros pendientes"/>
                                                                         <p:inputSwitch value="#{reincorporacionCalificacionesServiciosEscolares.rol.tipoRep}" offLabel="NO" onLabel="SI">
                                                                             <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.getreporte}" update=":frm" />
-                                                                        </p:inputSwitch>              
+                                                                        </p:inputSwitch>  
+                                                                        <p:separator/>
+                                                                        <p:outputLabel value="Excluir Estudiantes de Baja"/>
+                                                                        <p:inputSwitch value="#{reincorporacionCalificacionesServiciosEscolares.rol.filtaBaja}" offLabel="NO" onLabel="SI">
+                                                                            <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.getreporte}" update=":frm" />
+                                                                        </p:inputSwitch>  
                                                                     </p:outputPanel>
                                                                 </f:facet>
                                                             </p:toolbar>
@@ -160,10 +165,13 @@
 
                                                                         <p:column groupRow="true">
                                                                             <h:outputText value="#{rein.estudiante.aspirante.idPersona.apellidoPaterno} #{rein.estudiante.aspirante.idPersona.apellidoMaterno} #{rein.estudiante.aspirante.idPersona.nombre}" />  
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <h:outputText value="Estatus: " /> <h:outputText value="#{rein.estatusUltimoregistro}" style="#{rein.estatusUltimoregistro eq 'Regular' ?'color: #000000;':'color: #ff2733;'}" />  
                                                                         </p:column>
                                                                         <p:column groupRow="true">
                                                                             <h:outputText value="#{rein.estudiante.matricula}" />
-                                                                        </p:column>
+                                                                        </p:column> 
                                                                         <p:column styleClass="#{rein.completo eq false?'actividad':''}">
                                                                             <h:outputText value="#{rein.estudiante.grupo.grado}° #{rein.estudiante.grupo.literal}, #{rein.estudiante.grupo.idSistema.nombre}" />
                                                                         </p:column>

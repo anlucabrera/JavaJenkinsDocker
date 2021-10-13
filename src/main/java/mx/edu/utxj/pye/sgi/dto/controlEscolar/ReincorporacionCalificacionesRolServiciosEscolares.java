@@ -30,6 +30,7 @@ public class ReincorporacionCalificacionesRolServiciosEscolares extends Abstract
     @Getter @Setter private Integer pestaniaActiva;
     @Getter @Setter private Integer universidadActiva;
     @Getter @Setter private Boolean tipoRep;
+    @Getter @Setter private Boolean filtaBaja;
     
     @Getter @Setter private Estudiante estudiante;
     @Getter @Setter private CalificacionesHistorialTsu historialTsu;

@@ -258,6 +258,7 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull        PlanEstudio planEstudio;
         @Getter        @Setter        @NonNull        Integer calificacionesRegistradas;
         @Getter        @Setter        @NonNull        Integer calificacionesEsperadas;
+        @Getter        @Setter        @NonNull        String estatusUltimoregistro;
         @Getter        @Setter        @NonNull        Boolean completo;
     }
 }

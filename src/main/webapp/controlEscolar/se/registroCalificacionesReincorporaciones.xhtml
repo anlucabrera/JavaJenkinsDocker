@@ -260,7 +260,7 @@
                                             <p:dataTable id="calificacionTSU" var="promedios" value="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesTSU}" editable="true" sortBy="#{promedios.academica.cveGrupo.grado}">
                                                 <p:headerRow>
                                                     <p:column colspan="4" styleClass="lac" style="text-align: left">
-                                                        <h:outputText value="#{promedios.academica.cveGrupo.grado}° #{promedios.academica.cveGrupo.literal}, #{promedios.academica.cveGrupo.idSistema.nombre}"/>
+                                                        <h:outputText value="#{promedios.academica.cveGrupo.grado}° #{promedios.academica.cveGrupo.literal}, #{promedios.academica.cveGrupo.idSistema.nombre}, Estatus #{promedios.calificacionPromedio.estudiante.tipoEstudiante.descripcion}"/>
                                                     </p:column>
                                                 </p:headerRow>  
 
