@@ -29,6 +29,7 @@ public class ReincorporacionCalificacionesRolServiciosEscolares extends Abstract
     @Getter @Setter private Integer cvestudiante;
     @Getter @Setter private Integer pestaniaActiva;
     @Getter @Setter private Integer universidadActiva;
+    @Getter @Setter private Boolean tipoRep;
     
     @Getter @Setter private Estudiante estudiante;
     @Getter @Setter private CalificacionesHistorialTsu historialTsu;
@@ -45,6 +46,7 @@ public class ReincorporacionCalificacionesRolServiciosEscolares extends Abstract
     @Getter @Setter @NonNull private List<DtoReincorporacion.AlineacionCalificaciones> calificacionesR;  
     @Getter @Setter @NonNull private List<UniversidadesUT> universidades;  
     @Getter @Setter @NonNull private List<DtoReincorporacion.PlanesDeEstudioConsulta> planesDeEstudioConsultas;  
+    @Getter @Setter @NonNull private List<DtoReincorporacion.ReporteReincorporaciones> reincorporacioneses;  
 
     public ReincorporacionCalificacionesRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad area) {
         super(filtro);

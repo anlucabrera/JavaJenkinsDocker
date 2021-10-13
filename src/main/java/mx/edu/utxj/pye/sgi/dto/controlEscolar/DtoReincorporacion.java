@@ -249,4 +249,15 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull        Short anioplan;
         @Getter        @Setter        @NonNull        String tipo;
     }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode
+    public static class ReporteReincorporaciones {
+        @Getter        @Setter        @NonNull        Persona persona;
+        @Getter        @Setter        @NonNull        Aspirante aspirante;
+        @Getter        @Setter        @NonNull        Estudiante estudiante;
+        @Getter        @Setter        @NonNull        PlanEstudio planEstudio;
+        @Getter        @Setter        @NonNull        Integer calificacionesRegistradas;
+        @Getter        @Setter        @NonNull        Integer calificacionesEsperadas;
+        @Getter        @Setter        @NonNull        Boolean completo;
+    }
 }

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="head-end">
+        <script type="text/javascript">
+            function myconfig() {
+                console.log("ejemplo");
+            }
+            ;
+
+            //<![CDATA[
+            function exportChart() {
+                //export image
+                $('#output').empty().append(PF('chart').exportAsImage());
+
+                //show the dialog
+            }
+            ;
+            //]]>
+
+        </script>
+        <style type="text/css">
+            @media print{
+                /* indicamos el salto de pagina */
+                .saltoDePagina{
+                    display:block;
+                    page-break-inside:auto  !important;
+                }
+                .ui-panelgrid .ui-panelgrid-cell{
+                    border-style: hidden !important;
+                }
+
+                .grafica grafica{
+                    visibility: visible !important;
+                }
+            }
+
+            .ui-panelgrid .ui-panelgrid-cell{
+                border-style: hidden !important;
+            }
+        </style>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
+        </c:if>      
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="title">
+        Planeación Cuatrimestral
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{reincorporacionCalificacionesServiciosEscolares.cargado}">
+            <div class="contenedor">
+                <c:if test="#{reincorporacionCalificacionesServiciosEscolares.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+                    <h:form id="frm" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <div class="box box-solid">
+                                    <div class="box-body">
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-3 col-lg-3'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-6 col-lg-6'}" />
+                                        <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {reincorporacionCalificacionesServiciosEscolares.actualizarCargaAcademica}" update="@form" />
+                                        <div class="row">                                           
+                                            <center>
+                                                <p:panel id="CV" >
+                                                    <p:autoUpdate/>
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row hidden-sm hidden-xs" style="align-content:  center">
+                                                                    <div class="col-sm-3 pull-left">
+                                                                        <div class="description-block" style="text-align: center">
+                                                                            <img src="../../resources/img/logoSep.jpg" alt="" height="80px"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-6 pull-left" >
+                                                                        <div class="row">
+                                                                            <div class="row">
+                                                                                <div id="tituloCV" class="col-sm-12">
+                                                                                    <div class="description-block" style="text-align: center">
+                                                                                        <h3><strong>Universidad Tecnológica De</strong></h3>
+                                                                                        <h3><strong>Xicotepec de Juárez</strong></h3>
+                                                                                        <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>       
+                                                                                        <h4><strong>Reporte de Registro de Calificaciones para Reincorporaciones</strong></h4>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-sm-3">
+                                                                        <div class="description-block" style="text-align: center">
+                                                                            <img src="../../resources/img/utxj.png" alt="" height="100px"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <br/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <br/>
+                                                    <div class="box-header with-border">
+                                                        <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                                            <p:toolbar id="tb">
+                                                                <f:facet name="right">
+                                                                    <p:outputPanel>            
+                                                                        <p:autoUpdate/>      
+                                                                        <p:outputLabel value="Mostrar solo registros pendientes"/>
+                                                                        <p:inputSwitch value="#{reincorporacionCalificacionesServiciosEscolares.rol.tipoRep}" offLabel="NO" onLabel="SI">
+                                                                            <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.getreporte}" update=":frm" />
+                                                                        </p:inputSwitch>              
+                                                                    </p:outputPanel>
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                        </div>
+                                                    </div>
+                                                    <br/>
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="description-block">
+                                                                <p:outputPanel>     
+                                                                    <p:autoUpdate/>
+                                                                    <p:dataTable id="calificacionTSU" var="rein" expandableRowGroups="true" 
+                                                                                 value="#{reincorporacionCalificacionesServiciosEscolares.rol.reincorporacioneses}" sortBy="#{rein.planEstudio.idPlanEstudio}">
+                                                                        <p:headerRow>
+                                                                            <p:column colspan="5" styleClass="eje" style="text-align: left">
+                                                                                <h:outputText value="#{rein.planEstudio.idPlanEstudio}-  #{rein.planEstudio.descripcion}, #{rein.planEstudio.anio}"/>
+                                                                            </p:column>
+                                                                        </p:headerRow>  
+
+                                                                        <p:columnGroup type="header">
+                                                                            <p:row class="success">
+                                                                                <p:column headerText="Estudiante" style="width: 20%;"/> 
+                                                                                <p:column headerText="Matricula" style="width: 20%;"/>
+                                                                                <p:column headerText="Grupo reincorporado" style="width: 20%;"/> 
+                                                                                <p:column headerText="Total de Materias" style="width: 20%;"/>
+                                                                                <p:column headerText="Calificaciones Registradas" style="width: 20%;"/>
+                                                                            </p:row>
+                                                                        </p:columnGroup>
+
+                                                                        <p:column groupRow="true">
+                                                                            <h:outputText value="#{rein.estudiante.aspirante.idPersona.apellidoPaterno} #{rein.estudiante.aspirante.idPersona.apellidoMaterno} #{rein.estudiante.aspirante.idPersona.nombre}" />  
+                                                                        </p:column>
+                                                                        <p:column groupRow="true">
+                                                                            <h:outputText value="#{rein.estudiante.matricula}" />
+                                                                        </p:column>
+                                                                        <p:column styleClass="#{rein.completo eq false?'actividad':''}">
+                                                                            <h:outputText value="#{rein.estudiante.grupo.grado}° #{rein.estudiante.grupo.literal}, #{rein.estudiante.grupo.idSistema.nombre}" />
+                                                                        </p:column>
+                                                                        <p:column styleClass="#{rein.completo eq false?'actividad':''}">
+                                                                            <h:outputText value="#{rein.calificacionesEsperadas}" />  
+                                                                        </p:column>
+                                                                        <p:column styleClass="#{rein.completo eq false?'actividad':''}">
+                                                                            <h:outputText value="#{rein.calificacionesRegistradas}" />
+                                                                        </p:column>
+                                                                    </p:dataTable>
+                                                                </p:outputPanel>     
+                                                            </div>
+                                                        </div>
+                                                    </div>    
+                                                </p:panel>
+                                            </center>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </c:if>
+                <c:if test="#{!reincorporacionCalificacionesServiciosEscolares.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="El acceso solo está autorizado al personal perteneciente a servicios escolares."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

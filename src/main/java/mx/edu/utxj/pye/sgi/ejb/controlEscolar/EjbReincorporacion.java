@@ -2254,4 +2254,27 @@ public class EjbReincorporacion {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOPersona (EjbReincorporacion.operacionesMedicosR).", e, null);
         }
     }
+    
+    public ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> getReporteReincorporaciones() {
+        try {
+            List<DtoReincorporacion.ReporteReincorporaciones> reincorporacioneses= new ArrayList<>();
+            List<Estudiante> estudiantes = em.createQuery("select t from Estudiante t INNER JOIN t.aspirante a INNER JOIN a.idPersona p WHERE t.tipoEstudiante.idTipoEstudiante=:idTipoEstudianteTSU OR t.tipoEstudiante.idTipoEstudiante=:idTipoEstudianteLIN ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, t.periodo", Estudiante.class)
+                        .setParameter("idTipoEstudianteTSU", Short.parseShort("5"))
+                        .setParameter("idTipoEstudianteLIN", Short.parseShort("6"))
+                        .getResultList();
+            
+            estudiantes.forEach((t) -> {
+               List<CalificacionPromedio> calificacionPromedios = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionPromedio.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+               DtoReincorporacion.ReporteReincorporaciones rr= new DtoReincorporacion.ReporteReincorporaciones(t.getAspirante().getIdPersona(), t.getAspirante(), t, t.getGrupo().getPlan(), calificacionPromedios.size(), t.getGrupo().getCargaAcademicaList().size(), Boolean.FALSE);
+               if(t.getGrupo().getCargaAcademicaList().size()==calificacionPromedios.size()){
+                   rr.setCompleto(Boolean.TRUE);
+               }
+               reincorporacioneses.add(rr);
+            });
+            
+            return ResultadoEJB.crearCorrecto(reincorporacioneses, "AgetReporteReincorporaciones Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar el getReporteReincorporaciones (EjbReincorporacion.getReporteReincorporaciones).", e, null);
+        }
+    }
 }

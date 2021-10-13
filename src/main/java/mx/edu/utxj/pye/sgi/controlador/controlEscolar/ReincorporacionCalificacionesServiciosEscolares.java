@@ -104,6 +104,8 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
             rol.setPestaniaActiva(0);
             rol.setIdPlanEstudio("");
             rol.setHistorialTsu(new CalificacionesHistorialTsu());
+            rol.setTipoRep(Boolean.TRUE);
+            getreporte();
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -229,5 +231,13 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
 
     }
     
-    
+    public void getreporte (){
+        ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> resUniversidades = ejb.getReporteReincorporaciones();
+        if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
+        if (rol.getTipoRep()) {
+            rol.setReincorporacioneses(resUniversidades.getValor().stream().filter(t->t.getCompleto().equals(Boolean.FALSE)).collect(Collectors.toList()));
+        } else {
+            rol.setReincorporacioneses(resUniversidades.getValor());
+        }
+    }   
 }

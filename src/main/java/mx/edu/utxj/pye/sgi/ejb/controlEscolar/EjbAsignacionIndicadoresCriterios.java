@@ -1493,4 +1493,31 @@ public class EjbAsignacionIndicadoresCriterios {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por docente. (EjbAsignacionIndicadoresCriterios.getCargaAcademicaPorDocente)", e, null);
         }
     }
+    
+    public ResultadoEJB<Boolean> getConparativoConfiguracionPlaneacionSugerida(CargaAcademica ca){
+        try{
+            Boolean coincide= Boolean.FALSE;
+            
+            List<UnidadMateriaConfiguracionDetalle> detalles = em.createQuery("SELECT c FROM UnidadMateriaConfiguracionDetalle c INNER JOIN c.configuracion g INNER JOIN g.carga ca WHERE ca.carga =:carga", UnidadMateriaConfiguracionDetalle.class)
+                    .setParameter("carga", ca.getCarga()).getResultList();
+            
+            List<UnidadMateriaConfiguracionEvidenciaInstrumento> instrumentos = em.createQuery("SELECT c FROM UnidadMateriaConfiguracionEvidenciaInstrumento c INNER JOIN c.configuracion g INNER JOIN g.carga ca WHERE ca.carga =:carga", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+                    .setParameter("carga", ca.getCarga()).getResultList();
+            
+            List<EvaluacionSugerida> sugeridas = em.createQuery("SELECT c FROM EvaluacionSugerida c INNER JOIN c.unidadMateria g INNER JOIN g.idMateria ca WHERE ca.idMateria =:idMateria", EvaluacionSugerida.class)
+                    .setParameter("idMateria", ca.getIdPlanMateria().getIdMateria().getIdMateria()).getResultList();
+            
+            if (detalles.size() >= sugeridas.size()) {
+                coincide = Boolean.TRUE;
+            } else if (instrumentos.size() >= sugeridas.size()) {
+                coincide = Boolean.TRUE;
+            } else {
+                coincide = Boolean.FALSE;
+            }
+            
+            return ResultadoEJB.crearCorrecto(coincide, "Lista de cargas académicas por docente.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de cargas académicas por docente. (EjbAsignacionIndicadoresCriterios.getCargaAcademicaPorDocente)", e, null);
+        }
+    }
 }

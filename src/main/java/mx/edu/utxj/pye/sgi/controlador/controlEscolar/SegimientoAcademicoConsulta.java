@@ -404,21 +404,40 @@ public class SegimientoAcademicoConsulta extends ViewScopedRol implements Desarr
         }
     }
     
+    public String buscarAreaAcademica(Short clave) {
+        try {            
+            AreasUniversidad p = new AreasUniversidad();
+            if (clave != null) {
+                p = ejbAreasLogeo.mostrarAreasUniversidad(clave);
+                return p.getNombre();
+            } else {
+                return "Área Academica";
+            }
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
+            return "";
+        }
+    }
+    
     public void existeAsignacion() {
         rol.setTitulos(new ArrayList<>());
         rol.setDvcs(new ArrayList<>());
         ResultadoEJB<List<DtoCargaAcademica>> rejb = ejb.getCargaAcademicasPorGrupo(rol.getGrupoSelec(), rol.getPeriodo());
         if(!rejb.getCorrecto()) mostrarMensajeResultadoEJB(rejb);
-        List<DtoCargaAcademica> dcas=rejb.getValor();
-
-        if(!dcas.isEmpty()){
-            dcas.forEach((t) -> {
-                Boolean ti=Boolean.TRUE;
-                if(t.getCargaAcademica().getTareaIntegradora() == null){
-                    ti=Boolean.FALSE;
+        List<DtoCargaAcademica> academicas=rejb.getValor();
+        List<DtoCargaAcademica> dcas=new ArrayList<>();
+        if (!academicas.isEmpty()) {
+            academicas.forEach((t) -> {
+                if (ejb.getConparativoConfiguracionPlaneacionSugerida(t.getCargaAcademica()).getValor()) {
+                    dcas.add(t);
+                    Boolean ti = Boolean.TRUE;
+                    if (t.getCargaAcademica().getTareaIntegradora() == null) {
+                        ti = Boolean.FALSE;
+                    }
+                    rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(t.getDocente().getPersonal().getNombre(), t.getMateria().getNombre(), t.getMateria().getUnidadMateriaList().size(), ti));
                 }
-            rol.getTitulos().add(new DtoVistaCalificacionestitulosTabla(t.getDocente().getPersonal().getNombre(),t.getMateria().getNombre(), t.getMateria().getUnidadMateriaList().size(), ti));
-            });            
+            });
         }
         
         ResultadoEJB<List<Estudiante>> rejb1= ea.buscaEstudiantesGrupo(rol.getGrupoSelec());
