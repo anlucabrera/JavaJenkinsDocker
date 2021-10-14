@@ -121,6 +121,7 @@
                                                                  id="tbl" rowIndexVar="rowIndex"
                                                                  tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                  tableStyle="vertical-align: middle;">
+                                                        <c:if test="#{asignacionAcademicaEscolares.rol.existeListadoOptativas}">
                                                         <p:column headerText="Activa" style="width: 70px;">
                                                             <h:outputText value="#{materia.activa?'Sí':'No'}" rendered="#{materia.materia.idAreaConocimiento.idAreaConocimiento ne 9}"/>
                                                             <p:selectBooleanCheckbox id="validar" value="#{materia.activa}" rendered="#{materia.materia.idAreaConocimiento.idAreaConocimiento eq 9}" 
@@ -129,6 +130,7 @@
                                                                 <p:ajax update="tbl" />
                                                             </p:selectBooleanCheckbox>
                                                         </p:column>
+                                                        </c:if>
                                                         <p:column headerText="Clave" style="width: 70px;"><h:outputText value="#{materia.materia.idMateria}"/></p:column>
                                                         <p:column headerText="Materia"><h:outputText value="#{materia.materia.nombre}"/></p:column>
                                                         <p:column headerText="Estado"><h:outputText value="#{empty materia.dtoCargaAcademica?'Por asignar':'Asignada'}"/></p:column>

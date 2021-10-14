@@ -40,6 +40,7 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Messages;
 
@@ -234,6 +235,8 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
      */
     public void actualizarMaterias(){
         rol.setMateriasPorGrupo(Collections.EMPTY_LIST);
+        List<DtoMateria> materiasOptativas = Collections.EMPTY_LIST;
+        rol.setExisteListadoOptativas(false);
         setAlertas(Collections.EMPTY_LIST);
         if(rol.getPeriodo() == null) return;
         if(rol.getPrograma() == null) return;
@@ -243,6 +246,12 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
 //        System.out.println("resMaterias = " + res);
         if(res.getCorrecto()){
             rol.setMateriasPorGrupo(res.getValor());
+            materiasOptativas =res.getValor().stream().filter(p->p.getMateria().getIdAreaConocimiento().getIdAreaConocimiento()==9).collect(Collectors.toList());
+            if(materiasOptativas.isEmpty() || materiasOptativas.size() <= 1){
+                rol.setExisteListadoOptativas(false);
+            }else{
+                rol.setExisteListadoOptativas(true);
+            }
             /*rol.getMateriasPorGrupo().forEach(dtoMateria -> {
                 System.out.println("dtoMateria.getDtoCargaAcademica() = " + dtoMateria.getDtoCargaAcademica());
             });*/

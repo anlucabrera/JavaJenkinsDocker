@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -230,6 +231,8 @@ public class AsignacionAcademicaEscolares extends ViewScopedRol implements Desar
      */
     public void actualizarMaterias(){
         rol.setMateriasPorGrupo(Collections.EMPTY_LIST);
+        List<DtoMateria> materiasOptativas = Collections.EMPTY_LIST;
+        rol.setExisteListadoOptativas(false);
         setAlertas(Collections.EMPTY_LIST);
         if(rol.getPeriodo() == null) return;
         if(rol.getPrograma() == null) return;
@@ -239,6 +242,12 @@ public class AsignacionAcademicaEscolares extends ViewScopedRol implements Desar
 //        System.out.println("resMaterias = " + res);
         if(res.getCorrecto()){
             rol.setMateriasPorGrupo(res.getValor());
+            materiasOptativas =res.getValor().stream().filter(p->p.getMateria().getIdAreaConocimiento().getIdAreaConocimiento()==9).collect(Collectors.toList());
+            if(materiasOptativas.isEmpty() || materiasOptativas.size() <= 1){
+                rol.setExisteListadoOptativas(false);
+            }else{
+                rol.setExisteListadoOptativas(true);
+            }
             /*rol.getMateriasPorGrupo().forEach(dtoMateria -> {
                 System.out.println("dtoMateria.getDtoCargaAcademica() = " + dtoMateria.getDtoCargaAcademica());
             });*/
