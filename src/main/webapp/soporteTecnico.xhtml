@@ -15,7 +15,7 @@
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="resources/css/procesoElectoral.css" media="screen" />
         </c:if>
-        <!-- Fin estilos par proceso electoral -->
+            <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
     <ui:define name="title">
@@ -39,7 +39,696 @@
                                     <i class="fa fa-at"/>
                                 </div>
                             </div>
-                        </div>                        
+                        </div>  
+                    </div>
+                    <div class="row">     
+                        <div class="col-lg-6 col-md-6 col-xs-12">
+                            <ul>
+                                <li>Inicio</li>
+                                <li>Herramientas Externas</li>
+                                <ul>
+                                    <li>Prontuario</li>
+                                    <li>Revisión por la dirección</li>
+                                </ul>
+                                <li>Retención</li>
+                                <li>Reprobación</li>
+                                <li>Deserción</li>
+
+                                <li>Perfil del personal</li>
+                                <ul>
+                                    <li>Perfil</li>
+                                    <li>Experiencia docente UTXJ</li>
+                                    <li>Contacto de emergencias</li>
+                                    <li>Curriculum vitae</li>
+                                    <ul>
+                                        <li>Datos personales</li>
+                                        <li>Educación</li>
+                                        <li>Habilidades</li>
+                                        <li>Tecnología</li>
+                                        <li>Premios</li>
+                                        <li>Producción profesional</li>
+                                    </ul>
+                                </ul>
+                                <li>Justificación de Asistencia</li>
+                                <ul>
+                                    <li>Incidencias</li>
+                                    <li>Incapacidades</li>
+                                    <li>Cuidados</li>
+                                </ul>
+                                <li>Control escolar</li>
+                                <ul> 
+                                    <li>Usuarios especiales</li>
+                                    <ul>
+                                        <li>Calendario eventos escolares</li> 
+                                        <li>Reporte de Aspirantes</li>
+                                    </ul>
+                                    <li>Administrador</li>
+                                    <ul>
+                                        <li>Eventos escolares</li>
+                                        <ul>
+                                            <li>Registro calendario</li>
+                                            <li>Aperturas extemporáneas</li>
+                                        </ul>
+                                        <li>Apertura Extemporánea</li>
+                                        <ul>
+                                            <li>Grupal</li>
+                                            <li>Estudiante</li>
+                                        </ul>
+                                        <li>Reporte Aperturas</li>
+                                    </ul>
+                                    <li>Secretaría Académica</li>
+                                    <ul>
+                                        <li>Seguimiento de avance programático</li>
+                                    </ul>
+                                    <li>Director Área Académica</li>
+                                    <ul>
+                                        <li>Administración de Planes de Estudio</li>
+                                        <li>Registro de evidencias e instrumentos de evaluación</li>
+                                        <li>Asignación académica</li>
+                                        <li>Asignación Tutor de Grupo</li>
+                                        <li>Planeación Cuatrimestral Validación </li>
+                                        <li>Listas de Asistencia</li>
+                                        <li>Concentrado Asistencias</li>
+                                        <li>Validación Baja</li>
+                                        <li>Fusión de grupos</li>
+                                        <li>Seguimiento de avance programático</li>
+                                        <li>Cédula de Identificación</li>
+                                        <li>Validación de Plan de Acción Tutorial</li>
+                                        <li>Seguimiento Evaluación Estadía</li>
+                                    </ul>
+                                    <li>Servicios Escolares</li>
+                                    <ul>
+                                        <li>Asignación académica</li>
+                                        <li>Generación de grupos</li>
+                                        <li>Proceso de inscripción</li>
+                                        <li>Inscripción Ing | Lic</li>
+                                        <li>Reincorporaciones</li>
+                                        <ul>
+                                            <li>Registro</li>
+                                            <li>Calificaciones</li>
+                                            <li>Reporte</li>
+                                        </ul>                                
+                                        <li>Credencialización</li>
+                                        <li>Registrar Bajas</li>
+                                        <li>Reporte Bajas</li>
+                                        <li>Concentrado Bajas</li>
+                                        <li>Historial Movimientos</li>
+                                        <li>Fusión de grupos</li>
+                                        <li>Cédula de Identificación</li>
+                                        <li>Préstamo de documentos</li>
+                                        <li>Registro documentos oficiales</li>
+                                        <li>Reinscripciones</li>
+                                        <li>Registro de ficha de admisión</li>
+                                    </ul>
+                                    <li>Titulación</li>
+                                    <ul>
+                                        <li>Registro eventos</li>
+                                        <li>Expedientes por Generación</li>
+                                        <li>Expedientes por Matricula</li>
+                                        <li>Registrar Expediente</li>
+                                        <li>Fechas Terminación</li>
+                                    </ul>
+                                    <li>Psicopedagogía</li>
+                                    <ul>
+                                        <li>Dictamen Baja</li>
+                                        <li>Cédula de Identificación</li>
+                                        <li>Seguimiento Tutorías y Asesorías</li>
+                                        <li>Plantilla Plan de Acción Tutorial</li>
+                                        <li>Seguimiento Test Aprendizaje</li>
+                                    </ul>
+                                    <li>Especialista</li>
+                                    <ul>
+                                        <li>Seguimiento Caso Crítico Especialista</li>
+                                    </ul>
+                                    <li>Registro múltiple</li>
+                                    <ul>
+                                        <li>Registrar Notificaciones</li>
+                                        <li>Registro de Asesorías Generales</li>
+                                    </ul>
+                                    <li>Consultas múltiples</li>
+                                    <ul>
+                                        <li>Consultar calificaciones</li>
+                                        <li>Resultado de Planeaciones</li>
+                                        <li>Resultado Registro del estudiante</li>
+                                        <li>Concentrado Calificaciones</li>
+                                        <li>Reportes Académicos</li>
+                                        <li>Seguimiento Evaluación Estadía</li>
+                                    </ul>
+                                    <li>Estadía</li>
+                                    <ul>
+                                        <li>Secretaría Académica</li>
+                                        <ul>
+                                            <li>Calendario eventos</li>
+                                            <li>Reportes</li>
+                                            <li>Formatos</li>
+                                            <ul>
+                                                <li>Reporte mensual</li>
+                                                <li>Carta de aceptación</li>
+                                                <li>Carta de liberación</li>
+                                                <li>Evaluación empresarial</li>
+                                                <li>Presentación estadías 2021</li>
+                                            </ul>
+                                        </ul>
+                                        <li>Coordinador de Estadías</li>
+                                        <ul>
+                                            <li>Seguimiento de estadía</li>
+                                            <li>Calendario eventos</li>
+                                            <li>Reportes</li>
+                                            <li>Formatos</li>
+                                            <ul>
+                                                <li>Reporte mensual</li>
+                                                <li>Carta de aceptación</li>
+                                                <li>Carta de liberación</li>
+                                                <li>Evaluación empresarial</li>
+                                                <li>Presentación estadías 2021</li>
+                                            </ul>
+                                        </ul>
+                                        <li>Director de carrera</li>
+                                        <ul>
+                                            <li>Asignación roles de estadía</li>
+                                            <li>Seguimiento de estadía</li>
+                                            <li>Aperturas extemporáneas</li>
+                                            <li>Calendario eventos</li>
+                                            <li>Reportes</li>
+                                            <li>Formatos</li>
+                                            <ul>
+                                                <li>Reporte mensual</li>
+                                                <li>Carta de aceptación</li>
+                                                <li>Carta de liberación</li>
+                                                <li>Evaluación empresarial</li>
+                                                <li>Presentación estadías 2021</li>
+                                            </ul>
+                                        </ul>
+                                    </ul>
+                                    <li>Docente</li>
+                                    <ul>
+                                        <li>Captura de calificaciones</li>
+                                        <li>Tarea integradora Nivelación</li>
+                                        <li>Configuración Unidad Materia</li>
+                                        <li>Asignación Evidencias e Instrumentos de Evaluación</li>
+                                        <li>Impresión de Planeación Cuatrimestral</li>
+                                        <li>Lista de asistencia</li>
+                                        <li>Seguimiento Pase de Lista Docente</li>
+                                        <li>Seguimiento de avance programático</li>
+                                        <li>Registro de Asesorías</li>
+                                        <li>Solicitar Apertura (En proceso de validación para su activación)</li>
+                                        <ul>
+                                            <li>Grupal</li>
+                                            <li>Estudiante</li>
+                                        </ul>
+                                    </ul>
+                                    <li>Tutor</li>
+                                    <ul>
+                                        <li>Concentrado Asistencias</li>
+                                        <li>Tramitar Baja</li>
+                                        <li>Cédula de Identificación</li>
+                                        <li>Registro de Plan de Acción Tutorial</li>
+                                        <li>Registro de Tutorías Grupales</li>
+                                        <li>Registro de Tutorías Individuales</li>
+                                        <li>Planes de Acción Tutorial</li>
+                                        <li>Seguimiento de Test</li>
+                                        <li>Seguimiento de Evaluación Estadía</li>
+                                    </ul>
+                                    <li>Asesor de estadía</li>
+                                    <ul>
+                                        <li>Asignación estudiantes</li>
+                                        <li>Seguimiento estudiantes</li>
+                                        <li>Calendario eventos</li>
+                                        <li>Formatos</li>
+                                        <ul>
+                                            <li>Reporte mensual</li>
+                                            <li>Carta de aceptación</li>
+                                            <li>Carta de liberación</li>
+                                            <li>Evaluación empresarial</li>
+                                            <li>Presentación estadías 2021</li>
+                                        </ul>
+                                    </ul>
+                                    <li>Coordinador de estadía por área académica</li>
+                                    <ul>
+                                        <li>Seguimiento estudiantes</li>
+                                        <li>Calendario eventos</li>
+                                        <li>Formatos</li>
+                                        <ul>
+                                            <li>Reporte mensual</li>
+                                            <li>Carta de aceptación</li>
+                                            <li>Carta de liberación</li>
+                                            <li>Evaluación empresarial</li>
+                                            <li>Presentación estadías 2021</li>
+                                        </ul>
+                                    </ul>
+                                    <li>estadías para Servicios Escolares</li>
+                                    <ul>                                        
+                                        <ul>
+                                            <li>Registro de eventos</li>
+                                            <li>Entrega de fotografías</li>
+                                            <li>Gestor evaluaciones</li>
+                                            <li>Aperturas extemporáneas</li>
+                                            <li>Reportes</li>
+                                            <li>Formatos</li>
+                                            <ul>
+                                                <li>Reporte mensual</li>
+                                                <li>Carta de aceptación</li>
+                                                <li>Carta de liberación</li>
+                                                <li>Evaluación empresarial</li>
+                                                <li>Presentación estadías 2021</li>
+                                            </ul>
+                                        </ul>
+                                    </ul> 
+                                </ul>
+                                <li>Evaluaciones y encuestas</li>
+                                <ul> 
+                                    <li>Satisfacción de servicios</li>
+                                    <li>Evaluaciones</li>
+                                    <ul>
+                                        <li>Evaluación pares académicos</li>
+                                        <li>Evaluación de Ética</li>
+                                        <li>Evaluación de Desempeño Ambiental</li>
+                                        <li>Desempeño</li>
+                                        <li>360 grados</li>
+                                        <li>Evaluación de control interno</li>
+                                        <li>Clima laboral</li>
+                                    </ul>
+                                    <li>Cuestionarios a personal</li>
+                                    <ul>
+                                        <li>Cuestionario información personal</li>
+                                    </ul>
+                                    <li>Administración evaluaciones</li>
+                                    <ul>
+                                        <li>secretaria académica</li>
+                                        <ul>
+                                            <li>Evaluaciones por carrera</li>
+                                        </ul>
+                                    </ul>
+                                    <li>Seguimiento de Evaluación y Encuestas por parte de: PYE, SA, IYE, directores Académicos y Tutores</li>
+                                    <ul>
+                                        <li>Seguimiento encuestas</li>
+                                        <ul>
+                                            <li>Encuesta satisfacción TSU</li>
+                                            <li>Encuesta satisfacción ING</li>
+                                            <li>Encuesta servicios</li>
+                                            <li>Evaluación Estadía</li>
+                                            <li>Encuesta Condiciones Estudio</li>
+                                        </ul>
+                                    </ul>
+                                    <li>    Seguimiento de Evaluaciones a Tutor y Evaluación a Docente</li>
+                                    <ul>
+                                        <li>Seguimiento Evaluaciones</li>
+                                        <ul>
+                                            <li>Evaluación a Tutor</li>
+                                            <li>Evaluación a Docente</li>
+                                            <li>Cuestionario Psicopedagógico</li>
+                                            <li>Cuestionario Psicopedagógico</li>
+                                            <li>Cuestionario Psicopedagógico</li>
+                                            <li>Ev. Pares Académicos</li>
+                                            <li>Seguimiento Evaluación Ambiental</li>
+                                        </ul>
+                                    </ul>
+                                    <li>Directivos/Directores de carrera</li>
+                                    <ul>
+                                        <li>Administración de Evaluaciones</li>
+                                        <li>Ev. entre pares académicos</li>
+                                        <ul>
+                                            <li>Combinaciones</li>
+                                            <li>Resultados</li>
+                                        </ul>
+                                    </ul>
+                                    <li>Administración de Evaluaciones</li>
+                                    <li>Administración de evaluaciones</li>
+                                    <li>Resultados subordinados</li>
+                                    <li>dministradores especiales</li>
+                                    <ul>
+                                        <li>Jefe de personal</li>
+                                        <ul>
+                                            <li>Genera Evaluaciones</li>
+                                            <li>Resultados generales</li>
+                                        </ul>
+                                        <li>Seguimiento a egresados</li>
+                                        <ul>
+                                            <li>Estudio egresado</li>
+                                            <li>Reporte egresados</li>
+                                        </ul>
+                                    </ul>
+                                    <li>Resultados de evaluaciones</li>
+                                </ul>
+                                <li>Becas para Servicios Estudiantiles</li>
+                                <ul> 
+                                    <li>Reporte Becas</li>
+                                </ul>
+                                <li>Planeación Cuatrimestral</li>
+                                <ul>
+                                    <li>Director</li>
+                                    <li>Sec. Académica</li>
+                                    <li>Dir. Personal</li>
+                                </ul>
+                                <li>Registros de información</li>
+                                <ul>
+                                    <li>Módulos Registro</li>
+                                    <li>Repositorio de Archivos</li>
+                                </ul>
+                                <li>Registro POA</li>
+                                <ul>
+                                    <li>Registro</li>
+                                    <li>Recurso y Justificaciones</li>
+                                    <li>Evaluación</li>
+                                    <li>Cuadro de Mando Integral</li>
+                                    <li>Consulta</li>
+                                    <li>Estatus</li>
+                                </ul>
+                                <li>Titulación</li>
+                                <ul>
+                                    <li>Expedientes</li>
+                                    <ul>
+                                        <li>Registrar Expediente</li>
+                                        <li>Seguimiento por Matricula</li>
+                                        <li>Seguimiento Nivel ING/LIC</li>
+                                        <li>Seguimiento Nivel TSU</li>
+                                    </ul>
+                                    <li>Títulos (Oculto)</li>
+                                    <ul>
+                                        <li>Cargar Título Electrónico</li>
+                                        <li>Listado de Titulados</li>
+                                    </ul>
+                                    <li>Catálogos - Reportes</li>
+                                    <ul>
+                                        <li>Registrar Fechas Documentos</li>
+                                        <li>Reporte por Generación y P.E.</li>
+                                    </ul>
+                                </ul>
+                                <li>Titulación Servicios Escolares</li>
+                                <ul>
+                                    <li>Expedientes</li>
+                                    <ul>
+                                        <li>Seguimiento por Matricula</li>
+                                    </ul>
+                                </ul>
+                                <li>Funciones y organigrama</li>
+                                <ul>
+                                    <li>Organigrama operativo</li>
+                                    <li>Consulta Funciones</li>
+                                </ul>
+                                <li>Herramientas directivos</li>
+                                <ul>
+                                    <li>Perfil de subordinados(as)</li>
+                                    <li>Reporte de Registros</li>
+                                    <li>Incidencias Subordinados</li>
+                                </ul>
+                                <li>SGI</li>
+                                <ul>
+                                    <li>Interacción  de Procesos</li>
+                                    <li>Mandatorios</li>
+                                    <ul>
+                                        <li>Atención a Quejas, Observaciones y Sugerencias</li>
+                                        <li>Acciones Correctivas</li>
+                                        <ul>
+                                            <li>Procedimiento</li>
+                                            <li>Formato</li>
+                                        </ul>
+                                        <li>Control de Salidas No Conforme</li>
+                                        <ul>
+                                            <li>Procedimiento</li>
+                                            <li>Formato</li>
+                                        </ul>
+                                        <li>Control de Registro</li>
+                                        <ul>
+                                            <li>Procedimiento</li>
+                                            <li>Formato</li>
+                                        </ul>
+                                        <li>Control de documentos</li>
+                                        <ul>
+                                            <li>Procedimiento</li>
+                                            <li>Lista Maestra de Doc. Externos</li>
+                                            <li>Lista Maestra de Doc. Internos</li>
+                                            <li>Registro de la Revisión y Aprobación de Documentos</li>
+                                        </ul>
+                                    </ul>
+                                    <li>Auditorias</li>
+                                    <ul>
+                                        <li>Procedimiento</li>
+                                        <li>Informe de Auditoria</li>
+                                        <li>Registro de Hallazgos</li>
+                                    </ul>
+                                    <li>Academia</li>
+                                    <ul>
+                                        <li>Procesos</li>
+                                        <ul>
+                                            <li>Estadía técnica</li>
+                                            <li>Tutorías y Asesorías</li>
+                                            <li>Visitas</li>
+                                            <li>Planeación y Seguimiento Académico</li>
+
+                                        </ul>
+                                        <li>Estadía</li>
+                                        <ul>
+                                            <li>Guía Proceso de Estadía  TSU 2021</li>
+                                            <li>1. Espacios concertados</li>
+                                            <li>2. Concentrado de estadías</li>
+                                            <li>3. Carta de presentación</li>
+                                            <li>4. Carta de aceptación</li>
+                                            <li>5. Seguimiento de la estadía</li>
+                                            <li>6. Informe mensual</li>
+                                            <li>7. Evaluación asesor empresarial</li>
+                                            <li>8. Carta de liberación empresarial</li>
+                                            <li>9. Evaluación, acreditación estadía</li>
+                                            <li>Solicitud Empresas Estadias UTXJ 2021</li>
+                                        </ul>
+                                        <li>Tutorías y Asesorías</li>
+                                        <ul>
+                                            <li>1. Plan Acción Tutorial</li>
+                                            <li>2. Registro General del Estudiante</li>
+                                            <li>3. Test Diagnostico de Aprendizaje</li>
+                                            <ul>
+                                                <li>Multiple 30 test</li>
+                                                <li>Individual 1 test</li>
+                                            </ul>
+                                            <li>4. Diagnóstico del Grupo Tutorado</li>
+                                            <ul>
+                                                <li>Ejemplo</li>
+                                                <li>Formato</li>
+                                            </ul>
+                                            <li>5. Foda Grupal</li>
+                                            <li>6. Tutoría Grupal (con lista de asistencia)</li>
+                                            <li>7. Tutoría Individual y Casos Críticos</li>
+                                            <li>8. Justificante</li>
+                                            <li>9. Asesoría</li>
+                                            <li>10. Citatorio</li>
+                                            <li>11. Supervisión de Tutoría</li>
+                                            <li>12. Expediente de caso en Psicopedagogía</li>
+                                            <li>13. Carnet de Citas de Psicopedagogía</li>
+                                            <li>14. Baja</li>
+                                        </ul>
+                                        <li>Plan de Acción Tutorial</li>
+                                        <ul>
+                                            <li>enero-abril 2021</li>
+                                            <ul>
+                                                <li>Propuesto 2°</li>
+                                                <li>Propuesto 5°</li>
+                                                <li>Propuesto 8°</li>
+                                            </ul>
+                                            <li>mayo-agosto 2021</li>
+                                            <ul>
+                                                <li>Propuesto 3°</li>
+                                                <li>Propuesto 9°</li>
+                                            </ul>
+                                            <li>septiembre-diciembre 2021</li>
+                                            <ul>
+                                                <li>Propuesto 1°</li>
+                                                <li>Propuesto 4°</li>
+                                                <li>Propuesto 7°</li>
+                                                <li>Propuesto 10°</li>
+                                            </ul>
+                                        </ul>
+                                        <li>Planeación y Seguimiento Académico</li>
+                                        <ul>
+                                            <li>1. Distribución de Horas</li>
+                                            <li>2. Horario de grupo</li>
+                                            <li>3. Carga Horaria</li>
+                                            <li>4. Matriz de espacios</li>
+                                            <li>5. Relación de Practicas</li>
+                                        </ul>
+                                        <li>Visitas</li>
+                                        <ul>
+                                            <li>2. Programa de visitas</li>
+                                            <li>3. Confirmación, Itinerario e informe de Visitas 2020</li>
+                                            <li>4. Listado de estudiantes con eSS vigente</li>
+                                            <li>5. Carta Responsiva</li>
+                                            <li>6. Encuesta Proceso de Visitas</li>
+                                        </ul>
+                                    </ul>
+                                    <li>Vinculación</li>
+                                    <ul>
+                                        <li>Escuela - Organización</li>
+                                    </ul>
+                                    <li>Finanzas</li>
+                                    <ul>
+                                        <li>Proceso de administración de recursos</li>
+                                    </ul>
+                                    <li>14001</li>
+                                    <ul>
+                                        <li>4.1 Compresión de la UTXJ y su contexto</li>
+                                        <li>4.2 Compresión de las necesidades y expectativas de las Partes Interesadas</li>
+                                        <li>Matriz de Aspectos Ambientales</li>
+                                        <ul>      
+                                            <li>Enseñanza - Aprendizaje</li>
+                                            <li>Administrativo</li>
+                                            <li>Servicios Materiales</li>
+                                            <li>Modificaciones</li>
+                                            <li>Clínica TFAR</li>
+                                        </ul>
+                                        <li>Obligaciones Legales</li>
+                                        <ul>          
+                                            <li>Federal</li>
+                                            <li>Estatal</li>
+                                            <li>Municipal</li>
+                                        </ul>
+                                        <li>6.1 Acciones para bordar riesgos y oportunidades</li>
+                                        <li>Pocedimientos</li>
+                                        <ul>          
+                                            <li>Agua</li>
+                                            <li>Energía</li>
+                                            <li>Papel</li>
+                                            <li>Almacenamiento de residuos</li>
+                                            <li>RPBI</li>
+                                        </ul>
+                                        <li>Bitácora de RP</li>
+                                        <li>Bitácora de RPBI</li>
+                                        <li>Etiquetas de RP</li>
+                                    </ul>
+                                    <li>9001</li>
+                                    <ul>
+                                        <li>4.1 Comprensión de la UTXJ y su contexto</li>
+                                        <li>4.2 Compresión de las necesidades y expectativas de las Partes Interesadas</li>
+                                        <li>6.1 Acciones para abordar riesgos y oportunidades</li>
+                                        <li>7.1.6 Capital del conocimiento</li>
+                                        <li>7.4 Cédula de Comunicación</li>
+                                    </ul>
+                                    <li>Procedimientos</li>
+                                    <ul>
+                                        <li>Atención a quejas</li>
+                                    </ul>
+                                    <li>Revisión Por La Dirección</li>
+                                    <ul>
+                                        <li>Revisión Por La Dirección </li>
+                                    </ul>
+                                    <li>Planificación</li>
+                                    <ul>
+                                        <li>Planificación </li>
+                                    </ul>
+                                </ul>
+                                <li>ACADEMIA DE EOE Y FSC</li>
+                                <ul>
+                                    <li>Formación Sociocultural</li>
+                                    <ul>
+                                        <li>Formación Sociocultural</li>
+                                        <li>Manual de Prácticas UTXJ Formación Sociocultural II</li>
+                                        <li>Manual de Prácticas UTXJ Formación Sociocultural III</li>
+                                        <li>Manual de Prácticas UTXJ Formación Sociocultural IV</li>
+                                        <li>Manual de asignatura UTXJ Formación Sociocultural III</li>
+                                        <li>Manual de asignatura UTXJ Formación Sociocultural IV</li>
+                                    </ul>
+                                    <li>Expresión Oral y Escrita</li>
+                                    <ul>
+                                        <li>Manual de Prácticas UTXJ EOyE II</li>
+                                    </ul>
+                                </ul>
+                                <li>Diseño Instruccional</li>
+                                <ul>
+                                    <li>Formación Sociocultural</li>  
+                                    <ul>
+                                        <li>FSC I</li>
+                                        <li>FSC I Mantenimiento</li>
+                                        <li>FSC I Mantenimiento</li>
+                                        <li>FSC II Mantenimiento </li>
+                                        <li>FSC III</li>
+                                        <li>FSC IV</li>
+                                        <li>FSC II Procesos</li>
+                                        <li>FSC II SALUD, TIC, ADMON, AGRO, GASTRO</li>
+                                        <li>FSC IV PROCESOS, MANTO, GASTRO</li>
+                                        <li>FSC II QUÍMICA</li>
+                                        <li>FSC III QUÍMICA</li>
+                                    </ul>
+                                    <li>Expresión Oral y Escrita</li>
+                                    <ul>
+                                        <li>EOE I</li>
+                                        <li>EOE II</li>
+                                        <li>EOE II MANTO, SALUD, TIC, ADMON, MECA, AGRICULTURA, GASTRO</li>
+                                        <li>EOE II PROCESOS</li>                        
+                                    </ul>
+                                </ul>
+                                <li>ADMINISTRADOR</li>
+                                <ul>
+                                    <li>Administración POA</li>
+                                    <ul>
+                                        <li>Asignación Presupuesto</li>
+                                        <li>Evaluación</li>
+                                        <li>Programa Anual de Trabajo</li>
+                                        <li>Reportes</li>
+                                        <li>Validación final</li>
+                                        <li>Validación finanzas</li>
+                                        <li>Validación Programación</li>                        
+                                    </ul>
+                                    <li>Control Escolar</li>
+                                    <ul>
+                                        <li>Reportes Planeación C</li>
+                                    </ul>
+                                    <li>Errores</li>
+                                    <li>Incidencias</li>
+                                    <ul>
+                                        <li>Reportes</li>
+                                    </ul>
+                                    <li>Usuarios</li>
+                                    <ul>
+                                        <li>Datos Acceso Alumnos</li>
+                                        <li>Datos Acceso Personal</li>
+                                    </ul>
+                                    <li>Plantilla laboral</li>
+                                    <ul>
+                                        <li>Activo</li>
+                                        <li>Configuración</li>
+                                        <li>Incidencias Personal</li>
+                                        <li>Reporte de Registros</li>
+                                    </ul>
+                                </ul>
+                                <li>Personal</li>
+                                <ul>
+                                    <li>Plantilla laboral</li>
+                                    <ul>
+                                        <li>Activo</li>
+                                        <li>Altas y bajas</li>
+                                        <li>Configuración</li>
+                                        <li>Incidencias Personal</li>
+                                        <li>Contactos de emergencia</li>
+                                        <li>Reporte de Registros</li>
+                                    </ul>
+                                </ul>
+                                <li>Estadística</li>
+                                <ul>
+                                    <li>Plantilla Personal</li>
+                                    <li>Histórico Plantilla Personal</li>
+                                </ul>
+                                <li>Fortalecimiento</li>
+                                <ul>
+                                    <li>Plantilla docente</li>
+                                </ul>
+                                <li>Comunicación interna</li>
+                                <ul>
+                                    <li>Directorio de Correos</li>
+                                    <li>Directorio Estudiantes Tutorados</li>
+                                    <li>Mensajería</li>
+                                </ul>
+                                <li>Documentación</li>
+                                <ul>
+                                    <li>Manual de Organización</li>
+                                    <li>Manual de Procedimientos Administrativos</li>
+                                    <li>Código de conducta</li>
+                                    <li>Código de ética</li>
+                                    <li>Modelo Nacional de Tutorías de la CGUTyP</li>
+                                    <li>Programa Institucional de Tutorías</li>
+                                    <li>Resumen del Modelo Nacional de Tutorías de la CGUTyP</li>
+                                    <li>Soporte técnico</li>
+                                    <li>Calendario</li>
+                                </ul>
+                            </ul>
+                        </div>      
                     </div>
                 </div>
             </div>
