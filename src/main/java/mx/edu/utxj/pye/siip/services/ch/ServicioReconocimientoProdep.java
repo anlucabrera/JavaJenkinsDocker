@@ -5,18 +5,15 @@
  */
 package mx.edu.utxj.pye.siip.services.ch;
 
-import static com.github.adminfaces.starter.util.Utils.addDetailMessage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
-import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
@@ -50,7 +47,6 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
     @EJB Facade f;
     @EJB EjbModulos ejbModulos;
     @EJB EjbCuerposAcademicos ejbCuerposAcademicos;
-    @Inject ControladorEmpleado controladorEmpleado;
    
     @Override
     public List<DTOReconocimientoProdep> getListaReconocimientoProdep(String rutaArchivo) throws Throwable {
@@ -248,14 +244,15 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
     }
 
     @Override
-    public List<DTOReconocimientoProdep> getRegistroDTOReconocimientosProdep(String mes, Short ejercicio) {
+    public List<DTOReconocimientoProdep> getRegistroDTOReconocimientosProdep(String mes, Short ejercicio, Short area) {
+        System.err.println("getRegistroDTOReconocimientosProdep - mes - ejercicio - area " + mes + " " + ejercicio + " " + area);
         List<DTOReconocimientoProdep> ldto = new ArrayList<>();
         TypedQuery<ReconocimientoProdepRegistros> q = f.getEntityManager()
                 .createQuery("SELECT r from ReconocimientoProdepRegistros r WHERE r.registros.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio AND r.registros.eventoRegistro.mes = :mes AND r.registros.area = :area", ReconocimientoProdepRegistros.class);
 //         AND r.registros.area = :area
         q.setParameter("mes", mes);
         q.setParameter("ejercicio", ejercicio);
-        q.setParameter("area", controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+        q.setParameter("area", area);
         List<ReconocimientoProdepRegistros> l = q.getResultList();
         if (l.isEmpty() || l == null) {
             return null;
@@ -269,10 +266,11 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                 Personal personal = f.getEntityManager().find(Personal.class, x.getDocente());
                 ReconocimientoProdepTiposApoyo reconocimientoProdepTiposApoyo = f.getEntityManager().find(ReconocimientoProdepTiposApoyo.class, x.getTipoApoyo().getTipo());
                 if(x.getCuerpAcad() !=null){
-                    TypedQuery<CuerposAcademicosRegistro> cuerposAcad = f.getEntityManager().createQuery("SELECT ca FROM CuerposAcademicosRegistro ca WHERE ca.cuerpoAcademico = :cuerpoAcademico AND ca.registros.eventoRegistro=:evento", CuerposAcademicosRegistro.class);
-                    cuerposAcad.setParameter("cuerpoAcademico", x.getCuerpAcad().getCuerpoAcademico());
-                    cuerposAcad.setParameter("evento", x.getRegistros().getEventoRegistro());
-                    CuerposAcademicosRegistro cuerposAcademicosRegistro = f.getEntityManager().find(CuerposAcademicosRegistro.class, cuerposAcad.getSingleResult().getRegistro());
+                    CuerposAcademicosRegistro cuerposAcademicosRegistro = f.getEntityManager().createQuery("SELECT ca FROM CuerposAcademicosRegistro ca WHERE ca.cuerpoAcademico = :cuerpoAcademico ORDER BY ca.registros.eventoRegistro.eventoRegistro DESC", CuerposAcademicosRegistro.class)
+                        .setParameter("cuerpoAcademico", x.getCuerpAcad().getCuerpoAcademico())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
                     AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
                     ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null : registro.getActividadesPoaList().get(0);
                     DTOReconocimientoProdep dto;
@@ -283,6 +281,7 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                     }
                     ldto.add(dto);
                 } else{
+                    System.err.println("getRegistroDTOReconocimientosProdep - CA NULL ");
                     CuerposAcademicosRegistro cuerposAcademicosRegistro = null;
                     AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
                     ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null : registro.getActividadesPoaList().get(0);
@@ -300,7 +299,7 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
     }
 
     @Override
-    public List<DTOReconocimientoProdep> getRegistroRecProdep(Short ejercicio) {
+    public List<DTOReconocimientoProdep> getRegistroRecProdep(Short ejercicio, Short area) {
         List<DTOReconocimientoProdep> ldto = new ArrayList<>();
         TypedQuery<ReconocimientoProdepRegistros> q = f.getEntityManager()
                 .createQuery("SELECT r from ReconocimientoProdepRegistros r INNER JOIN r.registros reg INNER JOIN reg.eventoRegistro er WHERE er.ejercicioFiscal.ejercicioFiscal = :ejercicio", ReconocimientoProdepRegistros.class);
@@ -319,10 +318,11 @@ public class ServicioReconocimientoProdep implements EjbReconocimientoProdep{
                 Personal personal = f.getEntityManager().find(Personal.class, x.getDocente());
                 ReconocimientoProdepTiposApoyo reconocimientoProdepTiposApoyo = f.getEntityManager().find(ReconocimientoProdepTiposApoyo.class, x.getTipoApoyo().getTipo());
                 if (x.getCuerpAcad() != null) {
-                    TypedQuery<CuerposAcademicosRegistro> cuerposAcad = f.getEntityManager().createQuery("SELECT ca FROM CuerposAcademicosRegistro ca WHERE ca.cuerpoAcademico = :cuerpoAcademico AND ca.registros.eventoRegistro=:evento", CuerposAcademicosRegistro.class);
-                    cuerposAcad.setParameter("cuerpoAcademico", x.getCuerpAcad().getCuerpoAcademico());
-                    cuerposAcad.setParameter("evento", x.getRegistros().getEventoRegistro());
-                    CuerposAcademicosRegistro cuerposAcademicosRegistro = f.getEntityManager().find(CuerposAcademicosRegistro.class, cuerposAcad.getSingleResult().getRegistro());
+                    CuerposAcademicosRegistro cuerposAcademicosRegistro = f.getEntityManager().createQuery("SELECT ca FROM CuerposAcademicosRegistro ca WHERE ca.cuerpoAcademico = :cuerpoAcademico ORDER BY ca.registros.eventoRegistro.eventoRegistro DESC", CuerposAcademicosRegistro.class)
+                        .setParameter("cuerpoAcademico", x.getCuerpAcad().getCuerpoAcademico())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
                     AreasUniversidad au = f.getEntityManager().find(AreasUniversidad.class, registro.getArea());
                     ActividadesPoa a = registro.getActividadesPoaList().isEmpty() ? null : registro.getActividadesPoaList().get(0);
                     DTOReconocimientoProdep dto;

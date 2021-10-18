@@ -57,11 +57,11 @@ public interface EjbReconocimientoProdep {
      * @param mes Mes del ejercicio fiscal.
      * @return Lista de registros.
      */
-   public List<DTOReconocimientoProdep> getRegistroDTOReconocimientosProdep(String mes, Short ejercicio);
+   public List<DTOReconocimientoProdep> getRegistroDTOReconocimientosProdep(String mes, Short ejercicio, Short area);
    
     /**
      * Obtiene la lista de registros actuales del registro
      * @return Lista de registros
      */
-    public List<DTOReconocimientoProdep> getRegistroRecProdep(Short ejercicio);
+    public List<DTOReconocimientoProdep> getRegistroRecProdep(Short ejercicio, Short area);
 }

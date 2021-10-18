@@ -101,17 +101,17 @@ public class ControladorReconocimientoProdep implements Serializable{
             return;
         }
         
-        dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistro((short) 50));
+        dto.setSelectItemEjercicioFiscal(ejbItems.itemEjercicioFiscalPorRegistroUsuarioOtraArea((short) 50, dto.getArea()));
         dto.setAreaPOA(ejbFiscalizacion.getAreaConPOA(dto.getArea()));
         dto.setClavesAreasSubordinadas(ejbFiscalizacion.getAreasSubordinadasSinPOA(dto.getAreaPOA()).stream().map(a -> a.getArea()).collect(Collectors.toList()));
        
+        initFiltros();
+        
         try {
             dto.setEventoActual(ejbModulos.getEventoRegistro());
         } catch (EventoRegistroNoExistenteException ex) {
             Logger.getLogger(ControladorReconocimientoProdep.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        initFiltros();
         
         clavePersonal = controladorEmpleado.getNuevoOBJListaPersonal().getClave();
         claveRegistro = 21;
@@ -127,15 +127,20 @@ public class ControladorReconocimientoProdep implements Serializable{
         try {
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 21);
-            if (areaRegistro == null) {
-                ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-                if(area.getCorrecto()){
-                    dto.setArea(area.getValor().getArea());
-                }else{
-                    dto.setArea(null);
+            
+            if(controladorEmpleado.getNuevoOBJListaPersonal().getClave()==16){
+                dto.setArea((short)12);
+            }else{
+                if (areaRegistro == null) {
+                    ResultadoEJB<AreasUniversidad> area = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                    if (area.getCorrecto()) {
+                        dto.setArea(area.getValor().getArea());
+                    } else {
+                        dto.setArea(null);
+                    }
+                } else {
+                    dto.setArea(areaRegistro.getArea());
                 }
-            } else {
-                dto.setArea(areaRegistro.getArea());
             }
         } catch (Exception ex) {
             dto.setArea(null);
@@ -144,12 +149,14 @@ public class ControladorReconocimientoProdep implements Serializable{
     
      public void initFiltros(){
         if (dto.getSelectItemEjercicioFiscal() == null) {
-           Messages.addGlobalInfo("No existen registros");
+            Messages.addGlobalInfo("No existen registros");
         } else {
-            dto.setEjercicioFiscal((short) ejbItems.itemEjercicioFiscalPorRegistro((short) 50).get(0).getValue());
-            dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 50, dto.getEjercicioFiscal()));
-            filtroReconocimientosProdep(dto.getSelectItemMes().get(0).getLabel(), dto.getEjercicioFiscal());
-        }
+            System.err.println("initFiltros - area " + dto.getArea());
+            dto.setEjercicioFiscal((short) ejbItems.itemEjercicioFiscalPorRegistroUsuarioOtraArea((short) 50, dto.getArea()).get(0).getValue());
+            dto.setSelectItemMes(ejbItems.itemMesesPorRegistroUsuarioOtraArea((short) 50, dto.getEjercicioFiscal(), dto.getArea()));
+            System.err.println("initFiltros - ejercicio " + dto.getEjercicioFiscal());
+            filtroReconocimientosProdep(dto.getSelectItemMes().get(0).getLabel(), dto.getEjercicioFiscal(), dto.getArea());
+        }     
         
     }
    
@@ -161,14 +168,14 @@ public class ControladorReconocimientoProdep implements Serializable{
      * se inicializan los filtrados
      */
     public void seleccionarMes(Short ejercicioFiscal) {
-        dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 50, ejercicioFiscal));
-        filtroReconocimientosProdep(dto.getSelectItemMes().get(-1).getLabel(),ejercicioFiscal);
+        dto.setSelectItemMes(ejbItems.itemMesesPorRegistroUsuarioOtraArea((short) 50, ejercicioFiscal, dto.getArea()));
+        filtroReconocimientosProdep(dto.getSelectItemMes().get(0).getLabel(),ejercicioFiscal, dto.getArea());
     }
 
-    public void filtroReconocimientosProdep(String mes, Short ejercicio) {
+    public void filtroReconocimientosProdep(String mes, Short ejercicio, Short area) {
         dto.setMes(mes);
         dto.setEjercicioFiscal(ejercicio);
-        dto.setLista(ejbReconocimientoProdep.getRegistroDTOReconocimientosProdep(mes, ejercicio));
+        dto.setLista(ejbReconocimientoProdep.getRegistroDTOReconocimientosProdep(mes, ejercicio, area));
         if (dto.getLista().isEmpty() || dto.getLista()== null) {
             Messages.addGlobalWarn("No hay información registrada en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
         }
@@ -267,7 +274,7 @@ public class ControladorReconocimientoProdep implements Serializable{
     public void alinearRegistro(){
         Boolean alineado = ejbEvidenciasAlineacion.alinearRegistroActividad(dto.getAlineacionActividad(), dto.getRegistro().getReconocimientoProdepRegistros().getRegistro());
         if (alineado) {
-            filtroReconocimientosProdep(dto.getMes(), dto.getEjercicioFiscal());
+            filtroReconocimientosProdep(dto.getMes(), dto.getEjercicioFiscal(), dto.getArea());
             abrirAlineacionPOA(dto.getRegistro());
             Messages.addGlobalInfo("El registro se alineó de forma correcta.");
         } else {
@@ -349,7 +356,7 @@ public class ControladorReconocimientoProdep implements Serializable{
     public void subirEvidencias(){
         Map.Entry<Boolean, Integer> res = ejbEvidenciasAlineacion.registrarEvidenciasARegistro(dto.getRegistro().getReconocimientoProdepRegistros().getRegistro(), dto.getArchivos(), dto.getEventoActual(), dto.getRegistroTipo());
         if (res.getKey()) {
-            filtroReconocimientosProdep(dto.getMes(), dto.getEjercicioFiscal());
+            filtroReconocimientosProdep(dto.getMes(), dto.getEjercicioFiscal(), dto.getArea());
             Messages.addGlobalInfo("Las evidencias se registraron correctamente.");
         } else {
             Messages.addGlobalError(String.format("Se registraron %s de %s evidencias, verifique e intente agregar las evidencias faltantes.", res.getValue().toString(), String.valueOf(dto.getArchivos().size())));

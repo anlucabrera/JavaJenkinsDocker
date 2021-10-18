@@ -666,4 +666,115 @@ public class ServicioSelectItems implements EJBSelectItems {
                 .getResultList();
     }
 
+    @Override
+    public List<SelectItem> itemEjercicioFiscalPorRegistroUsuarioOtraArea(Short tipo, Short area) {
+        List<Registros> registrosArea = getListaRegistrosAreaTipoUsuarioOtraArea(tipo, area);
+//        System.err.println("lo registros del area son = : "+ registrosArea);
+        List<SelectItem> ls = new ArrayList<>();
+        if (registrosArea == null) {
+//            ls.add(new SelectItem((short)1, "Aun no hay registros ligados a un ejercicio"));
+            return null;
+        } else {
+            for (Registros r : registrosArea) {
+                ls.add(new SelectItem(r.getEventoRegistro().getEjercicioFiscal().getEjercicioFiscal(), r.getEventoRegistro().getEjercicioFiscal().getAnio() + ""));
+                
+            }
+            //System.err.println("se imprimen las areas del registro ");
+            getListaRegistrosAreaTipoUsuarioOtraArea(tipo, area);
+            
+            return ls.stream().filter(distinctByKey(x -> x.getLabel())).collect(Collectors.toList());
+             
+        }
+    }
+    
+    public List<SelectItem> itemMesesPorRegistroUsuarioOtraArea(Short tipo, Short ejercicio, Short area) {
+        List<Registros> registrosArea = getListaRegistrosAreaTipoEjercicioUsuarioOtraArea(tipo, ejercicio, area);
+        //System.err.println("lo registros del area son = : "+ registrosArea);
+        List<SelectItem> ls = new ArrayList<>();
+        if (registrosArea == null) {
+//            ls.add(new SelectItem((short)1, "Aun no hay registros ligados a un mes"));
+            return null;
+        } else {
+            for (Registros r : registrosArea) {
+                ls.add(new SelectItem(r.getEventoRegistro().getMes(), r.getEventoRegistro().getMes()));
+//                ls.sort(Comparator.comparing(SelectItem::getLabel));
+            }
+            
+            return ls.stream().filter(distinctByKey(x -> x.getLabel())).collect(Collectors.toList());
+        }
+    }
+    
+    public List<Registros> getListaRegistrosAreaTipoUsuarioOtraArea(Short tipo, Short area) {
+       TypedQuery<AreasUniversidad> qa = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a", AreasUniversidad.class);
+        List<AreasUniversidad> listaAreasConPoa = qa.getResultStream().filter(x -> (x.getTienePoa() && x.getArea().equals(area)
+                || (x.getTienePoa() && x.getArea().equals(area)))).collect(Collectors.toList());
+
+        if (listaAreasConPoa == null || listaAreasConPoa.isEmpty()) {
+            return null;
+        } else {
+
+            listaAreasConPoa.forEach(x -> {
+                //System.err.println("El personal es --->" + x);
+            });
+            Short areaSeleccionada = listaAreasConPoa.get(0).getArea();
+            List<Registros> qr = new ArrayList<>();
+            
+            if (areaSeleccionada == 6 || areaSeleccionada == 9) {
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
+                .setParameter("tipo", tipo)
+                .getResultList();
+                        
+            } else {
+                areas = ejbModulos.getAreasDependientes(areaSeleccionada);
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area IN :areas ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
+                .setParameter("tipo", tipo)
+                .setParameter("areas", areas)
+                .getResultList();
+            }
+            if (qr == null || qr.isEmpty()) {
+                return null;
+            } else {
+                return qr;
+            }
+        }
+    }
+    
+    public List<Registros> getListaRegistrosAreaTipoEjercicioUsuarioOtraArea(Short tipo, Short ejercicio, Short area) {
+        TypedQuery<AreasUniversidad> qa = f.getEntityManager().createQuery("SELECT a from AreasUniversidad a", AreasUniversidad.class);
+        List<AreasUniversidad> listaAreasConPoa = qa.getResultStream().filter(x -> (x.getTienePoa() && x.getArea().equals(area)
+                || (x.getTienePoa() && x.getArea().equals(area)))).collect(Collectors.toList());
+
+        if (listaAreasConPoa == null || listaAreasConPoa.isEmpty()) {
+            return null;
+        } else {
+
+            listaAreasConPoa.forEach(x -> {
+                //System.err.println("El personal es --->" + x);
+            });
+            Short areaSeleccionada = listaAreasConPoa.get(0).getArea();
+            List<Registros> qr = new ArrayList<>();
+            
+            if (areaSeleccionada == 6 || areaSeleccionada == 9) {
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
+                        .setParameter("tipo", tipo)
+                        .setParameter("ejercicio", ejercicio)
+                        .getResultList();
+
+            } else {
+                areas = ejbModulos.getAreasDependientes(areaSeleccionada);
+
+                qr = f.getEntityManager().createQuery("SELECT r FROM Registros r WHERE r.tipo.registroTipo = :tipo AND r.area IN :areas AND r.eventoRegistro.ejercicioFiscal.ejercicioFiscal = :ejercicio ORDER BY r.eventoRegistro.eventoRegistro DESC", Registros.class)
+                        .setParameter("tipo", tipo)
+                        .setParameter("areas", areas)
+                        .setParameter("ejercicio", ejercicio)
+                        .getResultList();
+            }
+            if (qr == null || qr.isEmpty()) {
+                return null;
+            } else {
+                return qr;
+            }
+        }
+    }
+
 }

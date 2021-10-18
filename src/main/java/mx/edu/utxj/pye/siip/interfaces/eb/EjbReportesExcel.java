@@ -107,7 +107,7 @@ public interface EjbReportesExcel {
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */
-    public String getReporteRecProdep(Short ejercicio) throws Throwable;
+    public String getReporteRecProdep(Short ejercicio, Short area) throws Throwable;
     
     /**
     * Genera reporte de registro de Comisiones Académicas y Participantes

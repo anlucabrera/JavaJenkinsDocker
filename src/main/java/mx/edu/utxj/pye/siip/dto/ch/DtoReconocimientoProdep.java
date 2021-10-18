@@ -205,7 +205,7 @@ public class DtoReconocimientoProdep {
     public void setClaveActividad(Integer claveActividad) {
         this.claveActividad = claveActividad;
     }
-    
+
     public void setSelectItemMes(List<SelectItem> selectItemMes) {
         this.selectItemMes = selectItemMes;
     }
