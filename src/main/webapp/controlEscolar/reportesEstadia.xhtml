@@ -313,17 +313,20 @@
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
                                                             <p:column headerText="Programa educativo" style="width: 400px;"/>
-                                                            <p:column headerText="Acreditados(as) Evaluación" style="width: 100px;"/>
-                                                            <p:column headerText="No acreditados(as) Evaluación" style="width: 100px;"/>
+                                                            <p:column headerText="Total" style="width: 100px;"/>
+                                                            <p:column headerText="Aprobaron Evaluación" style="width: 100px;"/>
+                                                            <p:column headerText="No aprobaron Evaluación" style="width: 100px;"/>
+                                                            <p:column headerText="% de Acreditación de Evaluación" style="width: 100px;"/>
                                                             <p:column headerText="Validados(as) por Dirección" style="width: 100px;"/>
                                                             <p:column headerText="No validados(as) por Dirección" style="width: 100px;"/>
-                                                            <p:column headerText="Total" style="width: 100px;"/>
-                                                            <p:column headerText="% de Acreditación de Evaluación" style="width: 100px;"/>
                                                             <p:column headerText="% de Validación por Dirección" style="width: 100px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{eficienciaEstDatCom.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{eficienciaEstDatCom.seguimiento}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{eficienciaEstDatCom.acreditaron}"/>
@@ -332,16 +335,13 @@
                                                          <h:outputText value="#{eficienciaEstDatCom.noAcreditaron}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
+                                                         <h:outputText value="#{eficienciaEstDatCom.eficienciaEstadia}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
                                                         <h:outputText value="#{eficienciaEstDatCom.validadosDireccion}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                          <h:outputText value="#{eficienciaEstDatCom.noValidadosDireccion}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                         <h:outputText value="#{eficienciaEstDatCom.seguimiento}"/>
-                                                    </p:column>
-                                                    <p:column style="text-align: center;">
-                                                         <h:outputText value="#{eficienciaEstDatCom.eficienciaEstadia}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                          <h:outputText value="#{eficienciaEstDatCom.eficienciaValidacionDireccion}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
