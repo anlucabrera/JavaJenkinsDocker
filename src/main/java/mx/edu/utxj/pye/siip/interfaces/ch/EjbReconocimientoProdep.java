@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.siip.interfaces.ch;
 
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.pye2.CuerposAcademicosRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ReconocimientoProdepRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.ReconocimientoProdepTiposApoyo;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
@@ -41,9 +42,10 @@ public interface EjbReconocimientoProdep {
    /**
      * Método que verifica si existe otro registro en la tabla de la base de datos con la misma información.
      * @param reconocimientoProdepRegistros
+     * @param eventosRegistros
      * @return entity.
      */
-   public ReconocimientoProdepRegistros getRegistroReconocimientoProdepRegistros(ReconocimientoProdepRegistros reconocimientoProdepRegistros);
+   public ReconocimientoProdepRegistros getRegistroReconocimientoProdepRegistros(ReconocimientoProdepRegistros reconocimientoProdepRegistros, EventosRegistros eventosRegistros);
    
     /**
      * Obtiene la lista de tipo de reconocimiento prodep actuales.
@@ -55,13 +57,23 @@ public interface EjbReconocimientoProdep {
      * Obtiene la lista de registros filtrado por ejercicio y mes seleccionado.
      * @param ejercicio Ejercicio fiscal.
      * @param mes Mes del ejercicio fiscal.
+     * @param area Clave del área de FDA.
      * @return Lista de registros.
      */
    public List<DTOReconocimientoProdep> getRegistroDTOReconocimientosProdep(String mes, Short ejercicio, Short area);
    
     /**
      * Obtiene la lista de registros actuales del registro
+     * @param ejercicio Ejercicio fiscal.
+     * @param area Clave del área de FDA.
      * @return Lista de registros
      */
     public List<DTOReconocimientoProdep> getRegistroRecProdep(Short ejercicio, Short area);
+    
+     /**
+     * Método que verifica si existe otro registro en la tabla de la base de datos con la misma información.
+     * @param cuerpoAcademico
+     * @return entity.
+     */
+   public CuerposAcademicosRegistro getRegistroCuerpoAcademicoRegistros(String cuerpoAcademico);
 }

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="true"/>
+        <h:outputStylesheet library="css" name="tablaDatos.css" />
+        <h:outputScript library="js" name="dialogs.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <h:outputStylesheet library="css" name="procesoElectoral.css" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+    <ui:define name="title">
+        Reconocimiento PRODEP
+    </ui:define>
+
+    <ui:define name="description">
+        Asegurar la Calidad Académica
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Asegurar la Calidad Académica - Reconocimiento PRODEP"/>
+        <adm:sidebar collapsed="true"/>
+        <p:importEnum type="mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa" var="etapa" allSuffix="ETAPAS" />
+        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+            <h1>
+                Esta página está disponible solo para pantallas superiores a 1024px.
+            </h1>
+        </p:panel>
+        <c:if test="#{recProdepPYE.listaReg ne null}">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                        <h:form prependId="true" id="frmMainButtons" class="form-inline">
+                            <p:outputPanel >
+                                <p:autoUpdate/>
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="10" />
+                                            <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                            <p:outputLabel value="Ejercicio Fiscal" class="form-inline"/>
+                                            <p:spacer width="15" class="form-inline"/>
+                                            <div class="btn-group">                                        
+                                                <p:selectOneMenu value="#{recProdepPYE.dto.ejercicioFiscal}">
+                                                    <f:selectItems value="#{recProdepPYE.dto.selectItemEjercicioFiscal}"/>
+                                                    <p:ajax process="@this" update="@(form)" listener="#{recProdepPYE.seleccionarMes(recProdepPYE.dto.ejercicioFiscal)}"/>
+                                                </p:selectOneMenu>
+                                            </div>
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <!-- Criterio de búsqueda dependiendo la naturaleza del registro -->
+                                            <p:outputLabel value="Mes" class="form-inline"/>
+                                            <p:spacer width="15" class="form-inline"/>
+                                            <div class="btn-group">
+                                                <p:selectOneMenu id="somEjercicioF" value="#{recProdepPYE.dto.mes}" >
+                                                    <f:selectItems value="#{recProdepPYE.dto.selectItemMes}"/>
+                                                    <p:ajax process="@this" update="@(form)" listener="#{recProdepPYE.filtroReconocimientosProdep(recProdepPYE.dto.mes, recProdepPYE.dto.ejercicioFiscal, recProdepPYE.dto.area)}" />
+                                                </p:selectOneMenu>
+                                            </div>
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <c:if test="#{recProdepPYE.dto.ejercicioFiscal ne null}">
+                                            <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteRecProdep(recProdepPYE.dto.ejercicioFiscal, recProdepPYE.dto.area)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
+                                        </c:if>
+                                        <p:commandLink class="btn btn-primary btn-sm" ajax="false" action="/siip/modulosRegistro/menu_general?faces-redirect=true" title="Regresar a menú de registro"><i class="fa fa-reply"></i></p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                                <p:sticky target="tb" />
+                            </p:outputPanel>
+                        </h:form>
+                    </div>
+                    <p:separator/>
+
+                    <div class="box-body">
+                        <!-- Sección de visualización y eliminación -->
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <center>
+                                    <c:if test="#{controladorArchivoReconocimiento.etapa eq etapa.MOSTRAR}">
+                                        <h:form id="formMuestraDatosActivos">
+                                            <p:remoteCommand name="actualizar" update="@form:dtbRecProdep" />
+                                            <p:dataTable id="dtbRecProdep" emptyMessage="Sin datos en el periodo seleccionado." value="#{recProdepPYE.dto.lista}" var="recProdep"
+                                                         paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                         resizeMode="expand"
+                                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                         rendered="true">
+                                                <p:columnGroup type="header">
+                                                    <p:row>
+                                                        <p:column rowspan="2" headerText="Opciones" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Nombre" style="width: 120px;"/>
+                                                        <p:column rowspan="2" headerText="Cuerpo Académico" style="width: 150px;"/>
+                                                        <p:column rowspan="2" headerText="Clave Cuerpo Académico" style="width: 100px;"/>
+                                                        <p:column rowspan="2" headerText="Tipo de Apoyo" style="width: 150px;"/>
+                                                        <p:column rowspan="2" headerText="Monto" style="width: 80px;"/>
+                                                        <p:column colspan="2" headerText="Vigencia" style="width: 200px;"/>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column headerText="Fecha Inicial" style="width: 100px;"/>
+                                                        <p:column headerText="Fecha Final" style="width: 100px;"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <c:set var="recProdepReg" value="#{recProdep.reconocimientoProdepRegistros.registro}"/>
+                                                <p:column style="width: 100px; text-align: center;">
+                                                    <div class="btn-group">
+                                                        <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{recProdepPYE.eliminarRegistro(recProdepReg)}" onsuccess="actualizar(); actualizar1();" title="Eliminar registro." disabled="#{recProdepPYE.dto.eventoActual ne recProdep.eventoSeleccionado}">
+                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el Reconocimiento PRODEP del personal: #{recProdep.personal.nombre}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                        <c:set var="evidencias" value="#{recProdepPYE.consultarEvidencias(recProdep)}" />
+                                                        <p:commandButton actionListener="#{recProdepPYE.seleccionarRegistro(recProdep)}"
+                                                                         class="btn btn-sm #{!empty evidencias?'btn-info':'btn-danger'}" 
+                                                                         icon="fa fa-image"
+                                                                         title="#{!empty evidencias?'Consultar evidencias registradas.':'Debe adjuntar evidencias a su registro.'}" />
+                                                        <p:commandButton actionListener="#{recProdepPYE.abrirAlineacionPOA(recProdep)}"
+                                                                         class="btn btn-sm #{!empty recProdep.actividadAlineada?'btn-info':'btn-warning'}" icon="fa fa-cog"
+                                                                         title="Alineación a POA." />
+                                                    </div>
+                                                </p:column>
+                                                <p:column><h:outputText value="#{recProdep.personal.nombre}"/></p:column> 
+                                                <p:column><h:outputText value="#{recProdep.cuerposAcademicosRegistro.nombre}"/></p:column>
+                                                <p:column style="text-align: center;"><h:outputText value="#{recProdep.cuerposAcademicosRegistro.cuerpoAcademico}"/></p:column>
+                                                <p:column style="text-align: center;"><h:outputText value="#{recProdep.reconocimientoProdepTiposApoyo.descripcion}"/></p:column>
+                                                <p:column style="text-align: center;"><h:outputText value="#{recProdep.reconocimientoProdepRegistros.monto}"><f:convertNumber pattern="¤#,##0.00" currencySymbol="$" /></h:outputText></p:column>
+                                                <p:column style="text-align: center;"><h:outputText value="#{recProdep.reconocimientoProdepRegistros.vigenciaInicial}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                                <p:column style="text-align: center;"><h:outputText value="#{recProdep.reconocimientoProdepRegistros.vigenciaFinal}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
+                                            </p:dataTable>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                            </p:confirmDialog>
+                                        </h:form>
+                                    </c:if>
+                                </center>
+                            </div>
+                        </div>
+                        <!-- Modal Evidencia Reconocimiento PRODEP -->
+                        <p:dialog id="modalCargaEvidencia" 
+                                  widgetVar="modalCargaEvidencia" 
+                                  width="700" 
+                                  height="auto"  
+                                  closeOnEscape="true" 
+                                  visible="#{recProdepPYE.dto.forzarAperturaDialogo}"
+                                  showEffect="fade" 
+                                  hideEffect="fade" 
+                                  modal="true" 
+                                  draggable="true" 
+                                  header="Carga de evidencias" 
+                                  onHide="actualizar();"
+                                  styleClass="panel panel-primary" 
+                                  responsive="true" 
+                                  resizable="false" 
+                                  maximizable="false">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <p:spacer width="10" />
+                                            <p:outputLabel value="Carga de evidencias: " style="padding-top: 5px;" />
+                                            <p:spacer width="10" />
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <o:form id="formularioEvidencia" 
+                                                    enctype="multipart/form-data" 
+                                                    class="form-inline"  >
+                                                <o:inputFile id="files" 
+                                                             value="#{recProdepPYE.dto.archivos}"  
+                                                             multiple="true" 
+                                                             class="form-control"
+                                                             accept="image/png,image/jpg,image/jpeg,application/pdf" 
+                                                             acceptMessage="Sólo se permiten imágenes JPG/PNG y documentos PDF."
+                                                             maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                             required="true" 
+                                                             requiredMessage="Debe elegir al menos un archivo." >
+                                                </o:inputFile>
+                                                <h:commandButton id="btnuploadFiles" value="Subir archivos" class="btn btn-primary" actionListener="#{recProdepPYE.subirEvidencias()}" />
+                                            </o:form>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </div>
+                            <h:form id="frmEvidencias" >
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Personal: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{recProdepPYE.dto.registro.personal.nombre}" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Tipo Apoyo: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{recProdepPYE.dto.registro.reconocimientoProdepTiposApoyo.descripcion}" /></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:remoteCommand name="actualizar2" update="@form:tblEvidencias" />
+                                        <p:dataTable id="tblEvidencias" value="#{recProdepPYE.dto.listaEvidencias}" var="evidencia"
+                                                     emptyMessage="No se han registrado evidencias de este registro." tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                     paginator="true" rows="10" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" paginatorAlwaysVisible="false" paginatorPosition="bottom"
+                                                     >
+                                            <p:columnGroup type="header">
+                                                <p:row>
+                                                    <p:column headerText="Opciones" width="80"/>
+                                                    <p:column headerText="Archivo" />
+                                                    <p:column headerText="Tipo"     width="80" />
+                                                    <p:column headerText="Tamanio"  width="80" />
+                                                </p:row>
+                                            </p:columnGroup>
+                                            <p:column style="text-align: center;">
+                                                <div class="btn-group">
+                                                    <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{recProdepPYE.eliminarEvidencia(evidencia)}" onsuccess="actualizar2();" title="Eliminar evidencia.">
+                                                        <p:confirm header="Eliminar evidencia" message="¿Está seguro de eliminar la evidencia: #{caster.rutaToArchivoNombre(evidencia.ruta)}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{recProdepPYE.descargarEvidencia(evidencia)}" target="_blank" title="Descargar evidencia."><i class="fa fa-download" /></p:commandLink>
+                                                </div>
+                                            </p:column>
+                                            <p:column><h:outputText value="#{caster.rutaToArchivoNombre(evidencia.ruta)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.mimeToTipo(evidencia.mime)}" /></p:column>
+                                            <p:column style="text-align: center;"><h:outputText value="#{caster.bytesToMegabytes(evidencia.tamanioBytes)}" /></p:column>
+                                            <f:facet name="footer">
+                                                <span style="font-size: smaller; font-weight: bold;">Evidencias en total #{fn:length(recProdepPYE.dto.listaEvidencias)}.</span>
+                                            </f:facet>
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                        <p:dialog id="modalAlineacion" widgetVar="modalAlineacion" width="900" height="auto"  closeOnEscape="true"
+                                  showEffect="fade" hideEffect="fade" modal="true" draggable="true" header="Alineación a POA." onHide="actualizar();"
+                                  styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">                        
+                            <h:form id="frmAlineacion" >
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <p:toolbar>
+                                            <f:facet name="left">
+
+                                            </f:facet>
+                                            <f:facet name="right">
+                                                <p:commandButton class="btn btn-primary" value="Eliminar alineación" icon="fa fa-trash" actionListener="#{recProdepPYE.eliminarAlineacion()}" rendered="#{!empty recProdepPYE.dto.registro.actividadAlineada}" >
+                                                    <p:confirm header="Eliminar alineación" message="¿Confirma eliminar la alineación de esta actividad?. No se eliminan evidencias del registro o de la actividad." icon="ui-icon-alert" />
+                                                </p:commandButton>
+                                                <p:commandButton class="btn btn-primary" value="Guardar alineación" icon="fa fa-save" actionListener="#{recProdepPYE.alinearRegistro()}" oncomplete="PF('modalAlineacion').hide();" />
+                                            </f:facet>
+                                        </p:toolbar>
+                                    </div>
+                                </div>                            
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Personal: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{recProdepPYE.dto.registro.personal.nombre}" /></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2"><p:outputLabel value="Tipo Apoyo: " /></div>
+                                    <div class="col-md-10"><p:outputLabel value="#{recProdepPYE.dto.registro.reconocimientoProdepTiposApoyo.descripcion}"/></div>
+                                </div>
+                                <p:separator style="margin-bottom: 5px; margin-top: 5px;"/>
+                                <c:set var="fila" value="#{'padding-bottom: 5px;'}" />
+                                <c:set var="col1" value="#{'col-md-2'}" />
+                                <c:set var="col2" value="#{'col-md-10'}" />
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="eje" value="Eje: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="eje" value="#{recProdepPYE.dto.alineacionEje}" valueChangeListener="#{recProdepPYE.actualizarEstrategias}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{recProdepPYE.dto.ejes}" var="eje" itemValue="#{eje}" itemLabel="#{eje.nombre}" itemDescription="#{eje.nombre}" />
+                                            <p:ajax process="eje" update="@form:estrategia,@form:lineaAccion,@form:actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="eje"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="estrategia" value="Estrategia: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="estrategia" value="#{recProdepPYE.dto.alineacionEstrategia}" valueChangeListener="#{recProdepPYE.actualizarLineasAccion}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{recProdepPYE.dto.estrategias}" var="estrategia" itemValue="#{estrategia}" itemLabel="#{estrategia.nombre}" itemDescription="#{estrategia.nombre}" />
+                                            <p:ajax process="estrategia" update="lineaAccion,actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="estrategia"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="lineaAccion" value="Línea de acción: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="lineaAccion" value="#{recProdepPYE.dto.alineacionLinea}" valueChangeListener="#{recProdepPYE.actualizarActividades}" required="true"  converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{recProdepPYE.dto.lineasAccion}" var="linea" itemValue="#{linea}" itemLabel="#{linea.nombre}" itemDescription="#{linea.nombre}" />
+                                            <p:ajax process="lineaAccion" update="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="lineaAccion"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                                <div class="row" style="#{fila}">
+                                    <div class="#{col1}"><p:outputLabel for="actividad" value="Actividad: " indicateRequired="true"/></div>
+                                    <div class="#{col2}">
+                                        <p:selectOneMenu id="actividad" value="#{recProdepPYE.dto.alineacionActividad}" required="true" converter="entidadConverter2">
+                                            <p:autoUpdate />
+                                            <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                            <f:selectItems value="#{recProdepPYE.dto.actividades}" var="actividad" itemValue="#{actividad}" itemLabel="#{actividad.denominacion}" itemDescription="#{actividad.denominacion}" />
+                                            <p:ajax process="actividad" />
+                                        </p:selectOneMenu>
+                                        <p:message for="actividad"><p:autoUpdate /></p:message>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </p:dialog>
+                    </div>
+                </div>
+            </div>
+        </c:if>
+    </ui:define>
+</ui:composition>

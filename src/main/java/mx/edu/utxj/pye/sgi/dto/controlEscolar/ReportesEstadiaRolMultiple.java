@@ -76,6 +76,22 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private Integer total;
     
+     /**
+     * Reporte de eficiencia de estadía con datos complementarios
+     */
+    @Getter @NonNull private List<DtoEficienciaEstadiaDatosComplementarios> eficienciaEstadiaDatosComplementarios;
+    
+    
+     /**
+     * Total de estudiantes validados por dirección de carrera
+     */
+    @Getter @NonNull private Integer totalValidadoDireccion;
+    
+     /**
+     * Total de estudiantes no validados por dirección de carrera
+     */
+    @Getter @NonNull private Integer totalNoValidadosDireccion;
+    
       /**
      * Reporte de listado de estudiantes con promedios
      */
@@ -223,6 +239,18 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
 
     public void setTotal(Integer total) {
         this.total = total;
+    }
+
+    public void setEficienciaEstadiaDatosComplementarios(List<DtoEficienciaEstadiaDatosComplementarios> eficienciaEstadiaDatosComplementarios) {
+        this.eficienciaEstadiaDatosComplementarios = eficienciaEstadiaDatosComplementarios;
+    }
+
+    public void setTotalValidadoDireccion(Integer totalValidadoDireccion) {
+        this.totalValidadoDireccion = totalValidadoDireccion;
+    }
+
+    public void setTotalNoValidadosDireccion(Integer totalNoValidadosDireccion) {
+        this.totalNoValidadosDireccion = totalNoValidadosDireccion;
     }
 
     public void setListadoEstudiantesPromedio(List<DtoSeguimientoEstadia> listadoEstudiantesPromedio) {

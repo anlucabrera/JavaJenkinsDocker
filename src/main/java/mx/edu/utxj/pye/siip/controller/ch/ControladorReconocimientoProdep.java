@@ -151,10 +151,8 @@ public class ControladorReconocimientoProdep implements Serializable{
         if (dto.getSelectItemEjercicioFiscal() == null) {
             Messages.addGlobalInfo("No existen registros");
         } else {
-            System.err.println("initFiltros - area " + dto.getArea());
             dto.setEjercicioFiscal((short) ejbItems.itemEjercicioFiscalPorRegistroUsuarioOtraArea((short) 50, dto.getArea()).get(0).getValue());
             dto.setSelectItemMes(ejbItems.itemMesesPorRegistroUsuarioOtraArea((short) 50, dto.getEjercicioFiscal(), dto.getArea()));
-            System.err.println("initFiltros - ejercicio " + dto.getEjercicioFiscal());
             filtroReconocimientosProdep(dto.getSelectItemMes().get(0).getLabel(), dto.getEjercicioFiscal(), dto.getArea());
         }     
         
@@ -380,7 +378,7 @@ public class ControladorReconocimientoProdep implements Serializable{
                init();
                Ajax.update("formMuestraDatosActivos");
            } catch (Throwable ex) {
-               Logger.getLogger(ControladorComisionesAcademicas.class.getName()).log(Level.SEVERE, null, ex);
+               Logger.getLogger(ControladorReconocimientoProdep.class.getName()).log(Level.SEVERE, null, ex);
                Messages.addGlobalError("<b>¡No se pudo eliminar el registro seleccionado!</b> ");
            }
     }

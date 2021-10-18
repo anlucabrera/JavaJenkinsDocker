@@ -20,6 +20,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsigAsesorAcadEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCumplimientoEstDocEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadiaDatosComplementarios;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteActividadesEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstIns;
@@ -412,7 +413,7 @@ public class EjbReportesEstadia {
     }
     
     /**
-     * Permite obtener la lista de eficiencia de estadía por programa educativo dependiendo del nivel educativo seleccionado
+     * Permite obtener la lista de eficiencia de estadía (validación por vinculación) por programa educativo dependiendo del nivel educativo seleccionado
      * @param generacion
      * @param nivelEducativo
      * @return Resultado del proceso
@@ -453,7 +454,7 @@ public class EjbReportesEstadia {
     }
     
      /**
-     * Empaqueta la eficiencia de estadía en un DTO Wrapper
+     * Empaqueta la eficiencia de estadía (validación por vinculación) en un DTO Wrapper
      * @param programaEducativo 
      * @param eventoSeleccionado
      * @return Eficiencia de estadía empaquetada
@@ -465,6 +466,104 @@ public class EjbReportesEstadia {
 
             AreasUniversidad programaBD = em.find(AreasUniversidad.class, programaEducativo.getArea());
             if(programaBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar programa ediucativo no registrado previamente en base de datos.", DtoEficienciaEstadia.class);
+            
+            List<Integer> grados = new ArrayList<>();
+            grados.add(6);
+            grados.add(11);
+
+//            List<Estudiante> listaEstudiantes= em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.idPe=:programaEducativo AND g.grado IN :grados", Estudiante.class)
+//                        .setParameter("programaEducativo", programaBD.getArea())
+//                        .setParameter("grados", grados)
+//                        .getResultStream()
+//                        .collect(Collectors.toList());
+            
+//            List<Estudiante> listaRegulares= listaEstudiantes.stream().filter(p -> p.getTipoEstudiante().getIdTipoEstudiante()==1 || p.getTipoEstudiante().getIdTipoEstudiante()==4).collect(Collectors.toList());
+//            
+//            List<Estudiante> listaBajas= listaEstudiantes.stream().filter(p -> p.getTipoEstudiante().getIdTipoEstudiante()==2 || p.getTipoEstudiante().getIdTipoEstudiante()==3).collect(Collectors.toList());
+           
+//            List<Integer> listaMatriculas = listaEstudiantes.stream().map(p -> p.getMatricula()).collect(Collectors.toList());
+            
+            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s INNER JOIN s.estudiante e INNER JOIN e.grupo g WHERE s.evento=:evento AND g.idPe=:programaEducativo AND g.grado IN :grados", SeguimientoEstadiaEstudiante.class)
+                    .setParameter("programaEducativo", programaBD.getArea())   
+                    .setParameter("grados", grados)
+                    .setParameter("evento", eventoSeleccionado)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            List<SeguimientoEstadiaEstudiante> listaAcreditados = listaSeguimiento.stream().filter(p -> p.getValidacionVinculacion()).collect(Collectors.toList());
+            
+            List<SeguimientoEstadiaEstudiante> listaNoAcreditados = listaSeguimiento.stream().filter(p -> !p.getValidacionVinculacion()).collect(Collectors.toList());
+            
+            Double eficienciaEstadia;
+            if(!listaSeguimiento.isEmpty()){
+                Double division = (double)listaAcreditados.size()/listaSeguimiento.size();
+                eficienciaEstadia = division*100;
+            }else{
+                eficienciaEstadia = 0.0;
+            }
+            
+            DtoEficienciaEstadia  dtoEficienciaEstadia = new DtoEficienciaEstadia(programaBD, listaSeguimiento.size(), listaAcreditados.size(), listaNoAcreditados.size(),eficienciaEstadia);
+            
+            return ResultadoEJB.crearCorrecto(dtoEficienciaEstadia, "Eficiencia de estadía empaquetada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la eficiencia de estadía. (EjbReportesEstadia.packEficienciaPrograma).", e, DtoEficienciaEstadia.class);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de eficiencia de estadía (aprobación de evaluación) por programa educativo dependiendo del nivel educativo seleccionado
+     * @param generacion
+     * @param nivelEducativo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoEficienciaEstadiaDatosComplementarios>> getEficienciaEstadiaDatosComplementarios(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
+        try{
+            EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
+            
+            List<Short> listaProgramasNivel = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.nivelEducativo=:nivel", AreasUniversidad.class)
+                    .setParameter("nivel", nivelEducativo)
+                    .getResultStream()
+                    .map(p -> p.getArea())
+                    .collect(Collectors.toList());
+            
+            List<Short> listaProgramasGeneracion= em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.idPe IN :lista",  Grupo.class)
+                    .setParameter("generacion",  generacion.getGeneracion())
+                    .setParameter("lista",  listaProgramasNivel)
+                    .getResultStream()
+                    .map(p -> p.getIdPe())
+                    .distinct()
+                    .collect(Collectors.toList());
+           
+            List<DtoEficienciaEstadiaDatosComplementarios> listaProgramasEducativos = new ArrayList<>();
+            
+                if (!listaProgramasGeneracion.isEmpty()) {
+                    
+                listaProgramasEducativos = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.area IN :lista", AreasUniversidad.class)
+                        .setParameter("lista", listaProgramasGeneracion)
+                        .getResultStream()
+                        .map(e -> packEficienciaProgramaDatosComplementarios(e, eventoSeleccionado).getValor())
+                        .sorted(DtoEficienciaEstadiaDatosComplementarios::compareTo)
+                        .collect(Collectors.toList());
+                }
+            return ResultadoEJB.crearCorrecto(listaProgramasEducativos, "Lista de eficiencia de estadía por programa educativo.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de de eficiencia de estadía por programa educativo. (EjbReportesEstadia.getEficienciaEstadiaDatosComplementarios)", e, null);
+        }
+    }
+    
+     /**
+     * Empaqueta la eficiencia de estadía (aprobación de evaluación) en un DTO Wrapper
+     * @param programaEducativo 
+     * @param eventoSeleccionado
+     * @return Eficiencia de estadía empaquetada
+     */
+    public ResultadoEJB<DtoEficienciaEstadiaDatosComplementarios> packEficienciaProgramaDatosComplementarios(AreasUniversidad programaEducativo, EventoEstadia eventoSeleccionado){
+        try{
+            if(programaEducativo == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar programa educativo nulo.", DtoEficienciaEstadiaDatosComplementarios.class);
+            if(programaEducativo.getArea()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar programa ediucativo con clave nula.", DtoEficienciaEstadiaDatosComplementarios.class);
+
+            AreasUniversidad programaBD = em.find(AreasUniversidad.class, programaEducativo.getArea());
+            if(programaBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar programa ediucativo no registrado previamente en base de datos.", DtoEficienciaEstadiaDatosComplementarios.class);
             
             List<Integer> grados = new ArrayList<>();
             grados.add(6);
@@ -501,11 +600,23 @@ public class EjbReportesEstadia {
                 eficienciaEstadia = 0.0;
             }
             
-            DtoEficienciaEstadia  dtoEficienciaEstadia = new DtoEficienciaEstadia(programaBD, listaSeguimiento.size(), listaAcreditados.size(), listaNoAcreditados.size(),eficienciaEstadia);
+            List<SeguimientoEstadiaEstudiante> listaValidadosDireccion = listaSeguimiento.stream().filter(p -> p.getValidacionDirector()).collect(Collectors.toList());
             
-            return ResultadoEJB.crearCorrecto(dtoEficienciaEstadia, "Eficiencia de estadía empaquetada.");
+            List<SeguimientoEstadiaEstudiante> listaNoValidadosDireccion = listaSeguimiento.stream().filter(p -> !p.getValidacionDirector()).collect(Collectors.toList());
+            
+            Double eficienciaValidacion;
+            if(!listaSeguimiento.isEmpty()){
+                Double division = (double)listaValidadosDireccion.size()/listaSeguimiento.size();
+                eficienciaValidacion = division*100;
+            }else{
+                eficienciaValidacion = 0.0;
+            }
+            
+            DtoEficienciaEstadiaDatosComplementarios  dtoEficienciaEstadiaDatosComplementarios = new DtoEficienciaEstadiaDatosComplementarios(programaBD, listaSeguimiento.size(), listaAcreditados.size(), listaNoAcreditados.size(),eficienciaEstadia, listaValidadosDireccion.size(), listaNoValidadosDireccion.size(), eficienciaValidacion);
+            
+            return ResultadoEJB.crearCorrecto(dtoEficienciaEstadiaDatosComplementarios, "Eficiencia de estadía empaquetada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la eficiencia de estadía. (EjbReportesEstadia.packEficienciaPrograma).", e, DtoEficienciaEstadia.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar la eficiencia de estadía. (EjbReportesEstadia.packEficienciaProgramaDatosComplementarios).", e, DtoEficienciaEstadiaDatosComplementarios.class);
         }
     }
     

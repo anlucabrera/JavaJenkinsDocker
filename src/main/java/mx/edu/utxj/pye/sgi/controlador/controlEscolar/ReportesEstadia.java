@@ -27,6 +27,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAsigAsesorAcadEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCumplimientoEstDocEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadiaDatosComplementarios;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteActividadesEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstIns;
@@ -166,6 +167,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             listaReportes.add("Asignación de asesor académico por programa educativo");
             listaReportes.add("Cumplimiento estudiante documentos");
             listaReportes.add("Eficiencia estadía técnica");
+            listaReportes.add("Eficiencia estadía técnica - Datos complementarios");
             listaReportes.add("Listado estudiantes con promedios");
             listaReportes.add("Consulta memorias de estadía");
             rol.setReportes(listaReportes);
@@ -176,6 +178,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             listaReportes.add("Asignación de asesor académico por programa educativo");
             listaReportes.add("Cumplimiento estudiante documentos");
             listaReportes.add("Eficiencia estadía técnica");
+            listaReportes.add("Eficiencia estadía técnica - Datos complementarios");
             listaReportes.add("Listado estudiantes con promedios");
             listaReportes.add("Consulta memorias de estadía");
             listaReportes.add("Zona influencia institucional");
@@ -198,6 +201,8 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
            generarCumpDocumentoPrograma();
         }else if("Eficiencia estadía técnica".equals(rol.getReporte())){
            generarEficienciaEstadia();
+        }else if("Eficiencia estadía técnica - Datos complementarios".equals(rol.getReporte())){
+           generarEficienciaEstadiaDatosComplementarios();
         }else if("Listado estudiantes con promedios".equals(rol.getReporte())){
            generarListadoEstudiantesPromedios();
         }else if("Consulta memorias de estadía".equals(rol.getReporte())){
@@ -276,6 +281,22 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
              rol.setTotalNoAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getNoAcreditaron()).sum());
              rol.setTotal(rol.getEficienciaEstadia().stream().mapToInt(p->p.getSeguimiento()).sum());
              Ajax.update("tbEficienciaEstadia");
+         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+     /**
+     * Permite generar el reporte de eficiencia de estadía datos complementarios
+     */
+    public void generarEficienciaEstadiaDatosComplementarios(){
+        ResultadoEJB<List<DtoEficienciaEstadiaDatosComplementarios>> res = ejb.getEficienciaEstadiaDatosComplementarios(rol.getGeneracion(), rol.getNivelEducativo());
+        if(res.getCorrecto()){
+             rol.setEficienciaEstadiaDatosComplementarios(res.getValor());
+             rol.setTotalAcreditados(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getAcreditaron()).sum());
+             rol.setTotalNoAcreditados(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getNoAcreditaron()).sum());
+             rol.setTotal(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getSeguimiento()).sum());
+             rol.setTotalValidadoDireccion(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getValidadosDireccion()).sum());
+             rol.setTotalNoValidadosDireccion(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getNoValidadosDireccion()).sum());
+             Ajax.update("tbEficienciaEstadiaDatosComplementarios");
          }else mostrarMensajeResultadoEJB(res);
     }
     

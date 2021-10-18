@@ -104,6 +104,8 @@ public interface EjbReportesExcel {
     
     /**
     * Genera reporte de registro de Reconocimiento PRODEP
+     * @param ejercicio
+     * @param area
     * @return  Ruta del archivo del reporte
     * @throws Throwable
     */

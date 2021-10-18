@@ -304,6 +304,63 @@
                                                 </div>
                                             </center>
                                         </c:if>
+                                        <c:if test="#{reportesEstadia.rol.reporte eq 'Eficiencia estadía técnica - Datos complementarios'}">
+                                            <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                <p:dataTable id="tbEficienciaEstadiaDatosComplementarios" var="eficienciaEstDatCom" value="#{reportesEstadia.rol.eficienciaEstadiaDatosComplementarios}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                             tableStyle="vertical-align: middle;" emptyMessage="Sin información">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Programa educativo" style="width: 400px;"/>
+                                                            <p:column headerText="Acreditados(as) Evaluación" style="width: 100px;"/>
+                                                            <p:column headerText="No acreditados(as) Evaluación" style="width: 100px;"/>
+                                                            <p:column headerText="Validados(as) por Dirección" style="width: 100px;"/>
+                                                            <p:column headerText="No validados(as) por Dirección" style="width: 100px;"/>
+                                                            <p:column headerText="Total" style="width: 100px;"/>
+                                                            <p:column headerText="% de Acreditación de Evaluación" style="width: 100px;"/>
+                                                            <p:column headerText="% de Validación por Dirección" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{eficienciaEstDatCom.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eficienciaEstDatCom.acreditaron}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{eficienciaEstDatCom.noAcreditaron}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{eficienciaEstDatCom.validadosDireccion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{eficienciaEstDatCom.noValidadosDireccion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{eficienciaEstDatCom.seguimiento}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{eficienciaEstDatCom.eficienciaEstadia}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{eficienciaEstDatCom.eficienciaValidacionDireccion}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:columnGroup type="footer">
+                                                        <p:row>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="Totales:"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalAcreditados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalNoAcreditados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalValidadoDireccion}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalNoValidadosDireccion}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.total}"/>
+                                                            <p:column/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                </p:dataTable>
+                                                </div>
+                                            </center>
+                                        </c:if>
                                         <c:if test="#{reportesEstadia.rol.reporte eq 'Listado estudiantes con promedios'}">
                                             <center>
                                                 <p:dataTable id="tbEstudiantesPromedios" var="segEst" value="#{reportesEstadia.rol.listadoEstudiantesPromedio}"
