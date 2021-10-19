@@ -305,13 +305,13 @@ public class ServicioReportesExcel implements EjbReportesExcel{
     }
 
     @Override
-    public String getReporteRecProdep(Short ejercicio) throws Throwable {
+    public String getReporteRecProdep(Short ejercicio, Short area) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioReporte(ejes[1]);
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompleto(ejes[1]);
         String plantilla = rutaPlantilla.concat(RECPRODEP_PLANTILLA);
         String plantillaC = rutaPlantillaC.concat(RECPRODEP_ACTUALIZADO);
         Map beans = new HashMap();
-        beans.put("recP", ejbReconocimientoProdep.getRegistroRecProdep(ejercicio));
+        beans.put("recP", ejbReconocimientoProdep.getRegistroRecProdep(ejercicio, area));
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(plantilla, beans, plantillaC);
 

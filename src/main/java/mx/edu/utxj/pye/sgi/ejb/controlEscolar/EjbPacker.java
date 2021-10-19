@@ -158,23 +158,29 @@ public class EjbPacker {
         try{
             ResultadoEJB<PlanEstudioMateria> resPlanEstudioMateria = ejbAsignacionAcademica.getPlanEstudioMateria(programa, materia, grupo.getGrado());
 //            System.out.println("resPlanEstudioMateria = " + resPlanEstudioMateria);
-            if(!resPlanEstudioMateria.getCorrecto()) return ResultadoEJB.crearCorrecto(new DtoMateria(materia, null, 0), resPlanEstudioMateria.getMensaje());
+            if(!resPlanEstudioMateria.getCorrecto()) return ResultadoEJB.crearCorrecto(new DtoMateria(materia, null, 0, true), resPlanEstudioMateria.getMensaje());
             CargaAcademica cargaAcademica = em.createQuery("select ca from CargaAcademica ca where ca.idPlanMateria=:planMateria and ca.cveGrupo=:grupo", CargaAcademica.class)
                     .setParameter("planMateria", resPlanEstudioMateria.getValor())
                     .setParameter("grupo", grupo)
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
+            
+            Boolean activa = true;
+            if (materia.getIdAreaConocimiento().getIdAreaConocimiento() == 9 && cargaAcademica == null) {
+                activa = false;
+            }
+            
 //            System.out.println("cargaAcademica = " + cargaAcademica);
             if(cargaAcademica != null){
                 ResultadoEJB<DtoCargaAcademica> resCarga = packCargaAcademica(cargaAcademica);
 //                System.out.println("resCarga = " + resCarga);
-                DtoMateria dto = new DtoMateria(materia, resCarga.getValor(), cargaAcademica.getHorasSemana());
+                DtoMateria dto = new DtoMateria(materia, resCarga.getValor(), cargaAcademica.getHorasSemana(), activa);
 //                System.out.println("dto correcto = " + dto);
 //                System.out.println("dto.getDtoCargaAcademica() = " + dto.getDtoCargaAcademica());
                 return ResultadoEJB.crearCorrecto(dto, "Materia empaquetada");
             }else{
-                DtoMateria dto = new DtoMateria(materia, null, 0);
+                DtoMateria dto = new DtoMateria(materia, null, 0, activa);
 //                System.out.println("dto error = " + dto);
                 return ResultadoEJB.crearCorrecto(dto, "Se empaquetó la materia pero no ha sido asignada.");
             }

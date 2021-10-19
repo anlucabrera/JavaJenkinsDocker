@@ -131,6 +131,11 @@ public class AsignacionAcademicaRolEscolares extends AbstractRol{
      * Lista de cargas académicas realizadas al docente seleccionado
      */
     @Getter @NonNull private List<DtoCargaAcademica> cargas;
+    
+     /**
+     * Representa valor si hay listado de materias optativas para elegir
+     */
+    @Getter @NonNull private Boolean existeListadoOptativas;
 
     public AsignacionAcademicaRolEscolares(Filter<PersonalActivo> filtro, PersonalActivo escolares, AreasUniversidad programa) {
         super(filtro);
@@ -263,6 +268,10 @@ public class AsignacionAcademicaRolEscolares extends AbstractRol{
 
     public void setProgramas(List<AreasUniversidad> programas) {
         this.programas = programas;
+    }
+    
+    public void setExisteListadoOptativas(Boolean existeListadoOptativas) {
+        this.existeListadoOptativas = existeListadoOptativas;
     }
     
 }

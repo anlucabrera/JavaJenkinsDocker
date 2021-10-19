@@ -113,8 +113,8 @@ public class ControladorReporteRegistros implements Serializable{
         Faces.sendFile(f, true);
     }
     
-    public void descargarReporteRecProdep(Short ejercicio) throws IOException, Throwable{
-        File f = new File(ejb.getReporteRecProdep(ejercicio));
+    public void descargarReporteRecProdep(Short ejercicio, Short area) throws IOException, Throwable{
+        File f = new File(ejb.getReporteRecProdep(ejercicio, area));
         Faces.sendFile(f, true);
     }
     

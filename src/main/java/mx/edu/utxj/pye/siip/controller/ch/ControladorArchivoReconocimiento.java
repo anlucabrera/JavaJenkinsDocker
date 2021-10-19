@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.RegistroSiipEtapa;
+import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.siip.controller.eb.ControladorModulosRegistro;
 import mx.edu.utxj.pye.siip.interfaces.eb.EjbModulos;
@@ -57,11 +58,14 @@ public class ControladorArchivoReconocimiento implements Serializable{
     @EJB EjbCarga ejbCarga;
     @EJB EjbModulos ejbModulos;
     
+    @EJB Facade f;
+    
     @PostConstruct
     public void init(){
         eje = ejes[1];
         ejercicio = ejbModulos.getEventoRegistro().getEjercicioFiscal().getAnio();
         consultaAreaRegistro();
+        
         if(area == null){
             return;
         }
@@ -72,21 +76,25 @@ public class ControladorArchivoReconocimiento implements Serializable{
         try {
             AreasUniversidad areaRegistro = new AreasUniversidad();
             areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 21);
-            if (areaRegistro == null) {
-                areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 32);
                 if (areaRegistro == null) {
-                    ResultadoEJB<AreasUniversidad> resultadoEJB = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
-                    if(resultadoEJB.getCorrecto()){
-                        area = resultadoEJB.getValor();
-                    }else{
-                        area = null;
+                    areaRegistro = controladorModulosRegistro.consultaAreaRegistro((short) 32);
+                    if (areaRegistro == null) {
+                        if(controladorEmpleado.getNuevoOBJListaPersonal().getClave()==16){
+                            area = f.getEntityManager().find(AreasUniversidad.class, (short)12);
+                        }else{
+                            ResultadoEJB<AreasUniversidad> resultadoEJB = ejbModulos.getAreaUniversidadPrincipalRegistro((short) controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa());
+                            if (resultadoEJB.getCorrecto()) {
+                                area = resultadoEJB.getValor();
+                            } else {
+                                area = null;
+                            }
+                        }
+                    } else {
+                        area = areaRegistro;
                     }
                 } else {
                     area = areaRegistro;
                 }
-            } else {
-                area = areaRegistro;
-            }
         } catch (Exception ex) {
             area = null;
         }

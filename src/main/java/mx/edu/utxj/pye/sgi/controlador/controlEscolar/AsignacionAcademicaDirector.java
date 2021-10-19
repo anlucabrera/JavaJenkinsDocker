@@ -37,7 +37,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Messages;
 
 
 /**
@@ -230,6 +235,8 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
      */
     public void actualizarMaterias(){
         rol.setMateriasPorGrupo(Collections.EMPTY_LIST);
+        List<DtoMateria> materiasOptativas = Collections.EMPTY_LIST;
+        rol.setExisteListadoOptativas(false);
         setAlertas(Collections.EMPTY_LIST);
         if(rol.getPeriodo() == null) return;
         if(rol.getPrograma() == null) return;
@@ -239,6 +246,12 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
 //        System.out.println("resMaterias = " + res);
         if(res.getCorrecto()){
             rol.setMateriasPorGrupo(res.getValor());
+            materiasOptativas =res.getValor().stream().filter(p->p.getMateria().getIdAreaConocimiento().getIdAreaConocimiento()==9).collect(Collectors.toList());
+            if(materiasOptativas.isEmpty() || materiasOptativas.size() <= 1){
+                rol.setExisteListadoOptativas(false);
+            }else{
+                rol.setExisteListadoOptativas(true);
+            }
             /*rol.getMateriasPorGrupo().forEach(dtoMateria -> {
                 System.out.println("dtoMateria.getDtoCargaAcademica() = " + dtoMateria.getDtoCargaAcademica());
             });*/
@@ -270,7 +283,7 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
     public Boolean mostrarBotonAsignacion(DtoMateria dtoMateria){
         if(dtoMateria == null) return false;
         return rol.getDocente() != null //el docente no debe ser nulo
-                && dtoMateria.getDtoCargaAcademica() == null; //la materia no debe haber sido asignada aun
+                && dtoMateria.getDtoCargaAcademica() == null && dtoMateria.getActiva(); //la materia no debe haber sido asignada aun
     }
 
     /**
@@ -305,5 +318,35 @@ public class AsignacionAcademicaDirector extends ViewScopedRol implements Desarr
 
     public void seleccionarMateria(DtoMateria dtoMateria){
         rol.setMateria(dtoMateria);
+    }
+    
+    public void activarMateriaOptativa(ValueChangeEvent e) {
+        try {
+            String id = e.getComponent().getClientId();
+            DtoMateria ag = rol.getMateriasPorGrupo().get(Integer.parseInt(id.split("tbl:")[1].split(":validar")[0]));
+            ag.setActiva((Boolean) e.getNewValue());
+            if(!ag.getActiva() && ag.getDtoCargaAcademica() != null){
+                eliminarAsignacion(ag);
+                actualizarMaterias();
+            }
+//            existeAsignacion();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AsignacionAcademicaEscolares.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public Boolean verificarMateriaOptativaAsignada(DtoMateria dtoMateria) {
+        Boolean valor = false;
+        if(dtoMateria == null) return false;
+        DtoMateria optativaSeleccionada = rol.getMateriasPorGrupo().stream().filter(p->p.getActiva() && p.getMateria().getIdAreaConocimiento().getIdAreaConocimiento()==9).findFirst().orElse(null);
+        if(optativaSeleccionada !=null){
+            if(optativaSeleccionada.equals(dtoMateria)){
+                valor = true;
+            }
+        }else{
+            valor = true;
+        }
+        return valor;
     }
 }

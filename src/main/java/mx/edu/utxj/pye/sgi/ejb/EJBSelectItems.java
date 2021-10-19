@@ -75,6 +75,17 @@ public interface EJBSelectItems {
      * @return 
      */
     public List<SelectItem> itemMesesPorRegistro(Short tipo, Short ejercicio);
+    
+    /**
+     * Lena la lista de selectitems de meses por registro, busca dependiendo dl paramaetro tipo
+     * para encontrar el tipo de registro y el parametro ejercicio indica que el ejercicio en el que se buscara para
+     * obtener los meses que llenaran la lista
+     * @param tipo
+     * @param ejercicio
+     * @return 
+     */
+    public List<SelectItem> itemMesesPorRegistroUsuarioOtraArea(Short tipo, Short ejercicio, Short area);
+    
     /**
      * Llena la lista de select items de ejercicios activos segun sea ale tipo de registro
      * definido con el parametro tipo
@@ -82,6 +93,15 @@ public interface EJBSelectItems {
      * @return 
      */
     public List<SelectItem> itemEjercicioFiscalPorRegistro(Short tipo);
+    
+     /**
+     * Llena la lista de select items de ejercicios activos segun sea ale tipo de registro
+     * definido con el parametro tipo
+     * @param tipo
+     * @param area
+     * @return 
+     */
+    public List<SelectItem> itemEjercicioFiscalPorRegistroUsuarioOtraArea(Short tipo, Short area);
     
     public List<SelectItem> itemGeneraciones();
     
