@@ -177,12 +177,12 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
     
     public void listaEvaluacionesRegistradas(){
         if(rol.getTipoBusqueda().equals("busquedaGeneral")){
-            ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> res = ejb.buscarEvaluacionSugerida(rol.getProgramaEducativo(), rol.getPlanEstudio());
+            ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> res = ejb.buscarEvaluacionSugerida(rol.getProgramaEducativo(), rol.getPlanEstudio(), rol.getDirector());
             if(res.getCorrecto()){
                 rol.setListaEvidenciasInstrumentos(res.getValor());
             }else mostrarMensajeResultadoEJB(res);  
         }else{
-            ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> res = ejb.buscarEvaluacionSugeridaGrado(rol.getProgramaEducativo(), rol.getPlanEstudio(), rol.getCuatrimestre());
+            ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> res = ejb.buscarEvaluacionSugeridaGrado(rol.getProgramaEducativo(), rol.getPlanEstudio(), rol.getDirector(), rol.getCuatrimestre());
             if(res.getCorrecto()){
                 rol.setListaEvidenciasInstrumentos(res.getValor());
             }else mostrarMensajeResultadoEJB(res);  
@@ -199,7 +199,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
     }
     
     public void listaMateriasGrado(){
-            ResultadoEJB<List<Materia>> res = ejb.getMateriasGrado(rol.getPlanEstudio(), rol.getGrado());
+            ResultadoEJB<List<Materia>> res = ejb.getMateriasGrado(rol.getPlanEstudio(), rol.getGrado(), rol.getDirector());
             if(res.getCorrecto()){
                 rol.setMaterias(res.getValor());
                 rol.setMateria(rol.getMaterias().get(0));
@@ -369,7 +369,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
      */
     public void eliminarEvaluacionSugerida(){
         if(rol.getPlanEstudio().getEstatus()){
-            ResultadoEJB<Integer> resEliminar = ejb.eliminarRegistrosPlanEstudio(rol.getPlanEstudio());
+            ResultadoEJB<Integer> resEliminar = ejb.eliminarRegistrosPlanEstudio(rol.getPlanEstudio(), rol.getDirector());
             mostrarMensajeResultadoEJB(resEliminar);
             rol.setListaEvidenciasInstrumentos(Collections.EMPTY_LIST);
             Ajax.update("frm");
@@ -383,7 +383,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
      * @throws java.io.IOException
      */
     public void descargarPlantilla() throws IOException, Throwable{
-        File f = new File(ejb.getPlantillaEvidInstMateria(rol.getPlanEstudio(), rol.getProgramaEducativo()));
+        File f = new File(ejb.getPlantillaEvidInstMateria(rol.getPlanEstudio(), rol.getProgramaEducativo(), rol.getDirector()));
         Faces.sendFile(f, true);
     }
     
@@ -392,7 +392,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
      * @throws java.io.IOException
      */
     public void descargarRegistrosPlan() throws IOException, Throwable{
-        File f = new File(ejb.getRegistrosPlan(rol.getPlanEstudio(), rol.getProgramaEducativo()));
+        File f = new File(ejb.getRegistrosPlan(rol.getPlanEstudio(), rol.getProgramaEducativo(), rol.getDirector()));
         Faces.sendFile(f, true);
     }
     

@@ -157,7 +157,6 @@
                 <c:if test="#{controlEscolarMenu.tieneElementos()}">
                     <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Control escolar</li>
                     <!--Usuarios especiales -->
-                    <c:if test="#{calendarioEventosEscolares.mostrarEnDesarrollo(request) and calendarioEventosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEscolares.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos escolares<small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if> 
                     <c:if test="#{fichaAdmisionReporte.mostrarEnDesarrollo(request) and fichaAdmisionReporte.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reporteFichaAdmision.xhtml"><i class="fa fa-clipboard"></i><span>Reporte de Aspirantes <small class="label pull-right bg-green">Actualizado</small></span></p:link></li></c:if>
 
                     <!-- Administrador -->
@@ -205,7 +204,6 @@
                     <c:if test="#{planeacionCuatrimestralValidacion.mostrarEnDesarrollo(request) and planeacionCuatrimestralValidacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/planeacionCuatrimestralValidacion.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral<br/> Validacion</span> <span class="pull-right-container"></span></p:link></li></c:if>
                     <c:if test="#{listasAsistenciaDirector.mostrarEnDesarrollo(request) and listasAsistenciaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/ListasAsistencias.xhtml"><i class="fa fa-users"></i><span>Listas de Asistencia</span></p:link></li></c:if>
                     <c:if test="#{reporteAsistenciasDirector.mostrarEnDesarrollo(request) and reporteAsistenciasDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/reporteAsistenciasDirector.xhtml"><i class="fa fa-file-text-o"></i><span>Concentrado Asistencias</span></p:link></li></c:if>
-                    <c:if test="#{validacionBajaDirector.mostrarEnDesarrollo(request) and validacionBajaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacionBaja.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Baja</span></p:link></li></c:if>
                     <c:if test="#{fusionGruposDirector.mostrarEnDesarrollo(request) and fusionGruposDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{avanceProgramaticoDirector.mostrarEnDesarrollo(request) and avanceProgramaticoDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
                     <c:if test="#{cedulaIdentificacionDirector.mostrarEnDesarrollo(request) and cedulaIdentificacionDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cedulaIdentificacionDirector.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
@@ -232,9 +230,23 @@
                         </li>
                     </c:if>
                     <c:if test="#{credencializacionSE.mostrarEnDesarrollo(request) and credencializacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/credencializacion.xhtml"><i class="fa fa-address-card"></i><span>Credencialización</span></p:link></li></c:if>
-                    <c:if test="#{registrarBajaServiciosEscolares.mostrarEnDesarrollo(request) and registrarBajaServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registrarBajas.xhtml"><i class="fa fa-user-times"></i><span>Registrar Bajas</span></p:link></li></c:if>
-                    <c:if test="#{reporteBajasServiciosEscolares.mostrarEnDesarrollo(request) and reporteBajasServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reporteBajas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte Bajas</span></p:link></li></c:if>
-                    <c:if test="#{concentradoBajasAreasVarias.mostrarEnDesarrollo(request) and concentradoBajasAreasVarias.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/concentradoBajas.xhtml"><i class="fa fa-table"></i><span>Concentrado Bajas</span></p:link></li></c:if>
+                    <c:if test="#{(registrarBajaServiciosEscolares.mostrarEnDesarrollo(request) and registrarBajaServiciosEscolares.tieneAcceso) or (concentradoBajasAreasVarias.mostrarEnDesarrollo(request) and concentradoBajasAreasVarias.tieneAcceso) or (validacionBajaDirector.mostrarEnDesarrollo(request) and validacionBajaDirector.tieneAcceso)}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-user-times"></i><span>Bajas</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <c:if test="#{registrarBajaServiciosEscolares.mostrarEnDesarrollo(request) and registrarBajaServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registrarBajas.xhtml"><i class="fa fa-user-times"></i><span>Registrar baja</span></p:link></li></c:if>
+                                <c:if test="#{reporteBajasServiciosEscolares.mostrarEnDesarrollo(request) and reporteBajasServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reporteBajas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte por periodo escolar<br/>y programa educativo</span></p:link></li></c:if>
+                                <c:if test="#{dictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and dictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/dictamenBaja.xhtml"><i class="fa fa-edit"></i><span>Dictamen Baja</span></p:link></li></c:if>
+                                <c:if test="#{validacionBajaDirector.mostrarEnDesarrollo(request) and validacionBajaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacionBaja.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Baja</span></p:link></li></c:if>
+                                <c:if test="#{concentradoBajasAreasVarias.mostrarEnDesarrollo(request) and concentradoBajasAreasVarias.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/concentradoBajas.xhtml"><i class="fa fa-table"></i><span>Concentrado por categoría<br/>tipo y causas</span></p:link></li></c:if>
+                            </ul>
+                        </li>
+                    </c:if>
                     <c:if test="#{historialMovEstServiciosEscolares.mostrarEnDesarrollo(request) and historialMovEstServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/historialMovEstudiante.xhtml"><i class="fa fa-folder"></i><span>Historial Movimientos</span></p:link></li></c:if>
                     <c:if test="#{fusionGruposServiciosEscolares.mostrarEnDesarrollo(request) and fusionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{cedulaIdentificacionSE.mostrarEnDesarrollo(request) and cedulaIdentificacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cedulaIdentificacionSE.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
@@ -252,7 +264,6 @@
                     <c:if test="#{fechasTerminacionTitulacion.mostrarEnDesarrollo(request) and fechasTerminacionTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/fechasTerminacion.xhtml"><i class="fa fa-calendar"></i><span>Fechas Terminación</span></p:link></li></c:if>
 
                     <!-- Psicopedagogía -->
-                    <c:if test="#{dictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and dictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/dictamenBaja.xhtml"><i class="fa fa-edit"></i><span>Dictamen Baja</span></p:link></li></c:if>
                     <c:if test="#{cedulaIdentificacionPsicopedagogia.mostrarEnDesarrollo(request) and cedulaIdentificacionPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
                     <c:if test="#{validacionPlanAccionTutorialPsicopedagogia.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/seguimiento_tutorias_asesorias.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento Tutorías y Asesorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{plantillaPlanAccionTutorialPsicopedagogia.mostrarEnDesarrollo(request) and plantillaPlanAccionTutorialPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/plantilla_plan_accion_tutorial.xhtml"><i class="fa fa-slideshare"></i><span>Plantilla Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
@@ -282,23 +293,7 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                                 <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and concentradoCalificacionesSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-                                <li class="treeview">
-                                    <a href="#">
-                                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
-                                        <span class="pull-right-container">
-                                            <i class="fa fa-angle-left pull-right"></i>
-                                        </span>
-                                    </a>
-                                    <ul class="treeview-menu" style="display: none;">
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
-                                    </ul>
-                                </li>
                             </ul>
                         </li>
                     </c:if>
@@ -314,23 +309,7 @@
                             </a>
                             <ul class="treeview-menu" style="display: none;">
                                 <c:if test="#{seguimientoEstadiaVinculacion.mostrarEnDesarrollo(request) and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml"><i class="fa fa-folder"></i><span>Seguimiento de estadía</span></p:link></li></c:if>
-                                <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                                 <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-                                <li class="treeview">
-                                    <a href="#">
-                                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
-                                        <span class="pull-right-container">
-                                            <i class="fa fa-angle-left pull-right"></i>
-                                        </span>
-                                    </a>
-                                    <ul class="treeview-menu" style="display: none;">
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
-                                    </ul>
-                                </li>
                             </ul>
                         </li>
                     </c:if>
@@ -348,23 +327,7 @@
                                 <c:if test="#{asignacionRolesEstadiaDirector.mostrarEnDesarrollo(request) and asignacionRolesEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacionesRolesEstadia.xhtml"><i class="fa fa-user-plus"></i><span>Asignación roles de estadía</span></p:link></li></c:if>
                                 <c:if test="#{seguimientoEstadiaDirector.mostrarEnDesarrollo(request) and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/seguimientoEstadiaDirector.xhtml"><i class="fa fa-folder"></i><span>Seguimiento de estadía</span></p:link></li></c:if>
                                 <c:if test="#{aperturaExtemporaneaEstadia.mostrarEnDesarrollo(request) and aperturaExtemporaneaEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aperturaExtemporaneaEstadia.xhtml"><i class="fa fa-clock-o"></i><span>Aperturas extemporáneas</span></p:link></li></c:if>
-                                <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
                                 <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-                                <li class="treeview">
-                                    <a href="#">
-                                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
-                                        <span class="pull-right-container">
-                                            <i class="fa fa-angle-left pull-right"></i>
-                                        </span>
-                                    </a>
-                                    <ul class="treeview-menu" style="display: none;">
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
-                                    </ul>
-                                </li>
                             </ul>
                         </li>
                     </c:if>
@@ -375,9 +338,21 @@
                     </c:if>
                     <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_calificaciones.xhtml"><i class="fa fa-users"></i><span>Captura de <br/>calificaciones</span></p:link></li></c:if>
                     <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_integradora.xhtml"><i class="fa fa-users"></i><span>Tarea integradora /<br/>Nivelación</span><span class="pull-right-container"></span></p:link></li></c:if>
-                    <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request) and configuracionUnidadMateriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
-                    <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Evidencias e<br/>Instrumentos de Evaluación</span></p:link></li></c:if>
-                    <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Impresión de Planeación <br/> Cuatrimestral</span></p:link></li></c:if>
+                    <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-edit"></i><span>Planeación cuatrimestral</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                               <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request) and configuracionUnidadMateriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
+                               <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Evidencias e<br/>Instrumentos de Evaluación</span></p:link></li></c:if>
+                               <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Impresión y consulta</span></p:link></li></c:if>
+                            </ul>
+                        </li>
+                    </c:if>
                     <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/paseLista.xhtml"><i class="fa fa-list"></i><span>Lista de asistencia</span></p:link></li></c:if>
                     <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de <br/>Lista Docente</span></p:link></li></c:if>
                     <c:if test="#{avanceProgramaticoDocente.mostrarEnDesarrollo(request) and avanceProgramaticoDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
@@ -422,22 +397,6 @@
                             <ul class="treeview-menu" style="display: none;">
                                 <c:if test="#{asignacionEstudiantesEstadiaDocente.mostrarEnDesarrollo(request) and asignacionEstudiantesEstadiaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/asesorEstadia/asignacionEstudiantesEstadia.xhtml"><i class="fa fa-user-plus"></i><span>Asignación estudiantes</span></p:link></li></c:if>
                                 <c:if test="#{seguimientoEstadiaAsesor.mostrarEnDesarrollo(request) and seguimientoEstadiaAsesor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/asesorEstadia/seguimientoEstadiaAsesor.xhtml"><i class="fa fa-folder"></i><span>Seguimiento estudiantes</span></p:link></li></c:if>
-                                <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaAsesor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
-                                <li class="treeview">
-                                    <a href="#">
-                                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
-                                        <span class="pull-right-container">
-                                            <i class="fa fa-angle-left pull-right"></i>
-                                        </span>
-                                    </a>
-                                    <ul class="treeview-menu" style="display: none;">
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
-                                    </ul>
-                                </li>
                             </ul>
                         </li>
                     </c:if>
@@ -453,22 +412,6 @@
                             </a>
                             <ul class="treeview-menu" style="display: none;">
                                 <c:if test="#{seguimientoEstadiaCoordinador.mostrarEnDesarrollo(request) and seguimientoEstadiaCoordinador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/coordinadorEstadia/seguimientoEstadiaCoordinador.xhtml"><i class="fa fa-folder"></i><span>Seguimiento estudiantes</span></p:link></li></c:if>
-                                <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso and seguimientoEstadiaCoordinador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos</span></p:link></li></c:if>
-                                <li class="treeview">
-                                    <a href="#">
-                                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
-                                        <span class="pull-right-container">
-                                            <i class="fa fa-angle-left pull-right"></i>
-                                        </span>
-                                    </a>
-                                    <ul class="treeview-menu" style="display: none;">
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
-                                    </ul>
-                                </li>
                             </ul>
                         </li>
                     </c:if>
@@ -488,25 +431,40 @@
                                 <c:if test="#{gestorEvaluacionesEstadiaEscolares.mostrarEnDesarrollo(request) and gestorEvaluacionesEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/gestorEvaluacionesEstadia.xhtml"><i class="fa fa-list-ol"></i><span>Gestor evaluaciones</span></p:link></li></c:if>
                                 <c:if test="#{aperturaExtemporaneaEstadia.mostrarEnDesarrollo(request) and aperturaExtemporaneaEstadia.tieneAcceso and registroEventosEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aperturaExtemporaneaEstadia.xhtml"><i class="fa fa-clock-o"></i><span>Aperturas extemporáneas</span></p:link></li></c:if>
                                 <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and registroEventosEstadiaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-                                <li class="treeview">
-                                    <a href="#">
-                                        <i class="fa fa-file-text-o"></i><span>Formatos</span>
-                                        <span class="pull-right-container">
-                                            <i class="fa fa-angle-left pull-right"></i>
-                                        </span>
-                                    </a>
-                                    <ul class="treeview-menu" style="display: none;">
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
-                                    </ul>
-                                </li>
                             </ul>
                         </li>
                     </c:if>
-
+                    <c:if test="#{(calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso) or (registroEventosEstadiaEscolares.mostrarEnDesarrollo(request) and registroEventosEstadiaEscolares.tieneAcceso)}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-file-text-o"></i><span>Formatos Seguimiento <br/>Estadía</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Reporte mensual</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Carta de aceptación</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Carta de liberación</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Evaluación empresarial</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Presentación estadías 2021</span></p:link></li>
+                            </ul>
+                        </li>
+                    </c:if>
+                    <c:if test="#{(calendarioEventosEscolares.mostrarEnDesarrollo(request) and calendarioEventosEscolares.tieneAcceso) or (calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso)}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-calendar"></i><span>Calendarios</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <c:if test="#{calendarioEventosEscolares.mostrarEnDesarrollo(request) and calendarioEventosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEscolares.xhtml"><i class="fa fa-list"></i><span>Eventos escolares<small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                                <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-graduation-cap"></i><span>Eventos estadía</span></p:link></li></c:if>
+                            </ul>
+                        </li>
+                    </c:if>
                 </c:if>
 
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluaciones y encuestas</li>

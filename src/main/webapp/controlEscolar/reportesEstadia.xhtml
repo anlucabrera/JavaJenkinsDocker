@@ -297,10 +297,15 @@
                                                             <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalAcreditados}"/>
                                                             <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalNoAcreditados}"/>
                                                             <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.total}"/>
-                                                            <p:column/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.porcentajeEficiencia}"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                 </p:dataTable>
+                                                </div>
+                                                <br/> 
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                    <h4 style="text-align: center; color: red;">Notas Importantes:</h4>
+                                                    <h4 style="text-align: justify;">Se consideran ACREDITADOS los seguimientos de estadía que han sido validados y NO ACREDITADOS los seguimientos pendientes de validar o no validados por Coordinación de Estadías de Vinculación .</h4>
                                                 </div>
                                             </center>
                                         </c:if>
@@ -349,15 +354,22 @@
                                                     <p:columnGroup type="footer">
                                                         <p:row>
                                                             <p:column style="text-align:center;font-weight: bold;" footerText="Totales:"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.total}"/>
                                                             <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalAcreditados}"/>
                                                             <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalNoAcreditados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.porcentajeEficiencia}"/>
                                                             <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalValidadoDireccion}"/>
                                                             <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.totalNoValidadosDireccion}"/>
-                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.total}"/>
-                                                            <p:column/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesEstadia.rol.porcentajeValidacion}"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                 </p:dataTable>
+                                                </div>
+                                                <br/> 
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                    <h4 style="text-align: center; color: red;">Notas Importantes:</h4>
+                                                    <h4 style="text-align: justify;">Se consideran APROBADOS los seguimientos de estadía que tienen evaluaciones de estadía registradas con resultado aprobatorio (Mayor o igual a 8)  y NO APROBADOS los seguimientos pendientes de registrar evaluaciones o tienen resultado no aprobatorio (Menor a 8).</h4>
+                                                    <h4 style="text-align: justify;">Las evaluaciones son las registradas por el Asesor Académico y las emitidas por el Asesor Empresarial.</h4>
                                                 </div>
                                             </center>
                                         </c:if>

@@ -280,6 +280,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
              rol.setTotalAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getAcreditaron()).sum());
              rol.setTotalNoAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getNoAcreditaron()).sum());
              rol.setTotal(rol.getEficienciaEstadia().stream().mapToInt(p->p.getSeguimiento()).sum());
+             rol.setPorcentajeEficiencia(String.format("%.2f", rol.getEficienciaEstadia().stream().mapToDouble(p->p.getEficienciaEstadia()).average().getAsDouble()));
              Ajax.update("tbEficienciaEstadia");
          }else mostrarMensajeResultadoEJB(res);
     }
@@ -291,11 +292,13 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
         ResultadoEJB<List<DtoEficienciaEstadiaDatosComplementarios>> res = ejb.getEficienciaEstadiaDatosComplementarios(rol.getGeneracion(), rol.getNivelEducativo());
         if(res.getCorrecto()){
              rol.setEficienciaEstadiaDatosComplementarios(res.getValor());
+             rol.setTotal(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getSeguimiento()).sum());
              rol.setTotalAcreditados(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getAcreditaron()).sum());
              rol.setTotalNoAcreditados(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getNoAcreditaron()).sum());
-             rol.setTotal(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getSeguimiento()).sum());
+             rol.setPorcentajeEficiencia(String.format("%.2f", rol.getEficienciaEstadiaDatosComplementarios().stream().mapToDouble(p->p.getEficienciaEstadia()).average().getAsDouble()));
              rol.setTotalValidadoDireccion(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getValidadosDireccion()).sum());
              rol.setTotalNoValidadosDireccion(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getNoValidadosDireccion()).sum());
+             rol.setPorcentajeValidacion(String.format("%.2f", rol.getEficienciaEstadiaDatosComplementarios().stream().mapToDouble(p->p.getEficienciaValidacionDireccion()).average().getAsDouble()));
              Ajax.update("tbEficienciaEstadiaDatosComplementarios");
          }else mostrarMensajeResultadoEJB(res);
     }
@@ -310,6 +313,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
              rol.setTotalAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getAcreditaron()).sum());
              rol.setTotalNoAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getNoAcreditaron()).sum());
              rol.setTotal(rol.getEficienciaEstadia().stream().mapToInt(p->p.getSeguimiento()).sum());
+             rol.setPorcentajeEficiencia(String.format("%.2f", rol.getEficienciaEstadia().stream().mapToDouble(p->p.getEficienciaEstadia()).average().getAsDouble()));
              Ajax.update("tbEficienciaEstadia");
          }else mostrarMensajeResultadoEJB(res);
     }
