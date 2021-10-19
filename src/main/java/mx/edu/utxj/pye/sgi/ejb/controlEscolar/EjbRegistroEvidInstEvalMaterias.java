@@ -226,19 +226,19 @@ public class EjbRegistroEvidInstEvalMaterias {
             List<Materia> listaMaterias = new ArrayList<>();
             
             if(director.getAreaOperativa().getArea()==23){
-                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND p.idMateria.nombre like concat('%',:nombre,'%')", PlanEstudioMateria.class)
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND (p.idMateria.nombre like concat('%',:nombre1,'%') OR p.idMateria.nombre like concat('%',:nombre2,'%'))", PlanEstudioMateria.class)
                         .setParameter("programa", programaEducativo.getArea())
                         .setParameter("plan", planEstudio.getIdPlanEstudio())
-                        .setParameter("nombre", "Inglés")
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
                         .getResultStream()
                         .map(p -> p.getIdMateria())
                         .distinct()
                         .collect(Collectors.toList());
             }else{
-                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND p.idMateria.nombre not like concat('%',:nombre,'%')", PlanEstudioMateria.class)
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa", PlanEstudioMateria.class)
                         .setParameter("programa", programaEducativo.getArea())
                         .setParameter("plan", planEstudio.getIdPlanEstudio())
-                        .setParameter("nombre", "Inglés")
                         .getResultStream()
                         .map(p -> p.getIdMateria())
                         .distinct()
@@ -264,8 +264,12 @@ public class EjbRegistroEvidInstEvalMaterias {
                     
                 PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evaluacion.getPeriodoInicio());
                 String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
+                Boolean habilitarEliminar = true;
+                if(director.getAreaOperativa().getArea()!=23 && (materia.getNombre().contains("Inglés") || materia.getNombre().contains("Francés"))){
+                    habilitarEliminar = false;
+                }
                 
-                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo, programaEducativo);
+                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo, programaEducativo, habilitarEliminar);
                 listaDtoEvaluacionSugeridas.add(dtoRegistroEvidInstEvaluacionMateria);
                 });
             });
@@ -289,21 +293,21 @@ public class EjbRegistroEvidInstEvalMaterias {
             List<Materia> listaMaterias = new ArrayList<>();
             
             if(director.getAreaOperativa().getArea()==23){
-                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND p.grado=:grado AND p.idMateria.nombre like concat('%',:nombre,'%')", PlanEstudioMateria.class)
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND p.grado=:grado AND (p.idMateria.nombre like concat('%',:nombre1,'%') OR p.idMateria.nombre like concat('%',:nombre2,'%'))", PlanEstudioMateria.class)
                         .setParameter("programa", programaEducativo.getArea())
                         .setParameter("plan", planEstudio.getIdPlanEstudio())
                         .setParameter("grado", grado)
-                        .setParameter("nombre", "Inglés")
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
                         .getResultStream()
                         .map(p -> p.getIdMateria())
                         .distinct()
                         .collect(Collectors.toList());
             }else{
-                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND p.grado=:grado AND p.grado=:grado AND p.idMateria.nombre not like concat('%',:nombre,'%')", PlanEstudioMateria.class)
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND p.grado=:grado", PlanEstudioMateria.class)
                         .setParameter("programa", programaEducativo.getArea())
                         .setParameter("plan", planEstudio.getIdPlanEstudio())
                         .setParameter("grado", grado)
-                        .setParameter("nombre", "Inglés")
                         .getResultStream()
                         .map(p -> p.getIdMateria())
                         .distinct()
@@ -329,8 +333,11 @@ public class EjbRegistroEvidInstEvalMaterias {
                     
                 PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evaluacion.getPeriodoInicio());
                 String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
-                    
-                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo, programaEducativo);
+                Boolean habilitarEliminar = true;
+                if(director.getAreaOperativa().getArea()!=23 && (materia.getNombre().contains("Inglés") || materia.getNombre().contains("Francés"))){
+                    habilitarEliminar = false;
+                }    
+                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo, programaEducativo, habilitarEliminar);
                 listaDtoEvaluacionSugeridas.add(dtoRegistroEvidInstEvaluacionMateria);
                 });
             });
@@ -397,19 +404,21 @@ public class EjbRegistroEvidInstEvalMaterias {
             List<Materia> listaMaterias = new ArrayList<>();
             
             if(director.getAreaOperativa().getArea()==23){
-                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.grado=:grado AND p.idMateria.nombre like concat('%',:nombre,'%') ORDER BY p.claveMateria ASC", PlanEstudioMateria.class)
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.grado=:grado AND (p.idMateria.nombre like concat('%',:nombre1,'%') OR p.idMateria.nombre like concat('%',:nombre2,'%')) ORDER BY p.claveMateria ASC", PlanEstudioMateria.class)
                         .setParameter("plan", planEstudio.getIdPlanEstudio())
                         .setParameter("grado", grado)
-                        .setParameter("nombre", "Inglés")
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
                         .getResultStream()
                         .map(p -> p.getIdMateria())
                         .filter(p -> p.getEstatus())
                         .collect(Collectors.toList());
             }else{
-                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.grado=:grado AND p.idMateria.nombre not like concat('%',:nombre,'%') ORDER BY p.claveMateria ASC", PlanEstudioMateria.class)
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.grado=:grado AND (p.idMateria.nombre not like concat('%',:nombre1,'%') AND p.idMateria.nombre not like concat('%',:nombre2,'%')) ORDER BY p.claveMateria ASC", PlanEstudioMateria.class)
                         .setParameter("plan", planEstudio.getIdPlanEstudio())
                         .setParameter("grado", grado)
-                        .setParameter("nombre", "Inglés")
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
                         .getResultStream()
                         .map(p -> p.getIdMateria())
                         .filter(p -> p.getEstatus())
@@ -661,15 +670,17 @@ public class EjbRegistroEvidInstEvalMaterias {
         try {
             List<PlanEstudioMateria> listaMaterias = new ArrayList<>();
             if(director.getAreaOperativa().getArea()==23){
-                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idMateria.nombre like concat('%',:nombre,'%') ORDER BY p.grado, p.idMateria.nombre ASC", PlanEstudioMateria.class)
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND (p.idMateria.nombre like concat('%',:nombre1,'%') OR p.idMateria.nombre like concat('%',:nombre2,'%')) ORDER BY p.grado, p.idMateria.nombre ASC", PlanEstudioMateria.class)
                         .setParameter("plan", planEstudio.getIdPlanEstudio())
-                        .setParameter("nombre", "Inglés")
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
                         .getResultStream()
                         .collect(Collectors.toList());
             }else{
-                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idMateria.nombre not like concat('%',:nombre,'%') ORDER BY p.grado, p.idMateria.nombre ASC", PlanEstudioMateria.class)
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND (p.idMateria.nombre not like concat('%',:nombre1,'%') AND p.idMateria.nombre not like concat('%',:nombre2,'%')) ORDER BY p.grado, p.idMateria.nombre ASC", PlanEstudioMateria.class)
                         .setParameter("plan", planEstudio.getIdPlanEstudio())
-                        .setParameter("nombre", "Inglés")
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
                         .getResultStream()
                         .collect(Collectors.toList());
             }

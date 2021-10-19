@@ -24,6 +24,7 @@ public class DtoRegistroEvidInstEvaluacionMateria implements Serializable, Compa
     @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
     @Getter @Setter @NonNull String periodoEscolar;
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
+    @Getter @Setter @NonNull Boolean habilitarEliminar;
     
     @Override
     public int compareTo(DtoRegistroEvidInstEvaluacionMateria o) {

@@ -320,7 +320,7 @@
                                                         </p:column>
                                                         <p:column>
                                                             <center>
-                                                                <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.eliminarEvidencia(evidInstReg)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar evidencia.">
+                                                                <p:commandButton actionListener="#{registroEvidInstEvalMateriasDireccion.eliminarEvidencia(evidInstReg)}" disabled="#{!evidInstReg.habilitarEliminar}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar evidencia.">
                                                                      <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro seleccionado?" icon="ui-icon-alert" />
                                                                 </p:commandButton>
                                                             </center>
