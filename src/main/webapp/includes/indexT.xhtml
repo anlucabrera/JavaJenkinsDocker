@@ -390,6 +390,23 @@
                                     </div>
                                 </div>
                             </c:if>
+                            <c:if test="#{cartaNoAdeudoDireccionCarrera.tieneAcceso}">
+                                <div class="col-lg-3 col-md-6 col-xs-12">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner">
+                                            <h3>Carta No Adeudo</h3>
+                                            <p>#{cartaNoAdeudoDireccionCarrera.rol.totalFaltantes} Pendientes por liberar de la generación #{caster.generacionToString(cartaNoAdeudoDireccionCarrera.rol.generacionSelect)}</p>
+                                            <p> </p>
+
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-check-square-o"/>
+                                        </div>
+                                        <a href="controlEscolar/director/cartaNoAdeudoDirector.xhtml" class="small-box-footer">Consultar</a>
+                                    </div>
+                                </div>
+                            </c:if>
+
                             <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor}">
                                 <c:if test="#{administracionEncuesta.dto.ESIngActiva}">
                                     <div class="col-lg-3 col-md-6 col-xs-12">
