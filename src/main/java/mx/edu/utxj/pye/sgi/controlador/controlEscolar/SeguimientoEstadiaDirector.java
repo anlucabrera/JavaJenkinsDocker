@@ -393,7 +393,11 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
         Boolean aproboEstadia = aproboEstadia(dtoSeguimientoEstadia);
         
         if(primerInforme && segundoInforme && tercerInforme && informeFinal && aproboEstadia){
-            permiso = Boolean.FALSE;
+            if(!dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionVinculacion()){
+                permiso = Boolean.FALSE;
+            }else{
+                permiso = Boolean.TRUE;
+            }
         }
         return permiso;
     }

@@ -203,8 +203,9 @@ public class EjbAsignacionRolesEstadia {
         try{
             List<ProgramasEducativosNiveles> listaNiveles = new ArrayList<>();
             
-            List<String> listaNivelesArea = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior=:area",  AreasUniversidad.class)
+            List<String> listaNivelesArea = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior=:area AND a.categoria.categoria=:categoria",  AreasUniversidad.class)
                     .setParameter("area", area.getArea())
+                    .setParameter("categoria", (short)9)
                     .getResultStream()
                     .map(p->p.getNivelEducativo().getNivel())
                     .distinct()

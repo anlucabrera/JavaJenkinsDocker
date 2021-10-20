@@ -383,7 +383,8 @@
                                                             <p:column headerText="País" style="width: 150px;" sortBy="#{segEst.empresa.localidad.municipio.estado.idpais.nombre}" filterBy="#{segEst.empresa.localidad.municipio.estado.idpais.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Evaluación Interna" style="width: 150px;" sortBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno}" filterBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno}" filterMatchMode="contains"/>
                                                             <p:column headerText="Evaluación Externa" style="width: 150px;"  sortBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno}" filterBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Situación Estadía" style="width: 150px;" sortBy="#{!reportesEstadia.aproboEstadia(segEst)?'No acreditado(a)':'Acreditado(a)'}" filterBy="#{!reportesEstadia.aproboEstadia(segEst)?'No acreditado(a)':'Acreditado(a)'}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Aprobó Evaluaciones" style="width: 150px;" sortBy="#{!reportesEstadia.aproboEstadia(segEst)?'No':'Sí'}" filterBy="#{!reportesEstadia.aproboEstadia(segEst)?'No':'Sí'}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Validado Vinculación" style="width: 150px;" sortBy="#{!segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'No acreditado(a)':'Acreditado(a)'}" filterBy="#{!segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'No acreditado(a)':'Acreditado(a)'}" filterMatchMode="contains"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: center;">
@@ -426,7 +427,10 @@
                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno}" style="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno ge 8 ? 'color: #000000':'color: #E53935'}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{!reportesEstadia.aproboEstadia(segEst)?'No acreditado(a)':'Acreditado(a)'}"/>
+                                                        <h:outputText value="#{!reportesEstadia.aproboEstadia(segEst)?'No':'Sí'}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{!segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'No acreditado(a)':'Acreditado(a)'}"/>
                                                     </p:column>
                                                 </p:dataTable>
                                             </center>
