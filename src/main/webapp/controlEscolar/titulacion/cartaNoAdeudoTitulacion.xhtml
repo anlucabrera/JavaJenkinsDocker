@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+       Liberación de carta de no adeudo
+    </ui:define>
+    <ui:define name="description">
+         | Coordinación de Titulación
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{cartaNoAdeudoTitulacion.cargado}">
+        <adm:breadcrumb title="Liberación carta no adeudo "/>
+        <div class="contenedor">
+            <c:if test="#{cartaNoAdeudoTitulacion.tieneAcceso}">
+                <c:if test="#{cartaNoAdeudoTitulacion.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                        <p:spacer width="10px"/>
+                                        <p:commandButton value="Guardar cambios" id="btnSave"
+                                                         actionListener="#{cartaNoAdeudoTitulacion.updateCarta}"
+                                                         process="@this" icon="fa fa-check"
+                                                         styleClass="btn-success" update="dtbExpTitGenPE"
+                                        />
+
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-4'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" converter="entityConverter"
+                                                                 value="#{cartaNoAdeudoTitulacion.rol.generacionSelect}"
+                                                                 class="form-control" style="padding-top: 0px;"
+                                                                    valueChangeListener="#{cartaNoAdeudoTitulacion.cambiarGeneracion}"
+                                                >
+                                                    <f:selectItems value="#{cartaNoAdeudoTitulacion.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" itemDescription="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this" update=":frm:dtbExpTitGenPE" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generación" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{cartaNoAdeudoTitulacion.rol.nivelSeleccionado}"  valueChangeListener="#{cartaNoAdeudoTitulacion.cambiarNivel}" class="form-control" style="padding-top: 0px;">
+                                                    <f:selectItem itemLabel="T.S.U." itemValue="1"/>
+                                                    <f:selectItem itemLabel="Ingeniería/Licenciatura" itemValue="2"/>
+                                                    <p:ajax process="@this" update=":frm:dtbExpTitGenPE" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel Educativo" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12">
+                                                 <center>
+                                                         <p:remoteCommand name="actualizar" update="@form:dtbExpTitGenPE" />
+                                                         <p:dataTable id="dtbExpTitGenPE" emptyMessage="Sin datos en la generación seleccionada." value="#{cartaNoAdeudoTitulacion.rol.estudiantes}" var="est"
+                                                                      paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                      resizeMode="expand"
+                                                                      editable="true" editMode="cell"
+                                                                      tableStyleClass="table table-bordered table-hover table-condensed table-responsive"
+                                                                      filteredValue="#{cartaNoAdeudoTitulacion.rol.vacia}"
+                                                         >
+                                                             <f:facet name="header">
+                                                                 <p:commandLink  ajax="false">
+                                                                     <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                                                     <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="dtbExpTitGenPE"
+                                                                                     fileName="noAdedo_Estudiantes"/>
+                                                                 </p:commandLink>
+                                                             </f:facet>
+
+                                                             <p:ajax event="cellEdit" listener="#{cartaNoAdeudoTitulacion.onCellEdit}" update="@this" />
+                                                             <p:column headerText="Matricula" style="width: 130px; text-align: center;" sortBy="#{est.estudiante.matricula}" filterBy="#{est.estudiante.matricula}" filterMatchMode="contains">
+                                                                 <h:outputText value="#{est.estudiante.matricula}"/>
+                                                             </p:column>
+
+                                                             <p:column headerText="Nombre" style="width: 200px; text-align: center;" sortBy="#{est.estudiante.aspirante.idPersona.nombre.concat(' ').concat(est.estudiante.aspirante.idPersona.apellidoPaterno).concat(' ').concat(est.estudiante.aspirante.idPersona.apellidoMaterno)}" filterBy="#{est.estudiante.aspirante.idPersona.nombre.concat(' ').concat(est.estudiante.aspirante.idPersona.apellidoPaterno).concat(' ').concat(est.estudiante.aspirante.idPersona.apellidoMaterno)}" filterMatchMode="contains">
+                                                                 <h:outputText value="#{est.estudiante.aspirante.idPersona.nombre.concat(' ').concat(est.estudiante.aspirante.idPersona.apellidoPaterno).concat(' ').concat(est.estudiante.aspirante.idPersona.apellidoMaterno)}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Grado" style="width: 80px; text-align: center;" >
+                                                                 <h:outputText value="#{est.estudiante.grupo.grado}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Grado" style="width: 80px; text-align: center;" >
+                                                                 <h:outputText value="#{est.estudiante.grupo.literal}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Carrera" style="width: 100px; text-align: center;" >
+                                                                 <h:outputText value="#{est.pe.siglas}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Dirección de Carrera " style="width: 150px; text-align: center;" >
+                                                                 <p:selectBooleanButton id="direccion" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.direccionCarrera.liberado}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Biblioteca" style="width: 150px; text-align: center;" >
+                                                                 <p:selectBooleanButton id="biblioteca" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.biblioteca.liberado}"/>
+                                                             </p:column>
+                                                             <p:column headerText="IyE" style="width: 150px; text-align: center;" >
+                                                                 <p:selectBooleanButton id="iye" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.iye.liberado}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Coordinación de Estadía" style="width: 150px; text-align: center;" >
+                                                                 <p:selectBooleanButton id="es" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.cordinacionEstadia.liberado}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Seguimiento a Egresados " style="width: 150px; text-align: center;" >
+                                                                 <p:selectBooleanButton id="seg" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.seguimientoEgresados.liberado}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Recursos Materiales" style="width: 150px; text-align: center;" >
+                                                                 <p:selectBooleanButton id="rm" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.serviciosMateriales.liberado}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Servicios Escolares  " style="width: 150px; text-align: center;" >
+                                                                 <p:selectBooleanButton id="se" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.servciosEscolares.liberado}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Finanzas" style="width: 150px; text-align: center;" >
+                                                                 <p:selectBooleanButton id="f" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.finanzas.liberado}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Referencia pago" style="width: 100px; text-align: center;" >.
+                                                                 <c:if test="#{est.finanzas.liberado}">
+                                                                     <h:outputText value="#{est.finanzas.aduedoFinanzas.observaciones}"/>
+                                                                 </c:if>
+                                                             </p:column>
+                                                             <p:column headerText="Integro expediente" style="width: 150px; text-align: center;" >
+                                                                 <p:selectBooleanButton id="ex" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.titulacion.integroExpediente}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Expediente validado" style="width: 150px; text-align: center;" >
+                                                                 <p:selectBooleanButton id="v" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.titulacion.expedienteValidado}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Estatus" style="width: 100px; text-align: center;" >
+                                                                 <h:outputText value="#{est.titulacion.aduedoTitulacion.status}"/>
+                                                             </p:column>
+                                                             <p:column headerText="Adeudo" style="width: 200px; text-align: center;">
+                                                                 <p:cellEditor>
+                                                                     <f:facet name="output"> <h:outputText value="#{est.titulacion.aduedoTitulacion.adeudo.adeudo}"/></f:facet>
+                                                                     <f:facet name="input">
+                                                                         <p:selectOneMenu id="catalogo" value="#{est.titulacion.aduedoTitulacion.adeudo}" converter="entityConverter" required="true" requiredMessage="Falta respuesta" style="font-size: small;" disabled="#{!est.acreditadoEstadia or est.titulacion.liberado}">
+                                                                             <f:selectItems value="#{cartaNoAdeudoTitulacion.rol.catalogo}" var="catalogo" itemLabel="#{catalogo.adeudo}" itemValue="#{catalogo}"/>
+                                                                         </p:selectOneMenu>
+                                                                     </f:facet>
+                                                                 </p:cellEditor>
+                                                             </p:column>
+                                                             <p:column headerText="Observaciones" style="width: 200px; text-align: center;" >
+                                                                 <p:cellEditor>
+                                                                     <f:facet name="output"> <h:outputText value="#{est.titulacion.aduedoTitulacion.observaciones}"/></f:facet>
+                                                                     <f:facet name="input">
+                                                                         <h:inputTextarea    style="width:100%;background-color: #1e70bf" value="#{est.titulacion.aduedoTitulacion.observaciones}" disabled="#{est.titulacion.liberado}"/>
+                                                                     </f:facet>
+                                                                 </p:cellEditor>
+                                                             </p:column>
+                                                             <p:column headerText="Ver" style="width: 100px; text-align: center;" >
+                                                                 <p:commandButton actionListener="#{cartaNoAdeudoTitulacion.consultarAdeudos(est)}"
+                                                                                  class="btn btn-sm btn-success"
+                                                                                  icon="fa fa-eye"
+                                                                                  title="Ver"/>
+                                                             </p:column>
+                                                         </p:dataTable>
+                                                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="panel panel-primary" width="500" closable="false" closeOnEscape="true">
+                                                             <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes btn btn-primary" icon="ui-icon-check" />
+                                                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no btn btn-primary" icon="ui-icon-close" />
+                                                         </p:confirmDialog>
+                                                 </center>
+                                             </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+
+                <!-- Zona de cuadros de diálogo -->
+                 <!-- Modal para consultar pagos del estudiante seleccionado -->
+                    <!-- Modal para consultar pagos del estudiante seleccionado -->
+                    <p:dialog id="modalPagos"
+                              widgetVar="modalPagos"
+                              width="1200"
+                              height="auto"
+                              closeOnEscape="true"
+                              visible="#{cartaNoAdeudoTitulacion.rol.aperturaPagos}"
+                              showEffect="fade"
+                              hideEffect="fade"
+                              header="Listado de Pagos"
+                              modal="true"
+                              draggable="true"
+                              styleClass="panel panel-primary"
+                              responsive="true"
+                              resizable="false"
+                              maximizable="false">
+
+                        <h:form id="frmModalPagos" enctype="multipart/form-data">
+                            <p:dataTable id="dtbListaPagos" emptyMessage="No cuenta con pagos el estudiante seleccionado." value="#{cartaNoAdeudoTitulacion.rol.adeudoEstudiantes}" var="adeudos"
+                                         paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                         resizeMode="expand"
+                                         tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+
+                                <p:column headerText="Area" style="width: 100px; text-align: center;" sortBy="#{adeudos.noAdeudoEstudiantePK.area}">
+                                    <h:outputText value="#{adeudos.noAdeudoEstudiantePK.area}"></h:outputText>
+                                </p:column>
+
+                                <p:column headerText="Estatus" style="width: 150px; text-align: center;">
+                                    <h:outputText value="#{adeudos.status}" />
+                                </p:column>
+
+                                <p:column headerText="Adeudo" style="width: 150px; text-align: center;" >
+                                    <h:outputText value="#{adeudos.adeudo.adeudo}"/>
+                                </p:column>
+
+                                <p:column headerText="Observaciones" style="width: 100px; text-align: center;" >
+                                    <h:outputText value="#{adeudos.observaciones}"></h:outputText>
+                                </p:column>
+                            </p:dataTable>
+                        </h:form>
+                    </p:dialog>
+                </c:if>
+                <c:if test="#{cartaNoAdeudoTitulacion.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no generaciones egresadas de Control Escolar."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!cartaNoAdeudoTitulacion.tieneAcceso}">
+                <p:panel  header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal Titulación"/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

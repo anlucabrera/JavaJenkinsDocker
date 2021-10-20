@@ -21,7 +21,8 @@ public enum ControlEscolarVistaControlador {
     REPORTES_ACADEMICOS("/controlEscolar/reportesAcademicos.xhtml", ReportesAcademicos.class),
     CALENDARIO_EVENTOS_ESCOLARES("/controlEscolar/calendarioEventosEscolares.xhtml", CalendarioEventosEscolares.class),
     SEGUIMIENTO_EVALUACION_ESTADIA_MULTIPLE("/controlEscolar/seguimientoEvaluacionEstadia.xhtml", SeguimientoEvaluacionEstadiaMultiple.class),
-    
+    CARTA_NO_ADUEDO_ESTADISTICA("/controlEscolar/pye/cartaNoAdeudoEstadistica.xhtml", CartaNoAdeudoEstadistica.class),
+
     CONCENTRADO_CALIFICACIONES_SECACA("/controlEscolar/secAcademica/concentradoCal.xhtml",  ConcentradoCalificacionesSecAca.class),
     AVANCE_PROGRAMATICO_SECACA("/controlEscolar/secAcademica/avanceP.xhtml",  AvanceProgramaticoSecAca.class),
     
@@ -43,7 +44,13 @@ public enum ControlEscolarVistaControlador {
     SEGUIMIENTO_ESTADIA_DIRECTOR("/controlEscolar/director/seguimientoEstadiaDirector.xhtml", SeguimientoEstadiaDirector.class),
     REGISTRO_EVIDINST_EVALUACION("/controlEscolar/director/registroEvidInstEvalMateria.xhtml", RegistroEvidInstEvalMateriasDireccion.class),
     SEGUIMIENTO_EVALUACION_ESTADIA_DIRECTOR("/controlEscolar/director/seguimientoEvaluacionEstadia.xhtml", SeguimientoEvaluacionEstadiaDirector.class),
-    
+
+    CARTA_NO_ADUEDO_DIRRECION("/controlEscolar/director/cartaNoAdeudoDirector.xhtml", CartaNoAdeudoDireccionCarrera.class),
+
+    CARTA_NO_ADUEDO_BIBLIOTECA("/controlEscolar/serviciosEtudiantiles/cartaNoAdeudoBiblioteca.xhtml", CartaNoAdeudoBiblioteca.class),
+
+    CARTA_NO_ADUEDO_RECURSOS_MATERIALES("/controlEscolar/recursosMateriales/cartaNoAdeudoRecursosMateriales.xhtml", CartaNoAdeudoRecursosMateriales.class),
+
     REASIGNACION_ACADEMICA("/controlEscolar/se/asignacion_academica.xhtml",  AsignacionAcademicaEscolares.class),
     REINCORPORACION("/controlEscolar/se/reincorporaciones.xhtml", ReincorporacionServiciosEscolares.class),
     GENERACION_GRUPOS("/controlEscolar/se/generacionGrupos.xhtml", GeneracionGruposServiciosEscolares.class),
@@ -66,15 +73,21 @@ public enum ControlEscolarVistaControlador {
     REGISTRO_EVENTOS_ESCOLARES("/controlEscolar/se/registroEventosEscolares.xhtml",  RegistroEventosEscolares.class),
     APERTURA_EVENTOS_ESCOLARES("/controlEscolar/se/aperturaEventosEscolares.xhtml",  AperturaEventosEscolares.class),
     INSCRIPCION_ING("/controlEscolar/se/inscripcionIngenieria.xhtml",  InscripcionIngenieriaSE.class),
+    CARTA_NO_ADUEDO_SE("/controlEscolar/se/cartaNoAdeudoServiciosEscolares.xhtml", CartaNoAdeudoSE.class),
 
+    CARTA_NO_ADUEDO_FINANZAS("/controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml", CartaNoAdeudoFinanzas.class),
 
     SEGUIMIENTO_ESTADIA_VINCULACION("/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml", SeguimientoEstadiaVinculacion.class),
+    CARTA_NO_ADUEDO_CORDINACION_ESTADIA("/controlEscolar/vinculacion/cartaNoAdeudoCordinacionEstadia.xhtml", CartaNoAdeudoCordinacionEstadia.class),
+    CARTA_NO_ADUEDO_SEGUIMIENTO_EGRESADOS("/controlEscolar/vinculacion/cartaNoAdeudoSeguimientoEgresados.xhtml", CartaNoAdeudoSeguimientoEgresados.class),
 
     SEGUIMIENTO_EXPEDIENTE_GENERACION("/controlEscolar/titulacion/seguimientoMatricula.xhtml", SeguimientoExpedienteMatriculaTitulacion.class),
     SEGUIMIENTO_EXPEDIENTE_MATRICULA("/controlEscolar/titulacion/seguimientoGeneracion.xhtml", SeguimientoExpedienteGeneracionTitulacion.class),
     REGISTRO_EXPEDIENTE_TITULACION("/controlEscolar/titulacion/registroExpediente.xhtml", RegistroExpedienteTitulacion.class),
     FECHAS_TERMINACION_TITULACION("/controlEscolar/titulacion/fechasTerminacion.xhtml", FechasTerminacionTitulacion.class),
     REGISTRO_EVENTOS_TITULACION("/controlEscolar/titulacion/registroEventosTitulacion.xhtml",  RegistroEventosTitulacion.class),
+    CARTA_NO_ADUEDO_TITULACION("/controlEscolar/titulacion/cartaNoAdeudoTitulacion.xhtml", CartaNoAdeudoTitulacion.class),
+
 
     DICTAMEN_BAJAS("/controlEscolar/psicopedagogia/dictamenBaja.xhtml",  DictamenBajaPsicopedagogia.class),
     CEDULA_IDENTIFICACION("/controlEscolar/psicopedagogia/cedulaIdentificacion.xhtml",cedulaIdentificacionPsicopedagogia.class),
@@ -143,6 +156,7 @@ public enum ControlEscolarVistaControlador {
     ENCUESTA_SATISFACCION_TSU("/controlEscolar/estudiante/satisfaccionEgresadosTsu.xhtml", EncuestaSatisfaccionEgresadosTsu.class),
     CONSULTA_DOCUMENTOS_OFICIALES("/controlEscolar/estudiante/consultaDocumentosOficiales.xhtml", ConsultaDocumentosOficialesEstudiante.class),
     EVALUACION_ESTADIA("/controlEscolar/estudiante/evaluacionEstadia.xhtml", EvaluacionEstadiaControlEscolar.class),
+    CARTA_NO_ADUEDO_ESTUDIANTE("/controlEscolar/estudiante/cartaNoAdeudoEstudiante.xhtml", CartaNoAdeudoEstudiante.class),
 
     REGISTRO_FICHA_ASPIRANTE("/controlEscolar/aspirante/registroFichaAspirante.xhtml", RegistroFichaAdmisionAspirante.class),
     CARGA_DOCUMENTOS_ASPIRANTE("/controlEscolar/aspirante/cargaDocumentos.xhtml", CargaDocumentosAspirante.class),

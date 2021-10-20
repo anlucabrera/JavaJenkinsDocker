@@ -135,7 +135,15 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{seguimientoEvaluacionEstadiaTutor.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{seguimientoEvaluacionEstadiaMultiple.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{seguimientoEvaluacionEstadiaDirector.tieneAcceso}"); if(get) return true;
-
+        get = Faces.evaluateExpressionGet("#{cartaNoAdeudoBiblioteca.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{cartaNoAdeudoCordinacionEstadia.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{cartaNoAdeudoDireccionCarrera.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{cartaNoAdeudoEstadistica.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{cartaNoAdeudoEstudiante.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{cartaNoAdeudoRecursosMateriales.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{cartaNoAdeudoSE.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{cartaNoAdeudoSeguimientoEgresados.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{cartaNoAdeudoTitulacion.tieneAcceso}"); if(get) return true;
         return false;
     }
 }

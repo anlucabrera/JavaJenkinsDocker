@@ -151,6 +151,7 @@
                     <!--Usuarios especiales -->
                     <c:if test="#{calendarioEventosEscolares.mostrarEnDesarrollo(request) and calendarioEventosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEscolares.xhtml"><i class="fa fa-calendar"></i><span>Calendario eventos escolares<small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if> 
                     <c:if test="#{fichaAdmisionReporte.mostrarEnDesarrollo(request) and fichaAdmisionReporte.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reporteFichaAdmision.xhtml"><i class="fa fa-clipboard"></i><span>Reporte de Aspirantes <small class="label pull-right bg-green">Actualizado</small></span></p:link></li></c:if>
+                    <c:if test="#{cartaNoAdeudoFinanzas.mostrarEnDesarrollo(request) and cartaNoAdeudoFinanzas.tieneAcceso}"><li><p:link href="#{request.contextPath}//controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
 
                     <!-- Administrador -->
                     <c:if test="#{registroEventosEscolares.mostrarEnDesarrollo(request) and registroEventosEscolares.tieneAcceso}">
@@ -184,6 +185,8 @@
                         </li>
                     </c:if>
                     <c:if test="#{reporteAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and reporteAperturaExtemporaneaAdministrador.tieneAcceso}"> <li><p:link href="#{request.contextPath}/controlEscolar/pye/reporteAperturaExtemporanea.xhtml"><i class="fa fa-calendar-check-o"></i><span>Reporte Aperturas<small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{cartaNoAdeudoEstadistica.mostrarEnDesarrollo(request) and cartaNoAdeudoEstadistica.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/pye/cartaNoAdeudoEstadistica.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
+
                     <!--                    <c:if test="# {validacionAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and validacionAperturaExtemporaneaAdministrador.tieneAcceso}"> <li><p:link href="# {request.contextPath}/controlEscolar/pye/validacionAperturaExtemporanea.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Aperturas</span></p:link></li></c:if>-->
 
                     <!-- Secretaría Académica -->
@@ -203,6 +206,10 @@
                     <c:if test="#{cedulaIdentificacionDirector.mostrarEnDesarrollo(request) and cedulaIdentificacionDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cedulaIdentificacionDirector.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
                     <c:if test="#{validacionPlanAccionTutorialDirector.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacion_plan_accion_tutorial.xhtml"><i class="fa fa-check-square-o"></i><span>Validación de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{seguimientoEvaluacionEstadiaDirector.mostrarEnDesarrollo(request) and seguimientoEvaluacionEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/seguimientoEvaluacionEstadia.xhtml"><i class="fa fa-check-square-o"></i><span>Seguimiento Evaluación Estadía</span></p:link></li></c:if>
+                    <c:if test="#{cartaNoAdeudoDireccionCarrera.mostrarEnDesarrollo(request) and cartaNoAdeudoDireccionCarrera.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Carta de no adeudo</li>
+                        <c:if test="#{cartaNoAdeudoDireccionCarrera.mostrarEnDesarrollo(request) and cartaNoAdeudoDireccionCarrera.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cartaNoAdeudoDirector.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
+                    </c:if>
                     <!-- Servicios Escolares -->
                     <c:if test="#{asignacionAcademicaEscolares.mostrarEnDesarrollo(request) and asignacionAcademicaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/asignacion_academica.xhtml"><i class="fa fa-tags"></i><span>Asignación académica</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
@@ -234,7 +241,10 @@
                     <c:if test="#{registroDocumentosOficialesEscolares.mostrarEnDesarrollo(request) and registroDocumentosOficialesEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroDocumentosOficiales.xhtml"><i class="fa fa-folder"></i><span>Registro documentos<br/>oficiales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{reinscripcionExtemporaneaSE.mostrarEnDesarrollo(request) and reinscripcionExtemporaneaSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reinscripcionSeguimientoSE.xhtml"><i class="fa fa-history"></i><span>Reinscripciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{registroFichaAdmisionSE.mostrarEnDesarrollo(request) and registroFichaAdmisionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroFichaSE.xhtml"><i class="fa fa-graduation-cap"></i><span>Registro de ficha de admisión</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-
+                    <c:if test="#{cartaNoAdeudoSE.mostrarEnDesarrollo(request) and cartaNoAdeudoSE.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Carta de no adeudo</li>
+                        <c:if test="#{cartaNoAdeudoSE.mostrarEnDesarrollo(request) and cartaNoAdeudoSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cartaNoAdeudoServiciosEscolares.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
+                    </c:if>
 
                     <!-- Titulación -->
                     <c:if test="#{registroEventosTitulacion.mostrarEnDesarrollo(request) and registroEventosTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/registroEventosTitulacion.xhtml"><i class="fa fa-calendar-check-o"></i><span>Registro eventos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
@@ -242,6 +252,7 @@
                     <c:if test="#{seguimientoExpedienteMatriculaTitulacion.mostrarEnDesarrollo(request) and seguimientoExpedienteMatriculaTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/seguimientoMatricula.xhtml"><i class="fa fa-user"></i><span>Expedientes por Matricula</span></p:link></li></c:if>
                     <c:if test="#{registroExpedienteTitulacion.mostrarEnDesarrollo(request) and registroExpedienteTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/registrarExpediente.xhtml"><i class="fa fa-user-plus"></i><span>Registrar Expediente</span></p:link></li></c:if>
                     <c:if test="#{fechasTerminacionTitulacion.mostrarEnDesarrollo(request) and fechasTerminacionTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/fechasTerminacion.xhtml"><i class="fa fa-calendar"></i><span>Fechas Terminación</span></p:link></li></c:if>
+                    <c:if test="#{cartaNoAdeudoTitulacion.mostrarEnDesarrollo(request) and cartaNoAdeudoTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/cartaNoAdeudoTitulacion.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
 
                     <!-- Psicopedagogía -->
                     <c:if test="#{dictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and dictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/dictamenBaja.xhtml"><i class="fa fa-edit"></i><span>Dictamen Baja</span></p:link></li></c:if>
@@ -294,6 +305,18 @@
                             </ul>
                         </li>
                     </c:if>
+                    <c:if test="#{cartaNoAdeudoCordinacionEstadia.mostrarEnDesarrollo(request) and cartaNoAdeudoCordinacionEstadia.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Carta de no adeudo</li>
+                        <c:if test="#{cartaNoAdeudoCordinacionEstadia.mostrarEnDesarrollo(request) and cartaNoAdeudoCordinacionEstadia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/vinculacion/cartaNoAdeudoCordinacionEstadia.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
+                    </c:if>
+                    <c:if test="#{cartaNoAdeudoSeguimientoEgresados.mostrarEnDesarrollo(request) and cartaNoAdeudoSeguimientoEgresados.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/vinculacion/cartaNoAdeudoSeguimientoEgresados.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
+
+
+                    <!--Servcios Estudiantiles -->
+                    <c:if test="#{cartaNoAdeudoBiblioteca.mostrarEnDesarrollo(request) and cartaNoAdeudoBiblioteca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/serviciosEstudiantiles/cartaNoAdeudoBiblioteca.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
+
+                    <!--Recursos Materiales -->
+                    <c:if test="#{cartaNoAdeudoRecursosMateriales.mostrarEnDesarrollo(request) and cartaNoAdeudoRecursosMateriales.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/recursosMateriales/cartaNoAdeudoRecursosMateriales.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
 
                     <!-- Coordinador de Estadías - Extensión y Vinculación -->
                     <c:if test="#{seguimientoEstadiaVinculacion.mostrarEnDesarrollo(request) and seguimientoEstadiaVinculacion.tieneAcceso}">
