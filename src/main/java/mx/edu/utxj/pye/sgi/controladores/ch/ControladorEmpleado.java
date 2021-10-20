@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.ch.MenuDinamicoBD;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
@@ -80,8 +81,12 @@ public class ControladorEmpleado implements Serializable {
     @Getter    @Setter    private AreasUniversidad nuevaAreasUniversidadLogeado = new AreasUniversidad();
     @Getter    @Setter    private List<MenuDinamico> moduloses = new ArrayList();
     
-    @Getter    @Setter    private List<Menu> menus = new ArrayList();
-    @Getter    @Setter    private Nivel3 menu;
+    @Getter    @Setter    private List<MenuDinamicoBD.EncabezadosMenu> menus = new ArrayList<>();
+    List<MenuDinamicoBD.Nivel1> nivel1s = new ArrayList<>();
+    List<MenuDinamicoBD.Nivel2> nivel2s = new ArrayList<>();
+    List<MenuDinamicoBD.Nivel3> nivel3s = new ArrayList<>();
+    List<MenuDinamicoBD.Nivel4> nivel4s = new ArrayList<>();
+    List<MenuDinamicoBD.Nivel5> nivel5s = new ArrayList<>();
     
     @Getter    @Setter    private LocalDate fechaActual = LocalDate.now();
     @Getter    @Setter    private LocalDateTime fechaActualHora = LocalDateTime.now();
@@ -351,39 +356,93 @@ public class ControladorEmpleado implements Serializable {
 //////////////////////////////////////////////////////////////////////////////// Menú dinamico
     public void crearMenuAdministrador() {
         try {
-            List<MenuDinamico> msN1 = new ArrayList<>();
-            msN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, "Administrador","Trabajador");
-            if (!msN1.isEmpty()) {
-                msN1.forEach((n1) -> {
-                    List<MenuDinamico> msN2 = new ArrayList<>();
-                    msN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, n1.getTituloNivel1(),"Trabajador");
-//                    msN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, "Administrador","Trabajador");
-                    List<Nivel2> nivel2s = new ArrayList<>();
-                    if (!msN2.isEmpty()) {
-                        msN2.forEach((n2) -> {
-                            List<MenuDinamico> msN3 = new ArrayList<>();
-                            msN3 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 3, n2.getTituloNivel2(),"Trabajador");
-                            List<Nivel3> nivel3s = new ArrayList<>();
-                            if (!msN3.isEmpty()) {
-                                msN3.forEach((n3) -> {
-                                    List<MenuDinamico> msN4 = new ArrayList<>();
-                                    msN4 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 4, n3.getTitulonivel3(),"Trabajador");
-                                    List<Nivel4> nivel4s = new ArrayList<>();
-                                    if (!msN4.isEmpty()) {
-                                        msN4.forEach((n4) -> {
-                                            nivel4s.add(new Nivel4(n4.getTitulonivel4(), n4.getIconoNivel4(), n4.getEnlacenivel4(),n4.getEstatus()));
+//            List<MenuDinamico> dinamicos = new ArrayList<>();
+//            dinamicos = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 0, "", "Trabajador");
+//            menus = new ArrayList<>();
+//            if (!dinamicos.isEmpty()) {
+//                dinamicos.forEach((enc) -> {
+                    List<MenuDinamico> dinamicosN1 = new ArrayList<>();
+                    dinamicosN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, "Administrador","Trabajador");
+//                    dinamicosN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, enc.getEncabezado(), "Trabajador");
+                    nivel1s = new ArrayList<>();
+                    if (!dinamicosN1.isEmpty()) {
+                        dinamicosN1.forEach((n1) -> {
+                            List<MenuDinamico> dinamicosN2 = new ArrayList<>();
+                            dinamicosN2 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 2, n1.getTituloNivel1(), "Trabajador");
+                            nivel2s = new ArrayList<>();
+                            if (!dinamicosN2.isEmpty()) {
+                                dinamicosN2.forEach((n2) -> {
+                                    List<MenuDinamico> dinamicosN3 = new ArrayList<>();
+                                    dinamicosN3 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 3, n2.getTituloNivel2(), "Trabajador");
+                                    nivel3s = new ArrayList<>();
+                                    if (!dinamicosN3.isEmpty()) {
+                                        dinamicosN3.forEach((n3) -> {
+                                            List<MenuDinamico> dinamicosN4 = new ArrayList<>();
+                                            dinamicosN4 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 4, n3.getTitulonivel3(), "Trabajador");
+                                            nivel4s = new ArrayList<>();
+                                            if (!dinamicosN4.isEmpty()) {
+                                                dinamicosN4.forEach((n4) -> {
+                                                    List<MenuDinamico> dinamicosN5 = new ArrayList<>();
+                                                    dinamicosN5 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 5, n4.getTitulonivel4(), "Trabajador");
+                                                    nivel5s = new ArrayList<>();
+                                                    if (!dinamicosN5.isEmpty()) {
+                                                        dinamicosN5.forEach((n5) -> {
+                                                            MenuDinamicoBD.Nivel5 nivel5 = new MenuDinamicoBD.Nivel5();
+                                                            nivel5.setTitulo(n5.getTitulonivel5());
+                                                            nivel5.setIcono(n5.getIconoNivel5());
+                                                            nivel5.setEnlace(n5.getEnlacenivel5());
+                                                            nivel5.setEstaus(n5.getEstatus());
+                                                            nivel5.setTipoenlace(n5.getTipoenlace());
+                                                            nivel5s.add(nivel5);
+                                                        });
+                                                    }
+                                                    MenuDinamicoBD.Nivel4 nivel4 = new MenuDinamicoBD.Nivel4();
+                                                    nivel4.setTitulo(n4.getTitulonivel4());
+                                                    nivel4.setIcono(n4.getIconoNivel4());
+                                                    nivel4.setEnlace(n4.getEnlacenivel4());
+                                                    nivel4.setEstaus(n4.getEstatus());
+                                                    nivel4.setTipoenlace(n4.getTipoenlace());
+                                                    nivel4.setQuintoNivel(nivel5s);
+                                                    nivel4s.add(nivel4);
+                                                });
+                                            }
+                                            MenuDinamicoBD.Nivel3 nivel3 = new MenuDinamicoBD.Nivel3();
+                                            nivel3.setTitulo(n3.getTitulonivel3());
+                                            nivel3.setIcono(n3.getIconoNivel3());
+                                            nivel3.setEnlace(n3.getEnlacenivel3());
+                                            nivel3.setEstaus(n3.getEstatus());
+                                            nivel3.setTipoenlace(n3.getTipoenlace());
+                                            nivel3.setCuartoNivel(nivel4s);
+                                            nivel3s.add(nivel3);
                                         });
                                     }
-                                    nivel3s.add(new Nivel3(n3.getTitulonivel3(), n3.getIconoNivel3(), n3.getEnlacenivel3(),n3.getEstatus(), nivel4s));
+                                    MenuDinamicoBD.Nivel2 nivel2 = new MenuDinamicoBD.Nivel2();
+                                    nivel2.setTitulo(n2.getTituloNivel2());
+                                    nivel2.setIcono(n2.getIconoNivel2());
+                                    nivel2.setEnlace(n2.getEnlaceNivel2());
+                                    nivel2.setEstaus(n2.getEstatus());
+                                    nivel2.setTipoenlace(n2.getTipoenlace());
+                                    nivel2.setTercerNivel(nivel3s);
+                                    nivel2s.add(nivel2);
                                 });
                             }
-                            nivel2s.add(new Nivel2(n2.getTituloNivel2(), n2.getIconoNivel2(), n2.getEnlaceNivel2(),n2.getEstatus(), nivel3s));
+                            MenuDinamicoBD.Nivel1 nivel1 = new MenuDinamicoBD.Nivel1();
+                            nivel1.setTitulo(n1.getTituloNivel1());
+                            nivel1.setIcono(n1.getIconoNivel1());
+                            nivel1.setEnlace(n1.getEnlaceNivel1());
+                            nivel1.setEstaus(n1.getEstatus());
+                            nivel1.setTipoenlace(n1.getTipoenlace());
+                            nivel1.setSegundoNivel(nivel2s);
+                            nivel1s.add(nivel1);
                         });
                     }
-//                    menus.add(new Menu("Administrador", nivel2s));
-                    menus.add(new Menu(n1.getTituloNivel1(), nivel2s));
-                });
-            }
+                    MenuDinamicoBD.EncabezadosMenu nivel0 = new MenuDinamicoBD.EncabezadosMenu();
+//                    nivel0.setEncabezado(enc.getEncabezado());
+                    nivel0.setEncabezado("Administrador");
+                    nivel0.setPrimerNivel(nivel1s);
+                    menus.add(nivel0);
+//                });
+//            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
@@ -402,66 +461,5 @@ public static class listaEstrategiaActividades {
         }      
         
     }
-
-    public static class Menu {
-
-        @Getter        @Setter        private String titulo;
-        @Getter        @Setter        private List<Nivel2> nivel2s;
-
-        public Menu(String titulo, List<Nivel2> nivel2s) {
-            this.titulo = titulo;
-            this.nivel2s = nivel2s;
-        }
-    }
-
-    public static class Nivel2 {
-
-        @Getter        @Setter        private String titulo;
-        @Getter        @Setter        private String icono;
-        @Getter        @Setter        private String enlace;
-        @Getter        @Setter        private String estaus;
-        @Getter        @Setter        private List<Nivel3> nivel3s;
-
-        public Nivel2(String titulo, String icono, String enlace, String estaus, List<Nivel3> nivel3s) {
-            this.titulo = titulo;
-            this.icono = icono;
-            this.enlace = enlace;
-            this.estaus = estaus;
-            this.nivel3s = nivel3s;
-        }
-    }
-
-    public static class Nivel3 {
-
-        @Getter        @Setter        private String titulo;
-        @Getter        @Setter        private String icono;
-        @Getter        @Setter        private String enlace;
-        @Getter        @Setter        private String estaus;
-        @Getter        @Setter        private List<Nivel4> nivel4s;
-
-        public Nivel3(String titulo, String icono, String enlace, String estaus, List<Nivel4> nivel4s) {
-            this.titulo = titulo;
-            this.icono = icono;
-            this.enlace = enlace;
-            this.estaus = estaus;
-            this.nivel4s = nivel4s;
-        }   
-    }
-
-    public static class Nivel4 {
-
-        @Getter        @Setter        private String titulo;
-        @Getter        @Setter        private String icono;
-        @Getter        @Setter        private String enlace;
-        @Getter        @Setter        private String estaus;
-
-        public Nivel4(String titulo, String icono, String enlace, String estaus) {
-            this.titulo = titulo;
-            this.icono = icono;
-            this.enlace = enlace;
-            this.estaus = estaus;
-        }   
-    }
-
 }
 

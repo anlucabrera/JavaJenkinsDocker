@@ -6,23 +6,18 @@
 package mx.edu.utxj.pye.sgi.entity.ch;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -34,7 +29,10 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "MenuDinamico.findAll", query = "SELECT m FROM MenuDinamico m")
     , @NamedQuery(name = "MenuDinamico.findByModulo", query = "SELECT m FROM MenuDinamico m WHERE m.modulo = :modulo")
+    , @NamedQuery(name = "MenuDinamico.findByEncabezado", query = "SELECT m FROM MenuDinamico m WHERE m.encabezado = :encabezado")
     , @NamedQuery(name = "MenuDinamico.findByTituloNivel1", query = "SELECT m FROM MenuDinamico m WHERE m.tituloNivel1 = :tituloNivel1")
+    , @NamedQuery(name = "MenuDinamico.findByIconoNivel1", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel1 = :iconoNivel1")
+    , @NamedQuery(name = "MenuDinamico.findByEnlaceNivel1", query = "SELECT m FROM MenuDinamico m WHERE m.enlaceNivel1 = :enlaceNivel1")
     , @NamedQuery(name = "MenuDinamico.findByTituloNivel2", query = "SELECT m FROM MenuDinamico m WHERE m.tituloNivel2 = :tituloNivel2")
     , @NamedQuery(name = "MenuDinamico.findByEnlaceNivel2", query = "SELECT m FROM MenuDinamico m WHERE m.enlaceNivel2 = :enlaceNivel2")
     , @NamedQuery(name = "MenuDinamico.findByIconoNivel2", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel2 = :iconoNivel2")
@@ -44,13 +42,17 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "MenuDinamico.findByTitulonivel4", query = "SELECT m FROM MenuDinamico m WHERE m.titulonivel4 = :titulonivel4")
     , @NamedQuery(name = "MenuDinamico.findByEnlacenivel4", query = "SELECT m FROM MenuDinamico m WHERE m.enlacenivel4 = :enlacenivel4")
     , @NamedQuery(name = "MenuDinamico.findByIconoNivel4", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel4 = :iconoNivel4")
+    , @NamedQuery(name = "MenuDinamico.findByTitulonivel5", query = "SELECT m FROM MenuDinamico m WHERE m.titulonivel5 = :titulonivel5")
+    , @NamedQuery(name = "MenuDinamico.findByEnlacenivel5", query = "SELECT m FROM MenuDinamico m WHERE m.enlacenivel5 = :enlacenivel5")
+    , @NamedQuery(name = "MenuDinamico.findByIconoNivel5", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel5 = :iconoNivel5")
     , @NamedQuery(name = "MenuDinamico.findByPersonas", query = "SELECT m FROM MenuDinamico m WHERE m.personas = :personas")
     , @NamedQuery(name = "MenuDinamico.findByAreas", query = "SELECT m FROM MenuDinamico m WHERE m.areas = :areas")
     , @NamedQuery(name = "MenuDinamico.findByCategorias", query = "SELECT m FROM MenuDinamico m WHERE m.categorias = :categorias")
     , @NamedQuery(name = "MenuDinamico.findByActividades", query = "SELECT m FROM MenuDinamico m WHERE m.actividades = :actividades")
     , @NamedQuery(name = "MenuDinamico.findByEstatus", query = "SELECT m FROM MenuDinamico m WHERE m.estatus = :estatus")
     , @NamedQuery(name = "MenuDinamico.findByTipoUsuario", query = "SELECT m FROM MenuDinamico m WHERE m.tipoUsuario = :tipoUsuario")
-    , @NamedQuery(name = "MenuDinamico.findByActivo", query = "SELECT m FROM MenuDinamico m WHERE m.activo = :activo")})
+    , @NamedQuery(name = "MenuDinamico.findByActivo", query = "SELECT m FROM MenuDinamico m WHERE m.activo = :activo")
+    , @NamedQuery(name = "MenuDinamico.findByTipoenlace", query = "SELECT m FROM MenuDinamico m WHERE m.tipoenlace = :tipoenlace")})
 public class MenuDinamico implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,9 +61,20 @@ public class MenuDinamico implements Serializable {
     @Basic(optional = false)
     @Column(name = "modulo")
     private Integer modulo;
+    @Size(max = 255)
+    @Column(name = "encabezado")
+    private String encabezado;
     @Size(max = 50)
     @Column(name = "tituloNivel1")
     private String tituloNivel1;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 1000)
+    @Column(name = "iconoNivel1")
+    private String iconoNivel1;
+    @Size(max = 255)
+    @Column(name = "enlaceNivel1")
+    private String enlaceNivel1;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -93,6 +106,15 @@ public class MenuDinamico implements Serializable {
     @Size(max = 255)
     @Column(name = "iconoNivel4")
     private String iconoNivel4;
+    @Size(max = 255)
+    @Column(name = "titulonivel5")
+    private String titulonivel5;
+    @Size(max = 255)
+    @Column(name = "enlacenivel5")
+    private String enlacenivel5;
+    @Size(max = 255)
+    @Column(name = "iconoNivel5")
+    private String iconoNivel5;
     @Size(max = 250)
     @Column(name = "personas")
     private String personas;
@@ -113,8 +135,9 @@ public class MenuDinamico implements Serializable {
     private String tipoUsuario;
     @Column(name = "activo")
     private Boolean activo;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "modulo", fetch = FetchType.LAZY)
-    private List<Permisos> permisosList;
+    @Size(max = 9)
+    @Column(name = "Tipoenlace")
+    private String tipoenlace;
 
     public MenuDinamico() {
     }
@@ -123,8 +146,9 @@ public class MenuDinamico implements Serializable {
         this.modulo = modulo;
     }
 
-    public MenuDinamico(Integer modulo, String tituloNivel2, String iconoNivel2) {
+    public MenuDinamico(Integer modulo, String iconoNivel1, String tituloNivel2, String iconoNivel2) {
         this.modulo = modulo;
+        this.iconoNivel1 = iconoNivel1;
         this.tituloNivel2 = tituloNivel2;
         this.iconoNivel2 = iconoNivel2;
     }
@@ -137,12 +161,36 @@ public class MenuDinamico implements Serializable {
         this.modulo = modulo;
     }
 
+    public String getEncabezado() {
+        return encabezado;
+    }
+
+    public void setEncabezado(String encabezado) {
+        this.encabezado = encabezado;
+    }
+
     public String getTituloNivel1() {
         return tituloNivel1;
     }
 
     public void setTituloNivel1(String tituloNivel1) {
         this.tituloNivel1 = tituloNivel1;
+    }
+
+    public String getIconoNivel1() {
+        return iconoNivel1;
+    }
+
+    public void setIconoNivel1(String iconoNivel1) {
+        this.iconoNivel1 = iconoNivel1;
+    }
+
+    public String getEnlaceNivel1() {
+        return enlaceNivel1;
+    }
+
+    public void setEnlaceNivel1(String enlaceNivel1) {
+        this.enlaceNivel1 = enlaceNivel1;
     }
 
     public String getTituloNivel2() {
@@ -217,6 +265,30 @@ public class MenuDinamico implements Serializable {
         this.iconoNivel4 = iconoNivel4;
     }
 
+    public String getTitulonivel5() {
+        return titulonivel5;
+    }
+
+    public void setTitulonivel5(String titulonivel5) {
+        this.titulonivel5 = titulonivel5;
+    }
+
+    public String getEnlacenivel5() {
+        return enlacenivel5;
+    }
+
+    public void setEnlacenivel5(String enlacenivel5) {
+        this.enlacenivel5 = enlacenivel5;
+    }
+
+    public String getIconoNivel5() {
+        return iconoNivel5;
+    }
+
+    public void setIconoNivel5(String iconoNivel5) {
+        this.iconoNivel5 = iconoNivel5;
+    }
+
     public String getPersonas() {
         return personas;
     }
@@ -273,13 +345,12 @@ public class MenuDinamico implements Serializable {
         this.activo = activo;
     }
 
-    @XmlTransient
-    public List<Permisos> getPermisosList() {
-        return permisosList;
+    public String getTipoenlace() {
+        return tipoenlace;
     }
 
-    public void setPermisosList(List<Permisos> permisosList) {
-        this.permisosList = permisosList;
+    public void setTipoenlace(String tipoenlace) {
+        this.tipoenlace = tipoenlace;
     }
 
     @Override
