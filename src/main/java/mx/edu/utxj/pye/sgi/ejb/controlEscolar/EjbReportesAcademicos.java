@@ -104,6 +104,10 @@ public class EjbReportesAcademicos {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
+            else if (p.getPersonal().getAreaSuperior()== 2 && p.getPersonal().getAreaOperativa() == 23 && p.getPersonal().getStatus()!='B') {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal con acceso a reportes académicos.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbReportesAcademicos.validarRolesReportesAcademicos)", e, null);
@@ -216,7 +220,7 @@ public class EjbReportesAcademicos {
                 listaProgramasEducativos.add(programaPK);
             });
             
-            if(personal.getAreaOperativa()!=10 && personal.getAreaOperativa()!=6 && personal.getAreaOperativa()!=9){
+            if(personal.getAreaOperativa()!=10 && personal.getAreaOperativa()!=6 && personal.getAreaOperativa()!=9 && personal.getAreaOperativa()!=23){
                 listaProgramasEducativosFinal = listaProgramasEducativos.stream().filter(p->p.getAreaSuperior().equals(personal.getAreaOperativa())).collect(Collectors.toList());
             }else{
                 listaProgramasEducativosFinal = listaProgramasEducativos;
@@ -508,12 +512,26 @@ public class EjbReportesAcademicos {
             grados.add(6);
             grados.add(11);
             
-            List<CargaAcademica> cargasAcademicas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.cveGrupo.periodo=:periodo AND c.cveGrupo.idPe IN :programas AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
+            List<CargaAcademica> cargasAcademicas = new ArrayList<>();
+            
+            if(personal.getAreaOperativa()==23){
+                cargasAcademicas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.cveGrupo.periodo=:periodo AND c.cveGrupo.idPe IN :programas AND c.cveGrupo.grado NOT IN :grados AND (c.idPlanMateria.idMateria.nombre like concat('%',:nombre1,'%') OR c.idPlanMateria.idMateria.nombre like concat('%',:nombre2,'%'))", CargaAcademica.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .setParameter("programas", programasEducativos)
+                    .setParameter("grados", grados)
+                    .setParameter("nombre1", "Inglés")
+                    .setParameter("nombre2", "Francés")
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            }else{
+                cargasAcademicas = em.createQuery("SELECT c FROM CargaAcademica c WHERE c.cveGrupo.periodo=:periodo AND c.cveGrupo.idPe IN :programas AND c.cveGrupo.grado NOT IN :grados", CargaAcademica.class)
                     .setParameter("periodo", periodo.getPeriodo())
                     .setParameter("programas", programasEducativos)
                     .setParameter("grados", grados)
                     .getResultStream()
                     .collect(Collectors.toList());
+            }
             
             cargasAcademicas.forEach(carga -> {
                 AreasUniversidad programa = em.find(AreasUniversidad.class, carga.getCveGrupo().getIdPe());
@@ -1113,13 +1131,26 @@ public class EjbReportesAcademicos {
             List<Short> programasEducativos = getProgramasEducativos(periodo, personal).getValor().stream().map(p->p.getArea()).collect(Collectors.toList());
             
             List<DtoEstudianteIrregular> listaEstudiantesIrregulares = new ArrayList<>();
+            
+            List<CalificacionPromedio> calificacionesPromedio = new ArrayList<>();
              
-            List<CalificacionPromedio> calificacionesPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.estudiante.periodo=:periodo AND c.estudiante.carrera IN :programas AND c.valor<:valor", CalificacionPromedio.class)
+            if(personal.getAreaOperativa()==23){
+                calificacionesPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.estudiante.periodo=:periodo AND c.estudiante.carrera IN :programas AND c.valor<:valor AND (c.cargaAcademica.idPlanMateria.idMateria.nombre like concat('%',:nombre1,'%') OR c.cargaAcademica.idPlanMateria.idMateria.nombre like concat('%',:nombre2,'%'))", CalificacionPromedio.class)
+                        .setParameter("periodo", periodo.getPeriodo())
+                        .setParameter("programas", programasEducativos)
+                        .setParameter("valor", (double) 8)
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
+                        .getResultStream()
+                        .collect(Collectors.toList());
+            }else{
+                calificacionesPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.estudiante.periodo=:periodo AND c.estudiante.carrera IN :programas AND c.valor<:valor", CalificacionPromedio.class)
                     .setParameter("periodo", periodo.getPeriodo())
                     .setParameter("programas", programasEducativos)
                     .setParameter("valor", (double)8)
                     .getResultStream()
                     .collect(Collectors.toList());
+            }
 
             calificacionesPromedio.forEach(promedio -> {
                 AreasUniversidad programa = em.find(AreasUniversidad.class, promedio.getCargaAcademica().getCveGrupo().getIdPe());

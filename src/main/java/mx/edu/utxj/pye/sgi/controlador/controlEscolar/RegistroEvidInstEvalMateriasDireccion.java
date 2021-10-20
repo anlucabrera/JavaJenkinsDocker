@@ -84,26 +84,18 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
         if(!logon.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
             cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.REGISTRO_EVIDINST_EVALUACION);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarDirector(logon.getPersonal().getClave());//validar si es director
-//            System.out.println("resAcceso = " + resAcceso);
-
-            ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validarEncargadoDireccion(logon.getPersonal().getClave());
-//            System.out.println("resValidacion = " + resValidacion);
-            if(!resValidacion.getCorrecto() && !resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return; }//cortar el flujo si no se pudo validar
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarRolesRegistroEvidInstEvaluacion(logon.getPersonal().getClave());//validar si es director
+            
+            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return; }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
-            PersonalActivo director = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
-            rol = new RegistroEvidInstEvalMateriasRolDirector(filtro, director);
-            tieneAcceso = rol.tieneAcceso(director);
-//            System.out.println("tieneAcceso1 = " + tieneAcceso);
-            if(!tieneAcceso){
-                rol.setFiltro(resValidacion.getValor());
-                tieneAcceso = rol.tieneAcceso(director);
-            }
-//            System.out.println("tieneAcceso2 = " + tieneAcceso);
+            PersonalActivo usuario = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
+            rol = new RegistroEvidInstEvalMateriasRolDirector(filtro, usuario);
+            tieneAcceso = rol.tieneAcceso(usuario);
+
             if(!tieneAcceso){return;} //cortar el flujo si no tiene acceso
 
-            rol.setDirector(director);
+            rol.setDirector(usuario);
             rol.setNivelRol(NivelRol.OPERATIVO);
             rol.setPeriodoActivo(ejbAsignacionIndicadoresCriterios.getPeriodoActual());
 //            rol.setSoloLectura(true);

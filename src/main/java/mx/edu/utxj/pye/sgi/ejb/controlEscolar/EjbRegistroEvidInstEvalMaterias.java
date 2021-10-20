@@ -68,43 +68,30 @@ public class EjbRegistroEvidInstEvalMaterias {
      * @param clave Número de nómina del usuario autenticado
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Filter<PersonalActivo>> validarDirector(Integer clave){
+    public ResultadoEJB<Filter<PersonalActivo>> validarRolesRegistroEvidInstEvaluacion(Integer clave){
         try{
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
-            filtro.setEntity(p);
-            filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
-            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorCategoriaOperativa").orElse(18)));
+            if (p.getPersonal().getAreaSuperior()== 2 && p.getPersonal().getCategoriaOperativa().getCategoria()==18) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
+                filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorCategoriaOperativa").orElse(18)));
+            }
+            else if (p.getPersonal().getAreaSuperior()== 2 && p.getPersonal().getCategoriaOperativa().getCategoria()==48) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
+                filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorEncargadoCategoriaOperativa").orElse(48)));
+            }
+            else if (p.getPersonal().getAreaSuperior()== 2 && p.getPersonal().getAreaOperativa() == 23 && p.getPersonal().getStatus()!='B') {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }
             return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un director.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbRegistroEvidInstEvalMaterias.validarDirector)", e, null);
         }
     }
-    
-    /**
-     * Permite crear el filtro para validar si el usuario autenticado es un encarcado de dirección de área académica
-     * @param clave Número de nómina del usuario autenticado
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDireccion(Integer clave){
-        try{
-            PersonalActivo p = ejbPersonalBean.pack(clave);
-            Filter<PersonalActivo> filtro = new Filter<>();
-            if (p.getPersonal().getAreaSuperior()== 2 && p.getPersonal().getCategoriaOperativa().getCategoria()==48) {
-                filtro.setEntity(p);
-                filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
-                filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorEncargadoCategoriaOperativa").orElse(48)));
-            }
-            else if (p.getPersonal().getCategoriaOperativa().getCategoria() == 14 && p.getPersonal().getAreaOperativa() == 23 && p.getPersonal().getStatus()!='B') {
-                filtro.setEntity(p);
-                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
-            }
-            return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un encargado de dirección.");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbRegistroEvidInstEvalMaterias.validarDirector)", e, null);
-        }
-    }
-    
+ 
     /**
      * Permite obtener la lista de programas educativos de los que es responsable el director o directora
      * @param director
