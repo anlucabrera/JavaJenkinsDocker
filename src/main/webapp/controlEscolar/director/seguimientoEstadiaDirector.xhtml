@@ -121,6 +121,7 @@
                                                             <p:column rowspan="2" headerText="Comentarios Coordinador" style="width: 200px;"/>
                                                             <p:column rowspan="2" headerText="Validación Coordinador" style="width: 100px;"/>
                                                             <p:column colspan="2" headerText="* Validación Dirección" style="width: 200px;"/>
+                                                            <p:column rowspan="2" headerText="Validación Vinculación" style="width: 100px;"/>
                                                             <p:column colspan="2" headerText="Carta de Presentación" style="width: 200px;"/>
                                                             <p:column colspan="2" headerText="Carta de Aceptación" style="width: 200px;"/>
                                                             <p:column colspan="2" headerText="Primer Informe" style="width: 200px;"/>
@@ -202,6 +203,9 @@
                                                                         title="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'De clic para no validar.':'De clic para validar.'}"
                                                                         onsuccess="actualizar();"><i class="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'fa fa-close':'fa fa-check'}"/>
                                                         </p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'Si':'No'}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <p:commandLink class="btn btn-sm #{seguimientoEstadiaDirector.consultarExisteDocumento(33, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaDirector.descargarDocumento(33, segEst)}" target="_blank" title="#{seguimientoEstadiaDirector.consultarExisteDocumento(33, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaDirector.consultarExisteDocumento(33, segEst)}"><i class="fa fa-download" /></p:commandLink>
