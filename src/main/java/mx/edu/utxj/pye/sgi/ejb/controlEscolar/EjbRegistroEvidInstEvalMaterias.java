@@ -68,37 +68,30 @@ public class EjbRegistroEvidInstEvalMaterias {
      * @param clave Número de nómina del usuario autenticado
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Filter<PersonalActivo>> validarDirector(Integer clave){
+    public ResultadoEJB<Filter<PersonalActivo>> validarRolesRegistroEvidInstEvaluacion(Integer clave){
         try{
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
-            filtro.setEntity(p);
-            filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
-            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorCategoriaOperativa").orElse(18)));
+            if (p.getPersonal().getAreaSuperior()== 2 && p.getPersonal().getCategoriaOperativa().getCategoria()==18) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
+                filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorCategoriaOperativa").orElse(18)));
+            }
+            else if (p.getPersonal().getAreaSuperior()== 2 && p.getPersonal().getCategoriaOperativa().getCategoria()==48) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
+                filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorEncargadoCategoriaOperativa").orElse(48)));
+            }
+            else if (p.getPersonal().getAreaSuperior()== 2 && p.getPersonal().getAreaOperativa() == 23 && p.getPersonal().getStatus()!='B') {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }
             return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un director.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El director no se pudo validar. (EjbRegistroEvidInstEvalMaterias.validarDirector)", e, null);
         }
     }
-    
-    /**
-     * Permite crear el filtro para validar si el usuario autenticado es un encarcado de dirección de área académica
-     * @param clave Número de nómina del usuario autenticado
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDireccion(Integer clave){
-        try{
-            PersonalActivo p = ejbPersonalBean.pack(clave);
-            Filter<PersonalActivo> filtro = new Filter<>();
-            filtro.setEntity(p);
-            filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
-            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorEncargadoCategoriaOperativa").orElse(48)));
-            return ResultadoEJB.crearCorrecto(filtro, "El filtro del usuario ha sido preparado como un encargado de dirección.");
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El encargado de dirección de área académica no se pudo validar. (EjbRegistroEvidInstEvalMaterias.validarDirector)", e, null);
-        }
-    }
-    
+ 
     /**
      * Permite obtener la lista de programas educativos de los que es responsable el director o directora
      * @param director
@@ -106,12 +99,23 @@ public class EjbRegistroEvidInstEvalMaterias {
      */
     public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativos(PersonalActivo director){
         try{
-             List<AreasUniversidad> programasEducativos = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior=:areaSuperior AND a.categoria.categoria=:categoria AND a.vigente=:valor ORDER by a.nivelEducativo DESC, a.nombre ASC", AreasUniversidad.class)
+            List<AreasUniversidad> programasEducativos = new ArrayList<>();
+            
+            if(director.getAreaOperativa().getArea()==23){
+                programasEducativos = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.categoria.categoria=:categoria AND a.vigente=:valor ORDER by a.nivelEducativo DESC, a.nombre ASC", AreasUniversidad.class)
+                .setParameter("categoria", (int)9)
+                .setParameter("valor", "1")
+                .getResultStream()
+                .collect(Collectors.toList());
+            }else{
+                programasEducativos = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.areaSuperior=:areaSuperior AND a.categoria.categoria=:categoria AND a.vigente=:valor ORDER by a.nivelEducativo DESC, a.nombre ASC", AreasUniversidad.class)
                 .setParameter("areaSuperior", director.getAreaOperativa().getArea())
                 .setParameter("categoria", (int)9)
                 .setParameter("valor", "1")
                 .getResultStream()
                 .collect(Collectors.toList());
+            
+            }
              
             return ResultadoEJB.crearCorrecto(programasEducativos, "Programas educativos vigentes del área superior correspondiente.");
         }catch (Exception e){
@@ -201,17 +205,32 @@ public class EjbRegistroEvidInstEvalMaterias {
      * Permite obtener la lista de evidencias e instrumentos de evaluación registrados del programa educativo y plan de estudio seleccionado
      * @param programaEducativo
      * @param planEstudio
+     * @param director
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> buscarEvaluacionSugerida(AreasUniversidad programaEducativo, PlanEstudio planEstudio){
+    public ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> buscarEvaluacionSugerida(AreasUniversidad programaEducativo, PlanEstudio planEstudio, PersonalActivo director){
         try{
-            List<Materia> listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa", PlanEstudioMateria.class)
-                .setParameter("programa", programaEducativo.getArea())
-                .setParameter("plan",planEstudio.getIdPlanEstudio())
-                .getResultStream()
-                .map(p->p.getIdMateria())
-                .distinct()
-                .collect(Collectors.toList());
+            List<Materia> listaMaterias = new ArrayList<>();
+            
+            if(director.getAreaOperativa().getArea()==23){
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND (p.idMateria.nombre like concat('%',:nombre1,'%') OR p.idMateria.nombre like concat('%',:nombre2,'%'))", PlanEstudioMateria.class)
+                        .setParameter("programa", programaEducativo.getArea())
+                        .setParameter("plan", planEstudio.getIdPlanEstudio())
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
+                        .getResultStream()
+                        .map(p -> p.getIdMateria())
+                        .distinct()
+                        .collect(Collectors.toList());
+            }else{
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa", PlanEstudioMateria.class)
+                        .setParameter("programa", programaEducativo.getArea())
+                        .setParameter("plan", planEstudio.getIdPlanEstudio())
+                        .getResultStream()
+                        .map(p -> p.getIdMateria())
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
             
             List<DtoRegistroEvidInstEvaluacionMateria> listaDtoEvaluacionSugeridas = new ArrayList<>();
             
@@ -232,8 +251,12 @@ public class EjbRegistroEvidInstEvalMaterias {
                     
                 PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evaluacion.getPeriodoInicio());
                 String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
+                Boolean habilitarEliminar = true;
+                if(director.getAreaOperativa().getArea()!=23 && (materia.getNombre().contains("Inglés") || materia.getNombre().contains("Francés"))){
+                    habilitarEliminar = false;
+                }
                 
-                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo, programaEducativo);
+                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo, programaEducativo, habilitarEliminar);
                 listaDtoEvaluacionSugeridas.add(dtoRegistroEvidInstEvaluacionMateria);
                 });
             });
@@ -248,18 +271,35 @@ public class EjbRegistroEvidInstEvalMaterias {
      * Permite obtener la lista de evidencias e instrumentos de evaluación registrados del programa educativo y plan de estudio seleccionado
      * @param programaEducativo
      * @param planEstudio
+     * @param director
+     * @param grado
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> buscarEvaluacionSugeridaGrado(AreasUniversidad programaEducativo, PlanEstudio planEstudio, Integer grado){
+    public ResultadoEJB<List<DtoRegistroEvidInstEvaluacionMateria>> buscarEvaluacionSugeridaGrado(AreasUniversidad programaEducativo, PlanEstudio planEstudio, PersonalActivo director, Integer grado){
         try{
-            List<Materia> listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND p.grado=:grado", PlanEstudioMateria.class)
-                .setParameter("programa", programaEducativo.getArea())
-                .setParameter("plan",planEstudio.getIdPlanEstudio())
-                .setParameter("grado",grado)
-                .getResultStream()
-                .map(p->p.getIdMateria())
-                .distinct()
-                .collect(Collectors.toList());
+            List<Materia> listaMaterias = new ArrayList<>();
+            
+            if(director.getAreaOperativa().getArea()==23){
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND p.grado=:grado AND (p.idMateria.nombre like concat('%',:nombre1,'%') OR p.idMateria.nombre like concat('%',:nombre2,'%'))", PlanEstudioMateria.class)
+                        .setParameter("programa", programaEducativo.getArea())
+                        .setParameter("plan", planEstudio.getIdPlanEstudio())
+                        .setParameter("grado", grado)
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
+                        .getResultStream()
+                        .map(p -> p.getIdMateria())
+                        .distinct()
+                        .collect(Collectors.toList());
+            }else{
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.idPlan.idPe=:programa AND p.grado=:grado", PlanEstudioMateria.class)
+                        .setParameter("programa", programaEducativo.getArea())
+                        .setParameter("plan", planEstudio.getIdPlanEstudio())
+                        .setParameter("grado", grado)
+                        .getResultStream()
+                        .map(p -> p.getIdMateria())
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
             
             List<DtoRegistroEvidInstEvaluacionMateria> listaDtoEvaluacionSugeridas = new ArrayList<>();
             
@@ -280,8 +320,11 @@ public class EjbRegistroEvidInstEvalMaterias {
                     
                 PeriodosEscolares periodoPK = em.find(PeriodosEscolares.class, evaluacion.getPeriodoInicio());
                 String periodo = periodoPK.getMesInicio().getAbreviacion().concat(" - ").concat(periodoPK.getMesFin().getAbreviacion().concat(" ").concat(String.valueOf(periodoPK.getAnio())));    
-                    
-                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo, programaEducativo);
+                Boolean habilitarEliminar = true;
+                if(director.getAreaOperativa().getArea()!=23 && (materia.getNombre().contains("Inglés") || materia.getNombre().contains("Francés"))){
+                    habilitarEliminar = false;
+                }    
+                DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria = new DtoRegistroEvidInstEvaluacionMateria(evaluacion, planEstudioMateria, periodo, programaEducativo, habilitarEliminar);
                 listaDtoEvaluacionSugeridas.add(dtoRegistroEvidInstEvaluacionMateria);
                 });
             });
@@ -343,16 +386,31 @@ public class EjbRegistroEvidInstEvalMaterias {
      * @param grado Grado seleccionado
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<Materia>> getMateriasGrado(PlanEstudio planEstudio, Integer grado){
+    public ResultadoEJB<List<Materia>> getMateriasGrado(PlanEstudio planEstudio, Integer grado, PersonalActivo director){
         try {
+            List<Materia> listaMaterias = new ArrayList<>();
             
-            List<Materia> listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.grado=:grado ORDER BY p.claveMateria ASC", PlanEstudioMateria.class)
-                    .setParameter("plan", planEstudio.getIdPlanEstudio())
-                    .setParameter("grado", grado)
-                    .getResultStream()
-                    .map(p->p.getIdMateria())
-                    .filter(p->p.getEstatus())
-                    .collect(Collectors.toList());
+            if(director.getAreaOperativa().getArea()==23){
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.grado=:grado AND (p.idMateria.nombre like concat('%',:nombre1,'%') OR p.idMateria.nombre like concat('%',:nombre2,'%')) ORDER BY p.claveMateria ASC", PlanEstudioMateria.class)
+                        .setParameter("plan", planEstudio.getIdPlanEstudio())
+                        .setParameter("grado", grado)
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
+                        .getResultStream()
+                        .map(p -> p.getIdMateria())
+                        .filter(p -> p.getEstatus())
+                        .collect(Collectors.toList());
+            }else{
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND p.grado=:grado AND (p.idMateria.nombre not like concat('%',:nombre1,'%') AND p.idMateria.nombre not like concat('%',:nombre2,'%')) ORDER BY p.claveMateria ASC", PlanEstudioMateria.class)
+                        .setParameter("plan", planEstudio.getIdPlanEstudio())
+                        .setParameter("grado", grado)
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
+                        .getResultStream()
+                        .map(p -> p.getIdMateria())
+                        .filter(p -> p.getEstatus())
+                        .collect(Collectors.toList());
+            }
             
             return ResultadoEJB.crearCorrecto(listaMaterias, "Lista de materias del grado seleccionado.");
         } catch (Exception e) {
@@ -519,11 +577,12 @@ public class EjbRegistroEvidInstEvalMaterias {
      * Permite generar la información que contendrá la plantilla 
      * @param plan Plan de estudio
      * @param programa Programa educativo
+     * @param director
      * @return Resultado del proceso
      * @throws java.lang.Throwable
      */
     
-    public String getPlantillaEvidInstMateria(PlanEstudio plan, AreasUniversidad programa) throws Throwable {
+    public String getPlantillaEvidInstMateria(PlanEstudio plan, AreasUniversidad programa, PersonalActivo director) throws Throwable {
         String rutaPlantilla = ejbCarga.crearDirectorioPlantillaAlineacionMaterias();
         String rutaPlantillaC = ejbCarga.crearDirectorioPlantillaAlineacionMateriasCompleto(String.valueOf(plan.getAnio()), programa.getSiglas());
         String plantilla = rutaPlantilla.concat(EVIDINSTMAT_PLANTILLA);
@@ -531,8 +590,8 @@ public class EjbRegistroEvidInstEvalMaterias {
         Map beans = new HashMap();
         beans.put("planEstudio", plan);
         beans.put("grados", getGrados(plan).getValor());
-        beans.put("materiasGrados", getMateriasGradosPlanEstudio(plan).getValor());
-        beans.put("unidadesMateria", getUnidadesMateriasPlanEstudio(getMateriasGradosPlanEstudio(plan).getValor()).getValor());
+        beans.put("materiasGrados", getMateriasGradosPlanEstudio(plan, director).getValor());
+        beans.put("unidadesMateria", getUnidadesMateriasPlanEstudio(getMateriasGradosPlanEstudio(plan, director).getValor()).getValor());
         beans.put("categoriasEvaluacion",getCategoriasNivel(programa).getValor());
         beans.put("evidenciasCategoria", getEvidenciasCategorias(programa).getValor());
         beans.put("instrumentosEvaluacion", ejbAsignacionIndicadoresCriterios.getInstrumentosEvaluacion().getValor());
@@ -546,11 +605,12 @@ public class EjbRegistroEvidInstEvalMaterias {
      * Permite generar reporte de registros del plan de estudio seleccionado
      * @param plan Plan de estudio
      * @param programa Programa educativo
+     * @param director
      * @return Resultado del proceso
      * @throws java.lang.Throwable
      */
     
-    public String getRegistrosPlan(PlanEstudio plan, AreasUniversidad programa) throws Throwable {
+    public String getRegistrosPlan(PlanEstudio plan, AreasUniversidad programa, PersonalActivo director) throws Throwable {
         String rutaPlantilla = "C:\\archivos\\alineacionMaterias\\reportes\\registrosEvidInstPlan.xlsx";
         String rutaPlantillaC = ejbCarga.crearDirectorioReporteAlineacionMaterias(String.valueOf(plan.getAnio()), programa.getSiglas());
 
@@ -558,7 +618,7 @@ public class EjbRegistroEvidInstEvalMaterias {
         
         Map beans = new HashMap();
         beans.put("planEstudio", plan);
-        beans.put("regEvidInstPlan", buscarEvaluacionSugerida(programa, plan).getValor());
+        beans.put("regEvidInstPlan", buscarEvaluacionSugerida(programa, plan, director).getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 
@@ -590,15 +650,27 @@ public class EjbRegistroEvidInstEvalMaterias {
     /**
      * Permite obtener la lista de materias del plan de estudio seleccionado
      * @param planEstudio Plan de estudio
+     * @param director
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<PlanEstudioMateria>> getMateriasGradosPlanEstudio(PlanEstudio planEstudio){
+    public ResultadoEJB<List<PlanEstudioMateria>> getMateriasGradosPlanEstudio(PlanEstudio planEstudio, PersonalActivo director){
         try {
-            
-            List<PlanEstudioMateria> listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan ORDER BY p.grado, p.idMateria.nombre ASC", PlanEstudioMateria.class)
-                    .setParameter("plan", planEstudio.getIdPlanEstudio())
-                    .getResultStream()
-                    .collect(Collectors.toList());
+            List<PlanEstudioMateria> listaMaterias = new ArrayList<>();
+            if(director.getAreaOperativa().getArea()==23){
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND (p.idMateria.nombre like concat('%',:nombre1,'%') OR p.idMateria.nombre like concat('%',:nombre2,'%')) ORDER BY p.grado, p.idMateria.nombre ASC", PlanEstudioMateria.class)
+                        .setParameter("plan", planEstudio.getIdPlanEstudio())
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
+                        .getResultStream()
+                        .collect(Collectors.toList());
+            }else{
+                listaMaterias = em.createQuery("SELECT p FROM PlanEstudioMateria p WHERE p.idPlan.idPlanEstudio=:plan AND (p.idMateria.nombre not like concat('%',:nombre1,'%') AND p.idMateria.nombre not like concat('%',:nombre2,'%')) ORDER BY p.grado, p.idMateria.nombre ASC", PlanEstudioMateria.class)
+                        .setParameter("plan", planEstudio.getIdPlanEstudio())
+                        .setParameter("nombre1", "Inglés")
+                        .setParameter("nombre2", "Francés")
+                        .getResultStream()
+                        .collect(Collectors.toList());
+            }
             
             return ResultadoEJB.crearCorrecto(listaMaterias, "Lista de materias del plan de estudio seleccionado.");
         } catch (Exception e) {
@@ -650,11 +722,12 @@ public class EjbRegistroEvidInstEvalMaterias {
     /**
      * Permite eliminar los registros del plan de estudio activo seleccionado
      * @param planEstudio
+     * @param director
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Integer> eliminarRegistrosPlanEstudio(PlanEstudio planEstudio){
+    public ResultadoEJB<Integer> eliminarRegistrosPlanEstudio(PlanEstudio planEstudio, PersonalActivo director){
        try{
-            List<PlanEstudioMateria> listaPlanMaterias = getMateriasGradosPlanEstudio(planEstudio).getValor();
+            List<PlanEstudioMateria> listaPlanMaterias = getMateriasGradosPlanEstudio(planEstudio, director).getValor();
             
             List<UnidadMateria> listaUnidadesMaterias = getUnidadesMateriasPlanEstudio(listaPlanMaterias).getValor();
            

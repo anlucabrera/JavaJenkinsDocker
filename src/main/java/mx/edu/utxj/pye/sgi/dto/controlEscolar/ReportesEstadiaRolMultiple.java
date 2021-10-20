@@ -77,6 +77,11 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
     @Getter @NonNull private Integer total;
     
      /**
+     * Porcentaje total de eficiencia de estadía
+     */
+    @Getter @NonNull private String porcentajeEficiencia;
+    
+     /**
      * Reporte de eficiencia de estadía con datos complementarios
      */
     @Getter @NonNull private List<DtoEficienciaEstadiaDatosComplementarios> eficienciaEstadiaDatosComplementarios;
@@ -241,6 +246,10 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
         this.total = total;
     }
 
+    public void setPorcentajeEficiencia(String porcentajeEficiencia) {
+        this.porcentajeEficiencia = porcentajeEficiencia;
+    }
+    
     public void setEficienciaEstadiaDatosComplementarios(List<DtoEficienciaEstadiaDatosComplementarios> eficienciaEstadiaDatosComplementarios) {
         this.eficienciaEstadiaDatosComplementarios = eficienciaEstadiaDatosComplementarios;
     }

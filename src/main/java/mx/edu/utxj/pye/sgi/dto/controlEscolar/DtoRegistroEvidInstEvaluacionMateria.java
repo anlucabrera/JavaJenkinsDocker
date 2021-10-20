@@ -24,6 +24,7 @@ public class DtoRegistroEvidInstEvaluacionMateria implements Serializable, Compa
     @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
     @Getter @Setter @NonNull String periodoEscolar;
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
+    @Getter @Setter @NonNull Boolean habilitarEliminar;
     
     @Override
     public int compareTo(DtoRegistroEvidInstEvaluacionMateria o) {
@@ -31,8 +32,7 @@ public class DtoRegistroEvidInstEvaluacionMateria implements Serializable, Compa
     }
 
     public static String toLabel(DtoRegistroEvidInstEvaluacionMateria dtoRegistroEvidInstEvaluacionMateria){
-         return String.valueOf(dtoRegistroEvidInstEvaluacionMateria.getPlanEstudioMateria().getGrado()).concat(" ")
-                 .concat(dtoRegistroEvidInstEvaluacionMateria.getPlanEstudioMateria().getClaveMateria().concat(" "))
+         return dtoRegistroEvidInstEvaluacionMateria.getPlanEstudioMateria().getClaveMateria().concat(" ")
                  .concat(String.valueOf(dtoRegistroEvidInstEvaluacionMateria.getEvaluacionSugerida().getUnidadMateria().getNoUnidad()).concat(" "))
                  .concat(String.valueOf(dtoRegistroEvidInstEvaluacionMateria.getEvaluacionSugerida().getEvidencia().getCriterio().getCriterio()).concat(" "))
                  .concat(dtoRegistroEvidInstEvaluacionMateria.getEvaluacionSugerida().getEvidencia().getDescripcion().concat(" "))

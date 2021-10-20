@@ -155,7 +155,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(res.getCorrecto()){
             if((rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getPersonal().getAreaSuperior()==2) || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48  && rol.getUsuario().getPersonal().getAreaSuperior()==2)){
                 rol.setProgramas(res.getValor().stream().filter(p->p.getAreaSuperior().equals(rol.getUsuario().getAreaOperativa().getArea())).collect(Collectors.toList()));
-            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getAreaOperativa()==6 || rol.getUsuario().getPersonal().getAreaOperativa()==9){
+            }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getAreaOperativa()==6 || rol.getUsuario().getPersonal().getAreaOperativa()==9 || rol.getUsuario().getPersonal().getAreaOperativa()==23){
                 rol.setProgramas(res.getValor());
             }
             if(!rol.getProgramas().isEmpty()){
@@ -173,7 +173,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
     public void listaReportes(){
         List<String> listaReportes = new ArrayList<>();
         
-        if((rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getPersonal().getAreaSuperior()==2) || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48  && rol.getUsuario().getPersonal().getAreaSuperior()==2)){
+        if((rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getPersonal().getAreaSuperior()==2) || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48  && rol.getUsuario().getPersonal().getAreaSuperior()==2) || rol.getUsuario().getPersonal().getAreaOperativa()==23){
             listaReportes.add("Estudiantes irregulares");
             listaReportes.add("Planeación docente");
         }
@@ -401,13 +401,17 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(rol.getTipoBusqueda().equals("busquedaPrograma")){
             ResultadoEJB<List<DtoReportePlaneacionDocente>> res = ejb.getPlaneacionesDocentePrograma(rol.getPeriodo(), rol.getPrograma());
             if(res.getCorrecto()){
-                rol.setPlaneacionDocente(res.getValor());
+                if(rol.getUsuario().getAreaOperativa().getArea()==23){
+                    rol.setPlaneacionDocente(res.getValor().stream().filter(p->p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Inglés") || p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Francés")).collect(Collectors.toList()));
+                }else{
+                    rol.setPlaneacionDocente(res.getValor());
+                }
                 Ajax.update("tbPlaneacionDocente");
             }else mostrarMensajeResultadoEJB(res);
         }else{
             ResultadoEJB<List<DtoReportePlaneacionDocente>> res = ejb.getPlaneacionesDocente(rol.getPeriodo(), rol.getUsuario().getPersonal());
             if(res.getCorrecto()){
-                rol.setPlaneacionDocente(res.getValor());
+                    rol.setPlaneacionDocente(res.getValor());
                 Ajax.update("tbPlaneacionDocente");
             }else mostrarMensajeResultadoEJB(res);
         }
@@ -477,13 +481,17 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(rol.getTipoBusqueda().equals("busquedaPrograma")){
             ResultadoEJB<List<DtoEstudianteIrregular>> res = ejb.getEstudiantesIrregularesPrograma(rol.getPeriodo(), rol.getPrograma());
             if(res.getCorrecto()){
-                rol.setEstudiantesIrregulares(res.getValor());
+                if(rol.getUsuario().getAreaOperativa().getArea()==23){
+                    rol.setEstudiantesIrregulares(res.getValor().stream().filter(p->p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Inglés") || p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Francés")).collect(Collectors.toList()));
+                }else{
+                    rol.setEstudiantesIrregulares(res.getValor());
+                }
                 Ajax.update("tbEstudiantesIrregulares");
             }else mostrarMensajeResultadoEJB(res);
         }else{
             ResultadoEJB<List<DtoEstudianteIrregular>> res = ejb.getEstudiantesIrregulares(rol.getPeriodo(), rol.getUsuario().getPersonal());
             if(res.getCorrecto()){
-                rol.setEstudiantesIrregulares(res.getValor());
+                    rol.setEstudiantesIrregulares(res.getValor());
                 Ajax.update("tbEstudiantesIrregulares");
             }else mostrarMensajeResultadoEJB(res);
         }
