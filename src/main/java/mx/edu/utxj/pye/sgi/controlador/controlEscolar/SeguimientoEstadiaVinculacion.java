@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Collectors;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
@@ -104,6 +105,9 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
             rol.getInstrucciones().add("Dar clic en botón que se habilita para validar o invalidar los documentos.");
             rol.getInstrucciones().add("Dar clic en el campo del comentario para capturar las observaciones, en caso contrario dejar con el texto predeterminado.");
             
+            rol.setMostrarSegValVinc(false);
+            rol.setOcultarColumnas(false);
+            
             generacionesEventosRegistrados();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -164,8 +168,11 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
     public void listaEstudiantesSeguimiento(){
         ResultadoEJB<List<DtoSeguimientoEstadia>> res = ejb.getListaEstudiantesSeguimientoCoordinadorEstadias(rol.getGeneracion(), rol.getNivelEducativo(), rol.getProgramaEducativo());
         if(res.getCorrecto()){
-            rol.setEstudiantesSeguimiento(res.getValor());
-            Ajax.update("tbListaSeguimientoEstadia");
+            if(!rol.getMostrarSegValVinc()){
+                rol.setEstudiantesSeguimiento(res.getValor());
+            }else{
+                rol.setEstudiantesSeguimiento(res.getValor().stream().filter(p->p.getSeguimientoEstadiaEstudiante().getValidacionDirector()).collect(Collectors.toList()));
+            }
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -365,6 +372,32 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
             permiso = Boolean.FALSE;
         }
         return permiso;
+    }
+    
+      /**
+     * Método que cambia el tipo de visualización de la información (todos los seguimientos o solo los que están validados por dirección de carrera)
+     * @param event Evento al tipo de visualización
+     */
+    public void cambiarMostrarSegValVinc(ValueChangeEvent event){
+        if(rol.getMostrarSegValVinc()){
+            rol.setMostrarSegValVinc(false);
+            listaEstudiantesSeguimiento();
+        }else{
+            rol.setMostrarSegValVinc(true);
+            listaEstudiantesSeguimiento();
+        }
+    }
+    
+      /**
+     * Método que cambia el tipo de visualización de la información (todos los seguimientos o solo los que están validados por dirección de carrera)
+     * @param event Evento al tipo de visualización
+     */
+    public void cambiarOcultarColumnas(ValueChangeEvent event){
+        if(rol.getOcultarColumnas()){
+            rol.setOcultarColumnas(false);
+        }else{
+            rol.setOcultarColumnas(true);
+        }
     }
    
 }

@@ -67,6 +67,16 @@ public class SeguimientoEstadiaRolVinculacion extends AbstractRol{
      */
     @Getter @NonNull private DtoSeguimientoEstadia estudianteSeguimiento;
     
+     /**
+     * Indica si se visualiza toda la información o solo la validada por dirección de carrera
+     */
+    @Getter @NonNull private Boolean mostrarSegValVinc;
+    
+     /**
+     * Indica si se visualiza todas las columnas
+     */
+    @Getter @NonNull private Boolean ocultarColumnas;
+    
     public SeguimientoEstadiaRolVinculacion(Filter<PersonalActivo> filtro, PersonalActivo coordinadorEstadia) {
         super(filtro);
         this.coordinadorEstadia = coordinadorEstadia;
@@ -106,6 +116,14 @@ public class SeguimientoEstadiaRolVinculacion extends AbstractRol{
 
     public void setEstudianteSeguimiento(DtoSeguimientoEstadia estudianteSeguimiento) {
         this.estudianteSeguimiento = estudianteSeguimiento;
+    }
+
+    public void setMostrarSegValVinc(Boolean mostrarSegValVinc) {
+        this.mostrarSegValVinc = mostrarSegValVinc;
+    }
+
+    public void setOcultarColumnas(Boolean ocultarColumnas) {
+        this.ocultarColumnas = ocultarColumnas;
     }
     
 }

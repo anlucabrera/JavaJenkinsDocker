@@ -58,11 +58,12 @@
                             </div>
                             <div class="box box-solid">
                                 <div class="box-body">
-                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
-                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
-                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-6'}" />
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-1'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
-                                        <div class="#{casilla}">
+                                        <div class="#{casilla2}">
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="generacion" value="#{seguimientoEstadiaVinculacion.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{seguimientoEstadiaVinculacion.cambiarGeneracion}">
                                                     <f:selectItems value="#{seguimientoEstadiaVinculacion.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
@@ -84,7 +85,7 @@
                                                 <p:message for="nivel" />
                                             </div>
                                         </div>
-                                        <div class="#{casilla3}">
+                                        <div class="#{casilla4}">
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="programa" value="#{seguimientoEstadiaVinculacion.rol.programaEducativo}" converter="entityConverter" valueChangeListener="#{seguimientoEstadiaVinculacion.cambiarProgramaEducativo}">
                                                     <f:selectItems value="#{seguimientoEstadiaVinculacion.rol.programasEducativos}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
@@ -93,6 +94,26 @@
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Programa" for="programa"/>
                                                 <p:message for="programa" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:inputSwitch id="mostrarSegValVinc" value="#{seguimientoEstadiaVinculacion.rol.mostrarSegValVinc}" valueChangeListener="#{seguimientoEstadiaVinculacion.cambiarMostrarSegValVinc}"> 
+                                                    <p:ajax update="tbListaSeguimientoEstadia" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="mostrarSegValVinc" value="#{!seguimientoEstadiaVinculacion.rol.mostrarSegValVinc?'Ver validados por dirección':'Ver todos los información'}" />
+                                                <p:message for="mostrarSegValVinc" display="tooltip" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:inputSwitch id="ocultarColumnas" value="#{seguimientoEstadiaVinculacion.rol.ocultarColumnas}" valueChangeListener="#{seguimientoEstadiaVinculacion.cambiarOcultarColumnas}"> 
+                                                    <p:ajax update="tbListaSeguimientoEstadia" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="ocultarColumnas" value="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas?'Ocultar columnas':'Mostrar columnas'}" />
+                                                <p:message for="ocultarColumnas" display="tooltip" />
                                             </div>
                                         </div>
                                     </div>
@@ -120,29 +141,29 @@
                                                             <p:column rowspan="2" headerText="Semanas de estadía" style="width: 100px;"/>
                                                             <p:column rowspan="2" headerText="Asesor Interno" style="width: 200px;" sortBy="#{segEst.asesorEstadia.nombre}"/>
                                                             <p:column rowspan="2" headerText="Validación Dirección" style="width: 100px;"/>
-                                                            <p:column colspan="2" headerText="* Carta de Presentación" style="width: 200px;"/>
-                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
-                                                            <p:column colspan="2" headerText="* Carta de Aceptación" style="width: 200px;"/>
-                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
-                                                            <p:column colspan="2" headerText="* Carta Liberación Empresarial" style="width: 200px;"/>
-                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
-                                                            <p:column colspan="2" headerText="* Evaluación Empresarial" style="width: 200px;"/>
-                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
-                                                            <p:column colspan="2" headerText="* Carta de Acreditación" style="width: 200px;"/>
-                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;"/>
+                                                            <p:column colspan="2" headerText="* Carta de Presentación" style="width: 200px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column colspan="2" headerText="* Carta de Aceptación" style="width: 200px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column colspan="2" headerText="* Carta Liberación Empresarial" style="width: 200px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column colspan="2" headerText="* Evaluación Empresarial" style="width: 200px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column colspan="2" headerText="* Carta de Acreditación" style="width: 200px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column rowspan="2" headerText="* Comentarios" style="width: 300px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
                                                             <p:column colspan="2" headerText="* Validación Estadía" style="width: 200px;"/>
                                                         </p:row>
                                                         <p:row class="success">
-                                                            <p:column headerText="Archivo" style="width: 100px;"/>
-                                                            <p:column headerText="Validación" style="width: 100px;"/>
-                                                            <p:column headerText="Archivo" style="width: 100px;"/>
-                                                            <p:column headerText="Validación" style="width: 100px;"/>
-                                                            <p:column headerText="Archivo" style="width: 100px;"/>
-                                                            <p:column headerText="Validación" style="width: 100px;"/>
-                                                            <p:column headerText="Archivo" style="width: 100px;"/>
-                                                            <p:column headerText="Validación" style="width: 100px;"/>
-                                                            <p:column headerText="Archivo" style="width: 100px;"/>
-                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column headerText="Validación" style="width: 100px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column headerText="Validación" style="width: 100px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column headerText="Validación" style="width: 100px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column headerText="Validación" style="width: 100px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
+                                                            <p:column headerText="Validación" style="width: 100px;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}"/>
                                                             <p:column headerText="Situación" style="width: 200px;"/>
                                                             <p:column headerText="Acción" style="width: 200px;"/>
                                                         </p:row>
@@ -180,10 +201,10 @@
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'Si':'No'}"/>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
+                                                    <p:column style="text-align: center;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                         <p:commandLink class="btn btn-sm #{seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaVinculacion.descargarDocumento(33, segEst)}" target="_blank" title="#{seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)}"><i class="fa fa-download" /></p:commandLink>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
+                                                    <p:column style="text-align: center;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                         <h:outputText value="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(33, segEst)?'No':'Sí'}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,1) and seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)}"/>
                                                         <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)}"/>
                                                         <h:outputText value="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(33, segEst)?'Inválido':'Validado'}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,1) and seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)}"/>
@@ -193,7 +214,7 @@
                                                                         onsuccess="actualizar();"><i class="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(33, segEst)?'fa fa-close':'fa fa-check'}"/>
                                                         </p:commandLink>
                                                     </p:column>
-                                                    <p:column style="text-align: justify;">
+                                                    <p:column style="text-align: justify;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                        <h:outputText value="#{seguimientoEstadiaVinculacion.comentariosDocumento(33, segEst).observaciones}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,1) and seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)}"/>
                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)}"/>
                                                        <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(33, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,1) and seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)}">
@@ -202,10 +223,10 @@
                                                             <f:attribute name="seguimientoEstadia" value="#{segEst}" />
                                                        </p:inputTextarea>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
+                                                    <p:column style="text-align: center;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                         <p:commandLink class="btn btn-sm #{seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaVinculacion.descargarDocumento(34, segEst)}" target="_blank" title="#{seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}"><i class="fa fa-download" /></p:commandLink>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
+                                                    <p:column style="text-align: center;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                         <h:outputText value="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(34, segEst)?'No':'Sí'}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,2) and seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}"/>
                                                         <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}"/>
                                                         <h:outputText value="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(34, segEst)?'Inválido':'Validado'}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,2) and seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}"/>
@@ -215,7 +236,7 @@
                                                                         onsuccess="actualizar();"><i class="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(34, segEst)?'fa fa-close':'fa fa-check'}"/>
                                                         </p:commandLink>
                                                     </p:column>
-                                                    <p:column style="text-align: justify;">
+                                                    <p:column style="text-align: justify;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                        <h:outputText value="#{seguimientoEstadiaVinculacion.comentariosDocumento(34, segEst).observaciones}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,2) and seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}"/>
                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}"/>
                                                        <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(34, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,2) and seguimientoEstadiaVinculacion.consultarExisteDocumento(34, segEst)}">
@@ -224,10 +245,10 @@
                                                             <f:attribute name="seguimientoEstadia" value="#{segEst}" />
                                                        </p:inputTextarea>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
+                                                    <p:column style="text-align: center;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                         <p:commandLink class="btn btn-sm #{seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaVinculacion.descargarDocumento(39, segEst)}" target="_blank" title="#{seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}"><i class="fa fa-download" /></p:commandLink>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
+                                                    <p:column style="text-align: center;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                         <h:outputText value="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(39, segEst)?'No':'Sí'}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,3) and seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}"/>
                                                         <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}"/>
                                                         <h:outputText value="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(39, segEst)?'Inválido':'Validado'}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,3) and seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}"/>
@@ -237,7 +258,7 @@
                                                                         onsuccess="actualizar();"><i class="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(39, segEst)?'fa fa-close':'fa fa-check'}"/>
                                                         </p:commandLink>
                                                     </p:column>
-                                                    <p:column style="text-align: justify;">
+                                                    <p:column style="text-align: justify;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                        <h:outputText value="#{seguimientoEstadiaVinculacion.comentariosDocumento(39, segEst).observaciones}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,3) and seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}"/>
                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}"/>
                                                        <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(39, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,3) and seguimientoEstadiaVinculacion.consultarExisteDocumento(39, segEst)}">
@@ -246,10 +267,10 @@
                                                             <f:attribute name="seguimientoEstadia" value="#{segEst}" />
                                                        </p:inputTextarea>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
+                                                    <p:column style="text-align: center;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                         <p:commandLink class="btn btn-sm #{seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaVinculacion.descargarDocumento(40, segEst)}" target="_blank" title="#{seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}"><i class="fa fa-download" /></p:commandLink>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
+                                                    <p:column style="text-align: center;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                         <h:outputText value="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(40, segEst)?'No':'Sí'}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,4) and seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}"/>
                                                         <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}"/>
                                                         <h:outputText value="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(40, segEst)?'Inválido':'Validado'}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,4) and seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}"/>
@@ -259,7 +280,7 @@
                                                                         onsuccess="actualizar();"><i class="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(40, segEst)?'fa fa-close':'fa fa-check'}"/>
                                                         </p:commandLink>
                                                     </p:column>
-                                                    <p:column style="text-align: justify;">
+                                                    <p:column style="text-align: justify;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                        <h:outputText value="#{seguimientoEstadiaVinculacion.comentariosDocumento(40, segEst).observaciones}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,4) and seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}"/>
                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}"/>
                                                        <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(40, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,4) and seguimientoEstadiaVinculacion.consultarExisteDocumento(40, segEst)}">
@@ -268,10 +289,10 @@
                                                             <f:attribute name="seguimientoEstadia" value="#{segEst}" />
                                                        </p:inputTextarea>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
+                                                    <p:column style="text-align: center;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                         <p:commandLink class="btn btn-sm #{seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaVinculacion.descargarDocumento(41, segEst)}" target="_blank" title="#{seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}"><i class="fa fa-download" /></p:commandLink>
                                                     </p:column>
-                                                    <p:column style="text-align: center;">
+                                                    <p:column style="text-align: center;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                         <h:outputText value="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(41, segEst)?'No':'Sí'}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,5) and seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}"/>
                                                         <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}"/>
                                                         <h:outputText value="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(41, segEst)?'Inválido':'Validado'}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,5) and seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}"/>
@@ -281,7 +302,7 @@
                                                                         onsuccess="actualizar();"><i class="#{!seguimientoEstadiaVinculacion.buscarValidacionDocumento(41, segEst)?'fa fa-close':'fa fa-check'}"/>
                                                         </p:commandLink>
                                                     </p:column>
-                                                    <p:column style="text-align: justify;">
+                                                    <p:column style="text-align: justify;" rendered="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas}">
                                                        <h:outputText value="#{seguimientoEstadiaVinculacion.comentariosDocumento(41, segEst).observaciones}" rendered="#{!seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,5) and seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}"/>
                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}"/>
                                                        <p:inputTextarea class="form-control" rows="2" cols="43" style="text-align: justify;" maxlength="255" value="#{seguimientoEstadiaVinculacion.comentariosDocumento(41, segEst).observaciones}" valueChangeListener="#{seguimientoEstadiaVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoEstadiaVinculacion.deshabilitarValidacion(segEst,5) and seguimientoEstadiaVinculacion.consultarExisteDocumento(41, segEst)}">

@@ -177,16 +177,22 @@ public class EjbHistorialMovEstudiante {
             AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
 
             DtoMovimientoEstudiante datosAdmision = getDatosAdmision(aspiranteBD).getValor();
-            listaMovimientos.add(datosAdmision);
-            DtoMovimientoEstudiante datosInscripcion = getDatosInscripcion(aspirante).getValor();
-            listaMovimientos.add(datosInscripcion);
-            List<DtoMovimientoEstudiante> datosReinscripciones = getDatosReinscripcion(estudiante.getMatricula()).getValor();
+            if (datosAdmision != null) {
+                 listaMovimientos.add(datosAdmision);
+            } 
+           
+            DtoMovimientoEstudiante datosInscripcion = getDatosInscripcion(aspiranteBD).getValor();
+            if (datosInscripcion != null) {
+                listaMovimientos.add(datosInscripcion);
+            } 
+            
+            List<DtoMovimientoEstudiante> datosReinscripciones = getDatosReinscripcion(aspiranteBD).getValor();
             if (!datosReinscripciones.isEmpty()) {
                 datosReinscripciones.forEach(reinscripcion -> {
                 listaMovimientos.add(reinscripcion);
                 });
             } 
-            DtoMovimientoEstudiante datosBaja = getDatosBaja(estudiante.getMatricula()).getValor();
+            DtoMovimientoEstudiante datosBaja = getDatosBaja(aspiranteBD).getValor();
             if (datosBaja != null) {
                 listaMovimientos.add(datosBaja);
             } 
@@ -213,7 +219,7 @@ public class EjbHistorialMovEstudiante {
            
             PeriodosEscolares periodo = em.find(PeriodosEscolares.class, aspirante.getIdProcesoInscripcion().getIdPeriodo());
             String periodoEscolar = periodo.getMesInicio().getMes()+ " - " + periodo.getMesFin().getMes()+ " " + periodo.getAnio();
-            String tipoMovimiento = "Admisión";
+            String tipoMovimiento = "Admisión".concat(" - ").concat(aspirante.getTipoAspirante().getDescripcion());
             Persona persona = em.find(Persona.class, aspirante.getIdPersona().getIdpersona());
             String personalRealizo = persona.getApellidoPaterno()+ " " + persona.getApellidoMaterno()+ " " + persona.getNombre();
             String informacionMovimiento = "Folio aspirante: " +  aspirante.getFolioAspirante();
@@ -233,7 +239,7 @@ public class EjbHistorialMovEstudiante {
      */
     public ResultadoEJB<DtoMovimientoEstudiante> getDatosInscripcion(Aspirante aspirante){
         try{
-            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante =:aspirante AND e.tipoRegistro =:tipoRegistro", Estudiante.class)
+            Estudiante estudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante =:aspirante AND e.tipoRegistro like concat(:tipoRegistro,'%')", Estudiante.class)
                     .setParameter("aspirante", aspirante.getIdAspirante())
                     .setParameter("tipoRegistro", "Inscripción")
                     .getSingleResult();
@@ -256,10 +262,10 @@ public class EjbHistorialMovEstudiante {
     
     /**
      * Permite obtener los datos de reinscripción del estudiante seleccionado
-     * @param matricula Matricula del estudiante
+     * @param aspirante Registro de aspirante
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoMovimientoEstudiante>> getDatosReinscripcion(Integer matricula){
+    public ResultadoEJB<List<DtoMovimientoEstudiante>> getDatosReinscripcion(Aspirante aspirante){
         try{
             List<String> listaTiposMovimientos = new ArrayList();
             listaTiposMovimientos.add("Reinscripcion Autónoma");
@@ -274,8 +280,8 @@ public class EjbHistorialMovEstudiante {
             listaTiposMovimientos.add("Equivalencia");
             
             
-            List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula AND e.tipoRegistro IN :tipoRegistro", Estudiante.class)
-                    .setParameter("matricula", matricula)
+            List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.aspirante.idAspirante=:aspirante AND e.tipoRegistro IN :tipoRegistro ORDER BY e.periodo ASC", Estudiante.class)
+                    .setParameter("aspirante", aspirante.getIdAspirante())
                     .setParameter("tipoRegistro", listaTiposMovimientos)
                     .getResultList();
            
@@ -309,13 +315,13 @@ public class EjbHistorialMovEstudiante {
     
     /**
      * Permite obtener los datos de baja del estudiante seleccionado
-     * @param matricula Matricula del estudiante
+     * @param aspirante Registro de aspirante
      * @return Resultado del proceso
      */
-    public ResultadoEJB<DtoMovimientoEstudiante> getDatosBaja(Integer matricula){
+    public ResultadoEJB<DtoMovimientoEstudiante> getDatosBaja(Aspirante aspirante){
         try{
-            Baja baja = em.createQuery("SELECT b FROM Baja b INNER JOIN b.estudiante e WHERE e.matricula =:matricula", Baja.class)
-                    .setParameter("matricula", matricula)
+            Baja baja = em.createQuery("SELECT b FROM Baja b INNER JOIN b.estudiante e WHERE e.aspirante.idAspirante=:aspirante", Baja.class)
+                    .setParameter("aspirante", aspirante.getIdAspirante())
                     .getSingleResult();
             
             PeriodosEscolares periodo = em.find(PeriodosEscolares.class, baja.getPeriodoEscolar());
