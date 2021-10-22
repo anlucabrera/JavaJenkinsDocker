@@ -74,6 +74,7 @@ public enum ControlEscolarVistaControlador {
     APERTURA_EVENTOS_ESCOLARES("/controlEscolar/se/aperturaEventosEscolares.xhtml",  AperturaEventosEscolares.class),
     INSCRIPCION_ING("/controlEscolar/se/inscripcionIngenieria.xhtml",  InscripcionIngenieriaSE.class),
     CARTA_NO_ADUEDO_SE("/controlEscolar/se/cartaNoAdeudoServiciosEscolares.xhtml", CartaNoAdeudoSE.class),
+    SEGUIMIENTO_ESTADIA_ESCOLARES("/controlEscolar/se/seguimientoEstadiaEscolares.xhtml", SeguimientoEstadiaEscolares.class),
 
     CARTA_NO_ADUEDO_FINANZAS("/controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml", CartaNoAdeudoFinanzas.class),
 

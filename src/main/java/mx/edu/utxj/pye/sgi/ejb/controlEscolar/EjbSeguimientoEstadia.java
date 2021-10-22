@@ -1649,4 +1649,23 @@ public class EjbSeguimientoEstadia {
             return ResultadoEJB.crearErroneo(1, "No se pudo validar o invalidar el documento seleccionado. (EjbSeguimientoEstadia.validarDocumento)", e, null);
         }
     }
+    
+     /**
+     * Permite eliminar un seguimiento de estadía de un estudiante con situación académica de baja temporal o definitiva durante el proceso de estadía
+     * @param seguimientoEstadiaEstudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarSeguimientoEstadia(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante){
+        try{
+            if(seguimientoEstadiaEstudiante.getSeguimiento()== null) return ResultadoEJB.crearErroneo(2, "La clave del seguimiento de estadía no puede ser nula.", Integer.TYPE);
+
+            Integer delete = em.createQuery("DELETE FROM SeguimientoEstadiaEstudiante s WHERE s.seguimiento =:seguimiento", SeguimientoEstadiaEstudiante.class)
+                .setParameter("seguimiento", seguimientoEstadiaEstudiante.getSeguimiento())
+                .executeUpdate();
+
+            return ResultadoEJB.crearCorrecto(delete, "El seguimiento de estadía se eliminó correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el seguimiento de estadía correctamente. (EjbSeguimientoEstadia.eliminarSeguimientoEstadia)", e, null);
+        }
+    }
 }

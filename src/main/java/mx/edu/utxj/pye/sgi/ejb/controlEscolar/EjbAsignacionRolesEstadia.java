@@ -251,7 +251,7 @@ public class EjbAsignacionRolesEstadia {
             });
             
             List<AreasUniversidad> listaProgramasDistintos = new ArrayList<>();
-            if(areaSuperior==5){
+            if(areaSuperior==5 || areaSuperior==10){
                 listaProgramasDistintos = listaProgramas.stream()
                     .distinct()
                     .sorted(Comparator.comparing(AreasUniversidad::getNombre))
