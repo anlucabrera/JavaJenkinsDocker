@@ -81,6 +81,7 @@ public enum ControlEscolarVistaControlador {
     SEGUIMIENTO_ESTADIA_VINCULACION("/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml", SeguimientoEstadiaVinculacion.class),
     CARTA_NO_ADUEDO_CORDINACION_ESTADIA("/controlEscolar/vinculacion/cartaNoAdeudoCordinacionEstadia.xhtml", CartaNoAdeudoCordinacionEstadia.class),
     CARTA_NO_ADUEDO_SEGUIMIENTO_EGRESADOS("/controlEscolar/vinculacion/cartaNoAdeudoSeguimientoEgresados.xhtml", CartaNoAdeudoSeguimientoEgresados.class),
+    CONSULTA_EMPRESAS_ESTADIA("/controlEscolar/vinculacion/consultaEmpresasEstadia.xhtml", ConsultaEmpresasEstadiaVinculacion.class),
 
     SEGUIMIENTO_EXPEDIENTE_GENERACION("/controlEscolar/titulacion/seguimientoMatricula.xhtml", SeguimientoExpedienteMatriculaTitulacion.class),
     SEGUIMIENTO_EXPEDIENTE_MATRICULA("/controlEscolar/titulacion/seguimientoGeneracion.xhtml", SeguimientoExpedienteGeneracionTitulacion.class),

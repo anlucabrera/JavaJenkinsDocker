@@ -41,8 +41,10 @@ import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Objects;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalendarioEventosEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEmpresaSeguimientosEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEvaluacionEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorEmpresarialEstadia;
@@ -1668,4 +1670,58 @@ public class EjbSeguimientoEstadia {
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el seguimiento de estadía correctamente. (EjbSeguimientoEstadia.eliminarSeguimientoEstadia)", e, null);
         }
     }
+    
+    /**
+     * Permite obtener la lista de empresas asignadas a seguimiento de estadía de la generación y nivel seleccionado
+     * @param generacion
+     * @param nivelEducativo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoEmpresaSeguimientosEstadia>> getListaEmpresasSeguimientoEstadias(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
+        try{
+            EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
+            
+            List<DtoEmpresaSeguimientosEstadia> empresasEstadia = new ArrayList<>();
+            
+            List<SeguimientoEstadiaEstudiante> seguimientos = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento", SeguimientoEstadiaEstudiante.class)
+                    .setParameter("evento", eventoSeleccionado.getEvento())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            List<Integer> empresasSeguimiento = seguimientos.stream().map(p -> p.getEmpresa()).filter(p-> p != null).distinct().collect(Collectors.toList());
+            
+            empresasSeguimiento.forEach(empSeg -> {
+                OrganismosVinculados empresaEstadia = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.empresa=:clave", OrganismosVinculados.class)
+                        .setParameter("clave", empSeg)
+                        .getResultStream().findFirst().orElse(null);
+                
+                if(empresaEstadia != null){
+                    Integer cantSeg = (int) seguimientos.stream().filter(p -> Objects.equals(p.getEmpresa(), empSeg)).count();
+                    DtoEmpresaSeguimientosEstadia dtoEmpresaSeguimientosEstadia = new DtoEmpresaSeguimientosEstadia(empresaEstadia, cantSeg);
+                    empresasEstadia.add(dtoEmpresaSeguimientosEstadia);
+                }
+            });
+            
+            return ResultadoEJB.crearCorrecto(empresasEstadia.stream().sorted(DtoEmpresaSeguimientosEstadia::compareTo).collect(Collectors.toList()), "Lista de empresas asignadas a seguimiento de estadía de la generación y nivel seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de empresas asignadas a seguimiento de estadía de la generación y nivel seleccionado. (EjbSeguimientoEstadia.getListaEmpresasSeguimientoEstadias)", e, null);
+        }
+    }
+    
+     /**
+     * Permite actualizar el nombre o dirección de una empresa
+     * @param dtoEmpresaSeguimientosEstadia
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoEmpresaSeguimientosEstadia> actualizarDatosEmpresa(DtoEmpresaSeguimientosEstadia dtoEmpresaSeguimientosEstadia){
+        try{
+            em.merge(dtoEmpresaSeguimientosEstadia.getEmpresa());
+            em.flush();
+           
+            return ResultadoEJB.crearCorrecto(dtoEmpresaSeguimientosEstadia, "Se actualizó correctamente el nombre o dirección de la empresa seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el nombre o dirección de la empresa seleccionada. (EjbSeguimientoEstadia.actualizarDatosEmpresa)", e, null);
+        }
+    }
+    
 }

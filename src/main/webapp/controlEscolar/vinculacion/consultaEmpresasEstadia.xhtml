@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Consulta de empresas asignadas a seguimiento de estadía
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{consultaEmpresasEstadiaVinculacion.cargado}">
+        <adm:breadcrumb title="Consulta de empresas asignadas a seguimiento de estadía"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{consultaEmpresasEstadiaVinculacion.tieneAcceso}">
+                <c:if test="#{consultaEmpresasEstadiaVinculacion.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-1'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{consultaEmpresasEstadiaVinculacion.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{consultaEmpresasEstadiaVinculacion.cambiarGeneracion}">
+                                                    <f:selectItems value="#{consultaEmpresasEstadiaVinculacion.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generación" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{consultaEmpresasEstadiaVinculacion.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{consultaEmpresasEstadiaVinculacion.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{consultaEmpresasEstadiaVinculacion.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                            <center>
+                                                <p:remoteCommand name="actualizar" update="@form:tbListaEmpresasSeguimientoEstadia" />
+                                                <p:dataTable id="tbListaEmpresasSeguimientoEstadia" var="empEst" value="#{consultaEmpresasEstadiaVinculacion.rol.empresasSeguimiento}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No hay empresas asignadas para esta generación y nivel educativo"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
+                                                             editable="true" editMode="cell" expandableRowGroups="true"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <f:facet name="header">
+                                                          #{fn:length(consultaEmpresasEstadiaVinculacion.rol.empresasSeguimiento)} resultados obtenidos.
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Clave empresa" style="width: 80px;" sortBy="#{empEst.empresa.empresa}" filterBy="#{empEst.empresa.empresa}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Empresa" style="width: 200px;" sortBy="#{empEst.empresa.nombre}" filterBy="#{empEst.empresa.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Dirección" style="width: 200px;" sortBy="#{empEst.empresa.direccion}" filterBy="#{empEst.empresa.direccion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="País" style="width: 80px;" sortBy="#{empEst.empresa.localidad.municipio.estado.idpais.nombre}" filterBy="#{empEst.empresa.localidad.municipio.estado.idpais.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Estado" style="width: 150px;" sortBy="#{empEst.empresa.localidad.municipio.estado.nombre}" filterBy="#{empEst.empresa.localidad.municipio.estado.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Municipio" style="width: 150px;" sortBy="#{empEst.empresa.localidad.nombre}" filterBy="#{empEst.empresa.localidad.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Seguimientos asignados" style="width: 100px;" sortBy="#{empEst.seguimientosAsignados}" filterBy="#{empEst.seguimientosAsignados}" filterMatchMode="contains"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:ajax event="cellEdit" listener="#{consultaEmpresasEstadiaVinculacion.onCellEdit}"/>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{empEst.empresa.empresa}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{empEst.empresa.nombre}"/></f:facet>
+                                                             <f:facet name="input"><h:inputText value="#{empEst.empresa.nombre}" size="250" style="color: #000000;"/></f:facet>
+                                                        </p:cellEditor> 
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{empEst.empresa.direccion}"/></f:facet>
+                                                             <f:facet name="input"><h:inputText value="#{empEst.empresa.direccion}" size="250" style="color: #000000;"/></f:facet>
+                                                        </p:cellEditor> 
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{empEst.empresa.localidad.municipio.estado.idpais.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{empEst.empresa.localidad.municipio.estado.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{empEst.empresa.localidad.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{empEst.seguimientosAsignados}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty consultaEmpresasEstadiaVinculacion.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{consultaEmpresasEstadiaVinculacion.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para consulta de empresas con seguimiento de estadía por coordinador(a) institucional</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{consultaEmpresasEstadiaVinculacion.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{consultaEmpresasEstadiaVinculacion.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay eventos registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!consultaEmpresasEstadiaVinculacion.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a coordinador(a) de estadía institucional."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
