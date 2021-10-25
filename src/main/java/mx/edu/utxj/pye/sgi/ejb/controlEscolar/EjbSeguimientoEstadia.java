@@ -41,8 +41,10 @@ import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Objects;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalendarioEventosEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEmpresaSeguimientosEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEvaluacionEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorEmpresarialEstadia;
@@ -50,11 +52,9 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadiaPK;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CoordinadorAreaEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioEvaluacionEstadia;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadiaDescripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.FolioAcreditacionEstadia;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 
@@ -93,7 +93,7 @@ public class EjbSeguimientoEstadia {
                     .getResultStream().findFirst().orElse(null);
             
             List<SeguimientoEstadiaEstudiante> listaSeguimiento = asignacionesEstudianteEstadia(matricula).getValor();
-            if((e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1"))) && !listaSeguimiento.isEmpty()){
+            if((e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1")) || e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("4"))) && !listaSeguimiento.isEmpty()){
                 return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante y con seguimiento de estadía registrado.");
             }else {
                 return ResultadoEJB.crearErroneo(2, "El estudiante encontrado no tiene una inscripcion activa o no tiene registro de seguimiento de estadía.", Estudiante.class);
@@ -111,8 +111,9 @@ public class EjbSeguimientoEstadia {
      */
     public ResultadoEJB<List<SeguimientoEstadiaEstudiante>> asignacionesEstudianteEstadia(Integer matricula){
         try{
-            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula ORDER BY s.evento.evento DESC",  SeguimientoEstadiaEstudiante.class)
+            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula AND s.activo=:activo ORDER BY s.evento.evento DESC",  SeguimientoEstadiaEstudiante.class)
                     .setParameter("matricula", matricula)
+                    .setParameter("activo", true)
                     .getResultList();
             
             return ResultadoEJB.crearCorrecto(listaSeguimiento, "Lista de seguimiento de estadía registrados del estudiante.");
@@ -130,8 +131,9 @@ public class EjbSeguimientoEstadia {
         try{
             List<Generaciones> listaGeneraciones = new ArrayList<>();
             
-            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula ORDER BY s.evento.generacion DESC",  SeguimientoEstadiaEstudiante.class)
+            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula AND s.activo=:activo ORDER BY s.evento.generacion DESC",  SeguimientoEstadiaEstudiante.class)
                     .setParameter("matricula", matricula)
+                    .setParameter("activo", true)
                     .getResultList();
             
             listaSeguimiento.forEach(seguimiento -> {
@@ -158,9 +160,10 @@ public class EjbSeguimientoEstadia {
     public ResultadoEJB<ProgramasEducativosNiveles> getNivelEducativoSeguimientoEstudiante(Integer matricula, Generaciones generacion){
         try{
             
-            SeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula AND s.evento.generacion=:generacion",  SeguimientoEstadiaEstudiante.class)
+            SeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula AND s.evento.generacion=:generacion AND s.activo=:activo",  SeguimientoEstadiaEstudiante.class)
                     .setParameter("matricula", matricula)
                     .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("activo", true)
                     .getResultStream().findFirst().orElse(null);
             
             ProgramasEducativosNiveles nivelEducativo = em.find(ProgramasEducativosNiveles.class, seguimientoEstadia.getEvento().getNivel());
@@ -183,9 +186,10 @@ public class EjbSeguimientoEstadia {
         try{
             EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
          
-            DtoSeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.matricula=:matricula", SeguimientoEstadiaEstudiante.class)
+            DtoSeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.matricula=:matricula AND s.activo=:activo", SeguimientoEstadiaEstudiante.class)
                     .setParameter("evento", eventoSeleccionado.getEvento())
                     .setParameter("matricula", matricula)
+                    .setParameter("activo", true)
                     .getResultStream()
                     .map(seg -> packSeguimientoEstudiante(seg, eventoSeleccionado).getValor())
                     .filter(dto -> dto != null)
@@ -1342,6 +1346,7 @@ public class EjbSeguimientoEstadia {
      * Permite obtener la lista de estudiantes del área académica que representa el coordinador de estadía
      * @param generacion
      * @param nivelEducativo
+     * @param programaEducativo
      * @param personal
      * @return Resultado del proceso
      */
@@ -1649,4 +1654,90 @@ public class EjbSeguimientoEstadia {
             return ResultadoEJB.crearErroneo(1, "No se pudo validar o invalidar el documento seleccionado. (EjbSeguimientoEstadia.validarDocumento)", e, null);
         }
     }
+    
+     /* MÓDULO CONSULTA DE EMPRESAS ASIGNADAS PARA COORDINACIÓN DE ESTADÍAS DE VINCULACIÓN */
+    
+    /**
+     * Permite obtener la lista de empresas asignadas a seguimiento de estadía de la generación y nivel seleccionado
+     * @param generacion
+     * @param nivelEducativo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoEmpresaSeguimientosEstadia>> getListaEmpresasSeguimientoEstadias(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
+        try{
+            EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
+            
+            List<DtoEmpresaSeguimientosEstadia> empresasEstadia = new ArrayList<>();
+            
+            List<SeguimientoEstadiaEstudiante> seguimientos = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento", SeguimientoEstadiaEstudiante.class)
+                    .setParameter("evento", eventoSeleccionado.getEvento())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            List<Integer> empresasSeguimiento = seguimientos.stream().map(p -> p.getEmpresa()).filter(p-> p != null).distinct().collect(Collectors.toList());
+            
+            empresasSeguimiento.forEach(empSeg -> {
+                OrganismosVinculados empresaEstadia = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.empresa=:clave", OrganismosVinculados.class)
+                        .setParameter("clave", empSeg)
+                        .getResultStream().findFirst().orElse(null);
+                
+                if(empresaEstadia != null){
+                    Integer cantSeg = (int) seguimientos.stream().filter(p -> Objects.equals(p.getEmpresa(), empSeg)).count();
+                    DtoEmpresaSeguimientosEstadia dtoEmpresaSeguimientosEstadia = new DtoEmpresaSeguimientosEstadia(empresaEstadia, cantSeg);
+                    empresasEstadia.add(dtoEmpresaSeguimientosEstadia);
+                }
+            });
+            
+            return ResultadoEJB.crearCorrecto(empresasEstadia.stream().sorted(DtoEmpresaSeguimientosEstadia::compareTo).collect(Collectors.toList()), "Lista de empresas asignadas a seguimiento de estadía de la generación y nivel seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de empresas asignadas a seguimiento de estadía de la generación y nivel seleccionado. (EjbSeguimientoEstadia.getListaEmpresasSeguimientoEstadias)", e, null);
+        }
+    }
+    
+     /**
+     * Permite actualizar el nombre o dirección de una empresa
+     * @param dtoEmpresaSeguimientosEstadia
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<DtoEmpresaSeguimientosEstadia> actualizarDatosEmpresa(DtoEmpresaSeguimientosEstadia dtoEmpresaSeguimientosEstadia){
+        try{
+            em.merge(dtoEmpresaSeguimientosEstadia.getEmpresa());
+            em.flush();
+           
+            return ResultadoEJB.crearCorrecto(dtoEmpresaSeguimientosEstadia, "Se actualizó correctamente el nombre o dirección de la empresa seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el nombre o dirección de la empresa seleccionada. (EjbSeguimientoEstadia.actualizarDatosEmpresa)", e, null);
+        }
+    }
+    
+    /* MÓDULO SEGUIMIENTO SERVICIOS ESCOLARES */
+    
+     /**
+     * Permite desactivar o activar un seguimiento de estadía de un estudiante con situación académica de baja temporal o definitiva durante el proceso de estadía
+     * @param seguimientoEstadiaEstudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<SeguimientoEstadiaEstudiante> desactivarSeguimientoEstadia(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante){
+        try{
+            if(seguimientoEstadiaEstudiante.getSeguimiento()== null) return ResultadoEJB.crearErroneo(2, "La clave del seguimiento de estadía no puede ser nula.", SeguimientoEstadiaEstudiante.class);
+
+            String mensaje = "La situación del seguimiento de estadía es " + seguimientoEstadiaEstudiante.getActivo();
+            if (seguimientoEstadiaEstudiante.getActivo()) {
+                seguimientoEstadiaEstudiante.setActivo(false);
+                em.merge(seguimientoEstadiaEstudiante);
+                f.flush();
+                mensaje="El seguimiento de estadía se ha desactivado correctamente.";
+            } else if(!seguimientoEstadiaEstudiante.getActivo()){
+                seguimientoEstadiaEstudiante.setActivo(true);
+                em.merge(seguimientoEstadiaEstudiante);
+                f.flush();
+                mensaje="El seguimiento de estadía se ha activado correctamente.";
+            }
+
+            return ResultadoEJB.crearCorrecto(seguimientoEstadiaEstudiante, mensaje);
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo desactivar o activar el seguimiento de estadía seleccionado. (EjbSeguimientoEstadia.desactivarSeguimientoEstadia)", e, null);
+        }
+    }
+    
 }

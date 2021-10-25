@@ -12,15 +12,13 @@ import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 
 import java.util.*;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
-
 /**
  *
  * @author UTXJ
  */
-public class SeguimientoEstadiaRolVinculacion extends AbstractRol{
+public class ConsultaEmpresasEstadiaRolVinculacion extends AbstractRol{
     /**
      * Representa la referencia hacia al coordinador de estadía institucional pertenciente al área de vinculación
      */
@@ -47,37 +45,18 @@ public class SeguimientoEstadiaRolVinculacion extends AbstractRol{
      */
     @Getter @NonNull private ProgramasEducativosNiveles nivelEducativo;
     
-     /**
-     * Lista de programas educativos
-     */
-    @Getter @NonNull private List<AreasUniversidad> programasEducativos;
-    
     /**
-     * Programa educativo seleccionado
+     * Lista de empresas asignadas a seguimiento de estadía de la generación y nivel seleccionado
      */
-    @Getter @NonNull private AreasUniversidad programaEducativo;
-    
-    /**
-     * Lista de estudiantes que pertenecen a la generacion, nivel y programa educativo seleccionado
-     */
-    @Getter @NonNull private List<DtoSeguimientoEstadia> estudiantesSeguimiento;
+    @Getter @NonNull private List<DtoEmpresaSeguimientosEstadia> empresasSeguimiento;
     
      /**
-     * Seguimiento de un estudiante
+     * Empresas asignadas a seguimiento de estadía seleccionada
      */
-    @Getter @NonNull private DtoSeguimientoEstadia estudianteSeguimiento;
+    @Getter @NonNull private DtoEmpresaSeguimientosEstadia empresaSeguimiento;
     
-     /**
-     * Indica si se visualiza toda la información o solo la validada por dirección de carrera
-     */
-    @Getter @NonNull private Boolean mostrarSegValVinc;
     
-     /**
-     * Indica si se visualiza todas las columnas
-     */
-    @Getter @NonNull private Boolean ocultarColumnas;
-    
-    public SeguimientoEstadiaRolVinculacion(Filter<PersonalActivo> filtro, PersonalActivo coordinadorEstadia) {
+    public ConsultaEmpresasEstadiaRolVinculacion(Filter<PersonalActivo> filtro, PersonalActivo coordinadorEstadia) {
         super(filtro);
         this.coordinadorEstadia = coordinadorEstadia;
     }
@@ -102,28 +81,12 @@ public class SeguimientoEstadiaRolVinculacion extends AbstractRol{
         this.nivelEducativo = nivelEducativo;
     }
 
-    public void setProgramasEducativos(List<AreasUniversidad> programasEducativos) {
-        this.programasEducativos = programasEducativos;
+    public void setEmpresasSeguimiento(List<DtoEmpresaSeguimientosEstadia> empresasSeguimiento) {
+        this.empresasSeguimiento = empresasSeguimiento;
     }
 
-    public void setProgramaEducativo(AreasUniversidad programaEducativo) {
-        this.programaEducativo = programaEducativo;
-    }
-    
-    public void setEstudiantesSeguimiento(List<DtoSeguimientoEstadia> estudiantesSeguimiento) {
-        this.estudiantesSeguimiento = estudiantesSeguimiento;
-    }
-
-    public void setEstudianteSeguimiento(DtoSeguimientoEstadia estudianteSeguimiento) {
-        this.estudianteSeguimiento = estudianteSeguimiento;
-    }
-
-    public void setMostrarSegValVinc(Boolean mostrarSegValVinc) {
-        this.mostrarSegValVinc = mostrarSegValVinc;
-    }
-
-    public void setOcultarColumnas(Boolean ocultarColumnas) {
-        this.ocultarColumnas = ocultarColumnas;
+    public void setEmpresaSeguimiento(DtoEmpresaSeguimientosEstadia empresaSeguimiento) {
+        this.empresaSeguimiento = empresaSeguimiento;
     }
     
 }

@@ -251,7 +251,7 @@ public class EjbAsignacionRolesEstadia {
             });
             
             List<AreasUniversidad> listaProgramasDistintos = new ArrayList<>();
-            if(areaSuperior==5){
+            if(areaSuperior==5 || areaSuperior==10){
                 listaProgramasDistintos = listaProgramas.stream()
                     .distinct()
                     .sorted(Comparator.comparing(AreasUniversidad::getNombre))
@@ -665,6 +665,7 @@ public class EjbAsignacionRolesEstadia {
                 seguimientoEstadia.setPromedioAsesorInterno(0);
                 seguimientoEstadia.setValidacionVinculacion(Boolean.FALSE);
                 seguimientoEstadia.setFechaValidacionVinculacion(null);
+                seguimientoEstadia.setActivo(true);
                 em.persist(seguimientoEstadia);
                 f.flush();
                 mensaje="Asignación de estudiante de estadía registrado correctamente.";

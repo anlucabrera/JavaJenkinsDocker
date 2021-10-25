@@ -53,7 +53,7 @@ public class EjbLetreroFotografias {
                     .getResultStream().findFirst().orElse(null);
                     
             List<Generaciones> listaGeneraciones = listaGeneracionesFotografias(matricula, listaEventosEntregaFotografias().getValor()).getValor();
-            if((e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1"))) && !listaGeneraciones.isEmpty()){
+            if((e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1")) || e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("4"))) && !listaGeneraciones.isEmpty()){
                 return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante y con seguimiento de estadía registrado.");
             }else {
                 return ResultadoEJB.crearErroneo(2, "El estudiante encontrado no tiene una inscripcion activa o no tiene registro de seguimiento de estadía.", Estudiante.class);
@@ -91,17 +91,27 @@ public class EjbLetreroFotografias {
         try{
             List<Generaciones> listaGeneraciones = new ArrayList<>();
             
+            List<Integer> tiposEst = new ArrayList<>(); tiposEst.add(1); tiposEst.add(4);
+            
             listaEventosFotografias.forEach(evento -> {
                 
-                List<Estudiante> listaEstudiante = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula AND e.grupo.generacion =:generacion",  Estudiante.class)
-                    .setParameter("matricula", matricula)
-                    .setParameter("generacion", evento.getGeneracion())
-                    .getResultList();
+                Integer grado = 6;
                 
-                listaEstudiante.forEach(estudiante -> {
-                    Generaciones generacion = em.find(Generaciones.class,estudiante.getGrupo().getGeneracion());
+                if(!evento.getNivel().equals("TSU")){
+                    grado = 11;
+                }
+               
+                Estudiante estadiaEst = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula AND e.grupo.generacion =:generacion AND e.grupo.grado=:grado AND e.tipoEstudiante.idTipoEstudiante IN :tiposEst",  Estudiante.class)
+                        .setParameter("matricula", matricula)
+                        .setParameter("generacion", evento.getGeneracion())
+                        .setParameter("grado", grado) 
+                        .setParameter("tiposEst", tiposEst)     
+                        .getResultStream().findFirst().orElse(null);
+                    
+                if(estadiaEst != null){
+                    Generaciones generacion = em.find(Generaciones.class,estadiaEst.getGrupo().getGeneracion());
                     listaGeneraciones.add(generacion);
-                });
+                }
             });
             
              List<Generaciones> listaGeneracionesDistintas = listaGeneraciones.stream()

@@ -74,12 +74,14 @@ public enum ControlEscolarVistaControlador {
     APERTURA_EVENTOS_ESCOLARES("/controlEscolar/se/aperturaEventosEscolares.xhtml",  AperturaEventosEscolares.class),
     INSCRIPCION_ING("/controlEscolar/se/inscripcionIngenieria.xhtml",  InscripcionIngenieriaSE.class),
     CARTA_NO_ADUEDO_SE("/controlEscolar/se/cartaNoAdeudoServiciosEscolares.xhtml", CartaNoAdeudoSE.class),
+    SEGUIMIENTO_ESTADIA_ESCOLARES("/controlEscolar/se/seguimientoEstadiaEscolares.xhtml", SeguimientoEstadiaEscolares.class),
 
     CARTA_NO_ADUEDO_FINANZAS("/controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml", CartaNoAdeudoFinanzas.class),
 
     SEGUIMIENTO_ESTADIA_VINCULACION("/controlEscolar/vinculacion/seguimientoEstadiaVinculacion.xhtml", SeguimientoEstadiaVinculacion.class),
     CARTA_NO_ADUEDO_CORDINACION_ESTADIA("/controlEscolar/vinculacion/cartaNoAdeudoCordinacionEstadia.xhtml", CartaNoAdeudoCordinacionEstadia.class),
     CARTA_NO_ADUEDO_SEGUIMIENTO_EGRESADOS("/controlEscolar/vinculacion/cartaNoAdeudoSeguimientoEgresados.xhtml", CartaNoAdeudoSeguimientoEgresados.class),
+    CONSULTA_EMPRESAS_ESTADIA("/controlEscolar/vinculacion/consultaEmpresasEstadia.xhtml", ConsultaEmpresasEstadiaVinculacion.class),
 
     SEGUIMIENTO_EXPEDIENTE_GENERACION("/controlEscolar/titulacion/seguimientoMatricula.xhtml", SeguimientoExpedienteMatriculaTitulacion.class),
     SEGUIMIENTO_EXPEDIENTE_MATRICULA("/controlEscolar/titulacion/seguimientoGeneracion.xhtml", SeguimientoExpedienteGeneracionTitulacion.class),
