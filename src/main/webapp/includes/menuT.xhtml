@@ -362,9 +362,9 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                               <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request) and configuracionUnidadMateriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
-                               <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Evidencias e<br/>Instrumentos de Evaluación</span></p:link></li></c:if>
-                               <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Impresión y consulta</span></p:link></li></c:if>
+                                <c:if test="#{configuracionUnidadMateriaDocente.mostrarEnDesarrollo(request) and configuracionUnidadMateriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/configuracionUnidadMateria.xhtml"><i class="fa fa-percent"></i><span>Configuración Unidad Materia</span></p:link></li></c:if>
+                                <c:if test="#{asignacionIndicadoresCriteriosDocente.mostrarEnDesarrollo(request) and asignacionIndicadoresCriteriosDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/asignacionIndicadoresCriterios.xhtml"><i class="fa fa-plus-circle"></i><span>Asignación Evidencias e<br/>Instrumentos de Evaluación</span></p:link></li></c:if>
+                                <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/planeacionCuatrimestral.xhtml"><i class="fa fa-print"></i><span>Impresión y consulta</span></p:link></li></c:if>
                             </ul>
                         </li>
                     </c:if>
@@ -876,538 +876,26 @@
                         </ul>
                     </li>
                 </c:if>
-
-
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">SGI</li>
-                <li class="treeview">  
-                    <li>
-                        <p:link href="http://siip.utxj.edu.mx/RevisionPorDireccion/" target="_blank">
-                            <i class="fa fa-desktop"></i>
-                            <span>Revisión por la dirección</span>
-                            <span class="pull-right-container">
-                            </span>
-                        </p:link>
-                    </li>                 
-                    <li>
-                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/INTERACION_DE_PROCESOS.pdf#toolbar=0" target="_blank">
-                            <span>Interacción de Procesos</span>
-                        </p:link>
-                    </li>
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-file-text-o"></i> <span>Mandatorios</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span> 
-                        </a>
-                        <ul class="treeview-menu" style="display: none;">
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/P_Quejas_Observaciones_Sugerencias.pdf#toolbar=0" target="_blank"><span>Atención a Quejas, <br/>Observaciones y Sugerencias</span></p:link></li>
-                            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Acciones Correctivas</li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/P_Acciones_Correctivas.pdf#toolbar=0" target="_blank"><span>Procedimiento</span></p:link></li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/Formato_Acciones_Correctivas.docx#toolbar=0" target="_blank"><span>Formato</span></p:link></li>
-                            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Control de Salidas <br/>No Conforme</li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/P_Salida_No_Conforme.pdf#toolbar=0" target="_blank"><span>Procedimiento</span></p:link></li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/Registro_Salidas_No_Conforme.docx#toolbar=0" target="_blank"><span>Formato</span></p:link></li>
-                            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Control de Registro</li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/P_Control_Registros.pdf#toolbar=0" target="_blank"><span>Procedimiento</span></p:link></li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/Formato_Listado_Registros.xls#toolbar=0" target="_blank"><span>Formato</span></p:link></li>
-                            <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Control de documentos</li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/P_Control_Documentos.pdf#toolbar=0" target="_blank"><span>Procedimiento</span></p:link></li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/L_M_Documentos_Externos.xls#toolbar=0" target="_blank"><span>Lista Maestra de Doc. Externos</span></p:link></li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/L_M_Documentos_Internos.xls#toolbar=0" target="_blank"><span>Lista Maestra de Doc. Internos</span></p:link></li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Mandatorios/Registro_de_revision_y_aprobacion_de_Documentos.xlsx#toolbar=0" target="_blank"><span>Registro de la Revisión y <br/>Aprobación de Documentos</span></p:link></li>
-                        </ul>
-                    </li>
-                    <li class="treeview">
-                        <a href="#">
-                            <i class="fa fa-file-text-o"></i> <span>Auditorias</span>
-                            <span class="pull-right-container">
-                                <i class="fa fa-angle-left pull-right"></i>
-                            </span> 
-                        </a>
-                        <ul class="treeview-menu" style="display: none;">
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Auditorias/P_Realizacion_Auditoria_Internas.pdf#toolbar=0" target="_blank"><span>Procedimiento</span></p:link></li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Auditorias/INFORME_DE_AUDITORIA.xlsx#toolbar=0" target="_blank"><span>Informe de Auditoria</span></p:link></li>
-                            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/general/Auditorias/Registro_de_Hallazgos.docx#toolbar=0" target="_blank"><span>Registro de Hallazgos</span></p:link></li>
-
-                        </ul>
-                    </li>
-                </li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Academia</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span> 
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-file-text-o"></i> <span>Procesos</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span> 
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/procesos/PROCESO_ESTADIA_TECNICA_2021.pdf#toolbar=0" target="_blank"><span>Estadía técnica</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/procesos/Proceso_de_Tut_y_A_Autorizado.pdf#toolbar=0" target="_blank"><span>Tutorías y<br/> Asesorías</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/procesos/PROCESO_VISITAS.pdf#toolbar=0" target="_blank"><span>Visitas</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/procesos/Proceso_de_Planeacion_y_Seguimiento_Academico_2021.pdf#toolbar=0" target="_blank"><span>Planeación y <br/>Seguimiento Académico</span></p:link></li>
-
-                            </ul>
-                        </li>
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-file-text-o"></i> <span>Estadía</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span> 
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/Guia_Proceso_Estadia_TSU_2021.pdf#toolbar=0" target="_blank"><span>Guía Proceso de Estadía  <br/> TSU 2021</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/1_ESPACIOS_CONCERTADOS_DE_ESTADIA_2021.xlsx#toolbar=0" target="_blank"><span>1. Espacios concertados</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/2_CONCENTRADO_DE_ESTADIAS_2021.xlsx#toolbar=0" target="_blank"><span>2. Concentrado de estadías</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/3_CARTA_DE_PRESENTACION_2021_a.pdf#toolbar=0" target="_blank"><span>3. Carta de presentación</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/4_CARTA_DE_ACEPTACION_2021_a.docx#toolbar=0" target="_blank"><span>4. Carta de aceptación</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/5_Seguimiento_Estadia_Tecnica_2020.xls#toolbar=0" target="_blank"><span>5. Seguimiento de la estadía</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/6_Informe_Mensual_2020.doc#toolbar=0" target="_blank"><span>6. Informe mensual</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/7_EVALUACION_POR_ASESOR_EMPRESARIAL_2021_a.docx#toolbar=0" target="_blank"><span>7. Evaluación asesor <br/>empresarial</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/8_CARTA_DE_LIBERACION_2021_a.docx#toolbar=0" target="_blank"><span>8. Carta de liberación <br/>empresarial</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/9_Carta_de_evaluacion_y_acreditacion_de_estadia_2020.doc#toolbar=0" target="_blank"><span>9. Evaluación, <br/>acreditación estadía</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/estadia/SOLICITUD_EMPRESAS_ESTADIAS_UTXJ_2021.xlsx#toolbar=0" target="_blank"><span>Solicitud Empresas Estadías <br/>UTXJ 2021</span></p:link></li>
-                            </ul>
-                        </li>
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-file-text-o"></i> <span>Tutorías y<br/> Asesorías</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span> 
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/1_Plan_Accion_Tutorial.docx#toolbar=0" target="_blank"><span>1. Plan Acción Tutorial</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/2_Registro_General_del_Estudiante.xlsx#toolbar=0" target="_blank"><span>2. Registro General <br/>del Estudiante</span></p:link></li>
-                                <li class="treeview">
-                                    <a href="#">
-                                        <i class="fa fa-file-text-o"></i> <span>3. Test Diagnóstico <br/> de Aprendizaje</span>
-                                        <span class="pull-right-container">
-                                            <i class="fa fa-angle-left pull-right"></i>
-                                        </span> 
-                                    </a>
-                                    <ul class="treeview-menu" style="display: none;">
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/3_Test_Diagnostico_de_Aprendizaje_30_test.xlsx#toolbar=0" target="_blank"><span>Múltiple 30 test</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/3_Test_Diagnostico_de_Aprendizaje_Individual.xlsx#toolbar=0" target="_blank"><span>Individual 1 test</span></p:link></li>
-                                    </ul>
-                                </li>
-                                <li class="treeview">
-                                    <a href="#">
-                                        <i class="fa fa-file-text-o"></i> <span>4. Diagnostico del<br/> Grupo Tutorado</span>
-                                        <span class="pull-right-container">
-                                            <i class="fa fa-angle-left pull-right"></i>
-                                        </span> 
-                                    </a>
-                                    <ul class="treeview-menu" style="display: none;">
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/4_Diagnostico_del_Grupo_Tutorado_Ejemplo.docx#toolbar=0" target="_blank"><span>Ejemplo</span></p:link></li>
-                                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/4_Diagnostico_del_Grupo_Tutorado.docx#toolbar=0" target="_blank"><span>Formato</span></p:link></li>
-                                    </ul>
-                                </li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/5_FODA_Grupal.docx#toolbar=0" target="_blank"><span>5. Foda Grupal</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/6_Tutoria_Grupal_con_lista_de_asistencia.xls#toolbar=0" target="_blank"><span>6. Tutoría Grupal <br/>(con lista de asistencia)</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/7_Tutoria_Individual_y_Casos_Criticos.xlsx#toolbar=0" target="_blank"><span>7. Tutoría Individual y <br/>Casos Críticos</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/8_Justificante.xls#toolbar=0" target="_blank"><span>8. Justificante</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/9_Asesoria.xlsx#toolbar=0" target="_blank"><span>9. Asesoría</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/10_Citatorio.doc#toolbar=0" target="_blank"><span>10. Citatorio</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/11_Supervision_de_Tutoria.xlsx#toolbar=0" target="_blank"><span>11. Supervisión de Tutoría</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/12_Expediente_de_caso_en_Psicopedagogia.docx#toolbar=0" target="_blank"><span>12. Expediente de caso <br/>en Psicopedagogía</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/13_Carnet_de_Citas_de_Psicopedagogia.xlsx#toolbar=0" target="_blank"><span>13. Carnet de Citas <br/>de Psicopedagogía</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Tutorias_y_Asesorias/14_Baja.xlsx#toolbar=0" target="_blank"><span>14. Baja</span></p:link></li>
-                            </ul>
-                        </li>
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-file-text-o"></i> <span>Plan de Acción<br/> Tutorial</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span> 
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">
-                                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">enero-abril 2021</li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Plan_Accion_Tutorial/P.A.T.2o.docx#toolbar=0" target="_blank"><span>Propuesto 2°</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Plan_Accion_Tutorial/P.A.T.5o.docx#toolbar=0" target="_blank"><span>Propuesto 5°</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Plan_Accion_Tutorial/P.A.T.8o.docx#toolbar=0" target="_blank"><span>Propuesto 8°</span></p:link></li>
-                                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">mayo-agosto 2021</li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Plan_Accion_Tutorial/Plan_Accion_Tutorial_3_2021.docx#toolbar=0" target="_blank"><span>Propuesto 3°</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Plan_Accion_Tutorial/Plan_Accion_Tutorial_9_2021.docx#toolbar=0" target="_blank"><span>Propuesto 9°</span></p:link></li>
-                                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">septiembre-diciembre 2021</li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Plan_Accion_Tutorial/Plan_Accion_Tutorial_1_2021.docx#toolbar=0" target="_blank"><span>Propuesto 1°</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Plan_Accion_Tutorial/Plan_Accion_Tutorial_4.docx#toolbar=0" target="_blank"><span>Propuesto 4°</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Plan_Accion_Tutorial/Plan_Accion_Tutorial_7_2021.docx#toolbar=0" target="_blank"><span>Propuesto 7°</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Plan_Accion_Tutorial/Plan_Accion_Tutorial_10.docx#toolbar=0" target="_blank"><span>Propuesto 10°</span></p:link></li>
-                            </ul>
-                        </li>
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-file-text-o"></i> <span>Planeación y <br/>Seguimiento Académico</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span> 
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/PlaSegAca/1_Distribucion_de_ Horas.xlsx#toolbar=0" target="_blank"><span>1. Distribución de Horas</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/PlaSegAca/2_Horario_de_grupo.xlsx#toolbar=0" target="_blank"><span>2. Horario de grupo</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/PlaSegAca/3_Carga_Horaria.xlsx#toolbar=0" target="_blank"><span>3. Carga Horaria</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/PlaSegAca/4_Matriz_de_espacios.xlsx#toolbar=0" target="_blank"><span>4. Matriz de espacios</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/PlaSegAca/5_Relacion_de_Practicas.xlsx#toolbar=0" target="_blank"><span>5. Relación de Practicas</span></p:link></li>
-                            </ul>
-                        </li>
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-file-text-o"></i> <span>Visitas</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span> 
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Visitas/2_Programa_de_visitas.xls#toolbar=0" target="_blank"><span>2. Programa de visitas</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Visitas/3_Confirmacion_Itinerario_e_informe_de_Visitas.xlsx#toolbar=0" target="_blank"><span>3. Confirmación, Itinerario <br/>e informe de <br/>Visitas 2020</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Visitas/4_LISTADO_DE_ESTUDIANTES_CON_SS_SD2021.xlsx#toolbar=0" target="_blank"><span>4. Listado de estudiantes con <br/>eSS vigente</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Visitas/5_Carta_Responsiva_2021.docx#toolbar=0" target="_blank"><span>5. Carta Responsiva</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/academia/Visitas/6_Encuesta_Proceso_Visitas_SD2021.docx#toolbar=0" target="_blank"><span>6. Encuesta Proceso de Visitas</span></p:link></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Vinculación</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span> 
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/vinculacion/VINCULACION_ESC_ORG.pdf#toolbar=0" target="_blank"><span>Escuela - Organización </span></p:link></li>
-                    </ul>
-                </li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Finanzas</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span> 
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/FINANZAS/PROCESO_ADMINISTREACION_RECURSOS.pdf#toolbar=0" target="_blank"><span>Proceso de administración<br/>de recursos</span></p:link></li>
-                    </ul>
-                </li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>14001</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span> 
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/4.1_Comprension_de_la_UTXJ_y_su_contexto.pdf#toolbar=0" target="_blank"><span>4.1 Compresión de la UTXJ y <br/>su contexto</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/4.2_Compresion_de_las_necesidades_y_expectativas_de__las_Partes_Interesadas.pdf#toolbar=0" target="_blank"><span>4.2 Compresión de las necesidades <br/>y expectativas de las <br/>Partes Interesadas</span></p:link></li>
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-file-text-o"></i> 
-                                <span>Matriz de Aspectos <br/>Ambientales</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span> 
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">      
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/Ensenanza_Aprendizaje.pdf#toolbar=0" target="_blank"><span>Enseñanza - Aprendizaje</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/Administrativo.pdf#toolbar=0" target="_blank"><span>Administrativo</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/Servicios_Generales.pdf#toolbar=0" target="_blank"><span>Servicios Materiales</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/Modificaciones.pdf#toolbar=0" target="_blank"><span>Modificaciones</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Matriz__Aspectos_Ambientales/Clinica_TFAR.pdf#toolbar=0" target="_blank"><span>Clínica TFAR</span></p:link></li>
-                            </ul>
-                        </li>
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-file-text-o"></i> 
-                                <span>Obligaciones Legales</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span> 
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">    
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Obligaciones_Legales/FEDERAL2021.pdf#toolbar=0" target="_blank"><span>Federal</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Obligaciones_Legales/ESTATAL2021.pdf#toolbar=0" target="_blank"><span>Estatal</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Obligaciones_Legales/MUNICIPAL2021.pdf#toolbar=0" target="_blank"><span>Municipal</span></p:link></li>
-                            </ul>
-                        </li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/6.1_Acciones_para_afrontar_Riesgos__y_Oportunidades_GENERAL.pdf#toolbar=0" target="_blank"><span>6.1 Acciones para bordar <br/>riesgos y oportunidades</span></p:link></li>
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-file-text-o"></i> 
-                                <span>Pocedimientos</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span> 
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Pocedimientos/PROCEDIMIENTO_DE_AGUA.pdf#toolbar=0" target="_blank"><span>Agua</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Pocedimientos/PROCEDIMIENTO_DE_ENERGIA.pdf#toolbar=0" target="_blank"><span>Energía</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Pocedimientos/PROCEDIMIENTO_PAPEL.pdf#toolbar=0" target="_blank"><span>Papel</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Pocedimientos/PROCEDIMIENTO_PARA_EL_ALMACENAMIENTO_DE_RESIDUOS.pdf#toolbar=0" target="_blank"><span>Almacenamiento de residuos</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Pocedimientos/PROCEDIMIENTO_PARA_RPBI.pdf#toolbar=0" target="_blank"><span>RPBI</span></p:link></li>
-                            </ul>
-                        </li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/bitacora_de_RP.xlsx#toolbar=0" target="_blank"><span>Bitácora de RP</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/bitacora_de_RPBI.xlsx#toolbar=0" target="_blank"><span>Bitácora de RPBI</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/14001/Etiquetas_de_RP.docx#toolbar=0" target="_blank"><span>Etiquetas de RP</span></p:link></li>
-                    </ul>
-                </li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>9001</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span> 
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/4.1_Comprension_de_la_UTXJ_y_de_su_contexto_Rev2021.pdf#toolbar=0" target="_blank"><span>4.1 Comprensión de la UTXJ y<br/> su contexto</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/4.2_Comprension_de_las_nec_y_expec_de_Partes_Interesadas_2021.pdf#toolbar=0" target="_blank"><span>4.2 Compresión de las <br/>necesidades y expectativas de <br/>las Partes Interesadas</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/6.1_Acciones_para_afrontar_Riesgos_y_Oportunidades_GENERAL2021.pdf#toolbar=0" target="_blank"><span>6.1 Acciones para abordar <br/>riesgos y oportunidades</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/7_1_6_Capital_del_Conocimiento_2021.pdf#toolbar=0" target="_blank"><span>7.1.6 Capital del conocimiento</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/9001/7_4_Cedula_Comunicacion_Institucional_2021.pdf#toolbar=0" target="_blank"><span>7.4 Cédula de Comunicación</span></p:link></li>
-                    </ul>
-                </li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Procedimientos</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/procedimientos/Procedimiento de atencion a quejas 025.pdf#toolbar=0" target="_blank">
-                                <span>Atención a quejas</span>
-                            </p:link>
-                        </li>
-                    </ul>
-                </li>   
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Revisión Por La Dirección</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span> 
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/RD/REVISION_POR_LA_DIRECCION.pdf#toolbar=0" target="_blank"><span>Revisión Por La Dirección </span></p:link></li>
-                    </ul>
-                </li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Planificación</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span> 
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/PLAN/PLANIFICACION.pdf#toolbar=0" target="_blank"><span>Planificación </span></p:link></li>
-                    </ul>
-                </li>
-
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">ACADEMIA DE EOE Y FSC</li>
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Formación Sociocultural</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/FORMACION_SOCIOCULTURAL.pdf" target="_blank">
-                                <span>Formación Sociocultural</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_PRACTICAS_UTXJ_FORMACION_SOCIOCULTURAL_II.docx" target="_blank">
-                                <span>Manual de Prácticas UTXJ <br/>Formación Sociocultural II</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_PRACTICAS_UTXJ_FORMACION_SOCIOCULTURAL_III.docx" target="_blank">
-                                <span>Manual de Prácticas UTXJ <br/>Formación Sociocultural III</span>
-                            </p:link>
-                        </li>                        
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_PRACTICAS_UTXJ_FORMACION_SOCIOCULTURAL_IV.docx" target="_blank">
-                                <span>Manual de Prácticas UTXJ <br/>Formación Sociocultural IV</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_ASIGNATURA_UTXJ_FORMACION_SOCIOCULTURAL_III.docx" target="_blank">
-                                <span>Manual de asignatura UTXJ <br/>Formación Sociocultural III</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_ASIGNATURA_UTXJ_FORMACION_SOCIOCULTURAL_IV.docx" target="_blank">
-                                <span>Manual de asignatura UTXJ <br/>Formación Sociocultural IV</span>
-                            </p:link>
-                        </li>
-                    </ul>
-
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Expresión Oral y Escrita</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_PRACTICAS_UTXJ_EOyE_II.docx" target="_blank">
-                                <span>Manual de Prácticas UTXJ <br/> EOyE II</span>
-                            </p:link>
-                        </li>
-                    </ul>
-
-                    <a href="#">
-                        <i class="fa fa-file-text-o"></i> <span>Diseño<br/> Instruccional</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Formación Sociocultural</li>                            
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_instruccional_FSC_I_UTXJ.docx" target="_blank">
-                                <span>FSC I</span>
-                            </p:link>
-                        </li>   
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_Instruccional_de_FSC_I_ Mantenimiento.docx" target="_blank">
-                                <span>FSC I Mantenimiento</span>
-                            </p:link>
-                        </li>   
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_Instruccional_FSC_I_Mantenimiento.docx" target="_blank">
-                                <span>FSC I Mantenimiento</span>
-                            </p:link>
-                        </li>  
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_Instruccional_FSC_II_UTXJ.docx" target="_blank">
-                                <span>FSC II Mantenimiento</span>                               
-                            </p:link>
-                        </li> 
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_Instruccional_de_FSC_III.docx" target="_blank">
-                                <span>FSC III</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_Instruccional_FSC_IV_UTXJ.docx" target="_blank">
-                                <span>FSC IV</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_Instruccional_FSC_II_Procesos.docx" target="_blank">
-                                <span>FSC II Procesos</span>
-                                <span class="pull-right-container">
-                                    <small class="label pull-right bg-green">Nuevo</small>
-                                </span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_instruccional_FSC_II_2021_Terapia_TIC_Agricultura_Gastro_Admon.docx" target="_blank">
-                                <span>FSC II SALUD, TIC,<br/> ADMON, AGRO, GASTRO</span>
-                                <span class="pull-right-container">
-                                    <small class="label pull-right bg-green">Nuevo</small>
-                                </span>
-                            </p:link>
-                        </li>
-
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/DISENO_INSTRUCCIONAL_FSC_IV_2021_Mantenimeinto_Gastronomia_Procesos.docx" target="_blank">
-                                <span>FSC IV PROCESOS, <br/>MANTO, GASTRO</span>
-                                <span class="pull-right-container">
-                                    <small class="label pull-right bg-green">Nuevo</small>
-                                </span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/FORMACION_SOCIOCULTURAL_II_2021_Quimica.docx" target="_blank">
-                                <span>FSC II QUÍMICA</span>
-                                <span class="pull-right-container">
-                                    <small class="label pull-right bg-green">Nuevo</small>
-                                </span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/DISENO_INSTRUCCIONAL_FSCIII_Quimica.docx" target="_blank">
-                                <span>FSC III QUÍMICA</span>
-                                <span class="pull-right-container">
-                                    <small class="label pull-right bg-green">Nuevo</small>
-                                </span>
-                            </p:link>
-                        </li>
-                        <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Expresión Oral y Escrita</li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/MANUAL_DE_EXPRESION_ORAL_Y_ESCRITA_I_UTXJ-2020.docx" target="_blank">
-                                <span>EOE I</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_Instruccional_EOyE_II.docx" target="_blank">
-                                <span>EOE II</span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_instruccional_VF_2021_EOE_Manto_Terapia_Agricultura_Gastronomia_TIC_Meca_Admon.docx" target="_blank">
-                                <span>EOE II MANTO, SALUD, <br/>TIC, ADMON, MECA, <br/>AGRICULTURA, GASTRO</span>
-                                <span class="pull-right-container">
-                                    <small class="label pull-right bg-green">Nuevo</small>
-                                </span>
-                            </p:link>
-                        </li>
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/manualesDeAsignatura/Diseno_instruccional_VF_2021-EOE_II_Procesos.docx" target="_blank">
-                                <span>EOE II PROCESOS</span>
-                                <span class="pull-right-container">
-                                    <small class="label pull-right bg-green">Nuevo</small>
-                                </span>
-                            </p:link>
-                        </li>                        
-                    </ul>
-                </li>
-
-
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-folder"></i><span>Herramientas Externas</span>
-                        <span class="pull-right-container">
-                            <i class="fa fa-angle-left pull-right"></i>
-                        </span>
-                    </a>
-                    <ul class="treeview-menu" style="display: none;">
-                        <li>
-                            <p:link href="http://siip.utxicotepec.edu.mx/prontuario-service2" target="_blank">
-                                <i class="fa fa-bar-chart-o"></i>
-                                <span>Prontuario</span>
-                            </p:link>
-                        </li>
-                    </ul>
-                </li>
-
-
+                                
                 <c:forEach var="i" begin="0" end="#{controladorEmpleado.menus.size()-1}">
                     <c:set var="enc" value="#{controladorEmpleado.menus.get(i)}"/>
                     <c:if test="#{controladorEmpleado.menus.size() ne 0 and enc.primerNivel.size() ne 0}">
-                        <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">#{enc.encabezado}</li>
+                        <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">
+                            <c:forEach var="t" begin="0" end="#{enc.encabezado.size()-1}">
+                                #{enc.encabezado.get(t)}
+                            </c:forEach>
+                        </li>
                         <c:forEach var="j" begin="0" end="#{enc.primerNivel.size()-1}">
                             <c:set var="n1" value="#{enc.primerNivel.get(j)}"/>
                             <c:if test="#{n1.segundoNivel.size() eq 0}">
                                 <li>
-                                    <p:link href="#{n1.tipoenlace eq 'interfaz'?request.contextPath:'http://siip.utxicotepec.edu.mx/archivos/evidencias2/'}#{n1.enlace}">
+                                    <p:link href="#{n1.tipoenlace eq 'interfaz'?request.contextPath:(n1.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2/':'')}#{n1.enlace}" target="#{n1.tipoenlace eq 'interfaz'?'':'_blank'}">
                                         <i class="#{n1.icono}"></i>
-                                        <span>#{n1.titulo}</span>
+                                        <span>
+                                            <c:forEach var="t" begin="0" end="#{n1.titulo.size()-1}">
+                                                #{n1.titulo.get(t)}<br/>
+                                            </c:forEach>
+                                        </span>
                                         <c:if test="#{n1.estaus eq 'Nuevo'}">
                                             <span class="pull-right-container">
                                                 <small class="label pull-right bg-green">#{n1.estaus}</small>
@@ -1419,7 +907,12 @@
                             <c:if test="#{n1.segundoNivel.size() ne 0}">
                                 <li class="treeview">
                                     <a href="#{n1.enlace}">
-                                        <i class="#{n1.icono}"></i> <span>#{n1.titulo}</span>
+                                        <i class="#{n1.icono}"></i> 
+                                        <span>
+                                            <c:forEach var="t" begin="0" end="#{n1.titulo.size()-1}">
+                                                #{n1.titulo.get(t)}<br/>
+                                            </c:forEach>
+                                        </span>
                                         <span class="pull-right-container">
                                             <i class="fa fa-angle-left pull-right"></i>
                                         </span> 
@@ -1429,9 +922,13 @@
                                             <c:set var="n2" value="#{n1.segundoNivel.get(k)}"/>
                                             <c:if test="#{n2.tercerNivel.size() eq 0}">
                                                 <li>
-                                                    <p:link href="#{n2.tipoenlace eq 'interfaz'?request.contextPath:'http://siip.utxicotepec.edu.mx/archivos/evidencias2/'}#{n2.enlace}">
+                                                    <p:link href="#{n2.tipoenlace eq 'interfaz'?request.contextPath:(n2.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2/':'')}#{n2.enlace}" target="#{n2.tipoenlace eq 'interfaz'?'':'_blank'}">
                                                         <i class="#{n2.icono}"></i>
-                                                        <span>#{n2.titulo}</span>
+                                                        <span>
+                                                            <c:forEach var="t" begin="0" end="#{n2.titulo.size()-1}">
+                                                                #{n2.titulo.get(t)}<br/>
+                                                            </c:forEach>
+                                                        </span>
                                                         <c:if test="#{n2.estaus eq 'Nuevo'}">
                                                             <span class="pull-right-container">
                                                                 <small class="label pull-right bg-green">#{n2.estaus}</small>
@@ -1443,7 +940,12 @@
                                             <c:if test="#{n2.tercerNivel.size() ne 0}">
                                                 <li class="treeview">
                                                     <a href="#{n2.enlace}">
-                                                        <i class="#{n2.icono}"></i> <span>#{n2.titulo}</span>
+                                                        <i class="#{n2.icono}"></i> 
+                                                        <span>
+                                                            <c:forEach var="t" begin="0" end="#{n2.titulo.size()-1}">
+                                                                #{n2.titulo.get(t)}<br/>
+                                                            </c:forEach>
+                                                        </span>
                                                         <span class="pull-right-container">
                                                             <i class="fa fa-angle-left pull-right"></i>
                                                         </span> 
@@ -1453,9 +955,13 @@
                                                             <c:set var="n3" value="#{n2.tercerNivel.get(l)}"/>
                                                             <c:if test="#{n3.cuartoNivel.size() eq 0}">
                                                                 <li>
-                                                                    <p:link href="#{n3.tipoenlace eq 'interfaz'?request.contextPath:'http://siip.utxicotepec.edu.mx/archivos/evidencias2/'}#{n3.enlace}">
+                                                                    <p:link href="#{n3.tipoenlace eq 'interfaz'?request.contextPath:(n3.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2/':'')}#{n3.enlace}" target="#{n3.tipoenlace eq 'interfaz'?'':'_blank'}">
                                                                         <i class="#{n3.icono}"></i>
-                                                                        <span>#{n3.titulo}</span>
+                                                                        <span>
+                                                                            <c:forEach var="t" begin="0" end="#{n3.titulo.size()-1}">
+                                                                                #{n3.titulo.get(t)}<br/>
+                                                                            </c:forEach>
+                                                                        </span>
                                                                         <c:if test="#{n3.estaus eq 'Nuevo'}">
                                                                             <span class="pull-right-container">
                                                                                 <small class="label pull-right bg-green">#{n3.estaus}</small>
@@ -1467,7 +973,12 @@
                                                             <c:if test="#{n3.cuartoNivel.size() ne 0}">
                                                                 <li class="treeview">
                                                                     <a href="#{n3.enlace}">
-                                                                        <i class="#{n3.icono}"></i> <span>#{n3.titulo}</span>
+                                                                        <i class="#{n3.icono}"></i> 
+                                                                        <span>
+                                                                            <c:forEach var="t" begin="0" end="#{n3.titulo.size()-1}">
+                                                                                #{n3.titulo.get(t)}<br/>
+                                                                            </c:forEach>
+                                                                        </span>
                                                                         <span class="pull-right-container">
                                                                             <i class="fa fa-angle-left pull-right"></i>
                                                                         </span> 
@@ -1477,9 +988,13 @@
                                                                             <c:set var="n4" value="#{n3.cuartoNivel.get(l)}"/>
                                                                             <c:if test="#{n4.quintoNivel.size() eq 0}">
                                                                                 <li>
-                                                                                    <p:link href="#{n4.tipoenlace eq 'interfaz'?request.contextPath:'http://siip.utxicotepec.edu.mx/archivos/evidencias2/'}#{n4.enlace}">
+                                                                                    <p:link href="#{n4.tipoenlace eq 'interfaz'?request.contextPath:(n4.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2/':'')}#{n4.enlace}" target="#{n4.tipoenlace eq 'interfaz'?'':'_blank'}">
                                                                                         <i class="#{n4.icono}"></i>
-                                                                                        <span>#{n4.titulo}</span>
+                                                                                        <span>
+                                                                                            <c:forEach var="t" begin="0" end="#{n4.titulo.size()-1}">
+                                                                                                #{n4.titulo.get(t)}<br/>
+                                                                                            </c:forEach>
+                                                                                        </span>
                                                                                         <c:if test="#{n4.estaus eq 'Nuevo'}">
                                                                                             <span class="pull-right-container">
                                                                                                 <small class="label pull-right bg-green">#{n4.estaus}</small>
@@ -1491,7 +1006,12 @@
                                                                             <c:if test="#{n4.quintoNivel.size() ne 0}">
                                                                                 <li class="treeview">
                                                                                     <a href="#{n4.enlace}">
-                                                                                        <i class="#{n4.icono}"></i> <span>#{n4.titulo}</span>
+                                                                                        <i class="#{n4.icono}"></i> 
+                                                                                        <span>
+                                                                                            <c:forEach var="t" begin="0" end="#{n4.titulo.size()-1}">
+                                                                                                #{n4.titulo.get(t)}<br/>
+                                                                                            </c:forEach>
+                                                                                        </span>
                                                                                         <span class="pull-right-container">
                                                                                             <i class="fa fa-angle-left pull-right"></i>
                                                                                         </span> 
@@ -1500,9 +1020,13 @@
                                                                                         <c:forEach var="l" begin="0" end="#{n4.quintoNivel.size()-1}">
                                                                                             <c:set var="n5" value="#{n4.quintoNivel.get(l)}"/>
                                                                                             <li>
-                                                                                                <p:link href="#{n5.tipoenlace eq 'interfaz'?request.contextPath:'http://siip.utxicotepec.edu.mx/archivos/evidencias2/'}#{n5.enlace}">
+                                                                                                <p:link href="#{n5.tipoenlace eq 'interfaz'?request.contextPath:(n5.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2/':'')}#{n5.enlace}" target="#{n5.tipoenlace eq 'interfaz'?'':'_blank'}">
                                                                                                     <i class="#{n5.icono}"></i>
-                                                                                                    <span>#{n5.titulo}</span>
+                                                                                                    <span>
+                                                                                                        <c:forEach var="t" begin="0" end="#{n5.titulo.size()-1}">
+                                                                                                            #{n5.titulo.get(t)}<br/>
+                                                                                                        </c:forEach>
+                                                                                                    </span>
                                                                                                     <c:if test="#{n5.estaus eq 'Nuevo'}">
                                                                                                         <span class="pull-right-container">
                                                                                                             <small class="label pull-right bg-green">#{n5.estaus}</small>
@@ -1636,63 +1160,13 @@
                         <span>Mensajería</span>
                     </p:link>
                 </li>
-                <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Documentación</li>
-                <li>
-                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Manual de Organización 2018 con Anexo de Funciones FINAL.pdf#toolbar=0" target="_blank">
-                        <i class="fa fa-book"></i>
-                        <span>Manual de Organización</span>
-                    </p:link>
-                </li>
-                <li>
-                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Manual de Procedimientos Administrativos 2018.pdf#toolbar=0" target="_blank">
-                        <i class="fa fa-book"></i>
-                        <span>Manual de Procedimientos <br/>Administrativos</span>
-                    </p:link>
-                </li>
-                <li>
-                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/CODIGO DE CONDUCTA.pdf#toolbar=0" target="_blank">
-                        <i class="fa fa-book"></i>
-                        <span>Código de conducta</span>
-                    </p:link>
-                </li>
-                <li>
-                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Código de etica.pdf#toolbar=0" target="_blank">
-                        <i class="fa fa-book"></i>
-                        <span>Código de ética</span>
-                    </p:link>
-                </li>
-                <li>
-                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/documentacion/Modelo_Nacional_Tutorias_CGUTyP.pdf#toolbar=0" target="_blank">
-                        <i class="fa fa-book"></i>
-                        <span>Modelo Nacional de<br/>Tutorías de la CGUTyP</span>
-                    </p:link>
-                </li>
-                <li>
-                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/documentacion/PROGRAMA_INSTITUCIONAL_TUTORIAS.pdf#toolbar=0" target="_blank">
-                        <i class="fa fa-book"></i>
-                        <span>Programa Institucional de <br/>Tutorías</span>
-                    </p:link>
-                </li>
-                <li>
-                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/SGI/documentacion/RESUMEN_Modelo_Nacional_Tutorias.pdf#toolbar=0" target="_blank">
-                        <i class="fa fa-book"></i>
-                        <span>Resumen del Modelo<br/>Nacional de Tutorías de la CGUTyP</span>
-                    </p:link>
-                </li>
                 <li>
                     <p:link href="#{request.contextPath}/soporteTecnico.xhtml">
                         <i class="fa fa-wrench"></i>
                         <span>Soporte técnico</span>
                     </p:link>
                 </li>
-                <!--c:if test="# {controladorEmpleado.tienePOA}"-->
-                <li>                    
-                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Calendario de Evaluacion SIIP 2021.pdf#toolbar=0"  target="_blank">
-                        <i class="fa fa-calendar"></i>
-                        <span>Calendario</span>
-                    </p:link>
-                </li>
-                <!--/c:if-->
+
             </c:if>
         </c:if>
     </ul>

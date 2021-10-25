@@ -6,14 +6,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
@@ -356,14 +355,14 @@ public class ControladorEmpleado implements Serializable {
 //////////////////////////////////////////////////////////////////////////////// Menú dinamico
     public void crearMenuAdministrador() {
         try {
-//            List<MenuDinamico> dinamicos = new ArrayList<>();
-//            dinamicos = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 0, "", "Trabajador");
-//            menus = new ArrayList<>();
-//            if (!dinamicos.isEmpty()) {
-//                dinamicos.forEach((enc) -> {
+            List<MenuDinamico> dinamicos = new ArrayList<>();
+            dinamicos = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 0, "", "Trabajador");
+            menus = new ArrayList<>();
+            if (!dinamicos.isEmpty()) {
+                dinamicos.forEach((enc) -> {
                     List<MenuDinamico> dinamicosN1 = new ArrayList<>();
-                    dinamicosN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, "Administrador","Trabajador");
-//                    dinamicosN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, enc.getEncabezado(), "Trabajador");
+//                    dinamicosN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, "Administrador","Trabajador");
+                    dinamicosN1 = ejbUtilidadesCH.mostrarListaMenu(nuevoOBJListaPersonal, 1, enc.getEncabezado(), "Trabajador");
                     nivel1s = new ArrayList<>();
                     if (!dinamicosN1.isEmpty()) {
                         dinamicosN1.forEach((n1) -> {
@@ -388,7 +387,7 @@ public class ControladorEmpleado implements Serializable {
                                                     if (!dinamicosN5.isEmpty()) {
                                                         dinamicosN5.forEach((n5) -> {
                                                             MenuDinamicoBD.Nivel5 nivel5 = new MenuDinamicoBD.Nivel5();
-                                                            nivel5.setTitulo(n5.getTitulonivel5());
+                                                            nivel5.setTitulo(saltoLinea(n5.getTitulonivel5()));
                                                             nivel5.setIcono(n5.getIconoNivel5());
                                                             nivel5.setEnlace(n5.getEnlacenivel5());
                                                             nivel5.setEstaus(n5.getEstatus());
@@ -397,7 +396,7 @@ public class ControladorEmpleado implements Serializable {
                                                         });
                                                     }
                                                     MenuDinamicoBD.Nivel4 nivel4 = new MenuDinamicoBD.Nivel4();
-                                                    nivel4.setTitulo(n4.getTitulonivel4());
+                                                    nivel4.setTitulo(saltoLinea(n4.getTitulonivel4()));
                                                     nivel4.setIcono(n4.getIconoNivel4());
                                                     nivel4.setEnlace(n4.getEnlacenivel4());
                                                     nivel4.setEstaus(n4.getEstatus());
@@ -407,7 +406,7 @@ public class ControladorEmpleado implements Serializable {
                                                 });
                                             }
                                             MenuDinamicoBD.Nivel3 nivel3 = new MenuDinamicoBD.Nivel3();
-                                            nivel3.setTitulo(n3.getTitulonivel3());
+                                            nivel3.setTitulo(saltoLinea(n3.getTitulonivel3()));
                                             nivel3.setIcono(n3.getIconoNivel3());
                                             nivel3.setEnlace(n3.getEnlacenivel3());
                                             nivel3.setEstaus(n3.getEstatus());
@@ -417,7 +416,7 @@ public class ControladorEmpleado implements Serializable {
                                         });
                                     }
                                     MenuDinamicoBD.Nivel2 nivel2 = new MenuDinamicoBD.Nivel2();
-                                    nivel2.setTitulo(n2.getTituloNivel2());
+                                    nivel2.setTitulo(saltoLinea(n2.getTituloNivel2()));
                                     nivel2.setIcono(n2.getIconoNivel2());
                                     nivel2.setEnlace(n2.getEnlaceNivel2());
                                     nivel2.setEstaus(n2.getEstatus());
@@ -427,7 +426,7 @@ public class ControladorEmpleado implements Serializable {
                                 });
                             }
                             MenuDinamicoBD.Nivel1 nivel1 = new MenuDinamicoBD.Nivel1();
-                            nivel1.setTitulo(n1.getTituloNivel1());
+                            nivel1.setTitulo(saltoLinea(n1.getTituloNivel1()));
                             nivel1.setIcono(n1.getIconoNivel1());
                             nivel1.setEnlace(n1.getEnlaceNivel1());
                             nivel1.setEstaus(n1.getEstatus());
@@ -437,29 +436,35 @@ public class ControladorEmpleado implements Serializable {
                         });
                     }
                     MenuDinamicoBD.EncabezadosMenu nivel0 = new MenuDinamicoBD.EncabezadosMenu();
-//                    nivel0.setEncabezado(enc.getEncabezado());
-                    nivel0.setEncabezado("Administrador");
+                    nivel0.setEncabezado(saltoLinea(enc.getEncabezado()));
+//                    nivel0.setEncabezado("Administrador");
                     nivel0.setPrimerNivel(nivel1s);
                     menus.add(nivel0);
-//                });
-//            }
+                });
+            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorEmpleado.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    
-public static class listaEstrategiaActividades {
-
-        @Getter        @Setter        private String modulo;
-        @Getter        @Setter        private List<Permisosadminstracion> ps;
-
-        public listaEstrategiaActividades(String modulo, List<Permisosadminstracion> ps) {
-            this.modulo = modulo;
-            this.ps = ps;
-        }      
-        
+  
+    public List<String> saltoLinea(String titulo) {
+        String[] parts = titulo.split(" ");
+        List<String> textoSeparado = Arrays.asList(parts);
+        List<String> tituloMostrado = new ArrayList<>();
+        String texto = "";
+        for (int i = 0; i < textoSeparado.size(); i++) {
+            String letra = textoSeparado.get(i);
+            Integer tmt = texto.length() + letra.length();
+            if (tmt > 20) {
+                tituloMostrado.add(texto);
+                texto = "";
+                texto = texto + letra;
+            } else {
+                texto = texto + " " + letra;
+            }
+        }
+        tituloMostrado.add(texto);
+        return tituloMostrado;
     }
 }
-

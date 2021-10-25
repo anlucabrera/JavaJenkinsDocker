@@ -31,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
+import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
 import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
@@ -76,6 +77,7 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private List<Partidas> partidasesTotales = new ArrayList<>();
     @Getter    @Setter    private List<ProductosAreasAsigados> asigadoses = new ArrayList<>();
     @Getter    @Setter    private List<CapitulosTipos> capitulosTiposes = new ArrayList<>();
+    @Getter    @Setter    private List<MenuDinamico> menuDinamicos = new ArrayList<>();
     
     
     @Getter    @Setter    private Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
@@ -127,6 +129,7 @@ public class AdministracionControl implements Serializable {
         mostrarConfiguracionProp();
         mostrarPartidas();
         mostrarProductos(Short.parseShort("0"), 1);
+        menuDocumentacion();
     }
 
 
@@ -233,6 +236,17 @@ public class AdministracionControl implements Serializable {
                 });
                 presupuestoPOAs.add(new PresupuestoPOA(Short.valueOf("0"),"Total", "", new PretechoFinanciero(0, Short.valueOf("0"), cp2T), new PretechoFinanciero(0, Short.valueOf("0"), cp3T), new PretechoFinanciero(0, Short.valueOf("0"), cp4T), new PretechoFinanciero(0, Short.valueOf("0"), cpdT)));
             }
+        }
+    }
+    
+    public void menuDocumentacion() {
+        try {
+            menuDinamicos = new ArrayList<>();
+            menuDinamicos.clear();
+            menuDinamicos = ejbUtilidadesCH.mostrarListaMenuDocumentacion();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

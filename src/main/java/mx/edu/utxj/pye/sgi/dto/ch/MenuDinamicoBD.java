@@ -8,13 +8,13 @@ public class MenuDinamicoBD {
     
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class EncabezadosMenu {
-        @Getter        @Setter        private String encabezado;
+        @Getter        @Setter        private List<String> encabezado;
         @Getter        @Setter        private List<Nivel1> primerNivel;
     }
     
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class Nivel1 {
-        @Getter        @Setter        private String titulo;
+        @Getter        @Setter        private List<String> titulo;
         @Getter        @Setter        private String icono;
         @Getter        @Setter        private String enlace;
         @Getter        @Setter        private String estaus;
@@ -24,7 +24,7 @@ public class MenuDinamicoBD {
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class Nivel2 {
-        @Getter        @Setter        private String titulo;
+        @Getter        @Setter        private List<String> titulo;
         @Getter        @Setter        private String icono;
         @Getter        @Setter        private String enlace;
         @Getter        @Setter        private String estaus;
@@ -34,7 +34,7 @@ public class MenuDinamicoBD {
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class Nivel3 {
-        @Getter        @Setter        private String titulo;
+        @Getter        @Setter        private List<String> titulo;
         @Getter        @Setter        private String icono;
         @Getter        @Setter        private String enlace;
         @Getter        @Setter        private String estaus;
@@ -44,7 +44,7 @@ public class MenuDinamicoBD {
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class Nivel4 {
-        @Getter        @Setter        private String titulo;
+        @Getter        @Setter        private List<String> titulo;
         @Getter        @Setter        private String icono;
         @Getter        @Setter        private String enlace;
         @Getter        @Setter        private String estaus;
@@ -54,7 +54,7 @@ public class MenuDinamicoBD {
     
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class Nivel5 {
-        @Getter        @Setter        private String titulo;
+        @Getter        @Setter        private List<String> titulo;
         @Getter        @Setter        private String icono;
         @Getter        @Setter        private String enlace;
         @Getter        @Setter        private String estaus;
