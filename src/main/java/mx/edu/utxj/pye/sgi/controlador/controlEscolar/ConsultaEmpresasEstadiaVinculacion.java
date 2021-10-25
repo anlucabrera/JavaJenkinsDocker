@@ -30,16 +30,10 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.io.File;
-import java.io.IOException;
-import java.util.stream.Collectors;
-import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEmpresaSeguimientosEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import org.omnifaces.util.Faces;
-import org.omnifaces.util.Messages;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
@@ -153,7 +147,7 @@ public class ConsultaEmpresasEstadiaVinculacion  extends ViewScopedRol implement
     }
     
     /**
-     * Permite que al cambiar o seleccionar una generación se pueda actualizar la lista de estudiantes asignados
+     * Permite que al cambiar o seleccionar una generación se pueda actualizar la lista de niveles educativos
      * @param e Evento del cambio de valor
      */
     public void cambiarGeneracion(ValueChangeEvent e){
@@ -166,7 +160,7 @@ public class ConsultaEmpresasEstadiaVinculacion  extends ViewScopedRol implement
     }
     
     /**
-     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la lista de estudiantes asignados
+     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la lista de empresas asignadas
      * @param e Evento del cambio de valor
      */
     public void cambiarNivelEducativo(ValueChangeEvent e){
@@ -178,6 +172,10 @@ public class ConsultaEmpresasEstadiaVinculacion  extends ViewScopedRol implement
         }else mostrarMensaje("");
     }
     
+    /**
+     * Permite actualizar el nombre o dirección de la empresa
+     * @param event Evento del cambio de valor
+     */
     public void onCellEdit(CellEditEvent event) {
         DataTable dataTable = (DataTable) event.getSource();
         DtoEmpresaSeguimientosEstadia datosActualizar = (DtoEmpresaSeguimientosEstadia) dataTable.getRowData();

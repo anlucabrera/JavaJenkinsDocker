@@ -31,20 +31,14 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.io.File;
-import java.io.IOException;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import org.omnifaces.util.Faces;
-import org.omnifaces.util.Messages;
 
 /**
  *
@@ -151,7 +145,7 @@ public class SeguimientoEstadiaEscolares extends ViewScopedRol implements Desarr
     }
     
      /**
-     * Permite obtener la lista de niveles educativos que existen en eventos de estadía registrados dependiendo de la generación seleccionada
+     * Permite obtener la lista de programas educativos que existen en eventos de estadía registrados dependiendo de la generación y nivel educativo seleccionado
      */
     public void listaProgramasNivelGeneracion(){
         if(rol.getNivelEducativo()== null) return;
@@ -193,7 +187,7 @@ public class SeguimientoEstadiaEscolares extends ViewScopedRol implements Desarr
     }
     
     /**
-     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la lista de estudiantes asignados
+     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la lista de programas educativos
      * @param e Evento del cambio de valor
      */
     public void cambiarNivelEducativo(ValueChangeEvent e){
@@ -206,7 +200,7 @@ public class SeguimientoEstadiaEscolares extends ViewScopedRol implements Desarr
     }
     
     /**
-     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la lista de estudiantes asignados
+     * Permite que al cambiar o seleccionar un programa educativo se pueda actualizar la lista de estudiantes asignados
      * @param e Evento del cambio de valor
      */
     public void cambiarProgramaEducativo(ValueChangeEvent e){
@@ -219,13 +213,13 @@ public class SeguimientoEstadiaEscolares extends ViewScopedRol implements Desarr
     }
     
     /**
-     * Método que permite eliminar el seguimiento de estadía seleccionado
+     * Método que permite desactivar/activar el seguimiento de estadía seleccionado
      * @param dtoSeguimientoEstadia
      */
-    public void eliminarSeguimiento(DtoSeguimientoEstadia dtoSeguimientoEstadia){
-        ResultadoEJB<Integer> resEliminar = ejb.eliminarSeguimientoEstadia(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante());
-        if (resEliminar.getCorrecto()) {
-            mostrarMensajeResultadoEJB(resEliminar);
+    public void desactivarSeguimiento(DtoSeguimientoEstadia dtoSeguimientoEstadia){
+        ResultadoEJB<SeguimientoEstadiaEstudiante> resDesactivar = ejb.desactivarSeguimientoEstadia(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante());
+        if (resDesactivar.getCorrecto()) {
+            mostrarMensajeResultadoEJB(resDesactivar);
             listaEstudiantesSeguimiento();
             Ajax.update("frm");
         }
@@ -236,7 +230,7 @@ public class SeguimientoEstadiaEscolares extends ViewScopedRol implements Desarr
      * @param dtoSeguimientoEstadia
      * @return Verdadero o Falso, según sea el caso
      */
-    public Boolean deshabilitarEliminacionSeguimiento(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
+    public Boolean deshabilitarDesactivarSeguimiento(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
         Boolean permiso = Boolean.TRUE;
         
         if(!dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionDirector() && !dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionVinculacion() && (dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getEstudiante().getTipoEstudiante().getIdTipoEstudiante() == 2 || dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getEstudiante().getTipoEstudiante().getIdTipoEstudiante() == 3)){
@@ -245,8 +239,8 @@ public class SeguimientoEstadiaEscolares extends ViewScopedRol implements Desarr
         return permiso;
     }
     
-      /**
-     * Método que cambia el tipo de visualización de la información (todos los seguimientos o solo los que están validados por dirección de carrera)
+    /**
+     * Método que cambia el tipo de visualización de la información (todos los seguimientos o solo los estudiante que se dieron de baja temporal o definitiva)
      * @param event Evento al tipo de visualización
      */
     public void cambiarMostrarEstBaja(ValueChangeEvent event){
@@ -257,10 +251,11 @@ public class SeguimientoEstadiaEscolares extends ViewScopedRol implements Desarr
             rol.setMostrarSegValVinc(true);
             listaEstudiantesSeguimiento();
         }
+        Ajax.update("frm");
     }
     
       /**
-     * Método que cambia el tipo de visualización de la información (todos los seguimientos o solo los que están validados por dirección de carrera)
+     * Método que cambia el tipo de visualización de la información (todas las columnas u oculta columnas para visualizar en primera instancia el botón de desactivar/activar seguimiento)
      * @param event Evento al tipo de visualización
      */
     public void cambiarOcultarColumnas(ValueChangeEvent event){
@@ -269,6 +264,7 @@ public class SeguimientoEstadiaEscolares extends ViewScopedRol implements Desarr
         }else{
             rol.setOcultarColumnas(true);
         }
+        Ajax.update("frm");
     }
    
 }

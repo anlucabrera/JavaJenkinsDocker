@@ -102,7 +102,7 @@
                                                     <p:ajax update="tbListaSeguimientoEstadia" process="@this" />
                                                     <p:autoUpdate />
                                                 </p:inputSwitch>
-                                                <p:outputLabel for="mostrarSegValVinc" value="#{!seguimientoEstadiaEscolares.rol.mostrarSegValVinc?'Ver estudiantes que son baja':'Ver todos los seguimientos'}" />
+                                                <p:outputLabel for="mostrarSegValVinc" value="#{!seguimientoEstadiaEscolares.rol.mostrarSegValVinc?'Todos los seguimientos':'Estudiante con baja'}" />
                                                 <p:message for="mostrarSegValVinc" display="tooltip" />
                                             </div>
                                         </div>
@@ -112,7 +112,7 @@
                                                     <p:ajax update="tbListaSeguimientoEstadia" process="@this" />
                                                     <p:autoUpdate />
                                                 </p:inputSwitch>
-                                                <p:outputLabel for="ocultarColumnas" value="#{!seguimientoEstadiaEscolares.rol.ocultarColumnas?'Ocultar columnas':'Mostrar columnas'}" />
+                                                <p:outputLabel for="ocultarColumnas" value="#{!seguimientoEstadiaEscolares.rol.ocultarColumnas?'Todas las columnas':'Ocultar columnas'}" />
                                                 <p:message for="ocultarColumnas" display="tooltip" />
                                             </div>
                                         </div>
@@ -143,7 +143,8 @@
                                                             <p:column headerText="Validación Coordinador Área" style="width: 100px;"/>
                                                             <p:column headerText="Validación Dirección de Carrera" style="width: 100px;"/>
                                                             <p:column headerText="Validación Vinculación" style="width: 100px;"/>
-                                                            <p:column headerText="Eliminar seguimiento" style="width: 100px;"/>
+                                                            <p:column headerText="Situación Seguimiento" style="width: 150px;"/>
+                                                            <p:column headerText="Desactivar/Activar" style="width: 100px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: center;">
@@ -186,11 +187,14 @@
                                                         <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'Sí':'No'}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <p:commandLink actionListener="#{seguimientoEstadiaEscolares.eliminarSeguimiento(segEst)}" 
-                                                                        disabled="#{seguimientoEstadiaEscolares.deshabilitarEliminacionSeguimiento(segEst)}"
-                                                                        class="btn btn-sm btn-danger"
-                                                                        title="Eliminar seguimiento"
-                                                                        onsuccess="actualizar();"><i class="fa fa-trash"/>
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.activo?'Activo':'Inactivo'}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink actionListener="#{seguimientoEstadiaEscolares.desactivarSeguimiento(segEst)}" 
+                                                                        disabled="#{seguimientoEstadiaEscolares.deshabilitarDesactivarSeguimiento(segEst)}"
+                                                                        class="btn btn-sm #{segEst.seguimientoEstadiaEstudiante.activo?'btn-danger':'btn-info'}"
+                                                                        title="#{segEst.seguimientoEstadiaEstudiante.activo?'Desactivar seguimiento':'Activar seguimiento'}"
+                                                                        onsuccess="actualizar();"><i class="fa #{segEst.seguimientoEstadiaEstudiante.activo?'fa-close':'fa-check'}"/>
                                                         </p:commandLink>
                                                     </p:column>
                                                 </p:dataTable>

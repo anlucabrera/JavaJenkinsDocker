@@ -665,6 +665,7 @@ public class EjbAsignacionRolesEstadia {
                 seguimientoEstadia.setPromedioAsesorInterno(0);
                 seguimientoEstadia.setValidacionVinculacion(Boolean.FALSE);
                 seguimientoEstadia.setFechaValidacionVinculacion(null);
+                seguimientoEstadia.setActivo(true);
                 em.persist(seguimientoEstadia);
                 f.flush();
                 mensaje="Asignación de estudiante de estadía registrado correctamente.";

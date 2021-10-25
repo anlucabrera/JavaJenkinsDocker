@@ -386,6 +386,7 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
             rol.setMostrarSegValVinc(true);
             listaEstudiantesSeguimiento();
         }
+        Ajax.update("frm");
     }
     
       /**
@@ -398,6 +399,7 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
         }else{
             rol.setOcultarColumnas(true);
         }
+        Ajax.update("frm");
     }
    
 }

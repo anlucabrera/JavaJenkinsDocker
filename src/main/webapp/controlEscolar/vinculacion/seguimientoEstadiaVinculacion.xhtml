@@ -102,7 +102,7 @@
                                                     <p:ajax update="tbListaSeguimientoEstadia" process="@this" />
                                                     <p:autoUpdate />
                                                 </p:inputSwitch>
-                                                <p:outputLabel for="mostrarSegValVinc" value="#{!seguimientoEstadiaVinculacion.rol.mostrarSegValVinc?'Ver validados por dirección':'Ver todos los seguimientos'}" />
+                                                <p:outputLabel for="mostrarSegValVinc" value="#{!seguimientoEstadiaVinculacion.rol.mostrarSegValVinc?'Todos los seguimientos':'Validados por dirección'}" />
                                                 <p:message for="mostrarSegValVinc" display="tooltip" />
                                             </div>
                                         </div>
@@ -112,7 +112,7 @@
                                                     <p:ajax update="tbListaSeguimientoEstadia" process="@this" />
                                                     <p:autoUpdate />
                                                 </p:inputSwitch>
-                                                <p:outputLabel for="ocultarColumnas" value="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas?'Ocultar columnas':'Mostrar columnas'}" />
+                                                <p:outputLabel for="ocultarColumnas" value="#{!seguimientoEstadiaVinculacion.rol.ocultarColumnas?'Todas las columnas':'Ocultar columnas'}" />
                                                 <p:message for="ocultarColumnas" display="tooltip" />
                                             </div>
                                         </div>

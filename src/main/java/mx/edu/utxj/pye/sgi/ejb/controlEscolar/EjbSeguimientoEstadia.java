@@ -52,11 +52,9 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadiaPK;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CoordinadorAreaEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioEvaluacionEstadia;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documentosentregadosestudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadiaDescripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.FolioAcreditacionEstadia;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 
@@ -95,7 +93,7 @@ public class EjbSeguimientoEstadia {
                     .getResultStream().findFirst().orElse(null);
             
             List<SeguimientoEstadiaEstudiante> listaSeguimiento = asignacionesEstudianteEstadia(matricula).getValor();
-            if((e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1"))) && !listaSeguimiento.isEmpty()){
+            if((e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1")) || e.getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("4"))) && !listaSeguimiento.isEmpty()){
                 return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante y con seguimiento de estadía registrado.");
             }else {
                 return ResultadoEJB.crearErroneo(2, "El estudiante encontrado no tiene una inscripcion activa o no tiene registro de seguimiento de estadía.", Estudiante.class);
@@ -113,8 +111,9 @@ public class EjbSeguimientoEstadia {
      */
     public ResultadoEJB<List<SeguimientoEstadiaEstudiante>> asignacionesEstudianteEstadia(Integer matricula){
         try{
-            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula ORDER BY s.evento.evento DESC",  SeguimientoEstadiaEstudiante.class)
+            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula AND s.activo=:activo ORDER BY s.evento.evento DESC",  SeguimientoEstadiaEstudiante.class)
                     .setParameter("matricula", matricula)
+                    .setParameter("activo", true)
                     .getResultList();
             
             return ResultadoEJB.crearCorrecto(listaSeguimiento, "Lista de seguimiento de estadía registrados del estudiante.");
@@ -132,8 +131,9 @@ public class EjbSeguimientoEstadia {
         try{
             List<Generaciones> listaGeneraciones = new ArrayList<>();
             
-            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula ORDER BY s.evento.generacion DESC",  SeguimientoEstadiaEstudiante.class)
+            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula AND s.activo=:activo ORDER BY s.evento.generacion DESC",  SeguimientoEstadiaEstudiante.class)
                     .setParameter("matricula", matricula)
+                    .setParameter("activo", true)
                     .getResultList();
             
             listaSeguimiento.forEach(seguimiento -> {
@@ -160,9 +160,10 @@ public class EjbSeguimientoEstadia {
     public ResultadoEJB<ProgramasEducativosNiveles> getNivelEducativoSeguimientoEstudiante(Integer matricula, Generaciones generacion){
         try{
             
-            SeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula AND s.evento.generacion=:generacion",  SeguimientoEstadiaEstudiante.class)
+            SeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.matricula=:matricula AND s.evento.generacion=:generacion AND s.activo=:activo",  SeguimientoEstadiaEstudiante.class)
                     .setParameter("matricula", matricula)
                     .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("activo", true)
                     .getResultStream().findFirst().orElse(null);
             
             ProgramasEducativosNiveles nivelEducativo = em.find(ProgramasEducativosNiveles.class, seguimientoEstadia.getEvento().getNivel());
@@ -185,9 +186,10 @@ public class EjbSeguimientoEstadia {
         try{
             EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
          
-            DtoSeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.matricula=:matricula", SeguimientoEstadiaEstudiante.class)
+            DtoSeguimientoEstadiaEstudiante seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.matricula=:matricula AND s.activo=:activo", SeguimientoEstadiaEstudiante.class)
                     .setParameter("evento", eventoSeleccionado.getEvento())
                     .setParameter("matricula", matricula)
+                    .setParameter("activo", true)
                     .getResultStream()
                     .map(seg -> packSeguimientoEstudiante(seg, eventoSeleccionado).getValor())
                     .filter(dto -> dto != null)
@@ -1344,6 +1346,7 @@ public class EjbSeguimientoEstadia {
      * Permite obtener la lista de estudiantes del área académica que representa el coordinador de estadía
      * @param generacion
      * @param nivelEducativo
+     * @param programaEducativo
      * @param personal
      * @return Resultado del proceso
      */
@@ -1652,24 +1655,7 @@ public class EjbSeguimientoEstadia {
         }
     }
     
-     /**
-     * Permite eliminar un seguimiento de estadía de un estudiante con situación académica de baja temporal o definitiva durante el proceso de estadía
-     * @param seguimientoEstadiaEstudiante
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<Integer> eliminarSeguimientoEstadia(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante){
-        try{
-            if(seguimientoEstadiaEstudiante.getSeguimiento()== null) return ResultadoEJB.crearErroneo(2, "La clave del seguimiento de estadía no puede ser nula.", Integer.TYPE);
-
-            Integer delete = em.createQuery("DELETE FROM SeguimientoEstadiaEstudiante s WHERE s.seguimiento =:seguimiento", SeguimientoEstadiaEstudiante.class)
-                .setParameter("seguimiento", seguimientoEstadiaEstudiante.getSeguimiento())
-                .executeUpdate();
-
-            return ResultadoEJB.crearCorrecto(delete, "El seguimiento de estadía se eliminó correctamente.");
-        }catch (Throwable e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el seguimiento de estadía correctamente. (EjbSeguimientoEstadia.eliminarSeguimientoEstadia)", e, null);
-        }
-    }
+     /* MÓDULO CONSULTA DE EMPRESAS ASIGNADAS PARA COORDINACIÓN DE ESTADÍAS DE VINCULACIÓN */
     
     /**
      * Permite obtener la lista de empresas asignadas a seguimiento de estadía de la generación y nivel seleccionado
@@ -1721,6 +1707,36 @@ public class EjbSeguimientoEstadia {
             return ResultadoEJB.crearCorrecto(dtoEmpresaSeguimientosEstadia, "Se actualizó correctamente el nombre o dirección de la empresa seleccionada.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el nombre o dirección de la empresa seleccionada. (EjbSeguimientoEstadia.actualizarDatosEmpresa)", e, null);
+        }
+    }
+    
+    /* MÓDULO SEGUIMIENTO SERVICIOS ESCOLARES */
+    
+     /**
+     * Permite desactivar o activar un seguimiento de estadía de un estudiante con situación académica de baja temporal o definitiva durante el proceso de estadía
+     * @param seguimientoEstadiaEstudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<SeguimientoEstadiaEstudiante> desactivarSeguimientoEstadia(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante){
+        try{
+            if(seguimientoEstadiaEstudiante.getSeguimiento()== null) return ResultadoEJB.crearErroneo(2, "La clave del seguimiento de estadía no puede ser nula.", SeguimientoEstadiaEstudiante.class);
+
+            String mensaje = "La situación del seguimiento de estadía es " + seguimientoEstadiaEstudiante.getActivo();
+            if (seguimientoEstadiaEstudiante.getActivo()) {
+                seguimientoEstadiaEstudiante.setActivo(false);
+                em.merge(seguimientoEstadiaEstudiante);
+                f.flush();
+                mensaje="El seguimiento de estadía se ha desactivado correctamente.";
+            } else if(!seguimientoEstadiaEstudiante.getActivo()){
+                seguimientoEstadiaEstudiante.setActivo(true);
+                em.merge(seguimientoEstadiaEstudiante);
+                f.flush();
+                mensaje="El seguimiento de estadía se ha activado correctamente.";
+            }
+
+            return ResultadoEJB.crearCorrecto(seguimientoEstadiaEstudiante, mensaje);
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo desactivar o activar el seguimiento de estadía seleccionado. (EjbSeguimientoEstadia.desactivarSeguimientoEstadia)", e, null);
         }
     }
     
