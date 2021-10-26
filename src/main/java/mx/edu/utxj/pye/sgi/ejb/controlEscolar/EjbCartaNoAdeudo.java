@@ -273,7 +273,7 @@ public class EjbCartaNoAdeudo {
             if(matricula==null){return ResultadoEJB.crearErroneo(2,new Estudiante(),"La matricula no debe ser nula");}
             Estudiante e= new Estudiante();
             List<Estudiante> estudiantes = new ArrayList<>();
-            estudiantes = em.createQuery("select e from Estudiante  e where e.matricula=:matricula", Estudiante.class)
+            estudiantes = em.createQuery("select e from Estudiante  e where e.matricula=:matricula and e.tipoEstudiante.idTipoEstudiante=4", Estudiante.class)
                     .setParameter("matricula",matricula)
                     .getResultList();
             e = estudiantes.stream().filter(es->es.getGrupo().getGrado()==6|| es.getGrupo().getGrado()==11).findFirst().orElse(null);
