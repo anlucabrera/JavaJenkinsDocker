@@ -91,6 +91,7 @@ public class ConsultaEmpresasEstadiaVinculacion  extends ViewScopedRol implement
             rol.getInstrucciones().add("Seleccione generación.");
             rol.getInstrucciones().add("Seleccione nivel educativo.");
             rol.getInstrucciones().add("En la tabla podrá visualizar las empresas asignadas a seguimiento de estadía.");
+            rol.getInstrucciones().add("Para modificar el nombre o dirección de la empresa, deberá de dar clic en el campo correspondiente e ingresar la información, presionar enter para guardar los cambios.");
            
             generacionesEventosRegistrados();
             

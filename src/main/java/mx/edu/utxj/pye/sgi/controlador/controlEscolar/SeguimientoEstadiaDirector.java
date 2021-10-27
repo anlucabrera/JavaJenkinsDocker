@@ -393,9 +393,9 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
             Boolean segundoInforme = ejb.buscarValidacionDocumento(36, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
             Boolean tercerInforme = ejb.buscarValidacionDocumento(37, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
             Boolean informeFinal = ejb.buscarValidacionDocumento(38, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
-            Boolean aproboEstadia = aproboEstadia(dtoSeguimientoEstadia);
+//            Boolean aproboEstadia = aproboEstadia(dtoSeguimientoEstadia);
 
-            if (primerInforme && segundoInforme && tercerInforme && informeFinal && aproboEstadia) {
+            if (primerInforme && segundoInforme && tercerInforme && informeFinal) {
                 if (!dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionVinculacion()) {
                     permiso = Boolean.FALSE;
                 } else {

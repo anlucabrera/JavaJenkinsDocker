@@ -180,7 +180,6 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
         ResultadoEJB<List<DtoSeguimientoEstadia>> res = ejb.getListaEstudiantesSeguimiento(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDocente().getPersonal());
         if(res.getCorrecto()){
             rol.setEstudiantesSeguimiento(res.getValor());
-            deshabilitarEvaluacion();
             Ajax.update("tbListaSeguimientoEstadia");
         }else mostrarMensajeResultadoEJB(res);
     
@@ -544,18 +543,26 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
            rol.setAperturaDialogoEvalEst(Boolean.FALSE);
         }
     }
-    
+     
      /**
-     * Método para verificar si existe evento de estadía activo para el registro de evaluación
+     * Método para verificar si el estudiante tiene toda la documentación requerida validada para que se habilite el registro de evaluación y la acreditación de estadía
+     * @param dtoSeguimientoEstadia
+     * @return 
      */
-    public void deshabilitarEvaluacion(){
-        EventoEstadia evento = rol.getEstudiantesSeguimiento().stream().map(p->p.getSeguimientoEstadiaEstudiante().getEvento()).distinct().findFirst().orElse(null);
-        if(evento != null){
-            ResultadoEJB<Boolean> res = ejb.buscarEventoActivo(evento, "Registro cedula evaluacion empresarial","Estudiante");
-            if(res.getCorrecto()){
-                rol.setHabilitarEvaluacion(res.getValor());
-            }else mostrarMensajeResultadoEJB(res);
+    public Boolean deshabilitarEvaluacion(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
+        Boolean permiso = Boolean.TRUE;
+        
+        if(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getActivo()){
+            Boolean primerInforme = ejb.buscarValidacionDocumento(35, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean segundoInforme = ejb.buscarValidacionDocumento(36, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean tercerInforme = ejb.buscarValidacionDocumento(37, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean informeFinal = ejb.buscarValidacionDocumento(38, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+
+            if (primerInforme && segundoInforme && tercerInforme && informeFinal && dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionDirector()) {
+                permiso = Boolean.FALSE;
+            }
         }
+        return permiso;
     }
     
      /**
