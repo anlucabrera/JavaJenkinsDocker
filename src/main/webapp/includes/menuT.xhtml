@@ -192,11 +192,24 @@
                     <c:if test="#{avanceProgramaticoSecAca.mostrarEnDesarrollo(request) and avanceProgramaticoSecAca.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/secAcademica/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
 
                     <!-- Director Área Académica -->
-                    <c:if test="#{administracionPlanEstudioDirector.mostrarEnDesarrollo(request) and administracionPlanEstudioDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/plan_estudio.xhtml"><i class="fa fa-users"></i><span>Administración de<br/> Planes de Estudio</span></p:link></li></c:if>
-                    <c:if test="#{registroEvidInstEvalMateriasDireccion.mostrarEnDesarrollo(request) and registroEvidInstEvalMateriasDireccion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/registroEvidInstEvalMateria.xhtml"><i class="fa fa-percent"></i><span>Registro de evidencias e<br/>instrumentos de evaluación</span></p:link></li></c:if>
+                    <c:if test="#{(administracionPlanEstudioDirector.mostrarEnDesarrollo(request) and administracionPlanEstudioDirector.tieneAcceso) or (registroEvidInstEvalMateriasDireccion.mostrarEnDesarrollo(request) and registroEvidInstEvalMateriasDireccion.tieneAcceso)}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-gears"></i><span>Seguimiento académico<br/>y planeación cuatrimestral</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <c:if test="#{administracionPlanEstudioDirector.mostrarEnDesarrollo(request) and administracionPlanEstudioDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/plan_estudio.xhtml"><i class="fa fa-users"></i><span>Administración de<br/> planes de estudio</span></p:link></li></c:if>
+                                <c:if test="#{registroEvidInstEvalMateriasDireccion.mostrarEnDesarrollo(request) and registroEvidInstEvalMateriasDireccion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/registroEvidInstEvalMateria.xhtml"><i class="fa fa-percent"></i><span>Registro de evidencias e<br/>instrumentos de evaluación</span></p:link></li></c:if>
+                                <c:if test="#{planeacionCuatrimestralValidacion.mostrarEnDesarrollo(request) and planeacionCuatrimestralValidacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/planeacionCuatrimestralValidacion.xhtml"><i class="fa fa-check-square-o"></i><span>Validación planeación<br/>docente</span> <span class="pull-right-container"></span></p:link></li></c:if>
+                            </ul>
+                        </li>
+                    </c:if>
+                    
                     <c:if test="#{asignacionAcademicaDirector.mostrarEnDesarrollo(request) and asignacionAcademicaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacion_academica.xhtml"><i class="fa fa-tags"></i><span>Asignación académica</span></p:link></li></c:if>
                     <c:if test="#{asignacionTutorAcademico.mostrarEnDesarrollo(request) and asignacionTutorAcademico.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacion_tutores.xhtml"><i class="fa fa-users"></i><span>Asignación Tutor de Grupo</span></p:link></li></c:if>
-                    <c:if test="#{planeacionCuatrimestralValidacion.mostrarEnDesarrollo(request) and planeacionCuatrimestralValidacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/planeacionCuatrimestralValidacion.xhtml"><i class="fa fa-print"></i><span>Planeación Cuatrimestral<br/> Validacion</span> <span class="pull-right-container"></span></p:link></li></c:if>
                     <c:if test="#{listasAsistenciaDirector.mostrarEnDesarrollo(request) and listasAsistenciaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/ListasAsistencias.xhtml"><i class="fa fa-users"></i><span>Listas de Asistencia</span></p:link></li></c:if>
                     <c:if test="#{reporteAsistenciasDirector.mostrarEnDesarrollo(request) and reporteAsistenciasDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/reporteAsistenciasDirector.xhtml"><i class="fa fa-file-text-o"></i><span>Concentrado Asistencias</span></p:link></li></c:if>
                     <c:if test="#{fusionGruposDirector.mostrarEnDesarrollo(request) and fusionGruposDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
@@ -204,10 +217,6 @@
                     <c:if test="#{cedulaIdentificacionDirector.mostrarEnDesarrollo(request) and cedulaIdentificacionDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cedulaIdentificacionDirector.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
                     <c:if test="#{validacionPlanAccionTutorialDirector.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacion_plan_accion_tutorial.xhtml"><i class="fa fa-check-square-o"></i><span>Validación de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{seguimientoEvaluacionEstadiaDirector.mostrarEnDesarrollo(request) and seguimientoEvaluacionEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/seguimientoEvaluacionEstadia.xhtml"><i class="fa fa-check-square-o"></i><span>Seguimiento Evaluación Estadía</span></p:link></li></c:if>
-                    <c:if test="#{cartaNoAdeudoDireccionCarrera.mostrarEnDesarrollo(request) and cartaNoAdeudoDireccionCarrera.tieneAcceso}">
-                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Carta de no adeudo</li>
-                        <c:if test="#{cartaNoAdeudoDireccionCarrera.mostrarEnDesarrollo(request) and cartaNoAdeudoDireccionCarrera.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cartaNoAdeudoDirector.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
-                    </c:if>
                     <!-- Servicios Escolares -->
                     <c:if test="#{asignacionAcademicaEscolares.mostrarEnDesarrollo(request) and asignacionAcademicaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/asignacion_academica.xhtml"><i class="fa fa-tags"></i><span>Asignación académica</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
@@ -347,13 +356,29 @@
                             </ul>
                         </li>
                     </c:if>
-
+                    <c:if test="#{cartaNoAdeudoDireccionCarrera.mostrarEnDesarrollo(request) and cartaNoAdeudoDireccionCarrera.tieneAcceso}">
+                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Carta de no adeudo</li>
+                        <c:if test="#{cartaNoAdeudoDireccionCarrera.mostrarEnDesarrollo(request) and cartaNoAdeudoDireccionCarrera.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cartaNoAdeudoDirector.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
+                    </c:if>
+                    
                     <!-- Docente -->
                     <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Docente</li>
                     </c:if>
-                    <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_calificaciones.xhtml"><i class="fa fa-users"></i><span>Captura de <br/>calificaciones</span></p:link></li></c:if>
-                    <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_integradora.xhtml"><i class="fa fa-users"></i><span>Tarea integradora /<br/>Nivelación</span><span class="pull-right-container"></span></p:link></li></c:if>
+                    <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-list-ol"></i><span>Registro de calificaciones</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                 <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_calificaciones.xhtml"><i class="fa fa-users"></i><span>Calificaciones ordinarias</span></p:link></li></c:if>
+                                 <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/captura_integradora.xhtml"><i class="fa fa-users"></i><span>Tarea integradora /<br/>Nivelación final</span><span class="pull-right-container"></span></p:link></li></c:if>
+                            </ul>
+                        </li>
+                    </c:if>
                     <c:if test="#{planeacionCuatrimestralImpresion.mostrarEnDesarrollo(request) and planeacionCuatrimestralImpresion.tieneAcceso}">
                         <li class="treeview">
                             <a href="#">

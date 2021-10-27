@@ -470,18 +470,13 @@ public class EjbReportesEstadia {
             List<Integer> grados = new ArrayList<>();
             grados.add(6);
             grados.add(11);
-
-//            List<Estudiante> listaEstudiantes= em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.idPe=:programaEducativo AND g.grado IN :grados", Estudiante.class)
-//                        .setParameter("programaEducativo", programaBD.getArea())
-//                        .setParameter("grados", grados)
-//                        .getResultStream()
-//                        .collect(Collectors.toList());
             
-//            List<Estudiante> listaRegulares= listaEstudiantes.stream().filter(p -> p.getTipoEstudiante().getIdTipoEstudiante()==1 || p.getTipoEstudiante().getIdTipoEstudiante()==4).collect(Collectors.toList());
-//            
-//            List<Estudiante> listaBajas= listaEstudiantes.stream().filter(p -> p.getTipoEstudiante().getIdTipoEstudiante()==2 || p.getTipoEstudiante().getIdTipoEstudiante()==3).collect(Collectors.toList());
-           
-//            List<Integer> listaMatriculas = listaEstudiantes.stream().map(p -> p.getMatricula()).collect(Collectors.toList());
+            List<Estudiante> listaEstudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.idPe=:programaEducativo AND g.grado IN :grados AND g.generacion=:generacion", Estudiante.class)
+                    .setParameter("programaEducativo", programaBD.getArea())   
+                    .setParameter("grados", grados)
+                    .setParameter("generacion", eventoSeleccionado.getGeneracion())
+                    .getResultStream()
+                    .collect(Collectors.toList());
             
             List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s INNER JOIN s.estudiante e INNER JOIN e.grupo g WHERE s.evento=:evento AND g.idPe=:programaEducativo AND g.grado IN :grados", SeguimientoEstadiaEstudiante.class)
                     .setParameter("programaEducativo", programaBD.getArea())   
@@ -495,14 +490,14 @@ public class EjbReportesEstadia {
             List<SeguimientoEstadiaEstudiante> listaNoAcreditados = listaSeguimiento.stream().filter(p -> !p.getValidacionVinculacion()).collect(Collectors.toList());
             
             Double eficienciaEstadia;
-            if(!listaSeguimiento.isEmpty()){
-                Double division = (double)listaAcreditados.size()/listaSeguimiento.size();
+            if(!listaEstudiantes.isEmpty()){
+                Double division = (double)listaAcreditados.size()/listaEstudiantes.size();
                 eficienciaEstadia = division*100;
             }else{
                 eficienciaEstadia = 0.0;
             }
             
-            DtoEficienciaEstadia  dtoEficienciaEstadia = new DtoEficienciaEstadia(programaBD, listaSeguimiento.size(), listaAcreditados.size(), listaNoAcreditados.size(),eficienciaEstadia);
+            DtoEficienciaEstadia  dtoEficienciaEstadia = new DtoEficienciaEstadia(programaBD, listaEstudiantes.size(), listaAcreditados.size(), listaNoAcreditados.size(),eficienciaEstadia);
             
             return ResultadoEJB.crearCorrecto(dtoEficienciaEstadia, "Eficiencia de estadía empaquetada.");
         }catch (Exception e){
@@ -569,17 +564,12 @@ public class EjbReportesEstadia {
             grados.add(6);
             grados.add(11);
 
-//            List<Estudiante> listaEstudiantes= em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.idPe=:programaEducativo AND g.grado IN :grados", Estudiante.class)
-//                        .setParameter("programaEducativo", programaBD.getArea())
-//                        .setParameter("grados", grados)
-//                        .getResultStream()
-//                        .collect(Collectors.toList());
-            
-//            List<Estudiante> listaRegulares= listaEstudiantes.stream().filter(p -> p.getTipoEstudiante().getIdTipoEstudiante()==1 || p.getTipoEstudiante().getIdTipoEstudiante()==4).collect(Collectors.toList());
-//            
-//            List<Estudiante> listaBajas= listaEstudiantes.stream().filter(p -> p.getTipoEstudiante().getIdTipoEstudiante()==2 || p.getTipoEstudiante().getIdTipoEstudiante()==3).collect(Collectors.toList());
-           
-//            List<Integer> listaMatriculas = listaEstudiantes.stream().map(p -> p.getMatricula()).collect(Collectors.toList());
+            List<Estudiante> listaEstudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.idPe=:programaEducativo AND g.grado IN :grados AND g.generacion=:generacion", Estudiante.class)
+                    .setParameter("programaEducativo", programaBD.getArea())   
+                    .setParameter("grados", grados)
+                    .setParameter("generacion", eventoSeleccionado.getGeneracion())
+                    .getResultStream()
+                    .collect(Collectors.toList());
             
             List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s INNER JOIN s.estudiante e INNER JOIN e.grupo g WHERE s.evento=:evento AND g.idPe=:programaEducativo AND g.grado IN :grados", SeguimientoEstadiaEstudiante.class)
                     .setParameter("programaEducativo", programaBD.getArea())   
@@ -593,8 +583,8 @@ public class EjbReportesEstadia {
             List<SeguimientoEstadiaEstudiante> listaNoAcreditados = listaSeguimiento.stream().filter(p -> p.getPromedioAsesorInterno()<8.0 || p.getPromedioAsesorExterno()<8.0).collect(Collectors.toList());
             
             Double eficienciaEstadia;
-            if(!listaSeguimiento.isEmpty()){
-                Double division = (double)listaAcreditados.size()/listaSeguimiento.size();
+            if(!listaEstudiantes.isEmpty()){
+                Double division = (double)listaAcreditados.size()/listaEstudiantes.size();
                 eficienciaEstadia = division*100;
             }else{
                 eficienciaEstadia = 0.0;
@@ -605,14 +595,14 @@ public class EjbReportesEstadia {
             List<SeguimientoEstadiaEstudiante> listaNoValidadosDireccion = listaSeguimiento.stream().filter(p -> !p.getValidacionDirector()).collect(Collectors.toList());
             
             Double eficienciaValidacion;
-            if(!listaSeguimiento.isEmpty()){
-                Double division = (double)listaValidadosDireccion.size()/listaSeguimiento.size();
+            if(!listaEstudiantes.isEmpty()){
+                Double division = (double)listaValidadosDireccion.size()/listaEstudiantes.size();
                 eficienciaValidacion = division*100;
             }else{
                 eficienciaValidacion = 0.0;
             }
             
-            DtoEficienciaEstadiaDatosComplementarios  dtoEficienciaEstadiaDatosComplementarios = new DtoEficienciaEstadiaDatosComplementarios(programaBD, listaSeguimiento.size(), listaAcreditados.size(), listaNoAcreditados.size(),eficienciaEstadia, listaValidadosDireccion.size(), listaNoValidadosDireccion.size(), eficienciaValidacion);
+            DtoEficienciaEstadiaDatosComplementarios  dtoEficienciaEstadiaDatosComplementarios = new DtoEficienciaEstadiaDatosComplementarios(programaBD, listaEstudiantes.size(), listaAcreditados.size(), listaNoAcreditados.size(),eficienciaEstadia, listaValidadosDireccion.size(), listaNoValidadosDireccion.size(), eficienciaValidacion);
             
             return ResultadoEJB.crearCorrecto(dtoEficienciaEstadiaDatosComplementarios, "Eficiencia de estadía empaquetada.");
         }catch (Exception e){
