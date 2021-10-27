@@ -252,6 +252,7 @@
                                                             <p:column headerText="Discapacidad" style="width: 150px;" sortBy="#{aprovEscEst.discapacidad}" filterBy="#{aprovEscEst.discapacidad}" filterMatchMode="contains"/>
                                                             <p:column headerText="Lengua indígena" style="width: 150px;" sortBy="#{aprovEscEst.lenguaIndigena}" filterBy="#{aprovEscEst.lenguaIndigena}" filterMatchMode="contains"/>
                                                             <p:column headerText="Promedio cuatrimestral" style="width: 180px;" sortBy="#{aprovEscEst.promedio}" filterBy="#{aprovEscEst.promedio}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Promedio acumulado" style="width: 180px;" sortBy="#{aprovEscEst.promedioAcumulado}" filterBy="#{aprovEscEst.promedioAcumulado}" filterMatchMode="contains"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column>
@@ -283,6 +284,9 @@
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{aprovEscEst.promedio}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{aprovEscEst.promedioAcumulado}"/>
                                                     </p:column>
                                                 </p:dataTable>
                                             </center>
