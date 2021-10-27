@@ -47,7 +47,7 @@
                                         <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesAcademicos.descargarReporteAcademico()}" 
                                                        target="_blank" title="Descargar reportes en excel"><i class="fa fa-file-excel-o" />
                                         </p:commandLink>
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesAcademicos.descargarPromediosMateriaEstudiante()}" disabled="#{reportesAcademicos.rol.usuario.personal.areaOperativa ne 10}"
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesAcademicos.descargarPromediosMateriaEstudiante()}" disabled="#{!reportesAcademicos.rol.habilitarListadoPromedios}"
                                                        target="_blank" title="Descargar base de promedios estudiantes por materia"><i class="fa fa-list-ol" />
                                         </p:commandLink>
                                         <p:commandLink
@@ -200,7 +200,9 @@
                                                             <p:column headerText="Clave materia" style="width: 100px;" sortBy="#{aprovEsc.planEstudioMateria.claveMateria}" filterBy="#{aprovEsc.planEstudioMateria.claveMateria}" filterMatchMode="contains"/>  
                                                             <p:column headerText="Materia" style="width: 350px;" sortBy="#{aprovEsc.planEstudioMateria.idMateria.nombre}" filterBy="#{aprovEsc.planEstudioMateria.idMateria.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Grado" style="width: 100px;" sortBy="#{aprovEsc.planEstudioMateria.grado}" filterBy="#{aprovEsc.planEstudioMateria.grado}" filterMatchMode="contains"/> 
-                                                            <p:column headerText="Promedio" style="width: 150px;" sortBy="#{aprovEsc.aprovEsc.promedio}" filterBy="#{aprovEsc.aprovEsc.promedio}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Promedio General" style="width: 150px;" sortBy="#{aprovEsc.aprovEsc.promedio}" filterBy="#{aprovEsc.aprovEsc.promedio}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Promedio Hombres" style="width: 150px;" sortBy="#{aprovEsc.aprovEsc.promedioH}" filterBy="#{aprovEsc.aprovEsc.promedioH}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Promedio Mujeres" style="width: 150px;" sortBy="#{aprovEsc.aprovEsc.promedioM}" filterBy="#{aprovEsc.aprovEsc.promedioM}" filterMatchMode="contains"/> 
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column groupRow="true" style="text-align: justify;">
@@ -217,6 +219,12 @@
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{aprovEsc.promedio}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{aprovEsc.promedioH}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{aprovEsc.promedioM}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                 </p:dataTable>
                                                 </div>

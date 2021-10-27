@@ -1235,6 +1235,33 @@ public class EjbSeguimientoEstadia {
         }
     }
     
+     /**
+     * Permite verificar si un director de carrera tiene o tuvo rol de asesor o coordinador de estadía de área académica
+     * @param personal
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> verificarEsDirector(Personal personal){
+        try{
+            List<Short> categorias = new ArrayList<>(); categorias.add((short)18); categorias.add((short)48);
+            
+            Personal personalDir = em.createQuery("SELECT p FROM Personal p WHERE p.clave=:clave AND p.categoriaOperativa.categoria IN :categorias", Personal.class)
+                    .setParameter("clave", personal.getClave())
+                    .setParameter("categorias", categorias)
+                    .getResultStream().findFirst().orElse(null);
+            
+            Boolean valor;
+            if(personalDir==null)
+            {
+                valor = Boolean.FALSE;
+            }else{
+                valor = Boolean.TRUE;
+            }
+           return ResultadoEJB.crearCorrecto(valor, "El director tiene o tuvo rol de asesor o coordinador de estadía de área académica");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se encontró rol de asesor o coordinador de estadía de área académica", e, Boolean.TYPE);
+        }
+    }
+    
      /* MÓDULO SEGUIMIENTO COORDINADOR DE ÁREA ACADÉMICA */
     
      /**
@@ -1286,7 +1313,14 @@ public class EjbSeguimientoEstadia {
         try{
             EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
             EventoEstadia eventoCoordinador = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion coordinador asesor estadia").getValor();
-            List<AsesorAcademicoEstadia> listaAsesores = getListaAsesoresEstadiaArea(eventoCoordinador, personal.getAreaSuperior()).getValor();
+            
+            Short area = personal.getAreaSuperior();
+            
+            if(verificarEsDirector(personal).getValor()){
+                area = personal.getAreaOperativa();
+            }
+            
+            List<AsesorAcademicoEstadia> listaAsesores = getListaAsesoresEstadiaArea(eventoCoordinador, area).getValor();
             
             List<DtoSeguimientoEstadia> seguimientoEstadia = new ArrayList();
             

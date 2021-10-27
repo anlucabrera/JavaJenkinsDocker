@@ -371,10 +371,12 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
      */
     public Boolean deshabilitarCarga(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
         Boolean permiso= Boolean.FALSE;
-        ResultadoEJB<Boolean> res = ejb.buscarEventoActivo(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getEvento(), "Registro cedula evaluacion y acreditacion estadia","Director de carrera");
-        if(res.getCorrecto()){
-            permiso=res.getValor();
-        }else mostrarMensajeResultadoEJB(res);
+        if(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getActivo()){
+            ResultadoEJB<Boolean> res = ejb.buscarEventoActivo(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getEvento(), "Registro cedula evaluacion y acreditacion estadia","Director de carrera");
+            if(res.getCorrecto()){
+                permiso=res.getValor();
+            }else mostrarMensajeResultadoEJB(res);
+        }
         return permiso;
     }
     
@@ -386,17 +388,19 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
     public Boolean deshabilitarValidacionEstadia(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
         Boolean permiso = Boolean.TRUE;
         
-        Boolean primerInforme = ejb.buscarValidacionDocumento(35, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
-        Boolean segundoInforme = ejb.buscarValidacionDocumento(36, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
-        Boolean tercerInforme = ejb.buscarValidacionDocumento(37, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
-        Boolean informeFinal = ejb.buscarValidacionDocumento(38, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
-        Boolean aproboEstadia = aproboEstadia(dtoSeguimientoEstadia);
-        
-        if(primerInforme && segundoInforme && tercerInforme && informeFinal && aproboEstadia){
-            if(!dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionVinculacion()){
-                permiso = Boolean.FALSE;
-            }else{
-                permiso = Boolean.TRUE;
+        if(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getActivo()){
+            Boolean primerInforme = ejb.buscarValidacionDocumento(35, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean segundoInforme = ejb.buscarValidacionDocumento(36, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean tercerInforme = ejb.buscarValidacionDocumento(37, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean informeFinal = ejb.buscarValidacionDocumento(38, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean aproboEstadia = aproboEstadia(dtoSeguimientoEstadia);
+
+            if (primerInforme && segundoInforme && tercerInforme && informeFinal && aproboEstadia) {
+                if (!dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionVinculacion()) {
+                    permiso = Boolean.FALSE;
+                } else {
+                    permiso = Boolean.TRUE;
+                }
             }
         }
         return permiso;

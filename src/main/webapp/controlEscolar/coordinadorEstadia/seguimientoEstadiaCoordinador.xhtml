@@ -187,12 +187,12 @@
                                                     <p:column style="text-align: justify;">
                                                         <p:cellEditor>
                                                              <f:facet name="output"><h:outputText value="#{segEst.seguimientoEstadiaEstudiante.comentariosCoordinador eq null?'No se han capturado comentarios':segEst.seguimientoEstadiaEstudiante.comentariosCoordinador}"/></f:facet>
-                                                             <f:facet name="input"><p:inputText value="#{segEst.seguimientoEstadiaEstudiante.comentariosCoordinador}" maxlength="255" size="150"/></f:facet>
+                                                             <f:facet name="input"><p:inputText value="#{segEst.seguimientoEstadiaEstudiante.comentariosCoordinador}" maxlength="255" size="150" disabled="#{seguimientoEstadiaCoordinador.deshabilitarValidacion(segEst)}"/></f:facet>
                                                          </p:cellEditor>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{!segEst.seguimientoEstadiaEstudiante.validacionCoordinador?'Sin validar':'Validado'}"/>
-                                                        <p:commandLink actionListener="#{seguimientoEstadiaCoordinador.validarEstadiaCoordinador(segEst)}"
+                                                        <p:commandLink actionListener="#{seguimientoEstadiaCoordinador.validarEstadiaCoordinador(segEst)}" disabled="#{seguimientoEstadiaCoordinador.deshabilitarValidacion(segEst)}"
                                                                         class="btn btn-sm #{!segEst.seguimientoEstadiaEstudiante.validacionCoordinador?'btn-danger':'btn-success'}"
                                                                         title="#{!segEst.seguimientoEstadiaEstudiante.validacionCoordinador?'Validar información.':'Invalidar información.'}"
                                                                         onsuccess="actualizar();"><i class="#{!segEst.seguimientoEstadiaEstudiante.validacionCoordinador?'fa fa-close':'fa fa-check'}"/>

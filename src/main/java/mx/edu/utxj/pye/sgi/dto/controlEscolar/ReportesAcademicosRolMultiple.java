@@ -120,6 +120,11 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private String tipoBusqueda ;
     
+     /**
+     * Representa valor para saber si se habilita o no la descarga del reporte del listado de promedios por estudiante
+     */
+    @Getter @NonNull private Boolean habilitarListadoPromedios;
+    
     
     public ReportesAcademicosRolMultiple(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
@@ -205,4 +210,9 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
     public void setTipoBusqueda(String tipoBusqueda) {
         this.tipoBusqueda = tipoBusqueda;
     }
+
+    public void setHabilitarListadoPromedios(Boolean habilitarListadoPromedios) {
+        this.habilitarListadoPromedios = habilitarListadoPromedios;
+    }
+    
 }

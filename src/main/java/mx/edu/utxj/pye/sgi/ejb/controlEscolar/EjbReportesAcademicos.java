@@ -643,7 +643,11 @@ public class EjbReportesAcademicos {
                 
                 Double promedio = getObtenerPromedioAsignatura(planEstudioMateria, estudiantesGrado).getValor();
                 
-                DtoAprovechamientoEscolar dtoAprovechamientoEscolar = new DtoAprovechamientoEscolar(programa, periodo, planEstudioMateria, promedio);
+                Double promedioHombres = getObtenerPromedioAsignaturaHombres(planEstudioMateria, estudiantesGrado).getValor();
+                    
+                Double promedioMujeres = getObtenerPromedioAsignaturaMujeres(planEstudioMateria, estudiantesGrado).getValor();
+                
+                DtoAprovechamientoEscolar dtoAprovechamientoEscolar = new DtoAprovechamientoEscolar(programa, periodo, planEstudioMateria, promedio, promedioHombres, promedioMujeres);
                 listaAprovechamiento.add(dtoAprovechamientoEscolar);
             });
             
@@ -686,8 +690,12 @@ public class EjbReportesAcademicos {
                     List<DtoMatricula> estudiantesGrado = estudiantes.stream().filter(p->p.getEstudiante().getGrupo().getGrado()==planEstudioMateria.getGrado()).collect(Collectors.toList());
                 
                     Double promedio = getObtenerPromedioAsignatura(planEstudioMateria, estudiantesGrado).getValor();
+                    
+                    Double promedioHombres = getObtenerPromedioAsignaturaHombres(planEstudioMateria, estudiantesGrado).getValor();
+                    
+                    Double promedioMujeres = getObtenerPromedioAsignaturaMujeres(planEstudioMateria, estudiantesGrado).getValor();
                 
-                    DtoAprovechamientoEscolar dtoAprovechamientoEscolar = new DtoAprovechamientoEscolar(programa, periodo, planEstudioMateria, promedio);
+                    DtoAprovechamientoEscolar dtoAprovechamientoEscolar = new DtoAprovechamientoEscolar(programa, periodo, planEstudioMateria, promedio, promedioHombres, promedioMujeres);
                     listaAprovechamiento.add(dtoAprovechamientoEscolar);
                 });
             
@@ -854,6 +862,113 @@ public class EjbReportesAcademicos {
             return ResultadoEJB.crearCorrecto(promedio, "Promedio de la asignatura en el periodo seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener el promedio de la asignatura en el periodo seleccionado. (EjbReportesAcademicos.getObtenerPromedioAsignatura)", e, null);
+        }
+    }
+     
+      /**
+     * Permite obtener el promedio del cuatrimestre del estudiante seleccionado
+     * @param planEstudioMateria
+     * @param estudiantes
+     * @return Resultado del proceso
+     */
+     public ResultadoEJB<Double> getObtenerPromedioAsignaturaHombres(PlanEstudioMateria planEstudioMateria, List<DtoMatricula> estudiantes){
+        try{
+            Double promedio=0.0;
+            
+            List<Double> listaCalificaciones = new ArrayList<>();
+            
+            List<DtoMatricula> estudiantesHombres = estudiantes.stream().filter(p->p.getGenero().getGenero()==2).collect(Collectors.toList());
+            
+            if(!estudiantesHombres.isEmpty()){
+            
+                estudiantesHombres.forEach(estudiante -> { 
+                    Double calificacion = 0.0;
+                
+                    CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.idPlanMateria.idPlanMateria=:planMateria AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
+                        .setParameter("planMateria", planEstudioMateria.getIdPlanMateria())
+                        .setParameter("estudiante", estudiante.getEstudiante().getIdEstudiante())
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null); 
+                
+                    if(calificacionPromedio!=null){
+                        if(calificacionPromedio.getValor()<8.0){
+                            CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.idPlanMateria.idPlanMateria=:planMateria AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
+                                .setParameter("planMateria", planEstudioMateria.getIdPlanMateria())
+                                .setParameter("estudiante", estudiante.getEstudiante().getIdEstudiante())
+                                .getResultStream()
+                                .findFirst()
+                                .orElse(null); 
+                            if(calificacionNivelacion!=null){ 
+                                calificacion = calificacionNivelacion.getValor(); 
+                            }
+                        }else{
+                            calificacion = calificacionPromedio.getValor();
+                        }
+                    }
+                listaCalificaciones.add(calificacion);
+                });
+                if(estudiantesHombres.size() == listaCalificaciones.size())
+                {
+                promedio = listaCalificaciones.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+                }
+            }
+            
+            return ResultadoEJB.crearCorrecto(promedio, "Promedio de la asignatura en el periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el promedio de la asignatura en el periodo seleccionado. (EjbReportesAcademicos.getObtenerPromedioAsignaturaHombres)", e, null);
+        }
+    }
+     
+      /**
+     * Permite obtener el promedio del cuatrimestre del estudiante seleccionado
+     * @param planEstudioMateria
+     * @param estudiantes
+     * @return Resultado del proceso
+     */
+     public ResultadoEJB<Double> getObtenerPromedioAsignaturaMujeres(PlanEstudioMateria planEstudioMateria, List<DtoMatricula> estudiantes){
+        try{
+            Double promedio=0.0;
+            
+            List<Double> listaCalificaciones = new ArrayList<>();
+            
+            List<DtoMatricula> estudiantesMujeres = estudiantes.stream().filter(p->p.getGenero().getGenero()==1).collect(Collectors.toList());
+            
+            if(!estudiantesMujeres.isEmpty()){
+                estudiantesMujeres.forEach(estudiante -> {
+                    Double calificacion = 0.0;
+
+                    CalificacionPromedio calificacionPromedio = em.createQuery("SELECT c FROM CalificacionPromedio c WHERE c.cargaAcademica.idPlanMateria.idPlanMateria=:planMateria AND c.estudiante.idEstudiante=:estudiante", CalificacionPromedio.class)
+                            .setParameter("planMateria", planEstudioMateria.getIdPlanMateria())
+                            .setParameter("estudiante", estudiante.getEstudiante().getIdEstudiante())
+                            .getResultStream()
+                            .findFirst()
+                            .orElse(null);
+
+                    if (calificacionPromedio != null) {
+                        if (calificacionPromedio.getValor() < 8.0) {
+                            CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.idPlanMateria.idPlanMateria=:planMateria AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
+                                    .setParameter("planMateria", planEstudioMateria.getIdPlanMateria())
+                                    .setParameter("estudiante", estudiante.getEstudiante().getIdEstudiante())
+                                    .getResultStream()
+                                    .findFirst()
+                                    .orElse(null);
+                            if (calificacionNivelacion != null) {
+                                calificacion = calificacionNivelacion.getValor();
+                            }
+                        } else {
+                            calificacion = calificacionPromedio.getValor();
+                        }
+                    }
+                    listaCalificaciones.add(calificacion);
+                });
+                if (estudiantesMujeres.size() == listaCalificaciones.size()) {
+                    promedio = listaCalificaciones.stream().mapToDouble(Double::doubleValue).average().getAsDouble();
+                }
+            }
+            return ResultadoEJB.crearCorrecto(promedio, "Promedio de la asignatura en el periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el promedio de la asignatura en el periodo seleccionado. (EjbReportesAcademicos.getObtenerPromedioAsignaturaMujeres)", e, null);
         }
     }
     

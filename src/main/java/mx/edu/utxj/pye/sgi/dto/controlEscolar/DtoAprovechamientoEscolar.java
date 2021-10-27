@@ -25,6 +25,8 @@ public class DtoAprovechamientoEscolar implements Serializable, Comparable<DtoAp
     @Getter @Setter @NonNull PeriodosEscolares periodoEscolar;
     @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
     @Getter @Setter @NonNull Double promedio;
+    @Getter @Setter @NonNull Double promedioH;
+    @Getter @Setter @NonNull Double promedioM;
     
     @Override
     public int compareTo(DtoAprovechamientoEscolar o) {
