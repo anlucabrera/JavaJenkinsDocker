@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Impresión de documentos de terminación de estudios
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <style type="text/css">
+            .table-bordered>tbody>tr>td{
+                padding-top: 0px !important;
+                padding-right: 0px !important;
+                padding-bottom: 0px !important;
+                padding-left: 0px !important;
+            }
+            .ui-chkbox {
+                display: inline-grid;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="body">
+        <script>
+            //window.addEventListener("load", window.print());
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+            function redireccionarPag1(){
+                window.locationf ="../../util/formatoActaExamenProf.xhtml";
+            }
+            
+        </script>
+        <c:if test="#{registroEgresadoTerminacionEstudioServiciosEscolares.cargado}">
+            <div class="contenedor">
+                <c:if test="#{registroEgresadoTerminacionEstudioServiciosEscolares.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+
+                    <h:form id="frmGeneral">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+
+                                        </f:facet>
+                                        <f:facet name="right">
+
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                                <div class="box box-solid">
+                                    <div class="box-body">
+                                        <c:set var="panel" value="#{'col-sm-12 col-md-12 col-lg-12'}"/>
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-6 col-lg-2'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                        <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                        <c:set var="casilla4" value="#{'col-sm-3 col-md-3 col-lg-3'}"/>
+                                        <c:set var="casilla5" value="#{'col-sm-4 col-md-4 col-lg-4'}"/>
+                                        <c:set var="casilla6" value="#{'col-sm-8 col-md-8 col-lg-8'}"/>
+                                        <c:set var="casilla7" value="#{'col-sm-9 col-md-9 col-lg-9'}"/>
+                                        <c:set var="casilla8" value="#{'col-sm-6 col-md-6 col-lg-6'}"/>
+                                        <c:set var="casilla9" value="#{'col-sm-5 col-md-5 col-lg-5'}"/>
+                                        <c:set var="casilla10" value="#{'col-sm-7 col-md-7 col-lg-7'}"/>
+                                        <!--p:remoteCommand id="cmdActualizarmaterias" name="actualizarmaterias" update="@(.ui-datatable) @(.ui-material) @(.ui-tabs)" /-->
+                                        <p:tabView id="tabView">
+                                            <p:tab title="Registro único">
+                                                <div class="row">
+
+                                                    <div class="#{panel}">
+                                                        <div class="row">
+                                                            <p:outputPanel id="selector1">
+                                                                <div class="box box-primary">
+                                                                    <div class="box-header panel-heading with-border">
+                                                                        <div class="ui-g ui-fluid">
+                                                                            <div class="ui-g-12 ui-md-1">
+                                                                                <p:outputLabel for="clave" value="Estudiante:" class=" hidden-sm hidden-xs"/>
+                                                                            </div>
+                                                                            <div class="ui-g-12 ui-md-4">
+                                                                                <p:selectOneMenu id="clave" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.matricula}" filter="true" disabled="#{registroEgresadoTerminacionEstudioServiciosEscolares.bloquear}"
+                                                                                                 filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label"
+                                                                                                 valueChangeListener="#{registroEgresadoTerminacionEstudioServiciosEscolares.buscarEstudiante}">
+                                                                                    <f:selectItem itemValue="0" itemLabel=" Buscar ESTUDIANTE"/>
+                                                                                    <f:selectItems value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.listaEstudiantes}" var="es" 
+                                                                                                   itemValue="#{es.inscripcionActiva.inscripcion.matricula}" 
+                                                                                                   itemLabel="#{es.inscripcionActiva.inscripcion.matricula} -- #{es.persona.nombre} 
+                                                                                                   #{es.persona.apellidoPaterno} #{es.persona.apellidoMaterno}" />
+                                                                                    <p:ajax process="@this" update="contenedorDatosPersonales clave btnRefresh contenedorRegistros matricula generacion folio libro foja fecha"/>
+                                                                                </p:selectOneMenu>  
+                                                                                <p:message for="clave"/>
+
+
+                                                                            </div>
+                                                                            <div class="ui-g-12 ui-md-4">
+                                                                                <p:commandLink
+                                                                                    id="btnRefresh"
+                                                                                    class="btn btn-warning"
+                                                                                    value="Limpiar formulario"
+                                                                                    disabled="#{registroEgresadoTerminacionEstudioServiciosEscolares.desbloquear}"
+                                                                                    onclick="location.reload()"
+                                                                                    title="Buscar nuevo estudiante">
+                                                                                    <i class="fa fa-refresh"></i>
+                                                                                </p:commandLink>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="box-body">
+                                                                        <div class="row">
+                                                                            <div class="#{casilla8}">
+                                                                                <p:outputPanel id="contenedorDatosPersonales">
+                                                                                    <table class="table table-condensed table-bordered table-hover table-responsive" style="text-align: left">
+                                                                                        <tbody>
+                                                                                            <tr>
+                                                                                                <td colspan="6" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
+                                                                                                    <!--#3c8dbc-->
+                                                                                                    Datos generales del estudiante
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td style="font-size: x-small; font-weight: bold; width: 120px;">Matricula:</td>
+                                                                                                <td style="font-size: x-small; font-weight: bold; text-align: center; width: 270px;">#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripcionActiva.inscripcion.matricula}</td>
+                                                                                                <td rowspan="3" colspan="3" style="font-size: x-small; font-weight: bold; align-content: center">
+
+                                                                                                </td>
+                                                                                                <td rowspan="6" style="font-size: x-small; font-weight: bold; width: 70px; text-align: center">
+                                                                                                    <div class="widget-user-header bg-aqua-active">
+                                                                                                        <div class="widget-user-image">
+                                                                                                            <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripcionActiva.inscripcion.matricula}.jpg"
+                                                                                                                 class="img-circle" alt="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripcionActiva.inscripcion.matricula}"
+                                                                                                                 title="Alumno #{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripcionActiva.inscripcion.matricula}"
+                                                                                                                 style="width: 80px; height: 80px;"/>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td style="font-size: x-small; font-weight: bold">Nombre completo:</td>
+                                                                                                <td style="font-size: x-small; font-weight: bold; text-align: center">#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.aspirante.idPersona.nombre} #{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.aspirante.idPersona.apellidoPaterno} #{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.aspirante.idPersona.apellidoMaterno}</td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td style="font-size: x-small; font-weight: bold">Fecha de nacimiento:</td>
+                                                                                                <td style="font-size: x-small; font-weight: bold; text-align: center">
+                                                                                                    <h:outputText value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.aspirante.idPersona.fechaNacimiento}">
+                                                                                                        <f:convertDateTime pattern="dd/MM/yyyy"/>
+                                                                                                    </h:outputText>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td colspan="4" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
+                                                                                                    Datos académicos
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td style="font-size: x-small; font-weight: bold;">Carrera:</td>
+                                                                                                <td style="font-size: x-small; font-weight: bold; text-align: center">#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripcionActiva.grupo.plan.descripcion}</td>
+                                                                                                <td style="font-size: x-small; font-weight: bold; width: 120px">Turno:</td>
+                                                                                                <td style="font-size: x-small; font-weight: bold; text-align: center; width: 150px">#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripcionActiva.grupo.idSistema.nombre}</td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td style="font-size: x-small; font-weight: bold">Grado actual:</td>
+                                                                                                <td style="font-size: x-small; font-weight: bold; text-align: center">#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripciones.get(0).grupo.grado}</td>
+                                                                                                <td style="font-size: x-small; font-weight: bold">Grupo actual:</td>
+                                                                                                <td style="font-size: x-small; font-weight: bold; text-align: center">#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripcionActiva.grupo.literal}</td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td colspan="6" style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">
+                                                                                                    <!--#3c8dbc-->
+                                                                                                    Generación
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                            <tr>
+                                                                                                <td style="font-size: x-small; font-weight: bold; text-align: center">#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripcionActiva.generacion.inicio} #{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripcionActiva.generacion.fin}</td>
+                                                                                            </tr>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </p:outputPanel>
+                                                                            </div>
+                                                                            <div class="#{casilla8}">
+                                                                                <p:outputPanel id="contenedorRegistros">
+                                                                                    <table class="table table-condensed table-bordered table-hover table-responsive" style="text-align: left">
+                                                                                        <thead>
+                                                                                            <tr>
+                                                                                                <th style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">#</th>
+                                                                                                <th style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">Matrícula</th>
+                                                                                                <th style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">Generación</th>
+                                                                                                <th style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">Folio</th>
+                                                                                                <th style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">Libro</th>
+                                                                                                <th style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">Foja</th>
+                                                                                                <th style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff">Fecha de emisión</th>
+                                                                                                <th style="font-size: x-small; font-weight: bold; background-color: #777777; color: #ffffff"><i class="fa fa-download"></i></th>
+                                                                                            </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                            <c:forEach var="registro" items="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.listaRegistros}">
+                                                                                                <tr>
+                                                                                                    <td style="font-size: x-small; font-weight: bold; text-align: center">#{registro.idRegistro}</td>
+                                                                                                    <td style="font-size: x-small; font-weight: bold; text-align: center">#{registro.idEstudiante.matricula}</td>
+                                                                                                    <td style="font-size: x-small; font-weight: bold; text-align: center">#{registro.generacion}</td>
+                                                                                                    <td style="font-size: x-small; font-weight: bold; text-align: center">#{registro.folio}</td>
+                                                                                                    <td style="font-size: x-small; font-weight: bold; text-align: center">#{registro.libro}</td>
+                                                                                                    <td style="font-size: x-small; font-weight: bold; text-align: center">#{registro.foja}</td>
+                                                                                                    <td style="font-size: x-small; font-weight: bold; text-align: center">
+                                                                                                        <h:outputText value="#{registro.fechaEmision}">
+                                                                                                            <f:convertDateTime locale="MX" pattern="dd-MM-yyyy"/>
+                                                                                                        </h:outputText>
+                                                                                                    </td>
+                                                                                                    <td style="font-size: x-small; font-weight: bold; text-align: center">
+                                                                                                        <p:commandLink value=" " title="Da clic para generar Acta de Exención de Examen Profesional "
+                                                                                                                       actionListener="#{registroEgresadoTerminacionEstudioServiciosEscolares.generarActaExamenProfesional(registro.idEstudiante.idEstudiante)}"
+                                                                                                                       type="submit" class="btn btn-warning" rendered="#{true}" disabled="#{false}" process="@this" update="@this">
+                                                                                                            <i class="fa fa-file-pdf-o"/>
+                                                                                                        </p:commandLink>
+                                                                                                        <p:spacer width="20"/>
+                                                                                                        <p:commandLink value=" " title="Da clic para generar Constancia de Servicio Social "
+                                                                                                                       actionListener="#{registroEgresadoTerminacionEstudioServiciosEscolares.generarActaServicioSocial(registro.idEstudiante.idEstudiante)}" type="submit"
+                                                                                                                       class="btn btn-primary" rendered="#{true}" disabled="#{false}" process="@this" update="@this">
+                                                                                                            <i class="fa fa-file-pdf-o"/>
+                                                                                                        </p:commandLink>
+                                                                                                        <p:spacer width="20"/>
+                                                                                                        <p:commandLink value=" " title="Da clic para generar Certificado de Estudios"
+                                                                                                                       actionListener="#{registroEgresadoTerminacionEstudioServiciosEscolares.generarCertificadoEstudios(registro.idEstudiante.idEstudiante)}"
+                                                                                                                       type="submit" class="btn btn-success" rendered="#{true}" disabled="#{false}" process="@this" update="@this">
+                                                                                                            <i class="fa fa-file-pdf-o"/>
+                                                                                                        </p:commandLink>
+
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            </c:forEach>
+                                                                                        </tbody>
+                                                                                    </table>
+                                                                                </p:outputPanel>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </p:outputPanel>
+                                                        </div>
+
+
+                                                        <div class="row">
+                                                            <p:outputPanel id="contenedorRegistro" rendered="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.ocultarPanelRegistro}">
+                                                                <div class="#{panel}">
+                                                                    <div class="box box-primary">
+                                                                        <div class="box-header panel-heading with-border">
+                                                                            <div class="pull-left">
+                                                                                <i class="fa fa-plus-square "></i>
+                                                                                <span class="box-title">  Agregar registro</span>
+                                                                            </div>
+                                                                            <div class="box-tools pull-right">
+                                                                                <p:commandLink value="Guardar"
+                                                                                               actionListener="#{registroEgresadoTerminacionEstudioServiciosEscolares.guardarRegistto}"
+                                                                                               type="submit"
+                                                                                               class="btn btn-primary"
+                                                                                               rendered="#{true}"
+                                                                                               disabled="#{false}"
+                                                                                               process="@this matricula generacion folio libro foja fecha" update="@this contenedorRegistros tblRegistros">
+                                                                                    <i class="fa fa-save"/>
+                                                                                </p:commandLink>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="box-body">
+                                                                            <div class="row">
+                                                                                <div class="#{casilla8}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:outputLabel for="matricula" value="Matricula"/>
+                                                                                        <p:inputText id="matricula" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.matricula}"/>
+                                                                                        <p:message for="matricula"/>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla8}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:outputLabel for="generacion" value="Generación"/>
+                                                                                        <p:inputText id="generacion" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.generacion}"/>
+                                                                                        <p:message for="generacion"/>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="#{casilla4}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:outputLabel for="folio" value="Folio"/>
+                                                                                        <p:inputNumber id="folio" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.folio}" decimalPlaces="0" />
+                                                                                        <p:message for="folio"/>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla4}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:outputLabel for="libro" value="Libro"/>
+                                                                                        <p:inputNumber id="libro" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.libro}" decimalPlaces="0"/>
+                                                                                        <p:message for="libro"/>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla4}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:outputLabel for="foja" value="Foja"/>
+                                                                                        <p:inputNumber id="foja" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.foja}" decimalPlaces="0"/>
+                                                                                        <p:messages for="foja"><p:autoUpdate/> </p:messages>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="#{casilla4}">
+                                                                                    <div class="ui-material">
+                                                                                        <p:outputLabel for="fecha" value="Fecha de Emision"/>
+                                                                                        <p:calendar id="fecha" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.fechaEmision}" disabled="true">
+                                                                                            <f:convertDateTime locale="MX" pattern="dd-MM-yyyy"/>
+                                                                                        </p:calendar>
+                                                                                        <p:messages for="fecha"><p:autoUpdate/> </p:messages>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </p:outputPanel>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="#{panel}">
+                                                                <div class="box box-primary">
+                                                                    <div class="box-header panel-heading with-border">
+                                                                        <div class="pull-left">
+                                                                            <i class="fa fa-list-alt "></i>
+                                                                            <span class="box-title">  Lista de registros</span>
+                                                                        </div>
+                                                                        <div class="box-tools pull-right">
+
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="box-body">
+                                                                        <p:dataTable var="registro" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.listaHistoricoRegistro}"
+                                                                                     expandableRowGroups="true" paginator="true" rows="10" paginatorPosition="top" rowsPerPageTemplate="10,20,30,40,50"
+                                                                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                                                     {RowsPerPageDropdown}" rendered="true" emptyMessage="Sin registros." id="tblRegistros" rowIndexVar="rowIndex" editable="true"
+                                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                     tableStyle="vertical-align: middle;">
+                                                                            <p:column headerText="#" style="width: 120px;text-align: center;"><h:outputText value="#{registro.idRegistro}"/></p:column>
+                                                                            <p:column headerText="Matrícula" style="width: 120px;text-align: center;"><h:outputText value="#{registro.idEstudiante.matricula}"/></p:column>
+                                                                            <p:column headerText="Generación" style="width: 120px;text-align: center;"><h:outputText value="#{registro.generacion}"/></p:column>
+                                                                            <p:column headerText="Folio" style="width: 120px;text-align: center;"><h:outputText value="#{registro.folio}"/></p:column>
+                                                                            <p:column headerText="Libro" style="width: 120px;text-align: center;"><h:outputText value="#{registro.libro}"/></p:column>
+                                                                            <p:column headerText="Foja" style="width: 120px;text-align: center;"><h:outputText value="#{registro.foja}"/></p:column>
+                                                                            <p:column headerText="Fecha emisión" style="width: 120px;text-align: center;">
+                                                                                <h:outputText value="#{registro.fechaEmision}">
+                                                                                    <f:convertDateTime locale="MX" pattern="dd-MM-yyyy"/>
+                                                                                </h:outputText>
+                                                                            </p:column>
+                                                                        </p:dataTable>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </p:tab>
+                                            <p:tab title="Registro múltiple" >
+                                                <div class="row">
+                                                    <div class="#{casilla9}">
+                                                        <div class="box box-primary">
+                                                            <div class="box-header panel-heading with-border">
+                                                                <div class="pull-left">
+                                                                    <i class="fa fa-list-alt "></i>
+                                                                    <span class="box-title">  Lista de Estudiantes</span>
+                                                                </div>
+                                                                <div class="box-tools pull-right">
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="box-body">
+                                                                <p:dataTable var="estudiante" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteRA}"
+                                                                             rows="20" selection="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudiantesRegistro}"
+                                                                             rendered="true" emptyMessage="Sin registros." id="tbl2" rowIndexVar="rowIndex" paginatorPosition="top"
+                                                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink}  " paginator="true"
+                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                             rowKey="#{estudiante.idEstudiante}"
+                                                                             tableStyle="vertical-align: middle;">
+                                                                    <p:column selectionMode="multiple" style="width:10px;text-align:center"/>
+                                                                    <p:column headerText="Matrícula" style="width: 80px;text-align: center; font-size: small">
+                                                                        <h:outputText value="#{estudiante.matricula}"/>
+                                                                    </p:column>
+                                                                    <p:column headerText="Nombre completo" style="width: 160px;text-align: left; font-size: small;">
+                                                                        <h:outputText value="#{estudiante.aspirante.idPersona.nombre}
+                                                                                      #{estudiante.aspirante.idPersona.apellidoPaterno}
+                                                                                      #{estudiante.aspirante.idPersona.apellidoMaterno}"/>
+                                                                    </p:column>
+                                                                    <p:column headerText="Grado" style="width: 80px;text-align: center; font-size: small;">
+                                                                        <h:outputText value="#{estudiante.grupo.grado}° #{estudiante.grupo.literal}" />
+                                                                    </p:column>
+                                                                    <f:facet name="footer">
+                                                                        <div class="btn-group">
+                                                                            <p:commandLink
+                                                                                update="tbl2 frmGeneral:tabView:tblHistRegistros"
+                                                                                class="#{true?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                                                actionListener="#{registroEgresadoTerminacionEstudioServiciosEscolares.realizarRegistroMultiple()}"
+                                                                                title="Realizar registro">
+                                                                                Realizar registro
+                                                                                <p:confirm header="Confirmar registro"
+                                                                                           message="¿Desea continuar con la operación?"/>
+                                                                            </p:commandLink>
+                                                                        </div>
+                                                                    </f:facet>
+                                                                </p:dataTable>
+                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                                                 styleClass="panel panel-primary" width="500"
+                                                                                 closable="false" closeOnEscape="true">
+                                                                    <p:commandButton value="Si" type="button"
+                                                                                     styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                                                     icon="ui-icon-check"/>
+                                                                    <p:commandButton value="No" type="button"
+                                                                                     styleClass="ui-confirmdialog-no btn btn-primary"
+                                                                                     icon="ui-icon-close"/>
+                                                                </p:confirmDialog> 
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="#{casilla10}">
+                                                        <div class="box box-primary">
+                                                            <div class="box-header panel-heading with-border">
+                                                                <div class="pull-left">
+                                                                    <i class="fa fa-list-alt "></i>
+                                                                    <span class="box-title">  Lista de registros</span>
+                                                                </div>
+                                                                <div class="box-tools pull-right">
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="box-body">
+                                                                <p:dataTable var="registro" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.listaHistoricoRegistro}"
+                                                                             expandableRowGroups="true" paginator="true" rows="20" paginatorPosition="top" rowsPerPageTemplate="10,20,30,40,50"
+                                                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                                             {RowsPerPageDropdown}" rendered="true" emptyMessage="Sin registros." id="tblHistRegistros" rowIndexVar="rowIndex" editable="true"
+                                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                             tableStyle="vertical-align: middle;">
+                                                                    <p:column headerText="#" style="width: 50px;text-align: center;"><h:outputText value="#{registro.idRegistro}"/></p:column>
+                                                                    <p:column headerText="Matrícula" style="width: 120px;text-align: center;"><h:outputText value="#{registro.idEstudiante.matricula}"/></p:column>
+                                                                    <p:column headerText="Generación" style="width: 120px;text-align: center;"><h:outputText value="#{registro.generacion}"/></p:column>
+                                                                    <p:column headerText="Folio" style="width: 80px;text-align: center;"><h:outputText value="#{registro.folio}"/></p:column>
+                                                                    <p:column headerText="Libro" style="width: 80px;text-align: center;"><h:outputText value="#{registro.libro}"/></p:column>
+                                                                    <p:column headerText="Foja" style="width: 80px;text-align: center;"><h:outputText value="#{registro.foja}"/></p:column>
+                                                                    <p:column headerText="Fecha emisión" style="width: 120px;text-align: center;">
+                                                                        <h:outputText value="#{registro.fechaEmision}">
+                                                                            <f:convertDateTime locale="MX" pattern="dd-MM-yyyy"/>
+                                                                        </h:outputText>
+                                                                    </p:column>
+                                                                    <p:column headerText="" style="width: 120px;text-align: center;">
+                                                                        <p:commandLink value=" " title="Da clic para generar Acta de Exención de Examen Profesional " style="padding: 2px 8px"
+                                                                                       actionListener="#{registroEgresadoTerminacionEstudioServiciosEscolares.generarActaExamenProfesional(registro.idEstudiante.idEstudiante)}"
+                                                                                       type="submit" class="btn btn-warning" rendered="#{true}" disabled="#{false}" process="@this" update="@this">
+                                                                            <i class="fa fa-file-pdf-o"/>
+                                                                        </p:commandLink>
+                                                                        <p:commandLink value=" " title="Da clic para generar Constancia de Servicio Social " style="padding: 2px 8px"
+                                                                                       actionListener="#{registroEgresadoTerminacionEstudioServiciosEscolares.generarActaServicioSocial(registro.idEstudiante.idEstudiante)}" type="submit"
+                                                                                       class="btn btn-primary" rendered="#{true}" disabled="#{false}" process="@this" update="@this">
+                                                                            <i class="fa fa-file-pdf-o"/>
+                                                                        </p:commandLink>
+                                                                        <p:commandLink value=" " title="Da clic para generar Certificado de Estudios" style="padding: 2px 8px"
+                                                                                       actionListener="#{registroEgresadoTerminacionEstudioServiciosEscolares.generarCertificadoEstudios(registro.idEstudiante.idEstudiante)}"
+                                                                                       type="submit" class="btn btn-success" rendered="#{true}" disabled="#{false}" process="@this" update="@this">
+                                                                            <i class="fa fa-file-pdf-o"/>
+                                                                        </p:commandLink> 
+                                                                    </p:column>
+                                                                </p:dataTable>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </p:tab>
+                                            <p:tab title="Impresion de Acta de Examen Profesional" rendered="#{registroEgresadoTerminacionEstudioServiciosEscolares.aeep}">
+                                                
+                                            </p:tab>
+                                            
+                                        </p:tabView>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </c:if>
+                <c:if test="#{!registroEgresadoTerminacionEstudioServiciosEscolares.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="El acceso solo está autorizado al departamento de Servicios Escolares."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

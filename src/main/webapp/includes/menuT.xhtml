@@ -257,6 +257,7 @@
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Carta de no adeudo</li>
                         <c:if test="#{cartaNoAdeudoSE.mostrarEnDesarrollo(request) and cartaNoAdeudoSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cartaNoAdeudoServiciosEscolares.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
                     </c:if>
+                    <c:if test="#{registroEgresadoTerminacionEstudioServiciosEscolares.mostrarEnDesarrollo(request) and registroEgresadoTerminacionEstudioServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroEgresados.xhtml"><i class="fa fa-print"></i><span>Impresión de Documentos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                     <!-- Titulación -->
                     <c:if test="#{registroEventosTitulacion.mostrarEnDesarrollo(request) and registroEventosTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/registroEventosTitulacion.xhtml"><i class="fa fa-calendar-check-o"></i><span>Registro eventos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>

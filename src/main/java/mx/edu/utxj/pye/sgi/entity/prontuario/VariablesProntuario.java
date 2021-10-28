@@ -52,7 +52,7 @@ public class VariablesProntuario implements Serializable {
     private String descripcion;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 200)
     @Column(name = "valor")
     private String valor;
 
