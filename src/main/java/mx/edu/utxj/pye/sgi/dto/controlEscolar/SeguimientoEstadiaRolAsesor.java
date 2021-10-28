@@ -122,12 +122,7 @@ public class SeguimientoEstadiaRolAsesor extends AbstractRol{
      * Represente el valor para habilitar o deshabilitar el botón de guardar
      */
     @Getter @NonNull private Boolean habilitarGuardar;
-    
-      /**
-     * Represente el valor para habilitar o deshabilitar el botón de evaluación
-     */
-    @Getter @NonNull private Boolean habilitarEvaluacion;
-    
+   
      /**
      * Represente el valor si el estudiante tiene evaluación de estadía registarda
      */
@@ -218,10 +213,6 @@ public class SeguimientoEstadiaRolAsesor extends AbstractRol{
         this.habilitarGuardar = habilitarGuardar;
     }
 
-    public void setHabilitarEvaluacion(Boolean habilitarEvaluacion) {
-        this.habilitarEvaluacion = habilitarEvaluacion;
-    }
-    
     public void setEvaluacionRegistrada(Boolean evaluacionRegistrada) {
         this.evaluacionRegistrada = evaluacionRegistrada;
     }

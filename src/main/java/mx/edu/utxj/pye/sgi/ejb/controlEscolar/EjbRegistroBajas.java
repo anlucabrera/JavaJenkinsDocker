@@ -55,6 +55,7 @@ public class EjbRegistroBajas {
     @EJB EjbPersonalBean ejbPersonalBean;
     @EJB EjbEstudianteBean ejbEstudianteBean;
     @EJB EjbPropiedades ep;
+    @EJB EjbSeguimientoEstadia ejbSeguimientoEstadia;
     @EJB Facade f;
     private EntityManager em;
     
@@ -257,6 +258,30 @@ public class EjbRegistroBajas {
         }
     }
     
+    
+     /**
+     * Permite desactivar o activar seguimiento de estadía, en caso de que exista un registro del estudiante
+     * @param estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<SeguimientoEstadiaEstudiante> desactivarActivarSeguimientoEstadiaBaja(Estudiante estudiante){
+         try{
+            
+            SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.estudiante.idEstudiante =:estudiante", SeguimientoEstadiaEstudiante.class)
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .getResultStream().findFirst().orElse(null);
+            
+            if(seguimientoEstadiaEstudiante != null){
+                ejbSeguimientoEstadia.desactivarSeguimientoEstadia(seguimientoEstadiaEstudiante).getValor();
+            }
+            
+            
+            return ResultadoEJB.crearCorrecto(seguimientoEstadiaEstudiante, "El seguimiento de estadía se ha desactivado o activado correctamente");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo desactivar o activar el seguimiento de estadía correctamente. (EjbRegistroBajas.desactivarActivarSeguimientoEstadiaBaja)", e, null);
+        }
+    }
+    
      /**
      * Permite guardar el registro de la baja
      * @param periodoEscolar Clave del periodo escolar activo
@@ -301,6 +326,8 @@ public class EjbRegistroBajas {
                         .setParameter("estudiante", registroBaja.getEstudiante().getIdEstudiante())
                         .executeUpdate();
             }
+            
+            desactivarActivarSeguimientoEstadiaBaja(registroBaja.getEstudiante());
             
             if(registroBaja.getCausaBaja() == 3)
             {
@@ -395,6 +422,8 @@ public class EjbRegistroBajas {
                         .setParameter("tipoEstudiante", tipoEstudiante)
                         .setParameter("estudiante", registro.getEstudiante().getIdEstudiante())
                         .executeUpdate();
+               
+               desactivarActivarSeguimientoEstadiaBaja(registro.getEstudiante());
            }
 
             return ResultadoEJB.crearCorrecto(delete, "El registro de la baja se eliminó correctamente.");
@@ -1214,6 +1243,8 @@ public class EjbRegistroBajas {
                 mensaje ="La baja se ha invalidado correctamente";
                 Integer actualizarStatus = resetearStatusEstudiante(registro).getValor();
             }
+            
+            desactivarActivarSeguimientoEstadiaBaja(registro.getEstudiante());
             
                        
             return ResultadoEJB.crearCorrecto(validar, mensaje);

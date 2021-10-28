@@ -29,6 +29,7 @@ public class DtoAprovechamientoEscolarEstudiante implements Serializable, Compar
     @Getter @Setter @NonNull String discapacidad;
     @Getter @Setter @NonNull String lenguaIndigena;
     @Getter @Setter @NonNull String promedio;
+    @Getter @Setter @NonNull String promedioAcumulado;
     
     @Override
     public int compareTo(DtoAprovechamientoEscolarEstudiante o) {

@@ -299,6 +299,7 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
     public Boolean deshabilitarValidacion(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia, Integer valor){
         Boolean permiso = Boolean.FALSE;
         
+        if(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getActivo()){
         switch (valor) {
                 case 1:
                     ResultadoEJB<Boolean> res1 = ejb.buscarEventoActivo(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getEvento(), "Evaluacion carta presentacion", "Coordinador institucional");
@@ -334,6 +335,7 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
 
                     break;
             }
+        }
         return permiso;
     }
     
@@ -362,14 +364,16 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
     public Boolean deshabilitarValidacionEstadia(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
         Boolean permiso = Boolean.TRUE;
         
-        Boolean cartaPresentacion = ejb.buscarValidacionDocumento(33, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
-        Boolean cartaAceptacion = ejb.buscarValidacionDocumento(34, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
-        Boolean cartaLiberacion = ejb.buscarValidacionDocumento(39, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
-        Boolean cartaEvaluacionEmp = ejb.buscarValidacionDocumento(40, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
-        Boolean cartaAcreditacion = ejb.buscarValidacionDocumento(41, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
-        
-        if(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionDirector() && cartaPresentacion && cartaAceptacion && cartaLiberacion && cartaEvaluacionEmp && cartaAcreditacion){
-            permiso = Boolean.FALSE;
+        if(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getActivo()){
+            Boolean cartaPresentacion = ejb.buscarValidacionDocumento(33, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean cartaAceptacion = ejb.buscarValidacionDocumento(34, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean cartaLiberacion = ejb.buscarValidacionDocumento(39, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean cartaEvaluacionEmp = ejb.buscarValidacionDocumento(40, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean cartaAcreditacion = ejb.buscarValidacionDocumento(41, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+
+            if (dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionDirector() && cartaPresentacion && cartaAceptacion && cartaLiberacion && cartaEvaluacionEmp && cartaAcreditacion) {
+                permiso = Boolean.FALSE;
+            }
         }
         return permiso;
     }

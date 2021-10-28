@@ -34,6 +34,7 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
@@ -135,7 +136,15 @@ public class SeguimientoEstadiaCoordinador extends ViewScopedRol implements Desa
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionAreaEventosRegistrados(rol.getGeneracion(), rol.getDocente().getAreaSuperior());
+        
+        AreasUniversidad area = new AreasUniversidad();
+        if(ejb.verificarEsDirector(rol.getDocente().getPersonal()).getValor()){
+            area = rol.getDocente().getAreaOperativa();
+        }else{
+            area = rol.getDocente().getAreaSuperior();
+        }
+        
+        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionAreaEventosRegistrados(rol.getGeneracion(), area);
         if(res.getCorrecto()){
             if(!res.getValor().isEmpty()){
                 rol.setNivelesEducativos(res.getValor());
@@ -153,7 +162,15 @@ public class SeguimientoEstadiaCoordinador extends ViewScopedRol implements Desa
      */
     public void listaProgramasNivelGeneracion(){
         if(rol.getNivelEducativo()== null) return;
-        ResultadoEJB<List<AreasUniversidad>> res = ejbAsignacionRolesEstadia.getProgramasNivelesGeneracionEventosRegistrados(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDocente().getAreaSuperior().getArea());
+        
+        AreasUniversidad area = new AreasUniversidad();
+        if(ejb.verificarEsDirector(rol.getDocente().getPersonal()).getValor()){
+            area = rol.getDocente().getAreaOperativa();
+        }else{
+            area = rol.getDocente().getAreaSuperior();
+        }
+        
+        ResultadoEJB<List<AreasUniversidad>> res = ejbAsignacionRolesEstadia.getProgramasNivelesGeneracionEventosRegistrados(rol.getGeneracion(), rol.getNivelEducativo(), area.getArea());
         if(res.getCorrecto()){
             rol.setProgramasEducativos(res.getValor());
             rol.setProgramaEducativo(rol.getProgramasEducativos().get(0));
@@ -256,6 +273,19 @@ public class SeguimientoEstadiaCoordinador extends ViewScopedRol implements Desa
         ResultadoEJB<SeguimientoEstadiaEstudiante> res = ejb.actualizarComentariosCoordinador(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante());
         mostrarMensajeResultadoEJB(res);
         listaEstudiantesSeguimiento();
+    }
+    
+     /**
+     * Método para verificar si el seguimiento de titulación está activo o inactivo y deshabilitar la validación
+     * @param dtoSeguimientoEstadia
+     * @return Verdadero o Falso, según sea el caso
+     */
+    public Boolean deshabilitarValidacion(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
+        Boolean permiso = Boolean.FALSE;
+        if(!dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getActivo()){
+           permiso = Boolean.TRUE;
+        }
+        return permiso;
     }
    
 }

@@ -46,6 +46,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
@@ -149,7 +150,15 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
-        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionAreaEventosRegistrados(rol.getGeneracion(), rol.getDocente().getAreaSuperior());
+        
+        AreasUniversidad area = new AreasUniversidad();
+        if(ejb.verificarEsDirector(rol.getDocente().getPersonal()).getValor()){
+            area = rol.getDocente().getAreaOperativa();
+        }else{
+            area = rol.getDocente().getAreaSuperior();
+        }
+        
+        ResultadoEJB<List<ProgramasEducativosNiveles>> res = ejbAsignacionRolesEstadia.getNivelesGeneracionAreaEventosRegistrados(rol.getGeneracion(), area);
         if(res.getCorrecto()){
             if(!res.getValor().isEmpty()){
                 rol.setNivelesEducativos(res.getValor());
@@ -171,7 +180,6 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
         ResultadoEJB<List<DtoSeguimientoEstadia>> res = ejb.getListaEstudiantesSeguimiento(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDocente().getPersonal());
         if(res.getCorrecto()){
             rol.setEstudiantesSeguimiento(res.getValor());
-            deshabilitarEvaluacion();
             Ajax.update("tbListaSeguimientoEstadia");
         }else mostrarMensajeResultadoEJB(res);
     
@@ -210,10 +218,12 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
      */
     public Boolean deshabilitarCaptura(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
         Boolean permiso= Boolean.FALSE;
-        ResultadoEJB<Boolean> res = ejb.buscarEventoActivo(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getEvento(), "Registro empresa y proyecto","Asesor academico");
-        if(res.getCorrecto()){
-            permiso=res.getValor();
-        }else mostrarMensajeResultadoEJB(res);
+        if(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getActivo()){
+            ResultadoEJB<Boolean> res = ejb.buscarEventoActivo(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getEvento(), "Registro empresa y proyecto","Asesor academico");
+            if(res.getCorrecto()){
+                permiso=res.getValor();
+            }else mostrarMensajeResultadoEJB(res);
+        }
         return permiso;
     }
     
@@ -453,8 +463,8 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
      */
     public Boolean deshabilitarValidacion(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia, Integer valor){
         Boolean permiso = Boolean.FALSE;
-        
-        switch (valor) {
+        if(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getActivo()){
+            switch (valor) {
                 case 1:
                     ResultadoEJB<Boolean> res1 = ejb.buscarEventoActivo(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getEvento(), "Evaluacion primer informe", "Asesor academico");
                     if (res1.getCorrecto()) {
@@ -483,6 +493,7 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
 
                     break;
             }
+        }
         return permiso;
     }
     
@@ -532,18 +543,26 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
            rol.setAperturaDialogoEvalEst(Boolean.FALSE);
         }
     }
-    
+     
      /**
-     * Método para verificar si existe evento de estadía activo para el registro de evaluación
+     * Método para verificar si el estudiante tiene toda la documentación requerida validada para que se habilite el registro de evaluación y la acreditación de estadía
+     * @param dtoSeguimientoEstadia
+     * @return 
      */
-    public void deshabilitarEvaluacion(){
-        EventoEstadia evento = rol.getEstudiantesSeguimiento().stream().map(p->p.getSeguimientoEstadiaEstudiante().getEvento()).distinct().findFirst().orElse(null);
-        if(evento != null){
-            ResultadoEJB<Boolean> res = ejb.buscarEventoActivo(evento, "Registro cedula evaluacion empresarial","Estudiante");
-            if(res.getCorrecto()){
-                rol.setHabilitarEvaluacion(res.getValor());
-            }else mostrarMensajeResultadoEJB(res);
+    public Boolean deshabilitarEvaluacion(@NonNull DtoSeguimientoEstadia dtoSeguimientoEstadia){
+        Boolean permiso = Boolean.TRUE;
+        
+        if(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getActivo()){
+            Boolean primerInforme = ejb.buscarValidacionDocumento(35, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean segundoInforme = ejb.buscarValidacionDocumento(36, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean tercerInforme = ejb.buscarValidacionDocumento(37, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            Boolean informeFinal = ejb.buscarValidacionDocumento(38, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+
+            if (primerInforme && segundoInforme && tercerInforme && informeFinal && dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante().getValidacionDirector()) {
+                permiso = Boolean.FALSE;
+            }
         }
+        return permiso;
     }
     
      /**

@@ -93,6 +93,13 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             if(!tieneAcceso){return;} //cortar el flujo si no tiene acceso
 
             rol.setUsuario(usuario);
+            
+            if(rol.getUsuario().getAreaOperativa().getArea()==10 || rol.getUsuario().getAreaOperativa().getArea()== 9){
+                rol.setHabilitarListadoPromedios(true);
+            }else{
+                rol.setHabilitarListadoPromedios(false);
+            }
+            
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
