@@ -141,8 +141,8 @@ public class Estudiante implements Serializable {
     private List<DocumentoEstudianteProceso> documentoEstudianteProcesoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
     private List<EstudianteHistorialTsu> estudianteHistorialTsuList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante")
-    private List<NoAdeudoEstudiante> noAdeudoEstudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
+    private List<RegistroEgresadosTerminacionEstudios> registroEgresadosTerminacionEstudiosList;
 
     public Estudiante() {
     }
@@ -461,15 +461,6 @@ public class Estudiante implements Serializable {
     public List<DocumentoEstudianteProceso> getDocumentoEstudianteProcesoList() {
         return documentoEstudianteProcesoList;
     }
-    @XmlTransient
-    public List<NoAdeudoEstudiante> getNoAdeudoEstudianteList() {
-        return noAdeudoEstudianteList;
-    }
-
-    public void setNoAdeudoEstudianteList(List<NoAdeudoEstudiante> noAdeudoEstudianteList) {
-        this.noAdeudoEstudianteList = noAdeudoEstudianteList;
-    }
-
 
     public void setDocumentoEstudianteProcesoList(List<DocumentoEstudianteProceso> documentoEstudianteProcesoList) {
         this.documentoEstudianteProcesoList = documentoEstudianteProcesoList;
@@ -479,7 +470,16 @@ public class Estudiante implements Serializable {
     public void setCalificacionEvidenciaInstrumentoList(List<CalificacionEvidenciaInstrumento> calificacionEvidenciaInstrumentoList) {
         this.calificacionEvidenciaInstrumentoList = calificacionEvidenciaInstrumentoList;
     }
+    
+    @XmlTransient
+    public List<RegistroEgresadosTerminacionEstudios> getRegistroEgresadosTerminacionEstudiosList() {
+        return registroEgresadosTerminacionEstudiosList;
+    }
 
+    public void setRegistroEgresadosTerminacionEstudiosList(List<RegistroEgresadosTerminacionEstudios> registroEgresadosTerminacionEstudiosList) {
+        this.registroEgresadosTerminacionEstudiosList = registroEgresadosTerminacionEstudiosList;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 0;
