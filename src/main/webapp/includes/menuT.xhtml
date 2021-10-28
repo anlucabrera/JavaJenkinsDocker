@@ -891,7 +891,7 @@
                             <c:set var="n1" value="#{enc.primerNivel.get(j)}"/>
                             <c:if test="#{n1.segundoNivel.size() eq 0}">
                                 <li>
-                                    <p:link href="#{n1.tipoenlace eq 'interfaz'?request.contextPath:(n1.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2/':'')}#{n1.enlace}" target="#{n1.tipoenlace eq 'interfaz'?'':'_blank'}">
+                                    <p:link href="#{n1.tipoenlace eq 'interfaz'?request.contextPath:(n1.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2':'')}#{n1.enlace}#{n1.tipoenlace eq 'documento'?'#toolbar=0':''}" target="#{n1.tipoenlace eq 'interfaz'?'':'_blank'}">
                                         <i class="#{n1.icono}"></i>
                                         <span>
                                             <c:forEach var="t" begin="0" end="#{n1.titulo.size()-1}">
@@ -908,7 +908,7 @@
                             </c:if>
                             <c:if test="#{n1.segundoNivel.size() ne 0}">
                                 <li class="treeview">
-                                    <a href="#{n1.enlace}">
+                                    <a href="#">
                                         <i class="#{n1.icono}"></i> 
                                         <span>
                                             <c:forEach var="t" begin="0" end="#{n1.titulo.size()-1}">
@@ -924,7 +924,7 @@
                                             <c:set var="n2" value="#{n1.segundoNivel.get(k)}"/>
                                             <c:if test="#{n2.tercerNivel.size() eq 0}">
                                                 <li>
-                                                    <p:link href="#{n2.tipoenlace eq 'interfaz'?request.contextPath:(n2.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2/':'')}#{n2.enlace}" target="#{n2.tipoenlace eq 'interfaz'?'':'_blank'}">
+                                                    <p:link href="#{n2.tipoenlace eq 'interfaz'?request.contextPath:(n2.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2':'')}#{n2.enlace}#{n2.tipoenlace eq 'documento'?'#toolbar=0':''}" target="#{n2.tipoenlace eq 'interfaz'?'':'_blank'}">
                                                         <i class="#{n2.icono}"></i>
                                                         <span>
                                                             <c:forEach var="t" begin="0" end="#{n2.titulo.size()-1}">
@@ -941,7 +941,7 @@
                                             </c:if>
                                             <c:if test="#{n2.tercerNivel.size() ne 0}">
                                                 <li class="treeview">
-                                                    <a href="#{n2.enlace}">
+                                                    <a href="#">
                                                         <i class="#{n2.icono}"></i> 
                                                         <span>
                                                             <c:forEach var="t" begin="0" end="#{n2.titulo.size()-1}">
@@ -957,7 +957,7 @@
                                                             <c:set var="n3" value="#{n2.tercerNivel.get(l)}"/>
                                                             <c:if test="#{n3.cuartoNivel.size() eq 0}">
                                                                 <li>
-                                                                    <p:link href="#{n3.tipoenlace eq 'interfaz'?request.contextPath:(n3.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2/':'')}#{n3.enlace}" target="#{n3.tipoenlace eq 'interfaz'?'':'_blank'}">
+                                                                    <p:link href="#{n3.tipoenlace eq 'interfaz'?request.contextPath:(n3.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2':'')}#{n3.enlace}#{n3.tipoenlace eq 'documento'?'#toolbar=0':''}" target="#{n3.tipoenlace eq 'interfaz'?'':'_blank'}">
                                                                         <i class="#{n3.icono}"></i>
                                                                         <span>
                                                                             <c:forEach var="t" begin="0" end="#{n3.titulo.size()-1}">
@@ -974,7 +974,7 @@
                                                             </c:if>
                                                             <c:if test="#{n3.cuartoNivel.size() ne 0}">
                                                                 <li class="treeview">
-                                                                    <a href="#{n3.enlace}">
+                                                                    <a href="#">
                                                                         <i class="#{n3.icono}"></i> 
                                                                         <span>
                                                                             <c:forEach var="t" begin="0" end="#{n3.titulo.size()-1}">
@@ -990,7 +990,7 @@
                                                                             <c:set var="n4" value="#{n3.cuartoNivel.get(l)}"/>
                                                                             <c:if test="#{n4.quintoNivel.size() eq 0}">
                                                                                 <li>
-                                                                                    <p:link href="#{n4.tipoenlace eq 'interfaz'?request.contextPath:(n4.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2/':'')}#{n4.enlace}" target="#{n4.tipoenlace eq 'interfaz'?'':'_blank'}">
+                                                                                    <p:link href="#{n4.tipoenlace eq 'interfaz'?request.contextPath:(n4.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2':'')}#{n4.enlace}#{n4.tipoenlace eq 'documento'?'#toolbar=0':''}" target="#{n4.tipoenlace eq 'interfaz'?'':'_blank'}">
                                                                                         <i class="#{n4.icono}"></i>
                                                                                         <span>
                                                                                             <c:forEach var="t" begin="0" end="#{n4.titulo.size()-1}">
@@ -1007,7 +1007,7 @@
                                                                             </c:if>
                                                                             <c:if test="#{n4.quintoNivel.size() ne 0}">
                                                                                 <li class="treeview">
-                                                                                    <a href="#{n4.enlace}">
+                                                                                    <a href="#">
                                                                                         <i class="#{n4.icono}"></i> 
                                                                                         <span>
                                                                                             <c:forEach var="t" begin="0" end="#{n4.titulo.size()-1}">
@@ -1022,7 +1022,7 @@
                                                                                         <c:forEach var="l" begin="0" end="#{n4.quintoNivel.size()-1}">
                                                                                             <c:set var="n5" value="#{n4.quintoNivel.get(l)}"/>
                                                                                             <li>
-                                                                                                <p:link href="#{n5.tipoenlace eq 'interfaz'?request.contextPath:(n5.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2/':'')}#{n5.enlace}" target="#{n5.tipoenlace eq 'interfaz'?'':'_blank'}">
+                                                                                                <p:link href="#{n5.tipoenlace eq 'interfaz'?request.contextPath:(n5.tipoenlace eq 'documento'?'http://siip.utxicotepec.edu.mx/archivos/evidencias2':'')}#{n5.enlace}#{n5.tipoenlace eq 'documento'?'#toolbar=0':''}" target="#{n5.tipoenlace eq 'interfaz'?'':'_blank'}">
                                                                                                     <i class="#{n5.icono}"></i>
                                                                                                     <span>
                                                                                                         <c:forEach var="t" begin="0" end="#{n5.titulo.size()-1}">

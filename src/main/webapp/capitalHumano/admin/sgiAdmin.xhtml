@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="#{administracionControl.cargado}">
+            <adm:sidebar collapsed="true"/>
+            <h:outputScript>
+                PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+                dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D','L','M','M','J','V','S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText : 'Todo el día'
+                };
+            </h:outputScript>
+            <p:panel id="informacion">
+                <section class="content">
+                    <div class="row">
+                        <!--ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/-->
+                        <div class="col-md-12">
+                            <div class="nav-tabs-custom">
+                                <div class="row">
+                                    <div class="col-lg-10 col-xs-10"/>
+                                    <div class="col-lg-2 col-xs-2">
+                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                            <i class="fa fa-reply"></i>
+                                            <span>Regresar a mi perfil</span>
+                                        </p:link>
+                                    </div>      
+                                </div>
+                                <p:tabView>
+                                    <p:tab title="Eventos Generales" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                                        <h:form id="frmEventos"> 
+                                            <p:outputPanel id="incidenciasReporte">
+                                                <p:dataTable id="tblActividades"  value="#{administracionControl.menuDinamicos}"  var="eventosR"
+                                                             editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                    <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditMenuDocumentacion}" update="tblActividades" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblActividades" />
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Titulo Nivel 1" style="width: 15%;"/> 
+                                                            <p:column headerText="Titulo Nivel 2" style="width: 15%;"/> 
+                                                            <p:column headerText="Titulo Nivel 3" style="width: 15%;"/> 
+                                                            <p:column headerText="Titulo Nivel 4" style="width: 15%;"/> 
+                                                            <p:column headerText="Titulo Nivel 5" style="width: 15%;"/> 
+                                                            <p:column headerText="Enlace" style="width: 10%;"/> 
+                                                            <p:column headerText="Enlace para veda electoral" style="width: 10%;"/> 
+                                                        </p:row>
+                                                    </p:columnGroup>
+
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputText value="#{eventosR.tituloNivel1}" /></f:facet>
+                                                            <f:facet name="input"><p:inputText value="#{eventosR.tituloNivel1}"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputText value="#{eventosR.tituloNivel2}" /></f:facet>
+                                                            <f:facet name="input"><p:inputText value="#{eventosR.tituloNivel2}"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputText value="#{eventosR.titulonivel3}" /></f:facet>
+                                                            <f:facet name="input"><p:inputText value="#{eventosR.titulonivel3}"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputText value="#{eventosR.titulonivel4}" /></f:facet>
+                                                            <f:facet name="input"><p:inputText value="#{eventosR.titulonivel4}"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputText value="#{eventosR.titulonivel5}" /></f:facet>
+                                                            <f:facet name="input"><p:inputText value="#{eventosR.titulonivel5}"/></f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column> 
+                                                    <p:column>
+                                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/#{eventosR.enlace}" target="_blank">
+                                                            <i class="fa fa-search"></i>
+                                                            <span>Ver</span>
+                                                        </p:link>
+                                                        <p:spacer width="20%"/>
+                                                        <p:column rendered="#{incidencia.evidencia eq null?true:false}">
+                                                            <p:commandButton icon="fa fa-folder-open" styleClass="btn-primary"
+                                                                             oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
+                                                                <f:setPropertyActionListener target="#{administracionControl.dinamico}" value="#{eventosR}" />
+                                                            </p:commandButton>
+                                                        </p:column>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/#{eventosR.enlaceVedaElectoral}" target="_blank">
+                                                            <i class="fa fa-search"></i>
+                                                            <span>Ver</span>
+                                                        </p:link>
+                                                        <p:spacer width="20%"/>
+                                                        <p:column rendered="#{incidencia.evidencia eq null?true:false}">
+                                                            <p:commandButton icon="fa fa-folder-open" styleClass="btn-primary"
+                                                                             oncomplete="PF('dialogDocVeda').show()" process="@this" update=":frmDocVeda:pnlAgregardocVeda">
+                                                                <f:setPropertyActionListener target="#{administracionControl.dinamico}" value="#{eventosR}" />
+                                                            </p:commandButton>
+                                                        </p:column>
+                                                    </p:column>   
+                                                    <p:column style="width:32px;" class="noprint">
+                                                        <p:rowEditor />
+                                                    </p:column>
+
+                                                </p:dataTable>  
+                                            </p:outputPanel>    
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
+
+                                <p:dialog id="dialogDoc" header="Cambiar Documento" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                                    <o:form id="frmComentario"  enctype="multipart/form-data"> 
+
+                                        <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
+                                            <p:outputLabel value="Secuencia: #{administracionControl.dinamico.tituloNivel1}-
+                                                           #{administracionControl.dinamico.tituloNivel2}-
+                                                           #{administracionControl.dinamico.titulonivel3}-
+                                                           #{administracionControl.dinamico.titulonivel4}-
+                                                           #{administracionControl.dinamico.titulonivel5}" />
+
+                                            <p:outputPanel>            
+                                                <p:autoUpdate/>
+                                                <p:outputPanel >                                                      
+                                                    <p:autoUpdate/>
+                                                    <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:" />
+                                                </p:outputPanel>
+                                                <o:inputFile id="file" value="#{administracionControl.file}" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                <br/>
+                                                <h:message id="messageForFile" for="file" />
+                                                <br/>
+                                                <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{administracionControl.agregarDocumentoconsulta()}"/>
+                                            </p:outputPanel>
+                                            <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" class="btn-primary btn-block col-md-3" rendered="false"
+                                                             icon="fa fa-pencil-square-o" update="@form" process="@form" oncomplete="PF('dlgComentario').hide();"/> 
+
+                                        </p:panelGrid>
+                                        <p:autoUpdate/>
+                                    </o:form>
+                                </p:dialog> 
+
+                                <p:dialog id="dialogDocVeda" header="Cambiar Documento" widgetVar="dialogDocVeda" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                                    <o:form id="frmDocVeda"  enctype="multipart/form-data"> 
+
+                                        <p:panelGrid id="pnlAgregardocVeda" style="text-align:justify;" columns="1">
+                                            <p:outputLabel value="Secuencia: #{administracionControl.dinamico.tituloNivel1}-
+                                                           #{administracionControl.dinamico.tituloNivel2}-
+                                                           #{administracionControl.dinamico.titulonivel3}-
+                                                           #{administracionControl.dinamico.titulonivel4}-
+                                                           #{administracionControl.dinamico.titulonivel5}" />
+
+                                            <p:outputPanel>            
+                                                <p:autoUpdate/>
+                                                <p:outputPanel >                                                      
+                                                    <p:autoUpdate/>
+                                                    <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:" />
+                                                </p:outputPanel>
+                                                <o:inputFile id="file" value="#{administracionControl.file}" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                <br/>
+                                                <h:message id="messageForFile" for="file" />
+                                                <br/>
+                                                <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{administracionControl.agregarDocumentoconsultaVeda()}"/>
+                                            </p:outputPanel>
+                                            <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" class="btn-primary btn-block col-md-3" rendered="false"
+                                                             icon="fa fa-pencil-square-o" update="@form" process="@form" oncomplete="PF('dialogDocVeda').hide();"/> 
+
+                                        </p:panelGrid>
+                                        <p:autoUpdate/>
+                                    </o:form>
+                                </p:dialog> 
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </p:panel>
+        </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+</ui:composition>

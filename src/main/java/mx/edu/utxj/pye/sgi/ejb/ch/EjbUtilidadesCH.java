@@ -91,6 +91,8 @@ public interface EjbUtilidadesCH {
     public List<MenuDinamico> mostrarListaMenu(ListaPersonal personal, Integer nivel, String titulo, String tipoUsuario);
     
     public List<MenuDinamico> mostrarListaMenuDocumentacion();
+    
+    public MenuDinamico actualizaMenuDocumentacion(MenuDinamico md);
 
 ////////////////////////////////////////////////////////////////////////////////Errores
     public List<Reporteerrores> mostrarListaReporteerroreses();

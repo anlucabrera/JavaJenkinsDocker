@@ -8,6 +8,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -22,9 +23,11 @@ import javax.faces.event.ValueChangeEvent;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.PaseListaDoc;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbPresupuestacion;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
@@ -45,6 +48,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Productos;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosPK;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import mx.edu.utxj.pye.sgi.util.ServicioArchivos;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.util.Ajax;
@@ -81,6 +85,7 @@ public class AdministracionControl implements Serializable {
     
     
     @Getter    @Setter    private Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
+    @Getter    @Setter    private MenuDinamico dinamico = new MenuDinamico();
     @Getter    @Setter    private CapitulosTipos capitulosTipos = new CapitulosTipos();
     @Getter    @Setter    private Eventos eventos = new Eventos();
     @Getter    @Setter    private Productos productos = new Productos();
@@ -95,6 +100,8 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private Date fehDate = new Date();
     @Getter    @Setter    private Boolean nuevoPeriodo = Boolean.FALSE;
     @Getter    @Setter    private Boolean nuevoproducto = Boolean.FALSE;
+    @Getter    @Setter    private Part file;
+    @Getter    private String ruta;
 
     @Getter    @Setter    private EventosAreas editEventosAreas = new EventosAreas();
 
@@ -104,12 +111,14 @@ public class AdministracionControl implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.administrador.EjbAdministrador administrador;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    EjbPresupuestacion ejbPresupuestacion;
+    @EJB    EjbCarga carga;
 
     @Inject    ControladorEmpleado controladorEmpleado;
     @Inject    UtilidadesCH utilidadesCH;
     @Inject    UtilidadesPOA utilidadesPOA;
 
     @Inject LogonMB logonMB;
+    @Inject ServicioArchivos archivos;
     @Inject    UtilidadesCH uch;
     @Getter private Boolean cargado = false;
     
@@ -780,6 +789,75 @@ public class AdministracionControl implements Serializable {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void onRowEditMenuDocumentacion(RowEditEvent event) {
+        try {
+            MenuDinamico e = (MenuDinamico) event.getObject();
+            ejbUtilidadesCH.actualizaMenuDocumentacion(e);
+            Messages.addGlobalInfo("¡Operación exitosa!");
+            menuDocumentacion();
+            Ajax.update("frmEventos");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void agregarDocumentoconsulta() {
+        try {
+            String enlaceNuevo=cargaArchivo(dinamico.getEnlace());
+            System.out.println("enlaceNuevo"+enlaceNuevo);
+            dinamico.setEnlace(enlaceNuevo);
+            dinamico =ejbUtilidadesCH.actualizaMenuDocumentacion(dinamico);
+            menuDocumentacion();
+            Ajax.update("frmEventos");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void agregarDocumentoconsultaVeda() {
+        try {
+            String enlaceNuevo=cargaArchivo(dinamico.getEnlaceVedaElectoral());
+            System.out.println("enlaceNuevo"+enlaceNuevo);
+            dinamico.setEnlaceVedaElectoral(enlaceNuevo);
+            dinamico =ejbUtilidadesCH.actualizaMenuDocumentacion(dinamico);
+            menuDocumentacion();
+            Ajax.update("frmEventos");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public String cargaArchivo(String archivoElimindo) {
+        List<String> carpetas = new ArrayList<>();
+        List<String> rutaG = new ArrayList<>();
+        String[] parts = archivoElimindo.split("/");
+        if (archivoElimindo.length() != 0) {
+            archivos.eliminarArchivo("C:" + File.separator + "archivos" + File.separator + archivoElimindo);
+        }
+        carpetas = Arrays.asList(parts);
+        System.out.println("carpetas= " + carpetas);
+        String cadenaRuta = "";
+        for (int j = 0; j < (carpetas.size() - 1); j++) {
+            cadenaRuta = cadenaRuta + File.separator + carpetas.get(j);
+        }
+
+        System.out.println("cadenaRuta= " + cadenaRuta);
+
+        ruta = carga.subirEvidenciaPOA(file, new File(cadenaRuta));
+
+        System.out.println("ruta= " + ruta);
+        String[] parts2 = ruta.split("archivos");
+
+        rutaG = Arrays.asList(parts2);
+        
+        System.out.println("parts2= " + rutaG);
+
+        return rutaG.get(rutaG.size()-1);
     }
 
     public void eliminarProductos(ProductosAreasAsigados cp) {

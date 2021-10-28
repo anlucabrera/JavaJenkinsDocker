@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -31,8 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "MenuDinamico.findByModulo", query = "SELECT m FROM MenuDinamico m WHERE m.modulo = :modulo")
     , @NamedQuery(name = "MenuDinamico.findByEncabezado", query = "SELECT m FROM MenuDinamico m WHERE m.encabezado = :encabezado")
     , @NamedQuery(name = "MenuDinamico.findByTituloNivel1", query = "SELECT m FROM MenuDinamico m WHERE m.tituloNivel1 = :tituloNivel1")
-    , @NamedQuery(name = "MenuDinamico.findByIconoNivel1", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel1 = :iconoNivel1")
     , @NamedQuery(name = "MenuDinamico.findByEnlaceNivel1", query = "SELECT m FROM MenuDinamico m WHERE m.enlaceNivel1 = :enlaceNivel1")
+    , @NamedQuery(name = "MenuDinamico.findByIconoNivel1", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel1 = :iconoNivel1")
     , @NamedQuery(name = "MenuDinamico.findByTituloNivel2", query = "SELECT m FROM MenuDinamico m WHERE m.tituloNivel2 = :tituloNivel2")
     , @NamedQuery(name = "MenuDinamico.findByEnlaceNivel2", query = "SELECT m FROM MenuDinamico m WHERE m.enlaceNivel2 = :enlaceNivel2")
     , @NamedQuery(name = "MenuDinamico.findByIconoNivel2", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel2 = :iconoNivel2")
@@ -45,6 +44,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "MenuDinamico.findByTitulonivel5", query = "SELECT m FROM MenuDinamico m WHERE m.titulonivel5 = :titulonivel5")
     , @NamedQuery(name = "MenuDinamico.findByEnlacenivel5", query = "SELECT m FROM MenuDinamico m WHERE m.enlacenivel5 = :enlacenivel5")
     , @NamedQuery(name = "MenuDinamico.findByIconoNivel5", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel5 = :iconoNivel5")
+    , @NamedQuery(name = "MenuDinamico.findByEnlace", query = "SELECT m FROM MenuDinamico m WHERE m.enlace = :enlace")
+    , @NamedQuery(name = "MenuDinamico.findByEnlaceVedaElectoral", query = "SELECT m FROM MenuDinamico m WHERE m.enlaceVedaElectoral = :enlaceVedaElectoral")
     , @NamedQuery(name = "MenuDinamico.findByPersonas", query = "SELECT m FROM MenuDinamico m WHERE m.personas = :personas")
     , @NamedQuery(name = "MenuDinamico.findByAreas", query = "SELECT m FROM MenuDinamico m WHERE m.areas = :areas")
     , @NamedQuery(name = "MenuDinamico.findByCategorias", query = "SELECT m FROM MenuDinamico m WHERE m.categorias = :categorias")
@@ -64,28 +65,22 @@ public class MenuDinamico implements Serializable {
     @Size(max = 255)
     @Column(name = "encabezado")
     private String encabezado;
-    @Size(max = 50)
+    @Size(max = 255)
     @Column(name = "tituloNivel1")
     private String tituloNivel1;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1000)
-    @Column(name = "iconoNivel1")
-    private String iconoNivel1;
     @Size(max = 255)
     @Column(name = "enlaceNivel1")
     private String enlaceNivel1;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
+    @Size(max = 1000)
+    @Column(name = "iconoNivel1")
+    private String iconoNivel1;
+    @Size(max = 255)
     @Column(name = "tituloNivel2")
     private String tituloNivel2;
     @Size(max = 255)
     @Column(name = "enlaceNivel2")
     private String enlaceNivel2;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1000)
+    @Size(max = 1000)
     @Column(name = "iconoNivel2")
     private String iconoNivel2;
     @Size(max = 1000)
@@ -115,6 +110,12 @@ public class MenuDinamico implements Serializable {
     @Size(max = 255)
     @Column(name = "iconoNivel5")
     private String iconoNivel5;
+    @Size(max = 255)
+    @Column(name = "enlace")
+    private String enlace;
+    @Size(max = 255)
+    @Column(name = "enlaceVedaElectoral")
+    private String enlaceVedaElectoral;
     @Size(max = 250)
     @Column(name = "personas")
     private String personas;
@@ -146,13 +147,6 @@ public class MenuDinamico implements Serializable {
         this.modulo = modulo;
     }
 
-    public MenuDinamico(Integer modulo, String iconoNivel1, String tituloNivel2, String iconoNivel2) {
-        this.modulo = modulo;
-        this.iconoNivel1 = iconoNivel1;
-        this.tituloNivel2 = tituloNivel2;
-        this.iconoNivel2 = iconoNivel2;
-    }
-
     public Integer getModulo() {
         return modulo;
     }
@@ -177,20 +171,20 @@ public class MenuDinamico implements Serializable {
         this.tituloNivel1 = tituloNivel1;
     }
 
-    public String getIconoNivel1() {
-        return iconoNivel1;
-    }
-
-    public void setIconoNivel1(String iconoNivel1) {
-        this.iconoNivel1 = iconoNivel1;
-    }
-
     public String getEnlaceNivel1() {
         return enlaceNivel1;
     }
 
     public void setEnlaceNivel1(String enlaceNivel1) {
         this.enlaceNivel1 = enlaceNivel1;
+    }
+
+    public String getIconoNivel1() {
+        return iconoNivel1;
+    }
+
+    public void setIconoNivel1(String iconoNivel1) {
+        this.iconoNivel1 = iconoNivel1;
     }
 
     public String getTituloNivel2() {
@@ -287,6 +281,22 @@ public class MenuDinamico implements Serializable {
 
     public void setIconoNivel5(String iconoNivel5) {
         this.iconoNivel5 = iconoNivel5;
+    }
+
+    public String getEnlace() {
+        return enlace;
+    }
+
+    public void setEnlace(String enlace) {
+        this.enlace = enlace;
+    }
+
+    public String getEnlaceVedaElectoral() {
+        return enlaceVedaElectoral;
+    }
+
+    public void setEnlaceVedaElectoral(String enlaceVedaElectoral) {
+        this.enlaceVedaElectoral = enlaceVedaElectoral;
     }
 
     public String getPersonas() {

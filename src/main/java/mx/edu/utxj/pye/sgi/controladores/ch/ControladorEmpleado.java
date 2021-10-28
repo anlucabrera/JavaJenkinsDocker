@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.generico.UtilidadesAcceso;
 import mx.edu.utxj.pye.sgi.dto.ch.MenuDinamicoBD;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
@@ -100,6 +101,7 @@ public class ControladorEmpleado implements Serializable {
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     
     @Inject    UtilidadesCH uch;
+    @Inject    UtilidadesAcceso acceso;
     @Inject    UtilidadesPOA utilidadesPOA;
 
     @Inject LogonMB logonMB;
@@ -389,7 +391,11 @@ public class ControladorEmpleado implements Serializable {
                                                             MenuDinamicoBD.Nivel5 nivel5 = new MenuDinamicoBD.Nivel5();
                                                             nivel5.setTitulo(saltoLinea(n5.getTitulonivel5()));
                                                             nivel5.setIcono(n5.getIconoNivel5());
-                                                            nivel5.setEnlace(n5.getEnlacenivel5());
+                                                            if (acceso.getProcesoElectoralActivo()) {
+                                                                nivel5.setEnlace(n5.getEnlaceVedaElectoral());
+                                                            } else {
+                                                                nivel5.setEnlace(n5.getEnlace());
+                                                            }
                                                             nivel5.setEstaus(n5.getEstatus());
                                                             nivel5.setTipoenlace(n5.getTipoenlace());
                                                             nivel5s.add(nivel5);
@@ -398,7 +404,11 @@ public class ControladorEmpleado implements Serializable {
                                                     MenuDinamicoBD.Nivel4 nivel4 = new MenuDinamicoBD.Nivel4();
                                                     nivel4.setTitulo(saltoLinea(n4.getTitulonivel4()));
                                                     nivel4.setIcono(n4.getIconoNivel4());
-                                                    nivel4.setEnlace(n4.getEnlacenivel4());
+                                                    if (acceso.getProcesoElectoralActivo()) {
+                                                        nivel4.setEnlace(n4.getEnlaceVedaElectoral());
+                                                    } else {
+                                                        nivel4.setEnlace(n4.getEnlace());
+                                                    }
                                                     nivel4.setEstaus(n4.getEstatus());
                                                     nivel4.setTipoenlace(n4.getTipoenlace());
                                                     nivel4.setQuintoNivel(nivel5s);
@@ -408,7 +418,11 @@ public class ControladorEmpleado implements Serializable {
                                             MenuDinamicoBD.Nivel3 nivel3 = new MenuDinamicoBD.Nivel3();
                                             nivel3.setTitulo(saltoLinea(n3.getTitulonivel3()));
                                             nivel3.setIcono(n3.getIconoNivel3());
-                                            nivel3.setEnlace(n3.getEnlacenivel3());
+                                            if (acceso.getProcesoElectoralActivo()) {
+                                                nivel3.setEnlace(n3.getEnlaceVedaElectoral());
+                                            } else {
+                                                nivel3.setEnlace(n3.getEnlace());
+                                            }
                                             nivel3.setEstaus(n3.getEstatus());
                                             nivel3.setTipoenlace(n3.getTipoenlace());
                                             nivel3.setCuartoNivel(nivel4s);
@@ -418,7 +432,11 @@ public class ControladorEmpleado implements Serializable {
                                     MenuDinamicoBD.Nivel2 nivel2 = new MenuDinamicoBD.Nivel2();
                                     nivel2.setTitulo(saltoLinea(n2.getTituloNivel2()));
                                     nivel2.setIcono(n2.getIconoNivel2());
-                                    nivel2.setEnlace(n2.getEnlaceNivel2());
+                                    if (acceso.getProcesoElectoralActivo()) {
+                                        nivel2.setEnlace(n2.getEnlaceVedaElectoral());
+                                    } else {
+                                        nivel2.setEnlace(n2.getEnlace());
+                                    }
                                     nivel2.setEstaus(n2.getEstatus());
                                     nivel2.setTipoenlace(n2.getTipoenlace());
                                     nivel2.setTercerNivel(nivel3s);
@@ -428,7 +446,11 @@ public class ControladorEmpleado implements Serializable {
                             MenuDinamicoBD.Nivel1 nivel1 = new MenuDinamicoBD.Nivel1();
                             nivel1.setTitulo(saltoLinea(n1.getTituloNivel1()));
                             nivel1.setIcono(n1.getIconoNivel1());
-                            nivel1.setEnlace(n1.getEnlaceNivel1());
+                            if (acceso.getProcesoElectoralActivo()) {
+                                nivel1.setEnlace(n1.getEnlaceVedaElectoral());
+                            } else {
+                                nivel1.setEnlace(n1.getEnlace());
+                            }
                             nivel1.setEstaus(n1.getEstatus());
                             nivel1.setTipoenlace(n1.getTipoenlace());
                             nivel1.setSegundoNivel(nivel2s);

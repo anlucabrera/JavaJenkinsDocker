@@ -385,6 +385,7 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         }
     }
     
+    @Override
     public List<MenuDinamico> mostrarListaMenuDocumentacion(){
         TypedQuery<MenuDinamico> q = em.createQuery("SELECT m FROM MenuDinamico m WHERE m.activo=:activo AND m.tipoUsuario=:tipoUsuario AND m.tipoenlace=:tipoenlace ORDER BY m.modulo", MenuDinamico.class);
         q.setParameter("activo", true);
@@ -396,6 +397,15 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         } else {
             return pr;
         }
+    }
+
+    @Override
+    public MenuDinamico actualizaMenuDocumentacion(MenuDinamico md) {
+        facade.setEntityClass(MenuDinamico.class);
+        facade.edit(md);
+        facade.flush();
+
+        return md;
     }
     
 ////////////////////////////////////////////////////////////////////////////////Errores
