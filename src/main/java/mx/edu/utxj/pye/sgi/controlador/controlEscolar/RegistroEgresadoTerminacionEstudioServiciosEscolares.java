@@ -236,9 +236,9 @@ public class RegistroEgresadoTerminacionEstudioServiciosEscolares extends ViewSc
         String fecha = sdf1.format(r.getFechaEmision());
         gExcel.escribirDatosWordAEP(nivelSE.getValor(), nivelD.getValor(), cargoSE.getValor(), cargoD.getValor(), dtoEstudiante.getValor(), au.getValor(), s.getValor().getProyecto(), fecha, r);
         gExcel.escribirWord(carpeta2, subCarpeta, wordDestino);
-        gExcel.abrirArchivo(carpeta2, subCarpeta, wordDestino);
-        /*String ruta = gExcel.enviarLibro();
-        Ajax.oncomplete("descargar('" + gExcel.enviarLibro() + "');");*/
+        //gExcel.abrirArchivo(carpeta2, subCarpeta, wordDestino);
+        String ruta = gExcel.enviarLibro();
+        Ajax.oncomplete("descargar('" + gExcel.enviarLibro() + "');");
     }
    
    public void generarActaServicioSocial(Integer idEstudiante) throws IOException{
@@ -261,10 +261,10 @@ public class RegistroEgresadoTerminacionEstudioServiciosEscolares extends ViewSc
         String fecha = sdf1.format(r.getFechaEmision());
         gExcel.escribirDatosWordASS(nivelSE.getValor(), nivelD.getValor(), cargoSE.getValor(), cargoD.getValor(), dtoEstudiante.getValor(), au.getValor(), fecha, r);
         gExcel.escribirWord(carpeta2, subCarpeta, wordDestino);
-        gExcel.abrirArchivo(carpeta2, subCarpeta, wordDestino);
+        //gExcel.abrirArchivo(carpeta2, subCarpeta, wordDestino);
         ////System.out.println("Se obtuvo el documento word"+ rol.getNameWord());
-        /*String ruta = gExcel.enviarLibro();
-        Ajax.oncomplete("descargar('" + gExcel.enviarLibro() + "');");*/
+        String ruta = gExcel.enviarLibro();
+        Ajax.oncomplete("descargar('" + gExcel.enviarLibro() + "');");
     }
    
    public void generarCertificadoEstudios(Integer idEstudiante)throws IOException{
@@ -292,10 +292,10 @@ public class RegistroEgresadoTerminacionEstudioServiciosEscolares extends ViewSc
         gExcel.escribirDatosWordCE(nivelSE.getValor(), nivelD.getValor(), cargoSE.getValor(), cargoD.getValor(), dtoEstudiante.getValor(), au.getValor(), fecha, director.getValor(),
                 r, listCompetenciasEspecificas.getValor(), listCompetenciasGenericas.getValor());
         gExcel.escribirWord(carpeta2, subCarpeta, wordDestino);
-        gExcel.abrirArchivo(carpeta2, subCarpeta, wordDestino);
+        //gExcel.abrirArchivo(carpeta2, subCarpeta, wordDestino);
         ////System.out.println("Se obtuvo el documento word"+ rol.getNameWord());
-        /*String ruta = gExcel.enviarLibro();
-        Ajax.oncomplete("descargar('" + gExcel.enviarLibro() + "');");*/
+        String ruta = gExcel.enviarLibro();
+        Ajax.oncomplete("descargar('" + gExcel.enviarLibro() + "');");
     }
     
    public void consultarListaEstudiantes(){
