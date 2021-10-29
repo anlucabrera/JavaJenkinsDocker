@@ -30,19 +30,14 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "MenuDinamico.findByModulo", query = "SELECT m FROM MenuDinamico m WHERE m.modulo = :modulo")
     , @NamedQuery(name = "MenuDinamico.findByEncabezado", query = "SELECT m FROM MenuDinamico m WHERE m.encabezado = :encabezado")
     , @NamedQuery(name = "MenuDinamico.findByTituloNivel1", query = "SELECT m FROM MenuDinamico m WHERE m.tituloNivel1 = :tituloNivel1")
-    , @NamedQuery(name = "MenuDinamico.findByEnlaceNivel1", query = "SELECT m FROM MenuDinamico m WHERE m.enlaceNivel1 = :enlaceNivel1")
     , @NamedQuery(name = "MenuDinamico.findByIconoNivel1", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel1 = :iconoNivel1")
     , @NamedQuery(name = "MenuDinamico.findByTituloNivel2", query = "SELECT m FROM MenuDinamico m WHERE m.tituloNivel2 = :tituloNivel2")
-    , @NamedQuery(name = "MenuDinamico.findByEnlaceNivel2", query = "SELECT m FROM MenuDinamico m WHERE m.enlaceNivel2 = :enlaceNivel2")
     , @NamedQuery(name = "MenuDinamico.findByIconoNivel2", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel2 = :iconoNivel2")
     , @NamedQuery(name = "MenuDinamico.findByTitulonivel3", query = "SELECT m FROM MenuDinamico m WHERE m.titulonivel3 = :titulonivel3")
-    , @NamedQuery(name = "MenuDinamico.findByEnlacenivel3", query = "SELECT m FROM MenuDinamico m WHERE m.enlacenivel3 = :enlacenivel3")
     , @NamedQuery(name = "MenuDinamico.findByIconoNivel3", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel3 = :iconoNivel3")
     , @NamedQuery(name = "MenuDinamico.findByTitulonivel4", query = "SELECT m FROM MenuDinamico m WHERE m.titulonivel4 = :titulonivel4")
-    , @NamedQuery(name = "MenuDinamico.findByEnlacenivel4", query = "SELECT m FROM MenuDinamico m WHERE m.enlacenivel4 = :enlacenivel4")
     , @NamedQuery(name = "MenuDinamico.findByIconoNivel4", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel4 = :iconoNivel4")
     , @NamedQuery(name = "MenuDinamico.findByTitulonivel5", query = "SELECT m FROM MenuDinamico m WHERE m.titulonivel5 = :titulonivel5")
-    , @NamedQuery(name = "MenuDinamico.findByEnlacenivel5", query = "SELECT m FROM MenuDinamico m WHERE m.enlacenivel5 = :enlacenivel5")
     , @NamedQuery(name = "MenuDinamico.findByIconoNivel5", query = "SELECT m FROM MenuDinamico m WHERE m.iconoNivel5 = :iconoNivel5")
     , @NamedQuery(name = "MenuDinamico.findByEnlace", query = "SELECT m FROM MenuDinamico m WHERE m.enlace = :enlace")
     , @NamedQuery(name = "MenuDinamico.findByEnlaceVedaElectoral", query = "SELECT m FROM MenuDinamico m WHERE m.enlaceVedaElectoral = :enlaceVedaElectoral")
@@ -68,18 +63,12 @@ public class MenuDinamico implements Serializable {
     @Size(max = 255)
     @Column(name = "tituloNivel1")
     private String tituloNivel1;
-    @Size(max = 255)
-    @Column(name = "enlaceNivel1")
-    private String enlaceNivel1;
     @Size(max = 1000)
     @Column(name = "iconoNivel1")
     private String iconoNivel1;
     @Size(max = 255)
     @Column(name = "tituloNivel2")
     private String tituloNivel2;
-    @Size(max = 255)
-    @Column(name = "enlaceNivel2")
-    private String enlaceNivel2;
     @Size(max = 1000)
     @Column(name = "iconoNivel2")
     private String iconoNivel2;
@@ -87,26 +76,17 @@ public class MenuDinamico implements Serializable {
     @Column(name = "titulonivel3")
     private String titulonivel3;
     @Size(max = 1000)
-    @Column(name = "enlacenivel3")
-    private String enlacenivel3;
-    @Size(max = 1000)
     @Column(name = "iconoNivel3")
     private String iconoNivel3;
     @Size(max = 255)
     @Column(name = "titulonivel4")
     private String titulonivel4;
     @Size(max = 255)
-    @Column(name = "enlacenivel4")
-    private String enlacenivel4;
-    @Size(max = 255)
     @Column(name = "iconoNivel4")
     private String iconoNivel4;
     @Size(max = 255)
     @Column(name = "titulonivel5")
     private String titulonivel5;
-    @Size(max = 255)
-    @Column(name = "enlacenivel5")
-    private String enlacenivel5;
     @Size(max = 255)
     @Column(name = "iconoNivel5")
     private String iconoNivel5;
@@ -171,14 +151,6 @@ public class MenuDinamico implements Serializable {
         this.tituloNivel1 = tituloNivel1;
     }
 
-    public String getEnlaceNivel1() {
-        return enlaceNivel1;
-    }
-
-    public void setEnlaceNivel1(String enlaceNivel1) {
-        this.enlaceNivel1 = enlaceNivel1;
-    }
-
     public String getIconoNivel1() {
         return iconoNivel1;
     }
@@ -193,14 +165,6 @@ public class MenuDinamico implements Serializable {
 
     public void setTituloNivel2(String tituloNivel2) {
         this.tituloNivel2 = tituloNivel2;
-    }
-
-    public String getEnlaceNivel2() {
-        return enlaceNivel2;
-    }
-
-    public void setEnlaceNivel2(String enlaceNivel2) {
-        this.enlaceNivel2 = enlaceNivel2;
     }
 
     public String getIconoNivel2() {
@@ -219,14 +183,6 @@ public class MenuDinamico implements Serializable {
         this.titulonivel3 = titulonivel3;
     }
 
-    public String getEnlacenivel3() {
-        return enlacenivel3;
-    }
-
-    public void setEnlacenivel3(String enlacenivel3) {
-        this.enlacenivel3 = enlacenivel3;
-    }
-
     public String getIconoNivel3() {
         return iconoNivel3;
     }
@@ -243,14 +199,6 @@ public class MenuDinamico implements Serializable {
         this.titulonivel4 = titulonivel4;
     }
 
-    public String getEnlacenivel4() {
-        return enlacenivel4;
-    }
-
-    public void setEnlacenivel4(String enlacenivel4) {
-        this.enlacenivel4 = enlacenivel4;
-    }
-
     public String getIconoNivel4() {
         return iconoNivel4;
     }
@@ -265,14 +213,6 @@ public class MenuDinamico implements Serializable {
 
     public void setTitulonivel5(String titulonivel5) {
         this.titulonivel5 = titulonivel5;
-    }
-
-    public String getEnlacenivel5() {
-        return enlacenivel5;
-    }
-
-    public void setEnlacenivel5(String enlacenivel5) {
-        this.enlacenivel5 = enlacenivel5;
     }
 
     public String getIconoNivel5() {

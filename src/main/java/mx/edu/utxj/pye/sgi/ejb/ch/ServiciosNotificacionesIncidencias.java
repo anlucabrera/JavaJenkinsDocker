@@ -78,7 +78,7 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
 
     @Override
     public List<Incidencias> mostrarIncidenciasArea(Short area) throws Throwable {
-        TypedQuery<Incidencias> q = em.createQuery("SELECT i FROM Incidencias i JOIN i.clavePersonal cp WHERE cp.areaOperativa=:areaOperativa OR cp.areaSuperior=:areaSuperior", Incidencias.class);
+        TypedQuery<Incidencias> q = em.createQuery("SELECT i FROM Incidencias i JOIN i.clavePersonal cp WHERE cp.areaOperativa=:areaOperativa OR cp.areaSuperior=:areaSuperior ORDER BY i.incidenciaID DESC", Incidencias.class);
         q.setParameter("areaOperativa", area);
         q.setParameter("areaSuperior", area);
         List<Incidencias> pr = q.getResultList();
@@ -109,7 +109,7 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
 
     @Override
     public List<Incidencias> mostrarIncidencias(Integer clave) throws Throwable {
-        TypedQuery<Incidencias> q = em.createQuery("SELECT i FROM Incidencias i JOIN i.clavePersonal cp WHERE cp.clave = :clave", Incidencias.class);
+        TypedQuery<Incidencias> q = em.createQuery("SELECT i FROM Incidencias i JOIN i.clavePersonal cp WHERE cp.clave = :clave ORDER BY i.incidenciaID DESC", Incidencias.class);
         q.setParameter("clave", clave);
         List<Incidencias> pr = q.getResultList();
         return pr;
@@ -177,7 +177,7 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
 
     @Override
     public List<Incapacidad> mostrarIncapacidad(Integer clave) throws Throwable {
-        TypedQuery<Incapacidad> q = em.createQuery("SELECT i FROM Incapacidad i JOIN i.clavePersonal cp WHERE cp.clave = :clave", Incapacidad.class);
+        TypedQuery<Incapacidad> q = em.createQuery("SELECT i FROM Incapacidad i JOIN i.clavePersonal cp WHERE cp.clave = :clave ORDER BY i.incapacidad DESC", Incapacidad.class);
         q.setParameter("clave", clave);
         List<Incapacidad> pr = q.getResultList();
         return pr;
@@ -234,7 +234,7 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
 
     @Override
     public List<Cuidados> mostrarCuidados(Integer clave) throws Throwable {
-        TypedQuery<Cuidados> q = em.createQuery("SELECT c FROM Cuidados c JOIN c.personal cp WHERE cp.clave = :clave", Cuidados.class);
+        TypedQuery<Cuidados> q = em.createQuery("SELECT c FROM Cuidados c JOIN c.personal cp WHERE cp.clave = :clave ORDER BY c.cuidados DESC", Cuidados.class);
         q.setParameter("clave", clave);
         List<Cuidados> pr = q.getResultList();
         return pr;

@@ -30,16 +30,12 @@ public class EjbOrganigrama {
     @Getter @Setter Integer idArApoRec=0;
     @Getter @Setter List<PersonalOrganigrama> organigrama = new ArrayList<>();
     
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
-    private EntityManager emch;
-    @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb-pro_ejb_1.0PU")
-    private EntityManager empy;
-    
     @EJB    Facade facade;    
-    
+    private EntityManager em;
+
     @PostConstruct
-    public void init(){
-//        obtenerPersonal();
+    public void init() {
+        em = facade.getEntityManager();
     }
 
     @GET
@@ -52,7 +48,7 @@ public class EjbOrganigrama {
         List<ListaPersonal> direcPersonals = new ArrayList<>();     
         direcPersonals.clear();
         idOrganigrama=0;        
-        TypedQuery<AreasUniversidad> q = empy.createQuery("SELECT a FROM AreasUniversidad a INNER JOIN a.categoria c WHERE a.vigente=:vigente AND c.categoria<=:categoria ORDER BY a.area", AreasUniversidad.class);
+        TypedQuery<AreasUniversidad> q = em.createQuery("SELECT a FROM AreasUniversidad a INNER JOIN a.categoria c WHERE a.vigente=:vigente AND c.categoria<=:categoria ORDER BY a.area", AreasUniversidad.class);
         q.setParameter("vigente", "1");
         q.setParameter("categoria", 8);
         aus=q.getResultList();
@@ -73,9 +69,9 @@ public class EjbOrganigrama {
             ListaPersonal l = new ListaPersonal();
             Personal p = new Personal();
             if (ar.getResponsable() != 0) {
-                p=emch.find(Personal.class, ar.getResponsable());
+                p=em.find(Personal.class, ar.getResponsable());
                 if(!p.getStatus().equals('B')){
-                    l = emch.find(ListaPersonal.class, ar.getResponsable());
+                    l = em.find(ListaPersonal.class, ar.getResponsable());
                 }else{
                     l=new ListaPersonal();
                     l.setClave(0);
@@ -113,15 +109,15 @@ public class EjbOrganigrama {
         List<ListaPersonal> adm = new ArrayList<>();
         List<ListaPersonal> doc = new ArrayList<>();
     
-        TypedQuery<ListaPersonal> c = emch.createQuery("SELECT l FROM ListaPersonal l WHERE l.actividad=:actividad ORDER BY l.areaOperativa ", ListaPersonal.class);c.setParameter("actividad", 1);
-        TypedQuery<ListaPersonal> d = emch.createQuery("SELECT l FROM ListaPersonal l WHERE l.actividad=:actividad ORDER BY l.areaOperativa ", ListaPersonal.class);d.setParameter("actividad", 3);
+        TypedQuery<ListaPersonal> c = em.createQuery("SELECT l FROM ListaPersonal l WHERE l.actividad=:actividad ORDER BY l.areaOperativa ", ListaPersonal.class);c.setParameter("actividad", 1);
+        TypedQuery<ListaPersonal> d = em.createQuery("SELECT l FROM ListaPersonal l WHERE l.actividad=:actividad ORDER BY l.areaOperativa ", ListaPersonal.class);d.setParameter("actividad", 3);
         
         adm = c.getResultList();
         doc = d.getResultList();
         
         adm.forEach((l) -> {
             if (!direcPersonals.contains(l)) {
-                AreasUniversidad ar = empy.find(AreasUniversidad.class, l.getAreaOperativa());
+                AreasUniversidad ar = em.find(AreasUniversidad.class, l.getAreaOperativa());
                 if (ar.getCategoria().getCategoria() <= 8) {
                     if (ar.getArea() == 1) {
                         organigrama.add(new PersonalOrganigrama(idOrganigrama, l.getClave(), idArApoRec, l.getNombre(), l.getCategoriaOperativaNombre(), "#BDBFC1", 2));
