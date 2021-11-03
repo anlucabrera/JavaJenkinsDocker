@@ -385,6 +385,44 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         }
     }
     
+     @Override
+    public List<MenuDinamico> mostrarListaTitulosMenu(ListaPersonal personal, Integer nivel, String titulo, String tipoUsuario) {
+        TypedQuery<MenuDinamico> q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tipoUsuario=:tipoUsuario AND m.tituloNivel1 !='' GROUP BY m.encabezado ORDER BY m.modulo", MenuDinamico.class);
+        switch (nivel) {
+            case 1:
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel1!='' AND m.tipoUsuario=:tipoUsuario AND m.encabezado=:titulo AND m.tituloNivel2 !='' GROUP BY m.tituloNivel1 ORDER BY m.modulo", MenuDinamico.class);
+                break;
+            case 2:
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tituloNivel2!='' AND m.tipoUsuario=:tipoUsuario AND m.tituloNivel1=:titulo AND m.titulonivel3 !='' GROUP BY m.tituloNivel2 ORDER BY m.modulo", MenuDinamico.class);
+                break;
+            case 3:
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.titulonivel3!='' AND m.tipoUsuario=:tipoUsuario AND m.tituloNivel2=:titulo AND m.titulonivel4 !='' GROUP BY m.titulonivel3 ORDER BY m.modulo", MenuDinamico.class);
+                break;
+            case 4:
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.titulonivel4!='' AND m.tipoUsuario=:tipoUsuario AND m.titulonivel3=:titulo AND m.titulonivel5 !='' GROUP BY m.titulonivel4 ORDER BY m.modulo", MenuDinamico.class);
+                break;
+            case 5:
+                q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.titulonivel5!='' AND m.tipoUsuario=:tipoUsuario AND m.titulonivel4=:titulo GROUP BY m.titulonivel5 ORDER BY m.modulo", MenuDinamico.class);
+                break;
+        }
+        q.setParameter("personas", String.valueOf(personal.getClave()));
+        q.setParameter("areas", String.valueOf(personal.getAreaOperativa()));
+        q.setParameter("categorias", String.valueOf(personal.getCategoriaOperativa()));
+        q.setParameter("actividades", String.valueOf(personal.getActividad()));
+        q.setParameter("activo", true);
+        q.setParameter("tipoUsuario", tipoUsuario);
+        if (nivel != 0) {
+            q.setParameter("titulo", titulo);
+        }
+        
+        List<MenuDinamico> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return pr;
+        }
+    }
+    
     @Override
     public List<MenuDinamico> mostrarListaMenuDocumentacion(){
         TypedQuery<MenuDinamico> q = em.createQuery("SELECT m FROM MenuDinamico m WHERE m.activo=:activo AND m.tipoUsuario=:tipoUsuario AND m.tipoenlace=:tipoenlace ORDER BY m.modulo", MenuDinamico.class);

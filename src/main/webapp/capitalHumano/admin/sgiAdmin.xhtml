@@ -68,153 +68,344 @@
                                         </p:link>
                                     </div>      
                                 </div>
-                                <p:tabView>
-                                    <p:tab title="Eventos Generales" rendered="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
-                                        <h:form id="frmEventos"> 
-                                            <p:outputPanel id="incidenciasReporte">
-                                                <p:dataTable id="tblActividades"  value="#{administracionControl.menuDinamicos}"  var="eventosR"
-                                                             editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+                                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 ?true:(controladorEmpleado.nuevoOBJListaPersonal.clave eq 409 ?true:false)}">
+                                    <h:form id="frmEventos"  enctype="multipart/form-data" > 
+                                        <p:panel header="Registro de documentos" class="box box-primary">
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-6 col-md-3 col-lg-3">
+                                                                                <p:outputLabel for="tn1"  value="Titulo Nivel 1" />
+                                                                                <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="tn1"  
+                                                                                                 valueChangeListener="#{administracionControl.asignaTitulo}" widgetVar="tn1" value="#{administracionControl.titulon1}" >
+                                                                                    <f:selectItem itemValue="No" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="Nuevo" itemLabel="Nuevo"/>
+                                                                                    <f:selectItems value="#{administracionControl.titulosn1}" var="ti1" itemValue="#{ti1}" itemLabel="#{ti1}" />
+                                                                                    <p:ajax update="@this" global="false"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="tn1" display="tooltip" />
+                                                                            </div> 
+                                                                            <p:outputPanel >
+                                                                                <p:autoUpdate/>
+                                                                                <div class="col-sm-6 col-md-3 col-lg-3" style="#{administracionControl.titulon1 eq 'Nuevo'? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                         
+                                                                                    <p:outputLabel for="tn1N"  value="Nuevo Titulo Nivel 1" />
+                                                                                    <p:inputText id="tn1N" class="form-control" value="#{administracionControl.menuDinamico.tituloNivel1}" valueChangeListener="#{administracionControl.asignaTitulo}" style="height:100%; width: 100%;" >
+                                                                                        <p:ajax update="tn1N"/>
+                                                                                    </p:inputText>
+                                                                                    <p:message for="tn1N" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <p:outputPanel >
+                                                                                <p:autoUpdate/>
+                                                                                <div class="col-sm-6 col-md-3 col-lg-3">
+                                                                                    <p:outputLabel for="tn2"  value="Titulo Nivel 2" />
+                                                                                    <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="tn2"  
+                                                                                                     valueChangeListener="#{administracionControl.asignaTitulo}" 
+                                                                                                     widgetVar="tn2" value="#{administracionControl.titulon2}" 
+                                                                                                     disabled="#{administracionControl.titulon1 eq 'No'? true:false}">
+                                                                                        <f:selectItem itemValue="No" itemLabel="No Aplica"/>
+                                                                                        <f:selectItem itemValue="Nuevo" itemLabel="Nuevo"/>
+                                                                                        <f:selectItems value="#{administracionControl.titulosn2}" var="ti1" itemValue="#{ti1}" itemLabel="#{ti1}" />
+                                                                                        <p:ajax update="@this" global="false"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="tn2" display="tooltip" />
+                                                                                </div> 
+                                                                                <div class="col-sm-6 col-md-3 col-lg-3" style="#{administracionControl.titulon2 eq 'Nuevo'? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                        
+                                                                                    <p:outputLabel for="tn2N"  value="Nuevo Titulo Nivel 2" />
+                                                                                    <p:inputText id="tn2N" class="form-control" value="#{administracionControl.menuDinamico.tituloNivel2}" valueChangeListener="#{administracionControl.asignaTitulo}" style="height:100%; width: 100%;" >
+                                                                                        <p:ajax update="tn2N"/>
+                                                                                    </p:inputText>
+                                                                                    <p:message for="tn2N" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <p:outputPanel >
+                                                                                <p:autoUpdate/>
+                                                                                <div class="col-sm-6 col-md-3 col-lg-3">
+                                                                                    <p:outputLabel for="tn3"  value="Titulo Nivel 3" />
+                                                                                    <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="tn3"  
+                                                                                                     valueChangeListener="#{administracionControl.asignaTitulo}" 
+                                                                                                     widgetVar="tn3" value="#{administracionControl.titulon3}" 
+                                                                                                     disabled="#{administracionControl.titulon2 eq 'No'? true:false}">
+                                                                                        <f:selectItem itemValue="No" itemLabel="No Aplica"/>
+                                                                                        <f:selectItem itemValue="Nuevo" itemLabel="Nuevo"/>
+                                                                                        <f:selectItems value="#{administracionControl.titulosn3}" var="ti1" itemValue="#{ti1}" itemLabel="#{ti1}" />
+                                                                                        <p:ajax update="@this" global="false"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="tn3" display="tooltip" />
+                                                                                </div> 
+                                                                                <div class="col-sm-6 col-md-3 col-lg-3" style="#{administracionControl.titulon3 eq 'Nuevo'? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                        
+                                                                                    <p:outputLabel for="tn3N"  value="Nuevo Titulo Nivel 3" />
+                                                                                    <p:inputText id="tn3N" class="form-control" value="#{administracionControl.menuDinamico.titulonivel3}" valueChangeListener="#{administracionControl.asignaTitulo}" style="height:100%; width: 100%;" >
+                                                                                        <p:ajax update="tn3N"/>
+                                                                                    </p:inputText>
+                                                                                    <p:message for="tn3N" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                            <p:outputPanel >
+                                                                                <p:autoUpdate/>
+                                                                                <div class="col-sm-6 col-md-3 col-lg-3">
+                                                                                    <p:outputLabel for="tn4"  value="Titulo Nivel 4" />
+                                                                                    <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="tn4"  
+                                                                                                     valueChangeListener="#{administracionControl.asignaTitulo}" 
+                                                                                                     widgetVar="tn4" value="#{administracionControl.titulon4}" 
+                                                                                                     disabled="#{administracionControl.titulon3 eq 'No'? true:false}">
+                                                                                        <f:selectItem itemValue="No" itemLabel="No Aplica"/>
+                                                                                        <f:selectItem itemValue="Nuevo" itemLabel="Nuevo"/>
+                                                                                        <f:selectItems value="#{administracionControl.titulosn4}" var="ti1" itemValue="#{ti1}" itemLabel="#{ti1}" />
+                                                                                        <p:ajax update="@this" global="false"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="tn4" display="tooltip" />
+                                                                                </div> 
+                                                                                <div class="col-sm-6 col-md-3 col-lg-3" style="#{administracionControl.titulon4 eq 'Nuevo'? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                        
+                                                                                    <p:outputLabel for="tn4N"  value="Nuevo Titulo Nivel 4" />
+                                                                                    <p:inputText id="tn4N" class="form-control" value="#{administracionControl.menuDinamico.titulonivel4}" valueChangeListener="#{administracionControl.asignaTitulo}" style="height:100%; width: 100%;" >
+                                                                                        <p:ajax update="tn4N"/>
+                                                                                    </p:inputText>
+                                                                                    <p:message for="tn4N" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <p:outputPanel >
+                                                                                <p:autoUpdate/>
+                                                                                <div class="col-sm-6 col-md-3 col-lg-3">
+                                                                                    <p:outputLabel for="tn5"  value="Titulo Nivel 5" />
+                                                                                    <p:selectOneMenu filter="true" filterMatchMode="contains" required="true" requiredMessage="Es necesario que la actividad cuente con una unidad de medida" id="tn5"  
+                                                                                                     valueChangeListener="#{administracionControl.asignaTitulo}" 
+                                                                                                     widgetVar="tn5" value="#{administracionControl.titulon5}" 
+                                                                                                     disabled="#{administracionControl.titulon4 eq 'No'? true:false}">
+                                                                                        <f:selectItem itemValue="No" itemLabel="No Aplica"/>
+                                                                                        <f:selectItem itemValue="Nuevo" itemLabel="Nuevo"/>
+                                                                                        <f:selectItems value="#{administracionControl.titulosn5}" var="ti1" itemValue="#{ti1}" itemLabel="#{ti1}" />
+                                                                                        <p:ajax update="@this" global="false"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="tn5" display="tooltip" />
+                                                                                </div> 
+                                                                                <div class="col-sm-6 col-md-3 col-lg-3" style="#{administracionControl.titulon5 eq 'Nuevo'? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                        
+                                                                                    <p:outputLabel for="tn5N"  value="Nuevo Titulo Nivel 5" />
+                                                                                    <p:inputText id="tn5N" class="form-control" value="#{administracionControl.menuDinamico.titulonivel5}" valueChangeListener="#{administracionControl.asignaTitulo}" style="height:100%; width: 100%;" >
+                                                                                        <p:ajax update="tn5N"/>
+                                                                                    </p:inputText>
+                                                                                    <p:message for="tn5N" display="tooltip" />
+                                                                                    <hr/>
+                                                                                </div>
+                                                                            </p:outputPanel>
+                                                                        </div>
+                                                                    </div>
 
-                                                    <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditMenuDocumentacion}" update="tblActividades" process="@this"/>
-                                                    <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblActividades" />
+                                                                    <div class="row">
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                            <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large; color: #dd4b39" value="Documento de consuta" />
+                                                                            <p:outputPanel>
+                                                                                <p:autoUpdate/>
+                                                                                <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:#{administracionControl.menuDinamico.enlace eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                            </p:outputPanel>
+                                                                            <o:inputFile id="fileR" value="#{administracionControl.fileRegistro}" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                            <br/>
+                                                                            <h:message id="messageForFile" for="fileR" />
+                                                                            <br/>
+                                                                            <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{administracionControl.agregarDocumentoConsulta()}"/>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr/>
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{administracionControl.creaApartadoMenu()}" 
+                                                                                                 icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" oncomplete="PF('frmListaIncidencias')update();"/> 
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:panel>
+                                        <br/>
+                                        <br/>
+                                        <p:outputPanel id="incidenciasReporte">
+                                            <p:dataTable id="tblActividades"  value="#{administracionControl.menuDinamicos}"  var="eventosR"
+                                                         editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
 
-                                                    <p:columnGroup type="header">
-                                                        <p:row class="success">
-                                                            <p:column headerText="Titulo Nivel 1" style="width: 15%;"/> 
-                                                            <p:column headerText="Titulo Nivel 2" style="width: 15%;"/> 
-                                                            <p:column headerText="Titulo Nivel 3" style="width: 15%;"/> 
-                                                            <p:column headerText="Titulo Nivel 4" style="width: 15%;"/> 
-                                                            <p:column headerText="Titulo Nivel 5" style="width: 15%;"/> 
-                                                            <p:column headerText="Enlace" style="width: 10%;"/> 
-                                                            <p:column headerText="Enlace para veda electoral" style="width: 10%;"/> 
-                                                        </p:row>
-                                                    </p:columnGroup>
+                                                <p:ajax event="rowEdit" listener="#{administracionControl.onRowEditMenuDocumentacion}" update="tblActividades" process="@this"/>
+                                                <p:ajax event="rowEditCancel" listener="#{administracionControl.onRowCancel}" update="tblActividades" />
 
-                                                    <p:column>
-                                                        <p:cellEditor>
-                                                            <f:facet name="output"> <h:outputText value="#{eventosR.tituloNivel1}" /></f:facet>
-                                                            <f:facet name="input"><p:inputText value="#{eventosR.tituloNivel1}"/></f:facet>
-                                                        </p:cellEditor>
-                                                    </p:column> 
-                                                    <p:column>
-                                                        <p:cellEditor>
-                                                            <f:facet name="output"> <h:outputText value="#{eventosR.tituloNivel2}" /></f:facet>
-                                                            <f:facet name="input"><p:inputText value="#{eventosR.tituloNivel2}"/></f:facet>
-                                                        </p:cellEditor>
-                                                    </p:column> 
-                                                    <p:column>
-                                                        <p:cellEditor>
-                                                            <f:facet name="output"> <h:outputText value="#{eventosR.titulonivel3}" /></f:facet>
-                                                            <f:facet name="input"><p:inputText value="#{eventosR.titulonivel3}"/></f:facet>
-                                                        </p:cellEditor>
-                                                    </p:column> 
-                                                    <p:column>
-                                                        <p:cellEditor>
-                                                            <f:facet name="output"> <h:outputText value="#{eventosR.titulonivel4}" /></f:facet>
-                                                            <f:facet name="input"><p:inputText value="#{eventosR.titulonivel4}"/></f:facet>
-                                                        </p:cellEditor>
-                                                    </p:column> 
-                                                    <p:column>
-                                                        <p:cellEditor>
-                                                            <f:facet name="output"> <h:outputText value="#{eventosR.titulonivel5}" /></f:facet>
-                                                            <f:facet name="input"><p:inputText value="#{eventosR.titulonivel5}"/></f:facet>
-                                                        </p:cellEditor>
-                                                    </p:column> 
-                                                    <p:column>
-                                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/#{eventosR.enlace}" target="_blank">
-                                                            <i class="fa fa-search"></i>
-                                                            <span>Ver</span>
-                                                        </p:link>
-                                                        <p:spacer width="20%"/>
-                                                        <p:column rendered="#{incidencia.evidencia eq null?true:false}">
-                                                            <p:commandButton icon="fa fa-folder-open" styleClass="btn-primary"
-                                                                             oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
-                                                                <f:setPropertyActionListener target="#{administracionControl.dinamico}" value="#{eventosR}" />
-                                                            </p:commandButton>
-                                                        </p:column>
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column headerText="Titulo Nivel 1" style="width: 10%;"/> 
+                                                        <p:column headerText="Titulo Nivel 2" style="width: 10%;"/> 
+                                                        <p:column headerText="Titulo Nivel 3" style="width: 15%;"/> 
+                                                        <p:column headerText="Titulo Nivel 4" style="width: 15%;"/> 
+                                                        <p:column headerText="Titulo Nivel 5" style="width: 15%;"/> 
+                                                        <p:column headerText="Estatus" style="width: 5%;"/> 
+                                                        <p:column headerText="Activo" style="width: 5%;"/> 
+                                                        <p:column headerText="Enlace" style="width: 10%;"/> 
+                                                        <p:column headerText="Enlace para veda electoral" style="width: 10%;"/> 
+                                                    </p:row>
+                                                </p:columnGroup>
+
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{eventosR.tituloNivel1}" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="#{eventosR.tituloNivel1}"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{eventosR.tituloNivel2}" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="#{eventosR.tituloNivel2}"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{eventosR.titulonivel3}" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="#{eventosR.titulonivel3}"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{eventosR.titulonivel4}" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="#{eventosR.titulonivel4}"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{eventosR.titulonivel5}" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="#{eventosR.titulonivel5}"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{eventosR.estatus}" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="#{eventosR.estatus}"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+                                                <p:column>
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputText value="#{eventosR.activo}" /></f:facet>
+                                                        <f:facet name="input"><p:inputText value="#{eventosR.activo}"/></f:facet>
+                                                    </p:cellEditor>
+                                                </p:column> 
+
+                                                <p:column>
+                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/#{eventosR.enlace}" target="_blank">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                    <p:spacer width="20%"/>
+                                                    <p:column rendered="#{incidencia.evidencia eq null?true:false}">
+                                                        <p:commandButton icon="fa fa-folder-open" styleClass="btn-primary"
+                                                                         oncomplete="PF('dlgComentario').show()" process="@this" update=":frmComentario:pnlAgregarComentario">
+                                                            <f:setPropertyActionListener target="#{administracionControl.dinamico}" value="#{eventosR}" />
+                                                        </p:commandButton>
                                                     </p:column>
-                                                    <p:column>
-                                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/#{eventosR.enlaceVedaElectoral}" target="_blank">
-                                                            <i class="fa fa-search"></i>
-                                                            <span>Ver</span>
-                                                        </p:link>
-                                                        <p:spacer width="20%"/>
-                                                        <p:column rendered="#{incidencia.evidencia eq null?true:false}">
-                                                            <p:commandButton icon="fa fa-folder-open" styleClass="btn-primary"
-                                                                             oncomplete="PF('dialogDocVeda').show()" process="@this" update=":frmDocVeda:pnlAgregardocVeda">
-                                                                <f:setPropertyActionListener target="#{administracionControl.dinamico}" value="#{eventosR}" />
-                                                            </p:commandButton>
-                                                        </p:column>
-                                                    </p:column>   
-                                                    <p:column style="width:32px;" class="noprint">
-                                                        <p:rowEditor />
+                                                </p:column>
+                                                <p:column>
+                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/#{eventosR.enlaceVedaElectoral}" target="_blank">
+                                                        <i class="fa fa-search"></i>
+                                                        <span>Ver</span>
+                                                    </p:link>
+                                                    <p:spacer width="20%"/>
+                                                    <p:column rendered="#{incidencia.evidencia eq null?true:false}">
+                                                        <p:commandButton icon="fa fa-folder-open" styleClass="btn-primary"
+                                                                         oncomplete="PF('dialogDocVeda').show()" process="@this" update=":frmDocVeda:pnlAgregardocVeda">
+                                                            <f:setPropertyActionListener target="#{administracionControl.dinamico}" value="#{eventosR}" />
+                                                        </p:commandButton>
                                                     </p:column>
+                                                </p:column>   
+                                                <p:column style="width:32px;" class="noprint">
+                                                    <p:rowEditor />
+                                                </p:column>
 
-                                                </p:dataTable>  
-                                            </p:outputPanel>    
-                                        </h:form>
-                                    </p:tab>
-                                </p:tabView>
+                                            </p:dataTable>  
+                                        </p:outputPanel>    
+                                    </h:form>
 
-                                <p:dialog id="dialogDoc" header="Cambiar Documento" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
-                                    <o:form id="frmComentario"  enctype="multipart/form-data"> 
+                                    <p:dialog id="dialogDoc" header="Cambiar Documento" widgetVar="dlgComentario" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                                        <o:form id="frmComentario"  enctype="multipart/form-data"> 
 
-                                        <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
-                                            <p:outputLabel value="Secuencia: #{administracionControl.dinamico.tituloNivel1}-
-                                                           #{administracionControl.dinamico.tituloNivel2}-
-                                                           #{administracionControl.dinamico.titulonivel3}-
-                                                           #{administracionControl.dinamico.titulonivel4}-
-                                                           #{administracionControl.dinamico.titulonivel5}" />
+                                            <p:panelGrid id="pnlAgregarComentario" style="text-align:justify;" columns="1">
+                                                <p:outputLabel value="Secuencia: #{administracionControl.dinamico.tituloNivel1}-
+                                                               #{administracionControl.dinamico.tituloNivel2}-
+                                                               #{administracionControl.dinamico.titulonivel3}-
+                                                               #{administracionControl.dinamico.titulonivel4}-
+                                                               #{administracionControl.dinamico.titulonivel5}" />
 
-                                            <p:outputPanel>            
-                                                <p:autoUpdate/>
-                                                <p:outputPanel >                                                      
+                                                <p:outputPanel>            
                                                     <p:autoUpdate/>
-                                                    <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:" />
+                                                    <p:outputPanel >                                                      
+                                                        <p:autoUpdate/>
+                                                        <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:" />
+                                                    </p:outputPanel>
+                                                    <o:inputFile id="fileA" value="#{administracionControl.file}" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                    <br/>
+                                                    <h:message id="messageForFile" for="fileA" />
+                                                    <br/>
+                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{administracionControl.agregarDocumentoconsulta()}"/>
                                                 </p:outputPanel>
-                                                <o:inputFile id="file" value="#{administracionControl.file}" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                                                <br/>
-                                                <h:message id="messageForFile" for="file" />
-                                                <br/>
-                                                <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{administracionControl.agregarDocumentoconsulta()}"/>
-                                            </p:outputPanel>
-                                            <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" class="btn-primary btn-block col-md-3" rendered="false"
-                                                             icon="fa fa-pencil-square-o" update="@form" process="@form" oncomplete="PF('dlgComentario').hide();"/> 
+                                                <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" class="btn-primary btn-block col-md-3" rendered="false"
+                                                                 icon="fa fa-pencil-square-o" update="@form" process="@form" oncomplete="PF('dlgComentario').hide();"/> 
 
-                                        </p:panelGrid>
-                                        <p:autoUpdate/>
-                                    </o:form>
-                                </p:dialog> 
+                                            </p:panelGrid>
+                                            <p:autoUpdate/>
+                                        </o:form>
+                                    </p:dialog> 
 
-                                <p:dialog id="dialogDocVeda" header="Cambiar Documento" widgetVar="dialogDocVeda" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
-                                    <o:form id="frmDocVeda"  enctype="multipart/form-data"> 
+                                    <p:dialog id="dialogDocVeda" header="Cambiar Documento" widgetVar="dialogDocVeda" modal="true" showEffect="fade" hideEffect="fade" resizable="false" width="650" closeOnEscape="true">
+                                        <o:form id="frmDocVeda"  enctype="multipart/form-data"> 
 
-                                        <p:panelGrid id="pnlAgregardocVeda" style="text-align:justify;" columns="1">
-                                            <p:outputLabel value="Secuencia: #{administracionControl.dinamico.tituloNivel1}-
-                                                           #{administracionControl.dinamico.tituloNivel2}-
-                                                           #{administracionControl.dinamico.titulonivel3}-
-                                                           #{administracionControl.dinamico.titulonivel4}-
-                                                           #{administracionControl.dinamico.titulonivel5}" />
+                                            <p:panelGrid id="pnlAgregardocVeda" style="text-align:justify;" columns="1">
+                                                <p:outputLabel value="Secuencia: #{administracionControl.dinamico.tituloNivel1}-
+                                                               #{administracionControl.dinamico.tituloNivel2}-
+                                                               #{administracionControl.dinamico.titulonivel3}-
+                                                               #{administracionControl.dinamico.titulonivel4}-
+                                                               #{administracionControl.dinamico.titulonivel5}" />
 
-                                            <p:outputPanel>            
-                                                <p:autoUpdate/>
-                                                <p:outputPanel >                                                      
+                                                <p:outputPanel>            
                                                     <p:autoUpdate/>
-                                                    <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:" />
+                                                    <p:outputPanel >                                                      
+                                                        <p:autoUpdate/>
+                                                        <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:" />
+                                                    </p:outputPanel>
+                                                    <o:inputFile id="fileAv" value="#{administracionControl.file}" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                    <br/>
+                                                    <h:message id="messageForFile" for="fileAv" />
+                                                    <br/>
+                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{administracionControl.agregarDocumentoconsultaVeda()}"/>
                                                 </p:outputPanel>
-                                                <o:inputFile id="file" value="#{administracionControl.file}" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                                                <br/>
-                                                <h:message id="messageForFile" for="file" />
-                                                <br/>
-                                                <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir archivo" class="btn-primary btn-info" action="#{administracionControl.agregarDocumentoconsultaVeda()}"/>
-                                            </p:outputPanel>
-                                            <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" class="btn-primary btn-block col-md-3" rendered="false"
-                                                             icon="fa fa-pencil-square-o" update="@form" process="@form" oncomplete="PF('dialogDocVeda').hide();"/> 
+                                                <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" class="btn-primary btn-block col-md-3" rendered="false"
+                                                                 icon="fa fa-pencil-square-o" update="@form" process="@form" oncomplete="PF('dialogDocVeda').hide();"/> 
 
-                                        </p:panelGrid>
-                                        <p:autoUpdate/>
-                                    </o:form>
-                                </p:dialog> 
+                                            </p:panelGrid>
+                                            <p:autoUpdate/>
+                                        </o:form>
+                                    </p:dialog> 
+
+                                </c:if>
                             </div>
                         </div>
                     </div>

@@ -64,6 +64,14 @@ public class AdministracionControl implements Serializable {
     private static final long serialVersionUID = 1736039029781733869L;
 
     @Getter    @Setter    private List<String> estatus = new ArrayList<>();
+    
+    @Getter    @Setter    private List<String> titulosn1 = new ArrayList<>();
+    @Getter    @Setter    private List<String> titulosn2 = new ArrayList<>();
+    @Getter    @Setter    private List<String> titulosn3 = new ArrayList<>();
+    @Getter    @Setter    private List<String> titulosn4 = new ArrayList<>();
+    @Getter    @Setter    private List<String> titulosn5 = new ArrayList<>();
+    @Getter    @Setter    private List<String> titulos = new ArrayList<>();
+    
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Modulosregistro> modulosregistros = new ArrayList<>();
     @Getter    @Setter    private List<Eventos> eventoses = new ArrayList<>();
@@ -84,8 +92,15 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private List<MenuDinamico> menuDinamicos = new ArrayList<>();
     
     
+    @Getter    @Setter    private String titulon1 ="No";
+    @Getter    @Setter    private String titulon2 ="No";
+    @Getter    @Setter    private String titulon3 ="No";
+    @Getter    @Setter    private String titulon4 ="No";
+    @Getter    @Setter    private String titulon5 ="No";
+    
     @Getter    @Setter    private Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
     @Getter    @Setter    private MenuDinamico dinamico = new MenuDinamico();
+    @Getter    @Setter    private MenuDinamico menuDinamico = new MenuDinamico();
     @Getter    @Setter    private CapitulosTipos capitulosTipos = new CapitulosTipos();
     @Getter    @Setter    private Eventos eventos = new Eventos();
     @Getter    @Setter    private Productos productos = new Productos();
@@ -101,6 +116,7 @@ public class AdministracionControl implements Serializable {
     @Getter    @Setter    private Boolean nuevoPeriodo = Boolean.FALSE;
     @Getter    @Setter    private Boolean nuevoproducto = Boolean.FALSE;
     @Getter    @Setter    private Part file;
+    @Getter    @Setter    private Part fileRegistro;
     @Getter    private String ruta;
 
     @Getter    @Setter    private EventosAreas editEventosAreas = new EventosAreas();
@@ -253,6 +269,11 @@ public class AdministracionControl implements Serializable {
             menuDinamicos = new ArrayList<>();
             menuDinamicos.clear();
             menuDinamicos = ejbUtilidadesCH.mostrarListaMenuDocumentacion();
+            menuDinamicos.forEach((t) -> {
+                if(!titulosn1.contains(t.getTituloNivel1())){
+                    titulosn1.add(t.getTituloNivel1());
+                }
+            });
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(PaseListaDoc.class.getName()).log(Level.SEVERE, null, ex);
@@ -807,7 +828,6 @@ public class AdministracionControl implements Serializable {
     public void agregarDocumentoconsulta() {
         try {
             String enlaceNuevo=cargaArchivo(dinamico.getEnlace());
-            System.out.println("enlaceNuevo"+enlaceNuevo);
             dinamico.setEnlace(enlaceNuevo);
             dinamico =ejbUtilidadesCH.actualizaMenuDocumentacion(dinamico);
             menuDocumentacion();
@@ -821,7 +841,6 @@ public class AdministracionControl implements Serializable {
     public void agregarDocumentoconsultaVeda() {
         try {
             String enlaceNuevo=cargaArchivo(dinamico.getEnlaceVedaElectoral());
-            System.out.println("enlaceNuevo"+enlaceNuevo);
             dinamico.setEnlaceVedaElectoral(enlaceNuevo);
             dinamico =ejbUtilidadesCH.actualizaMenuDocumentacion(dinamico);
             menuDocumentacion();
@@ -964,5 +983,137 @@ public class AdministracionControl implements Serializable {
             this.ct = ct;
             this.tipos = tipos;
         }
+    }
+    
+    public void asignaTitulo(ValueChangeEvent event) {
+        String texto = "";
+        System.out.println("getId "+event.getComponent().getId());
+        if (null != event.getComponent().getId()) {
+            if(event.getComponent().getId().contains("tn")){
+                texto = event.getNewValue().toString();
+                if (texto.equals("Nuevo") || texto.equals("No")) {
+                    switch (event.getComponent().getId()) {
+                        case "tn1":reseteo(1);break;
+                        case "tn2":reseteo(2);break;
+                        case "tn3":reseteo(3);break;
+                        case "tn4":reseteo(4);break;
+                        case "tn5":reseteo(5);break;
+                    }
+                }else{
+                    switch (event.getComponent().getId()) {
+                        case "tn1":titulosn2 = consultaTitulos(1, texto);break;
+                        case "tn2":titulosn3 = consultaTitulos(2, texto);break;
+                        case "tn3":titulosn4 = consultaTitulos(3, texto);break;
+                        case "tn4":titulosn5 = consultaTitulos(4, texto);break;
+                    }
+                }
+                switch (event.getComponent().getId()) {
+                    case "tn1N":menuDinamico.setTituloNivel1(texto);break;
+                    case "tn2N":menuDinamico.setTituloNivel2(texto);break;
+                    case "tn3N":menuDinamico.setTitulonivel3(texto);break;
+                    case "tn4N":menuDinamico.setTitulonivel4(texto);break;
+                    case "tn5N":menuDinamico.setTitulonivel5(texto);break;
+                }
+            }
+        }
+        System.out.println("----------------------------------------------");
+        System.out.println("N1 "+titulon1);
+        System.out.println("N1 "+menuDinamico.getTituloNivel1());
+        System.out.println("N2 "+titulon2);
+        System.out.println("N2 "+menuDinamico.getTituloNivel2());
+        System.out.println("N3 "+titulon3);
+        System.out.println("N3 "+menuDinamico.getTitulonivel3());
+        System.out.println("N4 "+titulon4);
+        System.out.println("N4 "+menuDinamico.getTitulonivel4());
+        System.out.println("N5 "+titulon5);
+        System.out.println("N5 "+menuDinamico.getTitulonivel5());
+    }
+    
+    public void reseteo(Integer nivel) {
+        switch (nivel) {
+            case 1:
+                menuDinamico.setTituloNivel1("");
+                titulosn2 = new ArrayList<>();
+                titulon2 = "No";
+            case 2:
+                menuDinamico.setTituloNivel2("");
+                titulosn3 = new ArrayList<>();
+                titulon3 = "No";
+            case 3:
+                menuDinamico.setTitulonivel3("");
+                titulosn4 = new ArrayList<>();
+                titulon4 = "No";
+            case 4:
+                menuDinamico.setTitulonivel4("");
+                titulosn5 = new ArrayList<>();
+                titulon5 = "No";
+            case 5:
+                menuDinamico.setTitulonivel5("");
+                break;
+        }
+    }
+    
+    public List<String> consultaTitulos(Integer nivel, String titulo) {
+        titulos = new ArrayList<>();
+        List<MenuDinamico> filtro = new ArrayList<>();
+        switch (nivel) {
+            case 1:
+                filtro = ejbUtilidadesCH.mostrarListaTitulosMenu(controladorEmpleado.getNuevoOBJListaPersonal(), 2,titulo, "Trabajador");
+                if(!filtro.isEmpty()){filtro.forEach((t) -> {titulos.add(t.getTituloNivel2());});}else{titulos= new ArrayList<>();}
+                break;
+            case 2:
+                filtro = ejbUtilidadesCH.mostrarListaTitulosMenu(controladorEmpleado.getNuevoOBJListaPersonal(), 3,titulo, "Trabajador");
+                if(!filtro.isEmpty()){filtro.forEach((t) -> {titulos.add(t.getTitulonivel3());});}else{titulos= new ArrayList<>();}
+                break;
+            case 3:
+                filtro = ejbUtilidadesCH.mostrarListaTitulosMenu(controladorEmpleado.getNuevoOBJListaPersonal(), 4,titulo, "Trabajador");
+                if(!filtro.isEmpty()){filtro.forEach((t) -> {titulos.add(t.getTitulonivel4());});}else{titulos= new ArrayList<>();}
+                break;
+            case 4:
+                filtro = ejbUtilidadesCH.mostrarListaTitulosMenu(controladorEmpleado.getNuevoOBJListaPersonal(), 5,titulo, "Trabajador");
+                if(!filtro.isEmpty()){filtro.forEach((t) -> {titulos.add(t.getTitulonivel5());});}else{titulos= new ArrayList<>();}
+                break;
+        }
+        return titulos;
+    }
+    
+    public void creaApartadoMenu() {
+        menuDinamico.setEncabezado("Documentación");
+        menuDinamico.setActividades("-1-2-3-4-");
+        menuDinamico.setEstatus("Nuevo");
+        menuDinamico.setTipoUsuario("Trabajador");
+        menuDinamico.setActivo(Boolean.TRUE);
+        menuDinamico.setTipoenlace("documento");
+        
+        System.out.println("N1 "+menuDinamico.getTituloNivel1());
+        System.out.println("N2 "+menuDinamico.getTituloNivel2());
+        System.out.println("N3 "+menuDinamico.getTitulonivel3());
+        System.out.println("N4 "+menuDinamico.getTitulonivel4());
+        System.out.println("N5 "+menuDinamico.getTitulonivel5());
+        
+        System.out.println("Enl "+menuDinamico.getEnlace());
+    }
+  
+    public void agregarDocumentoConsulta() {
+        String rutaG="C:" + File.separator + "archivos"+ File.separator;
+        System.out.println(rutaG);
+        if (menuDinamico.getTituloNivel1().length() != 0) {
+            rutaG = rutaG  + menuDinamico.getTituloNivel1() + File.separator;
+        }
+        if (menuDinamico.getTituloNivel2().length() != 0) {
+            rutaG = rutaG + menuDinamico.getTituloNivel2() + File.separator;
+        }
+        if (menuDinamico.getTitulonivel3().length() != 0) {
+            rutaG = rutaG + menuDinamico.getTitulonivel3() + File.separator;
+        }
+        if (menuDinamico.getTitulonivel4().length() != 0) {
+            rutaG = rutaG + menuDinamico.getTitulonivel4() + File.separator;
+        }
+        if (menuDinamico.getTitulonivel5().length() != 0) {
+            rutaG = rutaG + menuDinamico.getTitulonivel5() + File.separator;
+        }
+        System.out.println(rutaG);
+        String enlaceNuevo = cargaArchivo(rutaG);
+        menuDinamico.setEnlace(enlaceNuevo);
     }
 }
