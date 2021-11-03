@@ -804,7 +804,7 @@ public class GenerateExcel implements Serializable{
             agregarTextoParrafo(0,0,ParagraphAlignment.CENTER,0,"AvantGarde Bk BT", "", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         }
 
-        XWPFTable tabPrincipal = word.createTable(3, 1);
+        XWPFTable tabPrincipal = word.createTable(4, 1);
         setTableWidth(tabPrincipal, "9000");
         setTableAlign(tabPrincipal, ParagraphAlignment.CENTER);
         removeBorders(tabPrincipal);
@@ -820,8 +820,9 @@ public class GenerateExcel implements Serializable{
 
         agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 1, 0, 0, 0, ParagraphAlignment.BOTH, 0, "AvantGarde Bk BT","", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.5);
 
-        agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 2, 0, 0, 0, ParagraphAlignment.BOTH, 0, "AvantGarde Bk BT","Por lo que se extiende la presente, para los efectos legales que haya lugar, en la Ciudad de Xicotepec de Juárez, Puebla a los "+ fecha + ".", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.TRUE, 1.5);
-
+        agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 2, 0, 0, 0, ParagraphAlignment.BOTH, 0, "AvantGarde Bk BT","Por lo que se extiende la presente, para los efectos legales que haya lugar, en la Ciudad de Xicotepec de Juárez, Puebla a los "+ fecha + ".", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.5);
+        agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 3, 0, 0, 0, ParagraphAlignment.BOTH, 0, "AvantGarde Bk BT","", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.5);
+        
         agregarTextoParrafo(0,0,ParagraphAlignment.CENTER,0,"AvantGarde Bk BT", "", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         agregarTextoParrafo(0,0,ParagraphAlignment.CENTER,0,"AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         agregarTextoParrafo(0,0,ParagraphAlignment.CENTER,0,"Times New Roman", "", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
@@ -910,7 +911,7 @@ public class GenerateExcel implements Serializable{
         StringBuilder programaEducativo = new StringBuilder(programa.getNombre());
         programaEducativo = programaEducativo.delete(0, 9);
 
-        XWPFTable tabPrincipal = word.createTable(3, 1);
+        XWPFTable tabPrincipal = word.createTable(5, 1);
         setTableWidth(tabPrincipal, "9000");
         setTableAlign(tabPrincipal, ParagraphAlignment.CENTER);
         removeBorders(tabPrincipal);
@@ -920,12 +921,14 @@ public class GenerateExcel implements Serializable{
         agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 0, 0, 0, 0, ParagraphAlignment.BOTH, 1, "AvantGarde Bk BT", " C. " + estudiante.getPersona().getNombre().toUpperCase()+estudiante.getPersona().getApellidoPaterno().toUpperCase()+" "+estudiante.getPersona().getApellidoMaterno().toUpperCase(), Boolean.TRUE, 12, UnderlinePatterns.SINGLE, Boolean.FALSE, Boolean.FALSE, 1.5);
         agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 0, 0, 0, 0, ParagraphAlignment.BOTH, 2, "AvantGarde Bk BT", " de la carrera de Técnico Superior Universitario en"+ programaEducativo.toString() + " con número de matrícula ", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.5);
         agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 0, 0, 0, 0, ParagraphAlignment.BOTH, 3, "AvantGarde Bk BT", String.valueOf(estudiante.getInscripcionActiva().getInscripcion().getMatricula()), Boolean.TRUE, 12, UnderlinePatterns.SINGLE, Boolean.FALSE, Boolean.FALSE, 1.5);
-        agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 0, 0, 0, 0, ParagraphAlignment.BOTH, 4, "AvantGarde Bk BT", " concluyó satisfactoriamente su Servicio Social en un periodo de 6 meses en el cual se cumplieron 480 horas, conforme a lo dispuesto en el Artículo 55 de la Ley Reglamentaria del Artículo 5° Constitucional, relativo al ejercicio de las profesiones. ", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.TRUE, 1.5);
+        agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 0, 0, 0, 0, ParagraphAlignment.BOTH, 4, "AvantGarde Bk BT", " concluyó satisfactoriamente su Servicio Social en un periodo de 6 meses en el cual se cumplieron 480 horas, conforme a lo dispuesto en el Artículo 55 de la Ley Reglamentaria del Artículo 5° Constitucional, relativo al ejercicio de las profesiones. ", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.5);
 
         agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 1, 0, 0, 0, ParagraphAlignment.BOTH, 0, "AvantGarde Bk BT","", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.5);
-
-        agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 2, 0, 0, 0, ParagraphAlignment.BOTH, 0, "AvantGarde Bk BT", "Por lo que se extiende la presente, para los efectos legales que haya lugar, en la Ciudad de Xicotepec de Juárez, Puebla, a los "+ fecha.concat("."), Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.TRUE, 1.5);
-
+        agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 2, 0, 0, 0, ParagraphAlignment.BOTH, 0, "AvantGarde Bk BT","", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.5);
+        
+        agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 3, 0, 0, 0, ParagraphAlignment.BOTH, 0, "AvantGarde Bk BT", "Por lo que se extiende la presente, para los efectos legales que haya lugar, en la Ciudad de Xicotepec de Juárez, Puebla, a los "+ fecha.concat("."), Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.5);
+        agregarTextoCelda(tabPrincipal, XWPFTableCell.XWPFVertAlign.CENTER, 4, 0, 0, 0, ParagraphAlignment.BOTH, 0, "AvantGarde Bk BT","", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.5);
+        
         agregarTextoParrafo(0,0,ParagraphAlignment.CENTER,0,"AvantGarde Bk BT", "", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         agregarTextoParrafo(0,0,ParagraphAlignment.CENTER,0,"AvantGarde Bk BT", "", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         agregarTextoParrafo(0,0,ParagraphAlignment.CENTER,0,"AvantGarde Bk BT", "", Boolean.FALSE, 12, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
@@ -1077,12 +1080,12 @@ public class GenerateExcel implements Serializable{
         setCellsWidth(tabMaterias.getRow(1).getCell(2), 900);
         setCellsWidth(tabMaterias.getRow(1).getCell(3), 800);
 
-        setStyleCell(tabMaterias.getRow(0).getCell(0), Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, STBorder.DOTTED);
-        setStyleCell(tabMaterias.getRow(0).getCell(1), Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, STBorder.DOTTED);
-        setStyleCell(tabMaterias.getRow(0).getCell(2), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, STBorder.DOTTED);
-        setStyleCell(tabMaterias.getRow(1).getCell(0), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, STBorder.DOTTED);
-        setStyleCell(tabMaterias.getRow(1).getCell(2), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, STBorder.DOTTED);
-        setStyleCell(tabMaterias.getRow(1).getCell(3), Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, STBorder.DOTTED);
+        setStyleCell(tabMaterias.getRow(0).getCell(0), Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, STBorder.SINGLE);
+        setStyleCell(tabMaterias.getRow(0).getCell(1), Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, STBorder.SINGLE);
+        setStyleCell(tabMaterias.getRow(0).getCell(2), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, Boolean.FALSE, STBorder.SINGLE);
+        setStyleCell(tabMaterias.getRow(1).getCell(0), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, STBorder.SINGLE);
+        setStyleCell(tabMaterias.getRow(1).getCell(2), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, STBorder.SINGLE);
+        setStyleCell(tabMaterias.getRow(1).getCell(3), Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, STBorder.SINGLE);
 
         mergeCellsVertically(tabMaterias, 0, 0, 1);
         mergeCellsVertically(tabMaterias, 1, 0, 1);
@@ -1174,18 +1177,18 @@ public class GenerateExcel implements Serializable{
         String promedio = promedioFinal.toString();
 //        System.out.println("Promedio final:" + promedio);
         Integer row = totalMaterias + 2;
-        setStyleCell(tabMaterias.getRow(row).getCell(0), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, STBorder.DOTTED);
-        setStyleCell(tabMaterias.getRow(row).getCell(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, STBorder.DOTTED);
-        setStyleCell(tabMaterias.getRow(row).getCell(2), Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, STBorder.DOTTED);
-        setStyleCell(tabMaterias.getRow(row + 1).getCell(1), Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, STBorder.DOTTED);
+        setStyleCell(tabMaterias.getRow(row).getCell(0), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, STBorder.SINGLE);
+        setStyleCell(tabMaterias.getRow(row).getCell(1), Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE, STBorder.SINGLE);
+        setStyleCell(tabMaterias.getRow(row).getCell(2), Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, STBorder.SINGLE);
+        setStyleCell(tabMaterias.getRow(row + 1).getCell(1), Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, STBorder.SINGLE);
 
-        tabMaterias.getRow(row).setHeight((1700 / 10)); //set height 1/10 inch.
+        tabMaterias.getRow(row).setHeight((1900 / 10)); //set height 1/10 inch.
         tabMaterias.getRow(row).getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
         agregarTextoCelda(tabMaterias, XWPFTableCell.XWPFVertAlign.BOTTOM, row, 0, 0, 0, ParagraphAlignment.LEFT, 0, "AvantGarde Bk Bt", "Estadía Profesional", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.0);
         agregarTextoCelda(tabMaterias, XWPFTableCell.XWPFVertAlign.BOTTOM, row, 1, 0, 0, ParagraphAlignment.CENTER, 0, "AvantGarde Bk Bt", "525", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.0);
         agregarTextoCelda(tabMaterias, XWPFTableCell.XWPFVertAlign.BOTTOM, row, 2, 0, 0, ParagraphAlignment.CENTER, 0, "AvantGarde Bk Bt", "AC", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.0);
 
-        tabMaterias.getRow(row + 1).setHeight((1700 / 10)); //set height 1/10 inch.
+        tabMaterias.getRow(row + 1).setHeight((1900 / 10)); //set height 1/10 inch.
         tabMaterias.getRow(row + 1).getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
         setTableCellBorder(tabMaterias.getRow(row + 1).getCell(0), Border.RIGHT, STBorder.NIL, 0);
         setTableCellBorder(tabMaterias.getRow(row + 1).getCell(1), Border.LEFT, STBorder.NIL, 0);
@@ -1194,59 +1197,59 @@ public class GenerateExcel implements Serializable{
         agregarTextoCelda(tabMaterias, XWPFTableCell.XWPFVertAlign.BOTTOM, row + 1, 2, 0, 0, ParagraphAlignment.CENTER, 0, "AvantGarde Bk Bt", promedio, Boolean.TRUE, 8, UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.0);
 
         if(totalMaterias == 35){
-            agregarParrafosVacios(19, 8, 1.0);
-            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
-        }
-        if(totalMaterias == 36){
-            agregarParrafosVacios(18, 8, 1.0);
-            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
-        }
-        if(totalMaterias == 37){
-            agregarParrafosVacios(17, 8, 1.0);
-            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
-        }
-        if(totalMaterias == 38){
-            agregarParrafosVacios(16, 8, 1.0);
-            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
-        }
-        if(totalMaterias == 39){
-            agregarParrafosVacios(15, 8, 1.0);
-            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
-        }
-        if(totalMaterias == 40){
-            agregarParrafosVacios(14, 8, 1.0);
-            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
-        }
-        if(totalMaterias == 41){
-            agregarParrafosVacios(13, 8, 1.0);
-            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
-        }
-        if(totalMaterias == 42){
             agregarParrafosVacios(11, 8, 1.0);
             agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         }
-        if(totalMaterias == 43){
+        if(totalMaterias == 36){
+            agregarParrafosVacios(12, 8, 1.0);
+            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
+        }
+        if(totalMaterias == 37){
+            agregarParrafosVacios(11, 8, 1.0);
+            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
+        }
+        if(totalMaterias == 38){
             agregarParrafosVacios(10, 8, 1.0);
             agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         }
-        if(totalMaterias == 44){
-            agregarParrafosVacios(10, 8, 1.0);
-            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
-        }
-        if(totalMaterias == 45){
+        if(totalMaterias == 39){
             agregarParrafosVacios(9, 8, 1.0);
             agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         }
-        if(totalMaterias == 46){
+        if(totalMaterias == 40){
             agregarParrafosVacios(8, 8, 1.0);
             agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         }
-        if(totalMaterias == 47){
+        if(totalMaterias == 41){
             agregarParrafosVacios(7, 8, 1.0);
             agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         }
-        if(totalMaterias == 48){
+        if(totalMaterias == 42){
             agregarParrafosVacios(6, 8, 1.0);
+            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
+        }
+        if(totalMaterias == 43){
+            agregarParrafosVacios(5, 8, 1.0);
+            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
+        }
+        if(totalMaterias == 44){
+            agregarParrafosVacios(5, 8, 1.0);
+            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
+        }
+        if(totalMaterias == 45){
+            agregarParrafosVacios(4, 8, 1.0);
+            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
+        }
+        if(totalMaterias == 46){
+            agregarParrafosVacios(3, 8, 1.0);
+            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
+        }
+        if(totalMaterias == 47){
+            agregarParrafosVacios(2, 8, 1.0);
+            agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
+        }
+        if(totalMaterias == 48){
+            agregarParrafosVacios(1, 8, 1.0);
             agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         }
         
@@ -1255,10 +1258,10 @@ public class GenerateExcel implements Serializable{
         setTableWidth(tabDescripcion, "8800");
         setTableAlign(tabDescripcion, ParagraphAlignment.CENTER);
         setCellsWidth(tabDescripcion.getRow(0).getCell(0), 8800);
-        setTableCellBorder(tabDescripcion.getRow(0).getCell(0), Border.BOTTOM, STBorder.DOTTED, 0);
-        setTableCellBorder(tabDescripcion.getRow(1).getCell(0), Border.BOTTOM, STBorder.DOTTED, 0);
-        setTableCellBorder(tabDescripcion.getRow(listaEspecificas.size() + 2).getCell(0), Border.TOP, STBorder.DOTTED, 0);
-        setTableCellBorder(tabDescripcion.getRow(listaEspecificas.size() + 2).getCell(0), Border.BOTTOM, STBorder.DOTTED, 0);
+        setTableCellBorder(tabDescripcion.getRow(0).getCell(0), Border.BOTTOM, STBorder.SINGLE, 0);
+        setTableCellBorder(tabDescripcion.getRow(1).getCell(0), Border.BOTTOM, STBorder.SINGLE, 0);
+        setTableCellBorder(tabDescripcion.getRow(listaEspecificas.size() + 2).getCell(0), Border.TOP, STBorder.SINGLE, 0);
+        setTableCellBorder(tabDescripcion.getRow(listaEspecificas.size() + 2).getCell(0), Border.BOTTOM, STBorder.SINGLE, 0);
 
         tabDescripcion.getRow(0).setHeight((4200 / 10)); //set height 1/10 inch.
         tabDescripcion.getRow(0).getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
@@ -1373,7 +1376,7 @@ public class GenerateExcel implements Serializable{
         tabEscalas.getRow(2).setHeight((int) (1650 / 10)); //set height 1/10 inch.
         tabEscalas.getRow(2).getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
 
-        setStyleTable(tabEscalas, 3, 8, STBorder.DOTTED);
+        setStyleTable(tabEscalas, 3, 8, STBorder.SINGLE);
 
         agregarTextoCelda(tabEscalas, XWPFTableCell.XWPFVertAlign.CENTER, 0, 0, 0, 0, ParagraphAlignment.CENTER, 0, "AvantGarde Bk BT", "DESCRIPCIÓN DE LA ESCALA ALFANUMÉRICA", Boolean.TRUE, 5, 
                 UnderlinePatterns.NONE, Boolean.FALSE, Boolean.FALSE, 1.0);
