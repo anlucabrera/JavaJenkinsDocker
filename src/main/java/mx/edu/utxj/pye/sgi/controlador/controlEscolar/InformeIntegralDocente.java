@@ -95,6 +95,12 @@ public class InformeIntegralDocente extends ViewScopedRol implements Desarrollab
                 rol.setAreaSeleccionada(rol.getPersonalActivo().getAreaOperativa());
                 getDocentesbyArea();
             }
+            if(rol.getPersonalActivo().getAreaSuperior().getArea()==2 & rol.getPersonalActivo().getPersonal().getCategoriaOperativa().getCategoria()==14 & rol.getPersonalActivo().getAreaOperativa().getArea()==23){
+                rol.setEsDirector(Boolean.TRUE);
+                rol.setAreaSeleccionada(rol.getPersonalActivo().getAreaOperativa());
+                getDocentesbyArea();
+            }
+
             if(rol.getPersonalActivo().getAreaOperativa().getArea()==2 & rol.getPersonalActivo().getPersonal().getCategoriaOperativa().getCategoria()==38){
                 rol.setEsSA(Boolean.TRUE);
                 getAreasAcademicas();
