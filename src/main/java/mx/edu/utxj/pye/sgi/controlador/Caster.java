@@ -291,6 +291,15 @@ public class Caster {
                 +" de "+
                 anio.format(fechaFin);
     }
+    public static String decimalesPromedio(Double promedio){
+
+        DecimalFormat d= new DecimalFormat("#.00");
+        if(promedio!=null){
+            return d.format(promedio);
+
+        }else {return "Promedio nulo";}
+
+    }
 
     public static String convertirFormatoFecha(Date date) {
         if (date != null) {

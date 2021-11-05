@@ -103,6 +103,7 @@ public enum ControlEscolarVistaControlador {
     ADMINISTRACION_EVALUACIONES_FORTALECIMIENTO("/evaluaciones/administracion/administracionEvaluacionesFortalecimiento.xhtml", AdministracionEvaluacionesFortalecimiento.class),
     COMBINACIONES_EVALUACION_PARES_ACADEMICOS("/evaluaciones/administracion/combinacionesEvParesAcademicos.xhtml", EvaluacionParesAcademicosFortalecimiento.class),
     RESULTADOS_EVALUACION_PARES_ACADEMICOS("/evaluaciones/administracion/resultadosEvParesAcademicos.xhtml", ResultadosEvParesAcademicos.class),
+   EVALUACION_INTEGRAL_DOCENTE("/controlEscolar/reportesMu/evaluacionIntegralDocente.xhtml", InformeIntegralDocente.class),
 
 
     PASE_DE_LISTA_TUTOR("/controlEscolar/tutor/seguimientoPaseListaTutor.xhtml", PaseListaSegTutor.class),
