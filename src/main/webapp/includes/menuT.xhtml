@@ -512,6 +512,8 @@
 
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Evaluaciones y encuestas</li>
                 <c:if test="#{serviciosConsulta.mostrarEnDesarrollo(request) and serviciosConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/encuestas/consulta/servicios.xhtml" title="Satisfacción de servicios"><i class="fa fa-slideshare"></i><span>Satisfacción de servicios</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{informeIntegralDocente.mostrarEnDesarrollo(request) and informeIntegralDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/evaluacionIntegralDocente.xhtml"><i class="fa fa-file-o"></i><span>Evaluación Integral Docente</span></p:link></li></c:if>
+
                 <c:if test="#{controlEscolarMenu.tieneElementos()}">
                     <li class="treeview">
                         <a href="#">
