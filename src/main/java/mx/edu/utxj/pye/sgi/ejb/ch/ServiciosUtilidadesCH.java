@@ -436,6 +436,15 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
             return pr;
         }
     }
+    
+    @Override
+    public MenuDinamico agregarMenuDocumentacion(MenuDinamico md) {
+        facade.setEntityClass(MenuDinamico.class);
+        facade.create(md);
+        facade.flush();
+
+        return md;
+    }
 
     @Override
     public MenuDinamico actualizaMenuDocumentacion(MenuDinamico md) {

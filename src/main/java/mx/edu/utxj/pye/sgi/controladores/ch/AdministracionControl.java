@@ -377,7 +377,6 @@ public class AdministracionControl implements Serializable {
                 productos.setEjerciciosFiscales(ejerciciosFiscales);
                 productos = new Productos();
                 productos.setProductosPK(pK);
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.mostrarProductos(claveP)"+claveP);
 
             }
             
@@ -580,8 +579,8 @@ public class AdministracionControl implements Serializable {
                     });
                 });
             }
-            System.out.println("Productos()" + p.size());
-            System.out.println("Productos Areas()" + pa.size());
+//            System.out.println("Productos()" + p.size());
+//            System.out.println("Productos Areas()" + pa.size());
             
             
             ejeFiscal = ejeFiscalReferencia;
@@ -642,12 +641,12 @@ public class AdministracionControl implements Serializable {
     public void onRowEditMesEvaluacion(RowEditEvent event) {
         try {
             Procesopoa p = (Procesopoa) event.getObject();
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.onRowEditMesEvaluacion()" + p.getEvaluacion().getEvaluacionPOA());
+////            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.onRowEditMesEvaluacion()" + p.getEvaluacion().getEvaluacionPOA());
             if (Objects.equals(p.getEvaluacion().getEvaluacionPOA(), c.getEvaluacionPOA())) {
                 p.setEvaluacion(new Calendarioevaluacionpoa());
                 p.setEvaluacion(null);
             }
-//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.onRowEditMesEvaluacion()");
+////            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.onRowEditMesEvaluacion()");
             ejbUtilidadesCH.actualizarEtapaPOA(p);
             Messages.addGlobalInfo("¡Operación exitosa!");
             mostrarProcesos();
@@ -854,27 +853,46 @@ public class AdministracionControl implements Serializable {
     public String cargaArchivo(String archivoElimindo) {
         List<String> carpetas = new ArrayList<>();
         List<String> rutaG = new ArrayList<>();
+        List<String> valores = new ArrayList<>();
+        archivoElimindo=archivoElimindo.replace(" ","");
         String[] parts = archivoElimindo.split("/");
+        valores = Arrays.asList(parts);
+        carpetas = Arrays.asList(parts);
+        String cadenaRuta = "";
+        if (valores.size() == 1) {
+            carpetas = new ArrayList<>();
+            File fileNr = new File(archivoElimindo);
+            archivoElimindo = fileNr.toURI().toString();
+            parts = archivoElimindo.split("/");
+            valores = Arrays.asList(parts);
+//            System.out.println("valores" + valores);
+            archivoElimindo="";
+            for (int j = 2; j < (valores.size() - 1); j++) {
+//                System.out.println("valores.get(" + j + ")= " + valores.get(j));
+                archivoElimindo = archivoElimindo + File.separator + valores.get(j);
+                carpetas.add(valores.get(j));
+            }
+            archivoElimindo=archivoElimindo+ File.separator + valores.get(valores.size()-1);
+        }
+//        System.out.println("archivoElimindo"+archivoElimindo);
         if (archivoElimindo.length() != 0) {
             archivos.eliminarArchivo("C:" + File.separator + "archivos" + File.separator + archivoElimindo);
         }
-        carpetas = Arrays.asList(parts);
-        System.out.println("carpetas= " + carpetas);
-        String cadenaRuta = "";
+//        System.out.println("carpetas= " + carpetas);
         for (int j = 0; j < (carpetas.size() - 1); j++) {
             cadenaRuta = cadenaRuta + File.separator + carpetas.get(j);
         }
 
-        System.out.println("cadenaRuta= " + cadenaRuta);
+//        System.out.println("cadenaRuta= " + cadenaRuta);
 
         ruta = carga.subirEvidenciaPOA(file, new File(cadenaRuta));
 
-        System.out.println("ruta= " + ruta);
+//        System.out.println("ruta= " + ruta);
         String[] parts2 = ruta.split("archivos");
 
         rutaG = Arrays.asList(parts2);
         
-        System.out.println("parts2= " + rutaG);
+//        System.out.println("parts2= " + rutaG);
 
         return rutaG.get(rutaG.size()-1);
     }
@@ -885,7 +903,7 @@ public class AdministracionControl implements Serializable {
             List<ProductosAreas> pas = p.getProductosAreasList();
             i = 0;
             p.getProductosAreasList().forEach((pros) -> {
-                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.eliminarProductos()"+pas.size());
+//                System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl.eliminarProductos()"+pas.size());
                 ProductosAreas pa = pas.get(i);
                 i++;
             });
@@ -987,46 +1005,37 @@ public class AdministracionControl implements Serializable {
     
     public void asignaTitulo(ValueChangeEvent event) {
         String texto = "";
-        System.out.println("getId "+event.getComponent().getId());
         if (null != event.getComponent().getId()) {
             if(event.getComponent().getId().contains("tn")){
-                texto = event.getNewValue().toString();
-                if (texto.equals("Nuevo") || texto.equals("No")) {
-                    switch (event.getComponent().getId()) {
-                        case "tn1":reseteo(1);break;
-                        case "tn2":reseteo(2);break;
-                        case "tn3":reseteo(3);break;
-                        case "tn4":reseteo(4);break;
-                        case "tn5":reseteo(5);break;
+                if(event.getNewValue() != null){
+                    texto = event.getNewValue().toString();
+                    if (texto.equals("Nuevo") || texto.equals("No")) {
+                        switch (event.getComponent().getId()) {
+                            case "tn1":reseteo(1);break;
+                            case "tn2":reseteo(2);break;
+                            case "tn3":reseteo(3);break;
+                            case "tn4":reseteo(4);break;
+                            case "tn5":reseteo(5);break;
+                        }
+                    }else{
+                        switch (event.getComponent().getId()) {
+                            case "tn1":menuDinamico.setTituloNivel1(texto);titulosn2 = consultaTitulos(1, texto);break;
+                            case "tn2":menuDinamico.setTituloNivel2(texto);titulosn3 = consultaTitulos(2, texto);break;
+                            case "tn3":menuDinamico.setTitulonivel3(texto);titulosn4 = consultaTitulos(3, texto);break;
+                            case "tn4":menuDinamico.setTitulonivel4(texto);titulosn5 = consultaTitulos(4, texto);break;
+                            case "tn5":menuDinamico.setTitulonivel5(texto);break;
+                        }
                     }
-                }else{
                     switch (event.getComponent().getId()) {
-                        case "tn1":titulosn2 = consultaTitulos(1, texto);break;
-                        case "tn2":titulosn3 = consultaTitulos(2, texto);break;
-                        case "tn3":titulosn4 = consultaTitulos(3, texto);break;
-                        case "tn4":titulosn5 = consultaTitulos(4, texto);break;
+                        case "tn1N":menuDinamico.setTituloNivel1(texto);break;
+                        case "tn2N":menuDinamico.setTituloNivel2(texto);break;
+                        case "tn3N":menuDinamico.setTitulonivel3(texto);break;
+                        case "tn4N":menuDinamico.setTitulonivel4(texto);break;
+                        case "tn5N":menuDinamico.setTitulonivel5(texto);break;
                     }
-                }
-                switch (event.getComponent().getId()) {
-                    case "tn1N":menuDinamico.setTituloNivel1(texto);break;
-                    case "tn2N":menuDinamico.setTituloNivel2(texto);break;
-                    case "tn3N":menuDinamico.setTitulonivel3(texto);break;
-                    case "tn4N":menuDinamico.setTitulonivel4(texto);break;
-                    case "tn5N":menuDinamico.setTitulonivel5(texto);break;
                 }
             }
         }
-        System.out.println("----------------------------------------------");
-        System.out.println("N1 "+titulon1);
-        System.out.println("N1 "+menuDinamico.getTituloNivel1());
-        System.out.println("N2 "+titulon2);
-        System.out.println("N2 "+menuDinamico.getTituloNivel2());
-        System.out.println("N3 "+titulon3);
-        System.out.println("N3 "+menuDinamico.getTitulonivel3());
-        System.out.println("N4 "+titulon4);
-        System.out.println("N4 "+menuDinamico.getTitulonivel4());
-        System.out.println("N5 "+titulon5);
-        System.out.println("N5 "+menuDinamico.getTitulonivel5());
     }
     
     public void reseteo(Integer nivel) {
@@ -1084,36 +1093,60 @@ public class AdministracionControl implements Serializable {
         menuDinamico.setTipoUsuario("Trabajador");
         menuDinamico.setActivo(Boolean.TRUE);
         menuDinamico.setTipoenlace("documento");
-        
-        System.out.println("N1 "+menuDinamico.getTituloNivel1());
-        System.out.println("N2 "+menuDinamico.getTituloNivel2());
-        System.out.println("N3 "+menuDinamico.getTitulonivel3());
-        System.out.println("N4 "+menuDinamico.getTitulonivel4());
-        System.out.println("N5 "+menuDinamico.getTitulonivel5());
-        
-        System.out.println("Enl "+menuDinamico.getEnlace());
+//        agregarDocumentoConsulta();
+
+        menuDinamico = ejbUtilidadesCH.agregarMenuDocumentacion(menuDinamico);
+        menuDinamico = new MenuDinamico();
+        titulosn1 = new ArrayList<>();
+        titulosn2 = new ArrayList<>();
+        titulosn3 = new ArrayList<>();
+        titulosn4 = new ArrayList<>();
+        titulosn5 = new ArrayList<>();
+        titulon1 = "No";
+        titulon2 = "No";
+        titulon3 = "No";
+        titulon4 = "No";
+        titulon5 = "No";
+        menuDocumentacion();
+        Ajax.update("frmEventos");
     }
-  
+
     public void agregarDocumentoConsulta() {
-        String rutaG="C:" + File.separator + "archivos"+ File.separator;
-        System.out.println(rutaG);
-        if (menuDinamico.getTituloNivel1().length() != 0) {
-            rutaG = rutaG  + menuDinamico.getTituloNivel1() + File.separator;
+        String rutaG="documentacion-SII/";
+        List<String> rutaGn = new ArrayList<>();
+        List<String> rutaGv = new ArrayList<>();
+        if (menuDinamico.getTituloNivel1() != null && menuDinamico.getTituloNivel2() != null)if( menuDinamico.getTituloNivel1().length() != 0) {
+            rutaG = rutaG  + menuDinamico.getTituloNivel1() + "/";
         }
-        if (menuDinamico.getTituloNivel2().length() != 0) {
-            rutaG = rutaG + menuDinamico.getTituloNivel2() + File.separator;
+        if (menuDinamico.getTituloNivel2() != null && menuDinamico.getTitulonivel3() != null)if( menuDinamico.getTituloNivel2().length() != 0) {
+            rutaG = rutaG + menuDinamico.getTituloNivel2() +  "/";
         }
-        if (menuDinamico.getTitulonivel3().length() != 0) {
-            rutaG = rutaG + menuDinamico.getTitulonivel3() + File.separator;
+        if (menuDinamico.getTitulonivel3() != null && menuDinamico.getTitulonivel4() != null)if( menuDinamico.getTitulonivel3().length() != 0) {
+            rutaG = rutaG + menuDinamico.getTitulonivel3() +  "/";
         }
-        if (menuDinamico.getTitulonivel4().length() != 0) {
-            rutaG = rutaG + menuDinamico.getTitulonivel4() + File.separator;
+        if (menuDinamico.getTitulonivel4() != null && menuDinamico.getTitulonivel5() != null)if( menuDinamico.getTitulonivel4().length() != 0) {
+            rutaG = rutaG + menuDinamico.getTitulonivel4() +  "/";
         }
-        if (menuDinamico.getTitulonivel5().length() != 0) {
-            rutaG = rutaG + menuDinamico.getTitulonivel5() + File.separator;
+        if (menuDinamico.getTitulonivel5() != null)if( menuDinamico.getTitulonivel5().length() != 0) {
+            rutaG = rutaG + menuDinamico.getTitulonivel5() +  "/";
         }
-        System.out.println(rutaG);
-        String enlaceNuevo = cargaArchivo(rutaG);
-        menuDinamico.setEnlace(enlaceNuevo);
+        
+        Part  file2;
+        file2=fileRegistro;
+        
+        String rutaN = carga.subirEvidenciaPOA(fileRegistro, new File(rutaG));
+        String rutav = carga.subirEvidenciaPOA(file2, new File(rutaG));
+        
+        String[] parts2n = rutaN.split("archivos");
+        String[] parts2v = rutav.split("archivos");
+
+        rutaGn = Arrays.asList(parts2n);
+        rutaGv = Arrays.asList(parts2v);
+        
+        String enlaceNuevoN = rutaGn.get(rutaGn.size()-1);
+        String enlaceNuevoV = rutaGv.get(rutaGv.size()-1);
+        
+        menuDinamico.setEnlace(enlaceNuevoN);
+        menuDinamico.setEnlaceVedaElectoral(enlaceNuevoV);
     }
 }

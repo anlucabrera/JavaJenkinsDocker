@@ -95,7 +95,7 @@
                                                                                 <div class="col-sm-6 col-md-3 col-lg-3" style="#{administracionControl.titulon1 eq 'Nuevo'? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                         
                                                                                     <p:outputLabel for="tn1N"  value="Nuevo Titulo Nivel 1" />
                                                                                     <p:inputText id="tn1N" class="form-control" value="#{administracionControl.menuDinamico.tituloNivel1}" valueChangeListener="#{administracionControl.asignaTitulo}" style="height:100%; width: 100%;" >
-                                                                                        <p:ajax update="tn1N"/>
+                                                                                        <p:ajax update="tn1N" global="false"/>
                                                                                     </p:inputText>
                                                                                     <p:message for="tn1N" display="tooltip" />
                                                                                     <hr/>
@@ -121,7 +121,7 @@
                                                                                 <div class="col-sm-6 col-md-3 col-lg-3" style="#{administracionControl.titulon2 eq 'Nuevo'? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                        
                                                                                     <p:outputLabel for="tn2N"  value="Nuevo Titulo Nivel 2" />
                                                                                     <p:inputText id="tn2N" class="form-control" value="#{administracionControl.menuDinamico.tituloNivel2}" valueChangeListener="#{administracionControl.asignaTitulo}" style="height:100%; width: 100%;" >
-                                                                                        <p:ajax update="tn2N"/>
+                                                                                        <p:ajax update="tn2N" global="false"/>
                                                                                     </p:inputText>
                                                                                     <p:message for="tn2N" display="tooltip" />
                                                                                     <hr/>
@@ -149,7 +149,7 @@
                                                                                 <div class="col-sm-6 col-md-3 col-lg-3" style="#{administracionControl.titulon3 eq 'Nuevo'? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                        
                                                                                     <p:outputLabel for="tn3N"  value="Nuevo Titulo Nivel 3" />
                                                                                     <p:inputText id="tn3N" class="form-control" value="#{administracionControl.menuDinamico.titulonivel3}" valueChangeListener="#{administracionControl.asignaTitulo}" style="height:100%; width: 100%;" >
-                                                                                        <p:ajax update="tn3N"/>
+                                                                                        <p:ajax update="tn3N" global="false"/>
                                                                                     </p:inputText>
                                                                                     <p:message for="tn3N" display="tooltip" />
                                                                                     <hr/>
@@ -175,7 +175,7 @@
                                                                                 <div class="col-sm-6 col-md-3 col-lg-3" style="#{administracionControl.titulon4 eq 'Nuevo'? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                        
                                                                                     <p:outputLabel for="tn4N"  value="Nuevo Titulo Nivel 4" />
                                                                                     <p:inputText id="tn4N" class="form-control" value="#{administracionControl.menuDinamico.titulonivel4}" valueChangeListener="#{administracionControl.asignaTitulo}" style="height:100%; width: 100%;" >
-                                                                                        <p:ajax update="tn4N"/>
+                                                                                        <p:ajax update="tn4N" global="false"/>
                                                                                     </p:inputText>
                                                                                     <p:message for="tn4N" display="tooltip" />
                                                                                     <hr/>
@@ -203,7 +203,7 @@
                                                                                 <div class="col-sm-6 col-md-3 col-lg-3" style="#{administracionControl.titulon5 eq 'Nuevo'? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                        
                                                                                     <p:outputLabel for="tn5N"  value="Nuevo Titulo Nivel 5" />
                                                                                     <p:inputText id="tn5N" class="form-control" value="#{administracionControl.menuDinamico.titulonivel5}" valueChangeListener="#{administracionControl.asignaTitulo}" style="height:100%; width: 100%;" >
-                                                                                        <p:ajax update="tn5N"/>
+                                                                                        <p:ajax update="tn5N" global="false"/>
                                                                                     </p:inputText>
                                                                                     <p:message for="tn5N" display="tooltip" />
                                                                                     <hr/>
@@ -217,7 +217,7 @@
                                                                             <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large; color: #dd4b39" value="Documento de consuta" />
                                                                             <p:outputPanel>
                                                                                 <p:autoUpdate/>
-                                                                                <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:#{administracionControl.menuDinamico.enlace eq null?'':'(ya cuenta con el archivo cargado)'}" />
+                                                                                <p:outputLabel style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Evidencia:#{administracionControl.menuDinamico.enlace eq null?'':'(ya cuenta con el archivo cargado)'}" />
                                                                             </p:outputPanel>
                                                                             <o:inputFile id="fileR" value="#{administracionControl.fileRegistro}" maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
                                                                             <br/>

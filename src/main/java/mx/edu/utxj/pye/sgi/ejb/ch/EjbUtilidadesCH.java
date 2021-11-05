@@ -94,6 +94,8 @@ public interface EjbUtilidadesCH {
     
     public List<MenuDinamico> mostrarListaMenuDocumentacion();
     
+    public MenuDinamico agregarMenuDocumentacion(MenuDinamico md);
+    
     public MenuDinamico actualizaMenuDocumentacion(MenuDinamico md);
 
 ////////////////////////////////////////////////////////////////////////////////Errores
