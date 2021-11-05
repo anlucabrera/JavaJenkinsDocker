@@ -85,7 +85,10 @@ public class EjbInformeIntegralDocente {
                                 return ResultadoEJB.crearCorrecto(resDocente.getValor(),"Validado como Docente");
                             }
                             else {
-                                return ResultadoEJB.crearErroneo(2,null,"No tiene acceso");
+                                ResultadoEJB<PersonalActivo> resIdiomas = validarIdiomas(personalActivo);
+                                if(resIdiomas.getCorrecto()){
+                                    return ResultadoEJB.crearCorrecto(resIdiomas.getValor(),"Validado como coordinador/a de Idiomas");
+                                }else {return ResultadoEJB.crearErroneo(3,resIdiomas.getValor(),"No tiene acceso");}
 
                             }
                         }
@@ -193,6 +196,27 @@ public class EjbInformeIntegralDocente {
 
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbFichaAdmisionReporte.validarDocente)", e, null);
+
+        }
+    }
+    /**
+     * Valida que el usuario logueado sea COrdinador de Idiomas
+     * @param personalActivo Clave del personal logueado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<PersonalActivo> validarIdiomas (PersonalActivo personalActivo){
+        try {
+            if(personalActivo ==null){return ResultadoEJB.crearErroneo(2,new PersonalActivo(),"La clave no debe ser nula");}
+            if(personalActivo.getPersonal().getAreaOperativa()==23 & personalActivo.getPersonal().getCategoriaOperativa().getCategoria()==14 ){
+                //Es Director de Planeación
+                return ResultadoEJB.crearCorrecto(personalActivo,"Usuario autenticado como coordinador de Idiomas");
+            }
+            else {
+                return ResultadoEJB.crearErroneo(2,personalActivo,"No es coordinador de Idiomas");
+            }
+
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbFichaAdmisionReporte.validarFDA)", e, null);
 
         }
     }

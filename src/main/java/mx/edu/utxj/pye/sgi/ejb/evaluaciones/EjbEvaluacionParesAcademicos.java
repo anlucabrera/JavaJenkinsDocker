@@ -852,16 +852,16 @@ public class EjbEvaluacionParesAcademicos {
         a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,1f, "Realiza las actividades que se le requieran en tiempo y forma a las que fue comisionado.", ""));
         a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,2f, "Entrega reportes, evidencias, evaluaciones y/u otros aspectos que se requieran en tiempo y forma.", ""));
         a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,3f, "Demuestra su compromiso al llegar con puntualidad a las reuniones de trabajo.", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,4f, "Participa activamente en los proyectos de investigación con publicaciones científicas.", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,5f, "Realiza movilidades docentes que enriquezcan los proyectos de investigación", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,6f, "Propone actividades y acciones innovadoras, retadoras, colectivas y adecuadas al beneficio del logro de los objetivos y propósitos planteados por la institución.", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,7f, "Atiende oportunamente de manera eficaz y apegado a las normas y lineamientos institucionales los diferentes problemas e imprevistos que se presentan en los distintos escenarios.", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,8f, "Comparte y apoya a sus compañeros en los conocimientos que posee y/o adquirió en los programas de desarrollo previstos.", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,9f, "Ofrece diferentes criterios que permiten mejorar su trabajo y el de sus compañeros.", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,10f, "Expresa su opinión y punto de vista de manera atenta y respetuosa a todos los miembros de la institución.", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,11f, "Integra a los miembros de la comunidad en la toma de decisiones, resolución de conflictos y en la elaboración de las propuestas y/o actividades que le soliciten.", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,12f, "Logra coordinar y organizar actividades conjuntas con los miembros de la comunidad con los que le toque trabajar.", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,13f, "Genera un buen ambiente laboral con los miembros del grupo. ", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,4f, "Propone actividades y acciones innovadoras, retadoras, colectivas y adecuadas al beneficio del logro de los objetivos y propósitos planteados por la institución.", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,5f, "Apoya a otras áreas de la institución demostrando su interés, colaboración, entusiasmo y disposición en las tareas que se le asignen.",""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,6f, "Comparte y apoya a sus compañeros en los conocimientos que posee y/o adquirió en los programas de desarrollo previstos.", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,7f, "Ofrece diferentes criterios que permiten mejorar su trabajo y el de sus compañeros.", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,8f, "Expresa su opinión y punto de vista de manera atenta y respetuosa a todos los miembros de la institución.", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,9f, "Logra coordinar y organizar actividades conjuntas con los miembros de la comunidad con los que le toque trabajar.", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,10f, "Genera un buen ambiente laboral con los miembros del grupo.", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,11f, "Se dirige de manera institucional en los diferentes momentos que se presenten, actuando siempre apegado a las normas.", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,12f, "Apoya a las diferentes gestiones que se realicen durante los diferentes procesos que se le requieran.", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.PARES_ACADEMICOS, 1f,13f, "Se presenta en tiempo y forma, y en óptimas condiciones para el trabajo de área. ", ""));
         l.add(a1);
         return l;
     }
