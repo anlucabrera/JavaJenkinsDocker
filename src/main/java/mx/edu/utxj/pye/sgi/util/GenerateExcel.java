@@ -1233,7 +1233,7 @@ public class GenerateExcel implements Serializable{
             agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         }
         if(totalMaterias == 44){
-            agregarParrafosVacios(5, 8, 1.0);
+            agregarParrafosVacios(6, 8, 1.0);
             agregarTextoParrafo(0, 40, ParagraphAlignment.LEFT, 0, "AvantGarde Bk BT", "", Boolean.FALSE, 8, UnderlinePatterns.NONE, Boolean.FALSE, 1.0);
         }
         if(totalMaterias == 45){
@@ -1709,7 +1709,7 @@ public class GenerateExcel implements Serializable{
     }
     
     public void agregarInformacionFila(XWPFTableRow row,DtoCargaAcademica carga, BigDecimal promedio, String escala, Integer hrsPracticas, Integer hrsTeoricas){
-        int twipsPerInch = 1700;
+        int twipsPerInch = 1900;
         row.setHeight((int) (twipsPerInch * 1 / 10)); //set height 1/10 inch.
         row.getCtRow().getTrPr().getTrHeightArray(0).setHRule(STHeightRule.EXACT); //set w:hRule="exact"
         row.getCell(0).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.BOTTOM);
@@ -1717,9 +1717,9 @@ public class GenerateExcel implements Serializable{
         row.getCell(2).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.BOTTOM);
         row.getCell(3).setVerticalAlignment(XWPFTableCell.XWPFVertAlign.BOTTOM);
 
-        setTableCellBorder(row.getCell(0), Border.TOP, STBorder.DOTTED, 0);
-        setTableCellBorder(row.getCell(0), Border.BOTTOM, STBorder.DOTTED, 0);
-        setTableCellBorder(row.getCell(0), Border.RIGHT, STBorder.DOTTED, 0);
+        setTableCellBorder(row.getCell(0), Border.TOP, STBorder.SINGLE, 0);
+        setTableCellBorder(row.getCell(0), Border.BOTTOM, STBorder.SINGLE, 0);
+        setTableCellBorder(row.getCell(0), Border.RIGHT, STBorder.SINGLE, 0);
         XWPFParagraph pMateria = row.getCell(0).getParagraphs().get(0);
         pMateria.setSpacingAfter(0);
         pMateria.setSpacingBefore(0);
@@ -1729,10 +1729,10 @@ public class GenerateExcel implements Serializable{
         rMateria.setFontFamily("AvantGarde Bk BT");
         rMateria.setText(carga.getCargaAcademica().getIdPlanMateria().getIdMateria().getNombre());
 
-        setTableCellBorder(row.getCell(1), Border.TOP, STBorder.DOTTED, 0);
-        setTableCellBorder(row.getCell(1), Border.BOTTOM, STBorder.DOTTED, 0);
-        setTableCellBorder(row.getCell(1), Border.RIGHT, STBorder.DOTTED, 0);
-        setTableCellBorder(row.getCell(1), Border.LEFT, STBorder.DOTTED, 0);
+        setTableCellBorder(row.getCell(1), Border.TOP, STBorder.SINGLE, 0);
+        setTableCellBorder(row.getCell(1), Border.BOTTOM, STBorder.SINGLE, 0);
+        setTableCellBorder(row.getCell(1), Border.RIGHT, STBorder.SINGLE, 0);
+        setTableCellBorder(row.getCell(1), Border.LEFT, STBorder.SINGLE, 0);
         XWPFParagraph pHrs = row.getCell(1).getParagraphs().get(0);
         pHrs.setSpacingAfter(0);
         pHrs.setSpacingBefore(0);
@@ -1743,10 +1743,10 @@ public class GenerateExcel implements Serializable{
         rHrs.setText(String.valueOf(hrsPracticas + hrsTeoricas));
 
 
-        setTableCellBorder(row.getCell(2), Border.TOP, STBorder.DOTTED, 0);
-        setTableCellBorder(row.getCell(2), Border.BOTTOM, STBorder.DOTTED, 0);
-        setTableCellBorder(row.getCell(2), Border.RIGHT, STBorder.DOTTED, 0);
-        setTableCellBorder(row.getCell(2), Border.LEFT, STBorder.DOTTED, 0);
+        setTableCellBorder(row.getCell(2), Border.TOP, STBorder.SINGLE, 0);
+        setTableCellBorder(row.getCell(2), Border.BOTTOM, STBorder.SINGLE, 0);
+        setTableCellBorder(row.getCell(2), Border.RIGHT, STBorder.SINGLE, 0);
+        setTableCellBorder(row.getCell(2), Border.LEFT, STBorder.SINGLE, 0);
         XWPFParagraph pCal = row.getCell(2).getParagraphs().get(0);
         pCal.setSpacingAfter(0);
         pCal.setSpacingBefore(0);
@@ -1756,9 +1756,9 @@ public class GenerateExcel implements Serializable{
         rCal.setFontFamily("AvantGarde Bk BT");
         rCal.setText(promedio.toString());
 
-        setTableCellBorder(row.getCell(3), Border.TOP, STBorder.DOTTED, 0);
-        setTableCellBorder(row.getCell(3), Border.BOTTOM, STBorder.DOTTED, 0);
-        setTableCellBorder(row.getCell(3), Border.LEFT, STBorder.DOTTED, 0);
+        setTableCellBorder(row.getCell(3), Border.TOP, STBorder.SINGLE, 0);
+        setTableCellBorder(row.getCell(3), Border.BOTTOM, STBorder.SINGLE, 0);
+        setTableCellBorder(row.getCell(3), Border.LEFT, STBorder.SINGLE, 0);
         XWPFParagraph pLetr = row.getCell(3).getParagraphs().get(0);
         pLetr.setSpacingAfter(0);
         pLetr.setSpacingBefore(0);
