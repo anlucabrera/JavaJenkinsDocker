@@ -110,18 +110,20 @@ public class IntegracionExpedienteTitulacionEstudiante extends ViewScopedRol imp
     public void existeExpedienteTitulacion() {
         ResultadoEJB<ExpedienteTitulacion> res = ejb.buscarExpedienteRegistrado(rol.getEstudiante());
         if(res.getCorrecto()){
-            rol.setExisteExpediente(true);
-            rol.setExpedienteRegistrado(res.getValor());
-            rol.setPasoRegistro(rol.getExpedienteRegistrado().getPasoRegistro());
-            progresoRegistro();
-            pestaniaRegistro();
-            crearDtoExpedienteTitulacion();
-            Ajax.update("contenedorExp");
-        }else{  
-            rol.setExisteExpediente(false);
-            rol.setProgresoExpediente(0);
-            rol.setPestaniaActiva(0);
-        } 
+            if (res.getValor() != null) {
+                rol.setExisteExpediente(true);
+                rol.setExpedienteRegistrado(res.getValor());
+                rol.setPasoRegistro(rol.getExpedienteRegistrado().getPasoRegistro());
+                progresoRegistro();
+                pestaniaRegistro();
+                crearDtoExpedienteTitulacion();
+                Ajax.update("contenedorExp");
+            } else {
+                rol.setExisteExpediente(false);
+                rol.setProgresoExpediente(0);
+                rol.setPestaniaActiva(0);
+            }
+        }
         rol.setListaEstadosDomicilioRadica(eJBSelectItems.itemEstados());
         selectMunicipio();
         selectAsentamiento();

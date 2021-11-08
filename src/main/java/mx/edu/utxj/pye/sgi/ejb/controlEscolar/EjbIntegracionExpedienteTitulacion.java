@@ -108,14 +108,19 @@ public class EjbIntegracionExpedienteTitulacion {
                         .setParameter("listaTipos", listaTipos)
                         .setParameter("grado", 6)
                         .getResultStream().findFirst().orElse(null);
-                
+                    
                     if(estudianteTSU != null){
                         ExpedienteTitulacion expedienteTitulacionTSU = buscarExpedienteRegistrado(estudianteTSU).getValor();
-                        if(!expedienteTitulacionTSU.getPasoRegistro().equals("Fin Integración")){
+                        if(expedienteTitulacionTSU != null){
+                            if(!expedienteTitulacionTSU.getPasoRegistro().equals("Fin Integración")){
+                                e = estudianteTSU;
+                            }
+                        }else{
                             e = estudianteTSU;
                         }
                     }
                 }
+                
             return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El estudiante no se pudo validar. (EjbIntegracionExpedienteTitulacion.validadEstudiante)", e, null);
@@ -128,7 +133,7 @@ public class EjbIntegracionExpedienteTitulacion {
      * @return Evento escolar detectado o null de lo contrario
      */
     public ResultadoEJB<EventoTitulacion> verificarEvento(Estudiante estudiante){
-         try{
+        try{
             EventoTitulacion evento = null;
             
             if(estudiante.getTipoEstudiante().getIdTipoEstudiante()==1 || estudiante.getTipoEstudiante().getIdTipoEstudiante()==4){
@@ -161,7 +166,7 @@ public class EjbIntegracionExpedienteTitulacion {
      */
     public ResultadoEJB<ExpedienteTitulacion> buscarExpedienteRegistrado (Estudiante estudiante){
          try{
-            AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getCarrera());
+            AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
             //verificar apertura del evento
             ExpedienteTitulacion expediente = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.matricula.matricula =:matricula AND e.evento.generacion =:generacion AND e.evento.nivel =:nivel", ExpedienteTitulacion.class)
                     .setParameter("matricula", estudiante.getMatricula())
@@ -171,11 +176,8 @@ public class EjbIntegracionExpedienteTitulacion {
                     .findFirst()
                     .orElse(null);
             
-            if(expediente == null){
-                return ResultadoEJB.crearErroneo(2,expediente, "No se ha registrado expediente de titulación.");// .crearCorrecto(map.entrySet().iterator().next(), "Evento aperturado.");
-            }else{
-                return ResultadoEJB.crearCorrecto(expediente, "Existe expediente registrado.");
-            }
+            return ResultadoEJB.crearCorrecto(expediente, "Existe expediente registrado.");
+            
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo verificar la existencia del expediente de titulación (EjbIntegracionExpedienteTitulacion.buscarExpedienteRegistrado).", e, ExpedienteTitulacion.class);
         }
