@@ -166,7 +166,7 @@ public class RegistroEgresadoTerminacionEstudioServiciosEscolares extends ViewSc
                     rol.setFoja(1);
                 }else{
                     //System.out.println("El libro aun no ha alcanzado el numero de fojas requeridos");
-                    rol.setLibro(1);
+                    rol.setLibro(rete.getLibro());
                     rol.setFoja(1 + rete.getFoja());
                 }
             }else{
