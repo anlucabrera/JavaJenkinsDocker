@@ -18,7 +18,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -31,41 +30,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "CalificacionesHistorialTsu.findAll", query = "SELECT c FROM CalificacionesHistorialTsu c")
     , @NamedQuery(name = "CalificacionesHistorialTsu.findByIdcalificacionHistorica", query = "SELECT c FROM CalificacionesHistorialTsu c WHERE c.idcalificacionHistorica = :idcalificacionHistorica")
-    , @NamedQuery(name = "CalificacionesHistorialTsu.findByMateria", query = "SELECT c FROM CalificacionesHistorialTsu c WHERE c.materia = :materia")
-    , @NamedQuery(name = "CalificacionesHistorialTsu.findByValor", query = "SELECT c FROM CalificacionesHistorialTsu c WHERE c.valor = :valor")
-    , @NamedQuery(name = "CalificacionesHistorialTsu.findByHoras", query = "SELECT c FROM CalificacionesHistorialTsu c WHERE c.horas = :horas")
-    , @NamedQuery(name = "CalificacionesHistorialTsu.findByGrado", query = "SELECT c FROM CalificacionesHistorialTsu c WHERE c.grado = :grado")})
+    , @NamedQuery(name = "CalificacionesHistorialTsu.findByValor", query = "SELECT c FROM CalificacionesHistorialTsu c WHERE c.valor = :valor")})
 public class CalificacionesHistorialTsu implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id_calificacion_Historica")
+    @Column(name = "idcalificacionHistorica")
     private Integer idcalificacionHistorica;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "materia")
-    private String materia;
     @Basic(optional = false)
     @NotNull
     @Column(name = "valor")
     private double valor;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "horas")
-    private int horas;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "grado")
-    private int grado;
     @JoinColumn(name = "estudianteHistoricoTSU", referencedColumnName = "estudianteHistoricoTSU")
     @ManyToOne(optional = false)
     private EstudianteHistorialTsu estudianteHistoricoTSU;
-    @JoinColumn(name = "id_planEstudio", referencedColumnName = "id_planEstudio")
+    @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")
     @ManyToOne(optional = false)
-    private PlanesEstudioExternos idplanEstudio;
+    private PlanEstudioMateria idPlanMateria;
 
     public CalificacionesHistorialTsu() {
     }
@@ -74,12 +57,9 @@ public class CalificacionesHistorialTsu implements Serializable {
         this.idcalificacionHistorica = idcalificacionHistorica;
     }
 
-    public CalificacionesHistorialTsu(Integer idcalificacionHistorica, String materia, double valor, int horas, int grado) {
+    public CalificacionesHistorialTsu(Integer idcalificacionHistorica, double valor) {
         this.idcalificacionHistorica = idcalificacionHistorica;
-        this.materia = materia;
         this.valor = valor;
-        this.horas = horas;
-        this.grado = grado;
     }
 
     public Integer getIdcalificacionHistorica() {
@@ -90,36 +70,12 @@ public class CalificacionesHistorialTsu implements Serializable {
         this.idcalificacionHistorica = idcalificacionHistorica;
     }
 
-    public String getMateria() {
-        return materia;
-    }
-
-    public void setMateria(String materia) {
-        this.materia = materia;
-    }
-
     public double getValor() {
         return valor;
     }
 
     public void setValor(double valor) {
         this.valor = valor;
-    }
-
-    public int getHoras() {
-        return horas;
-    }
-
-    public void setHoras(int horas) {
-        this.horas = horas;
-    }
-
-    public int getGrado() {
-        return grado;
-    }
-
-    public void setGrado(int grado) {
-        this.grado = grado;
     }
 
     public EstudianteHistorialTsu getEstudianteHistoricoTSU() {
@@ -130,12 +86,12 @@ public class CalificacionesHistorialTsu implements Serializable {
         this.estudianteHistoricoTSU = estudianteHistoricoTSU;
     }
 
-    public PlanesEstudioExternos getIdplanEstudio() {
-        return idplanEstudio;
+    public PlanEstudioMateria getIdPlanMateria() {
+        return idPlanMateria;
     }
 
-    public void setIdplanEstudio(PlanesEstudioExternos idplanEstudio) {
-        this.idplanEstudio = idplanEstudio;
+    public void setIdPlanMateria(PlanEstudioMateria idPlanMateria) {
+        this.idPlanMateria = idPlanMateria;
     }
 
     @Override

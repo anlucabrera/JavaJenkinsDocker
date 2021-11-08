@@ -1341,17 +1341,20 @@
                         <h:form id="frmActualizaActividad">
                             <div class="row">
                                 <div class="col-sm-12 col-md-12 col-lg-12">
-                                    <p:panelGrid style="width: 100%;" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid" styleClass="ui-fluid card">
+                                    <p:outputPanel>
+                                        <p:autoUpdate/>
+                                        <p:panelGrid style="width: 100%;" columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid" styleClass="ui-fluid card">
 
-                                        <p:outputLabel style="font-size: large" value="Opción uno:"/>
-                                        <p:outputLabel style="font-size: large" value="#{reincorporacionServiciosEscolares.rol.rein.primeraOp}"/>
+                                            <p:outputLabel style="font-size: large" value="Opción uno:"/>
+                                            <p:outputLabel style="font-size: large" value="#{reincorporacionServiciosEscolares.rol.rein.primeraOp}"/>
 
-                                        <p:outputLabel style="font-size: large" value="Opción dos:"/>
-                                        <p:outputLabel style="font-size: large" value="#{reincorporacionServiciosEscolares.rol.rein.segundaOP}"/>
+                                            <p:outputLabel style="font-size: large" value="Opción dos:"/>
+                                            <p:outputLabel style="font-size: large" value="#{reincorporacionServiciosEscolares.rol.rein.segundaOP}"/>
 
-                                        <p:outputLabel style="font-size: large" value="Ultimo grupo activo:"/>
-                                        <p:outputLabel style="font-size: large" value="#{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.grado}° #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.literal}, #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.periodo}"/>
-                                    </p:panelGrid>
+                                            <p:outputLabel style="font-size: large" value="Ultimo grupo activo:"/>
+                                            <p:outputLabel style="font-size: large" value="#{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.grado}° #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.literal}, #{reincorporacionServiciosEscolares.rol.ultimoGrupoActivo.periodo}"/>
+                                        </p:panelGrid>
+                                    </p:outputPanel>
                                 </div>
                                 <br/>
                                 <div class="col-sm-12 col-md-12 col-lg-6">

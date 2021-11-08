@@ -95,25 +95,48 @@
                                             <p:message for="actividad" display="tooltip" />
                                         </div>
                                         <div class="col-sm-2 col-md-2 col-lg-2">
-                                            <p:outputLabel for="generacion"  value="Generacion" />
-                                            <p:inputText id="generacion" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.historialTsu.generacion}" style="height:100%; width: 100%;" placeholder="Generacion" >
-                                                <p:ajax update="generacion" global="false"/>
-                                            </p:inputText>
-                                            <p:message for="generacion" display="tooltip"/>     
-                                        </div> 
-                                        <div class="col-sm-2 col-md-2 col-lg-2">
                                             <p:outputLabel for="promedioe"  value="Promedio de Egreso" />
                                             <p:inputNumber id="promedioe" minValue="8.0" decimalPlaces="2" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.historialTsu.promedioEgreso}" style="height:100%; width: 100%;" placeholder="8.0" >
                                                 <p:ajax update="promedioe" global="false"/>
                                             </p:inputNumber>
                                             <p:message for="promedioe" display="tooltip"/>      
                                         </div> 
-                                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                            <p:outputLabel for="periodoE"  value="Periodo de carrera" />
-                                            <p:inputText id="periodoE" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.historialTsu.periodoCarrera}" style="height:100%; width: 100%;" placeholder="Sep 2014-Ago 2016">
-                                                <p:ajax update="periodoE" global="false"/>
-                                            </p:inputText>
-                                            <p:message for="periodoE" display="tooltip"/>  
+                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                            <p:outputLabel for="mesIni"  value="Mes inicio de carrera" />
+                                            <p:selectOneMenu id="mesIni" value="#{reincorporacionCalificacionesServiciosEscolares.rol.mesIni}"
+                                                             filter="true" filterMatchMode="contains" required="true" disabled="false">
+                                                <f:selectItems value="#{reincorporacionCalificacionesServiciosEscolares.rol.meses}" var="uni" itemValue="#{uni}" itemLabel="#{uni}"/>
+                                                <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.imprimirValores()}" process="mesIni" global="false"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="mesIni" display="tooltip"/>  
+                                        </div> 
+                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                            <p:outputLabel for="anioIni"  value="Año inicio de carrera" />
+                                            <p:selectOneMenu id="anioIni" value="#{reincorporacionCalificacionesServiciosEscolares.rol.anioIni}"
+                                                             filter="true" filterMatchMode="contains" required="true" disabled="false">
+                                                <f:selectItems value="#{reincorporacionCalificacionesServiciosEscolares.rol.anios}" var="uni" itemValue="#{uni}" itemLabel="#{uni}"/>
+                                                <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.imprimirValores()}" process="anioIni" global="false"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="anioIni" display="tooltip"/>  
+                                        </div> 
+                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                            <p:outputLabel for="mesFin"  value="Mes fin de carrera" />
+                                            <p:selectOneMenu id="mesFin" value="#{reincorporacionCalificacionesServiciosEscolares.rol.mesFin}"
+                                                             filter="true" filterMatchMode="contains" required="true" disabled="false">
+                                                <f:selectItems value="#{reincorporacionCalificacionesServiciosEscolares.rol.meses}" var="uni" itemValue="#{uni}" itemLabel="#{uni}"/>
+                                                <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.imprimirValores()}" process="mesFin" global="false"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="mesFin" display="tooltip"/>  
+                                        </div> 
+                                        <div class="col-sm-1 col-md-1 col-lg-1">
+                                            <p:outputLabel for="anioFin"  value="Año fin de carrera" />
+                                            <p:selectOneMenu id="anioFin" value="#{reincorporacionCalificacionesServiciosEscolares.rol.anioFin}"
+                                                             filter="true" filterMatchMode="contains" required="true" disabled="false">
+                                                <f:selectItems value="#{reincorporacionCalificacionesServiciosEscolares.rol.anios}" var="uni" itemValue="#{uni}" itemLabel="#{uni}"/>
+                                                <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.imprimirValores()}" process="anioFin" global="false"/>
+                                            </p:selectOneMenu>
+                                            <p:message for="anioFin" display="tooltip"/>  
+
                                         </div> 
                                     </div> 
                                 </div>

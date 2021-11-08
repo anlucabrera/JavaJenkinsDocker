@@ -54,6 +54,12 @@ public class PlanEstudioMateria implements Serializable {
     @NotNull
     @Column(name = "grado")
     private int grado;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "integradora")
+    private boolean integradora;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
+    private List<CalificacionesHistorialTsu> calificacionesHistorialTsuList;
     @ManyToMany(mappedBy = "planEstudioMateriaList", fetch = FetchType.LAZY)
     private List<Competencia> competenciaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
@@ -61,7 +67,7 @@ public class PlanEstudioMateria implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
-    private List<Calificacionestsuotrasaiiut> calificacionestsuotrasaiiutList;
+    private List<CalificacionesHistorialTsuOtrosPe> calificacionesHistorialTsuOtrosPes;
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Materia idMateria;
@@ -112,18 +118,18 @@ public class PlanEstudioMateria implements Serializable {
     public int getGrado() {
         return grado;
     }
-
+    
     public void setGrado(int grado) {
         this.grado = grado;
     }
     
     @XmlTransient
-    public List<Calificacionestsuotrasaiiut> getCalificacionestsuotrasaiiutList() {
-        return calificacionestsuotrasaiiutList;
+    public List<CalificacionesHistorialTsuOtrosPe> getCalificacionestsuotrasaiiutList() {
+        return calificacionesHistorialTsuOtrosPes;
     }
 
-    public void setCalificacionestsuotrasaiiutList(List<Calificacionestsuotrasaiiut> calificacionestsuotrasaiiutList) {
-        this.calificacionestsuotrasaiiutList = calificacionestsuotrasaiiutList;
+    public void setCalificacionestsuotrasaiiutList(List<CalificacionesHistorialTsuOtrosPe> calificacionestsuotrasaiiutList) {
+        this.calificacionesHistorialTsuOtrosPes = calificacionestsuotrasaiiutList;
     }
     
     @XmlTransient
@@ -246,6 +252,23 @@ public class PlanEstudioMateria implements Serializable {
 
     public void setIndicadorAlineacionPlanMateriaList(List<IndicadorAlineacionPlanMateria> indicadorAlineacionPlanMateriaList) {
         this.indicadorAlineacionPlanMateriaList = indicadorAlineacionPlanMateriaList;
+    }
+    
+    public boolean getIntegradora() {
+        return integradora;
+    }
+
+    public void setIntegradora(boolean integradora) {
+        this.integradora = integradora;
+    }
+
+    @XmlTransient
+    public List<CalificacionesHistorialTsu> getCalificacionesHistorialTsuList() {
+        return calificacionesHistorialTsuList;
+    }
+
+    public void setCalificacionesHistorialTsuList(List<CalificacionesHistorialTsu> calificacionesHistorialTsuList) {
+        this.calificacionesHistorialTsuList = calificacionesHistorialTsuList;
     }
     
 }

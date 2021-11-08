@@ -32,13 +32,24 @@ public class ReincorporacionCalificacionesRolServiciosEscolares extends Abstract
     @Getter @Setter private Boolean tipoRep;
     @Getter @Setter private Boolean filtaBaja;
     
+    
+    @Getter @Setter private String mesIni;
+    @Getter @Setter private String mesFin;
+    
+    @Getter @Setter private Integer anioIni;
+    @Getter @Setter private Integer anioFin;
+    
+    @Getter @Setter @NonNull private List<String> meses;
+    @Getter @Setter @NonNull private List<Integer> anios;
+    
+    
     @Getter @Setter private Estudiante estudiante;
-    @Getter @Setter private CalificacionesHistorialTsu historialTsu;
+    @Getter @Setter private CalificacionesHistorialTsuOtrosPe historialTsu;
     @Getter @Setter @NonNull private DtoReincorporacion.HistorialTsu tsu;
     
     
-    @Getter @Setter private List<CalificacionesHistorialTsu> historialCalificacionesTsus;
-    @Getter @Setter private List<Calificacionestsuotrasaiiut> historialCalificacionesSaiiuts;
+    @Getter @Setter private List<CalificacionesHistorialTsuOtrosPe> historialCalificacionesTsus;
+    @Getter @Setter private List<CalificacionesHistorialTsu> historialCalificacionesSaiiuts;
     
     @Getter @Setter @NonNull private List<Estudiante> estudiantesReincorporaciones;
     @Getter @Setter @NonNull private List<DtoReincorporacion.CalificacionesR> calificacionesTSU;

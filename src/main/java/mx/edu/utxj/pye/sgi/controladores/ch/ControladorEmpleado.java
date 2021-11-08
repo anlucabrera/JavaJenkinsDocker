@@ -135,7 +135,7 @@ public class ControladorEmpleado implements Serializable {
             mostrarPerfilLogeado();
             informacionComplementariaAEmpleadoLogeado();
             areaPoa();
-            crearMenuAdministrador();
+//            crearMenuAdministrador();
         } catch (NullPointerException npe) {
             Messages.addGlobalFatal("No se tiene acceso al Logon");
         } catch (Throwable ex) {

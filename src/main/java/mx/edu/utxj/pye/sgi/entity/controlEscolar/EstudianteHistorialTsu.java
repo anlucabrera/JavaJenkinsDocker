@@ -60,7 +60,7 @@ public class EstudianteHistorialTsu implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudianteHistoricoTSU")
     private List<CalificacionesHistorialTsu> calificacionesHistorialTsuList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudianteHistoricoTSU")
-    private List<Calificacionestsuotrasaiiut> calificacionestsuotrasaiiutList;
+    private List<CalificacionesHistorialTsuOtrosPe> calificacionesHistorialTsuOtrosPes;
 
     public EstudianteHistorialTsu() {
     }
@@ -119,12 +119,12 @@ public class EstudianteHistorialTsu implements Serializable {
     }
 
     @XmlTransient
-    public List<Calificacionestsuotrasaiiut> getCalificacionestsuotrasaiiutList() {
-        return calificacionestsuotrasaiiutList;
+    public List<CalificacionesHistorialTsuOtrosPe> getCalificacionesHistorialTsuOtrosPe() {
+        return calificacionesHistorialTsuOtrosPes;
     }
 
-    public void setCalificacionestsuotrasaiiutList(List<Calificacionestsuotrasaiiut> calificacionestsuotrasaiiutList) {
-        this.calificacionestsuotrasaiiutList = calificacionestsuotrasaiiutList;
+    public void setCalificacionesHistorialTsuOtrosPe(List<CalificacionesHistorialTsuOtrosPe> calificacionesHistorialTsuOtrosPes) {
+        this.calificacionesHistorialTsuOtrosPes = calificacionesHistorialTsuOtrosPes;
     }
 
     @Override

@@ -280,7 +280,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
     public void asignarNivelRein(ValueChangeEvent event) {
         rol.setNivelRi("");
         rol.setNivelRi(event.getNewValue().toString());
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.asignarNivelRein()"+rol.getNivelRi());
+//g        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.asignarNivelRein()"+rol.getNivelRi());
     }
     
 // Validadores
