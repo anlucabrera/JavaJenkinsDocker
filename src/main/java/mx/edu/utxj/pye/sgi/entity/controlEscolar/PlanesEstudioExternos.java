@@ -51,7 +51,7 @@ public class PlanesEstudioExternos implements Serializable {
     @Column(name = "anio")
     private Short anio;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idplanEstudio")
-    private List<CalificacionesHistorialTsu> calificacionesHistorialTsuList;
+    private List<CalificacionesHistorialTsuOtrosPe> calificacionesHistorialTsuOtrosPes;
 
     public PlanesEstudioExternos() {
     }
@@ -90,12 +90,12 @@ public class PlanesEstudioExternos implements Serializable {
     }
 
     @XmlTransient
-    public List<CalificacionesHistorialTsu> getCalificacionesHistorialTsuList() {
-        return calificacionesHistorialTsuList;
+    public List<CalificacionesHistorialTsuOtrosPe> getCalificacionesHistorialTsuOtrosPe() {
+        return calificacionesHistorialTsuOtrosPes;
     }
 
-    public void setCalificacionesHistorialTsuList(List<CalificacionesHistorialTsu> calificacionesHistorialTsuList) {
-        this.calificacionesHistorialTsuList = calificacionesHistorialTsuList;
+    public void setCalificacionesHistorialTsuOtrosPe(List<CalificacionesHistorialTsuOtrosPe> calificacionesHistorialTsuOtrosPes) {
+        this.calificacionesHistorialTsuOtrosPes = calificacionesHistorialTsuOtrosPes;
     }
 
     @Override

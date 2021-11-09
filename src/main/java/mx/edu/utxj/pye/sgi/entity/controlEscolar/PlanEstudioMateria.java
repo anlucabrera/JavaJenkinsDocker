@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "PlanEstudioMateria.findAll", query = "SELECT p FROM PlanEstudioMateria p")
     , @NamedQuery(name = "PlanEstudioMateria.findByIdPlanMateria", query = "SELECT p FROM PlanEstudioMateria p WHERE p.idPlanMateria = :idPlanMateria")
     , @NamedQuery(name = "PlanEstudioMateria.findByClaveMateria", query = "SELECT p FROM PlanEstudioMateria p WHERE p.claveMateria = :claveMateria")
-    , @NamedQuery(name = "PlanEstudioMateria.findByGrado", query = "SELECT p FROM PlanEstudioMateria p WHERE p.grado = :grado")})
+    , @NamedQuery(name = "PlanEstudioMateria.findByGrado", query = "SELECT p FROM PlanEstudioMateria p WHERE p.grado = :grado")
+    , @NamedQuery(name = "PlanEstudioMateria.findByIntegradora", query = "SELECT p FROM PlanEstudioMateria p WHERE p.integradora = :integradora")})
 public class PlanEstudioMateria implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -66,8 +67,6 @@ public class PlanEstudioMateria implements Serializable {
     private List<MetasPropuestas> metasPropuestasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaEstudiante> permisosCapturaExtemporaneaEstudianteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
-    private List<CalificacionesHistorialTsuOtrosPe> calificacionesHistorialTsuOtrosPes;
     @JoinColumn(name = "id_materia", referencedColumnName = "id_materia")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Materia idMateria;
@@ -94,9 +93,10 @@ public class PlanEstudioMateria implements Serializable {
         this.idPlanMateria = idPlanMateria;
     }
 
-    public PlanEstudioMateria(Integer idPlanMateria, int grado) {
+    public PlanEstudioMateria(Integer idPlanMateria, int grado, boolean integradora) {
         this.idPlanMateria = idPlanMateria;
         this.grado = grado;
+        this.integradora = integradora;
     }
 
     public Integer getIdPlanMateria() {
@@ -118,20 +118,19 @@ public class PlanEstudioMateria implements Serializable {
     public int getGrado() {
         return grado;
     }
-    
+
     public void setGrado(int grado) {
         this.grado = grado;
     }
-    
-    @XmlTransient
-    public List<CalificacionesHistorialTsuOtrosPe> getCalificacionestsuotrasaiiutList() {
-        return calificacionesHistorialTsuOtrosPes;
+
+    public boolean getIntegradora() {
+        return integradora;
     }
 
-    public void setCalificacionestsuotrasaiiutList(List<CalificacionesHistorialTsuOtrosPe> calificacionestsuotrasaiiutList) {
-        this.calificacionesHistorialTsuOtrosPes = calificacionestsuotrasaiiutList;
+    public void setIntegradora(boolean integradora) {
+        this.integradora = integradora;
     }
-    
+
     @XmlTransient
     public List<Competencia> getCompetenciaList() {
         return competenciaList;
@@ -252,14 +251,6 @@ public class PlanEstudioMateria implements Serializable {
 
     public void setIndicadorAlineacionPlanMateriaList(List<IndicadorAlineacionPlanMateria> indicadorAlineacionPlanMateriaList) {
         this.indicadorAlineacionPlanMateriaList = indicadorAlineacionPlanMateriaList;
-    }
-    
-    public boolean getIntegradora() {
-        return integradora;
-    }
-
-    public void setIntegradora(boolean integradora) {
-        this.integradora = integradora;
     }
 
     @XmlTransient
