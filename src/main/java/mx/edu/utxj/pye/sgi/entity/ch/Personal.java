@@ -270,7 +270,8 @@ public class Personal implements Serializable {
     private List<Cuidados> cuidadosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
     private List<EvaluacionParesAcademicos> evaluacionParesAcademicosList;
-
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
+    private List<EvaluacionConocimientoCodigoEticaResultados2> evaluacionConocimientoCodigoEticaResultados2List;
     public Personal() {
     }
 
@@ -997,6 +998,14 @@ public class Personal implements Serializable {
 
     public void setEvaluacionDocentesMateriaResultados5List(List<EvaluacionDocentesMateriaResultados5> evaluacionDocentesMateriaResultados5List) {
         this.evaluacionDocentesMateriaResultados5List = evaluacionDocentesMateriaResultados5List;
+    }
+    @XmlTransient
+    public List<EvaluacionConocimientoCodigoEticaResultados2> getEvaluacionConocimientoCodigoEticaResultados2List() {
+        return evaluacionConocimientoCodigoEticaResultados2List;
+    }
+
+    public void setEvaluacionConocimientoCodigoEticaResultados2List(List<EvaluacionConocimientoCodigoEticaResultados2> evaluacionConocimientoCodigoEticaResultados2List) {
+        this.evaluacionConocimientoCodigoEticaResultados2List = evaluacionConocimientoCodigoEticaResultados2List;
     }
 
 }

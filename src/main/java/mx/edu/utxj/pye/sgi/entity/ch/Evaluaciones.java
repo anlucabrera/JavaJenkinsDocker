@@ -110,6 +110,9 @@ public class Evaluaciones implements Serializable {
     private List<EvaluacionDesempenioAmbientalUtxj> evaluacionDesempenioAmbientalUtxjList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
     private List<EvaluacionParesAcademicos> evaluacionParesAcademicosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones")
+    private List<EvaluacionConocimientoCodigoEticaResultados2> evaluacionConocimientoCodigoEticaResultados2List;
+
 
     public Evaluaciones() {
     }
@@ -380,5 +383,15 @@ public class Evaluaciones implements Serializable {
     public void setEvaluacionParesAcademicosList(List<EvaluacionParesAcademicos> evaluacionParesAcademicosList) {
         this.evaluacionParesAcademicosList = evaluacionParesAcademicosList;
     }
+    @XmlTransient
+    public List<EvaluacionConocimientoCodigoEticaResultados2> getEvaluacionConocimientoCodigoEticaResultados2List() {
+        return evaluacionConocimientoCodigoEticaResultados2List;
+    }
+
+    public void setEvaluacionConocimientoCodigoEticaResultados2List(List<EvaluacionConocimientoCodigoEticaResultados2> evaluacionConocimientoCodigoEticaResultados2List) {
+        this.evaluacionConocimientoCodigoEticaResultados2List = evaluacionConocimientoCodigoEticaResultados2List;
+    }
+
+
 
 }
