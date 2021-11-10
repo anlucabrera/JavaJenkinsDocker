@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Consulta Alineación Educativa
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionAlineacionEducativaIdiomas.cargado}">
+            <adm:breadcrumb title="Administración de Planes de Estudio"/>
+            <adm:sidebar collapsed="true"/>
+            <div class="contenedor">
+                <c:if test="#{administracionAlineacionEducativaIdiomas.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div class="box box-solid">
+                                <p:tabView activeIndex="#{administracionAlineacionEducativaIdiomas.activaPestania}">
+                                    <p:tab title="Alineación Educativa">
+                                        <h:form id="alineacionFrm">
+                                            <div class="ui-g ui-fluid" style="margin-top: 20px;">   
+                                                <div class="ui-g-12 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:selectOneMenu id="planEstudioC" value="#{administracionAlineacionEducativaIdiomas.rol.alineacionAcedemica.planEstudio}" converter="entityConverter">
+                                                            <f:selectItem itemValue="#{null}"/>
+                                                            <f:selectItems value="#{administracionAlineacionEducativaIdiomas.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                            <p:ajax listener="#{administracionAlineacionEducativaIdiomas.comprobarTipoRegistro()}" update="@form" process="@this"/>
+                                                        </p:selectOneMenu>
+                                                        <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
+                                                        <p:message for="planEstudioC"/>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-6 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:selectOneMenu id="tipoRegistro" value="#{administracionAlineacionEducativaIdiomas.rol.tipoReg}">
+                                                            <f:selectItem itemValue="Ob" itemLabel="Objetivo educacional"/>
+                                                            <f:selectItem itemValue="Ae" itemLabel="Atributo de Egreso"/>
+                                                            <f:selectItem itemValue="In" itemLabel="Indicador" />
+                                                            <f:selectItem itemValue="Cr" itemLabel="Criterio de Desempeño"/>
+                                                            <p:ajax listener="#{administracionAlineacionEducativaIdiomas.comprobarTipoRegistro()}" update="@form" process="@this"/>
+                                                        </p:selectOneMenu>
+                                                        <p:outputLabel for="tipoRegistro" value="Tipo de Registro"/>
+                                                        <p:message for="tipoRegistro"/>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-12 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:dataTable id="unidadesResultados" var="com" value="#{administracionAlineacionEducativaIdiomas.rol.acedemicas}" sortBy="#{com.planEstudioMateria.claveMateria}">
+                                                            <f:facet name="header">
+                                                                #{administracionAlineacionEducativaIdiomas.rol.alineacionAcedemica.planEstudio.descripcion}
+                                                            </f:facet>
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="success">
+                                                                    <p:column rowspan="2" headerText="Meteria" style="width: 20%;" />
+                                                                    <p:column rowspan="2" headerText="Grado" style="width: 10%;"/>
+                                                                    <p:column rowspan="2" headerText="Clave" style="width: 10%;"/>
+                                                                    <p:column rowspan="2" headerText="Descripción" style="width: 40%;"/> 
+                                                                    <p:column rowspan="2" headerText="Nivel" style="width: 10%;" rendered="#{administracionAlineacionEducativaIdiomas.rol.newRegiistroOe}"/>
+                                                                    <p:column rowspan="2" headerText="Meta" style="width: 10%;" rendered="#{administracionAlineacionEducativaIdiomas.rol.newRegiistroIn}"/>
+                                                                </p:row>
+                                                            </p:columnGroup>
+
+
+                                                            <p:column groupRow="true">
+                                                                <h:outputText value="#{com.planEstudioMateria.claveMateria}--#{com.planEstudioMateria.idMateria.nombre}" />
+                                                            </p:column>
+                                                            <p:column groupRow="true">
+                                                                <h:outputText value="#{com.planEstudioMateria.grado}° Cuatrimestre" />
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:outputText value="#{com.clave}" />
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:outputText value="#{com.descripcion}" />                               
+                                                            </p:column>
+                                                            <p:column rendered="#{administracionAlineacionEducativaIdiomas.rol.newRegiistroOe}">
+                                                                <h:outputText value="#{com.nivelA}"/>
+                                                            </p:column>
+                                                            <p:column rendered="#{administracionAlineacionEducativaIdiomas.rol.newRegiistroIn}">
+                                                                <h:outputText value="#{com.meta}"/>
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Nivel de Desempeño">
+                                        <h:form id="desempeniosFrm">
+                                            <div class="ui-g ui-fluid" style="margin-top: 20px;">                                            
+                                                <div class="ui-g-6 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:selectOneMenu id="planEstudioC" value="#{administracionAlineacionEducativaIdiomas.rol.materiaMetasPropuestas.planEstudio}" converter="entityConverter">
+                                                            <f:selectItem itemValue="#{null}"/>
+                                                            <f:selectItems value="#{administracionAlineacionEducativaIdiomas.rol.planesEstudio}" var="planEstudio" itemValue="#{planEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                            <p:ajax listener="#{administracionAlineacionEducativaIdiomas.nivelesDesempenioPlanEstudioMateriaConsulta()}" update="@form" process="@this"/>
+                                                        </p:selectOneMenu>
+                                                        <p:outputLabel for="planEstudioC" value="Plan de estudios"/>
+                                                        <p:message for="planEstudioC"/>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-12 ui-sm-12">
+                                                    <div class="ui-material">
+                                                        <p:dataTable id="unidadesResultados" var="com" value="#{administracionAlineacionEducativaIdiomas.rol.propuestases}" sortBy="#{com.idPlanMateria.idPlanMateria}">
+                                                            <f:facet name="header">
+                                                                #{administracionAlineacionEducativaIdiomas.rol.materiaMetasPropuestas.materia.idPlan.descripcion}
+                                                            </f:facet>
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="success">
+                                                                    <p:column rowspan="2" headerText="Materia" style="width: 20%;"/> 
+                                                                    <p:column rowspan="2" headerText="Autónomo" style="width: 20%;"/> 
+                                                                    <p:column rowspan="2" headerText="Destacado" style="width: 20%;"/> 
+                                                                    <p:column rowspan="2" headerText="Satisfactorio" style="width: 20%;"/> 
+                                                                    <p:column rowspan="2" headerText="No Acreditado" style="width: 20%;"/>
+                                                                </p:row>
+                                                            </p:columnGroup>
+
+                                                            <p:column groupRow="true">
+                                                                <h:outputText value="#{com.idPlanMateria.claveMateria}-#{com.idPlanMateria.idMateria.nombre}" />
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:outputText value="#{com.autonomo}" />
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:outputText value="#{com.destacado}" />
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:outputText value="#{com.satisfactorio}" />
+                                                            </p:column>
+                                                            <p:column>
+                                                                <h:outputText value="#{com.noAcreditado}" />
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                        <br/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </h:form>
+                                    </p:tab>
+                                </p:tabView>
+                            </div>
+                        </div>
+                    </div>
+                </c:if>
+                <c:if test="#{!administracionAlineacionEducativaIdiomas.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText
+                                value="El acceso solo está autorizado a directores de área académica."/>
+                        </h:panelGrid>
+                        <f:facet name="footer">
+
+                        </f:facet>
+                    </p:panel>
+                </c:if>
+
+            </div>
+        </c:if>
+    </ui:define>
+</ui:composition>

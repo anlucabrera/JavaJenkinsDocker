@@ -29,6 +29,7 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
     public Boolean tieneElementos() {
         Boolean get = Faces.evaluateExpressionGet("#{asignacionAcademicaDirector.tieneAcceso}");if(get) return true;
         get = Faces.evaluateExpressionGet("#{reincorporacionServiciosEscolares.tieneAcceso}");if(get)return true;
+        get = Faces.evaluateExpressionGet("#{administracionAlineacionEducativaIdiomas.tieneAcceso}");if(get)return true;
         get = Faces.evaluateExpressionGet("#{asignacionTutorAcademico.tieneAcceso}");if(get)return true;
         get = Faces.evaluateExpressionGet("#{generacionGruposServiciosEscolares.tieneAcceso}");if(get)return true;
         get = Faces.evaluateExpressionGet("#{asignacionAcademicaDirector.tieneAcceso}"); if(get) return true;
@@ -51,11 +52,8 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{consultaCalificacionesEstudiante.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{cedulaIdentificacionPsicopedagogia.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{historialMovEstServiciosEscolares.tieneAcceso}"); if(get) return true;
-        get = Faces.evaluateExpressionGet("#{concentradoCalificacionesTutor.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{fusionGruposDirector.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{fusionGruposServiciosEscolares.tieneAcceso}"); if(get) return true;
-        get = Faces.evaluateExpressionGet("#{concentradoCalificacionesSecAca.tieneAcceso}"); if(get) return true;
-        get = Faces.evaluateExpressionGet("#{concentradoCalificacionesDirector.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{cuestionarioPsicopedagogicoEstudiante.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{avanceProgramaticoDirector.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{avanceProgramaticoDocente.tieneAcceso}"); if(get) return true;

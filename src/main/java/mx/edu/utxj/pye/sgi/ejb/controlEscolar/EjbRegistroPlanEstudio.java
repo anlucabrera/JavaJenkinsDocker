@@ -157,12 +157,27 @@ public class EjbRegistroPlanEstudio {
         }
     }
 
-public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst) {
+    public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst) {
         try {
             final List<MetasPropuestas> metasplane = em.createQuery("SELECT m FROM MetasPropuestas m WHERE m.idPlanMateria.idPlan.idPlanEstudio = :idPlanEstudio", MetasPropuestas.class)
                     .setParameter("idPlanEstudio", planEst.getIdPlanEstudio())
                     .getResultList();
 
+            return ResultadoEJB.crearCorrecto(metasplane, "Lista de Metas propuestas activas por plan de estudio");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "Imposible obtener el listado de Metas Propuestas del plan de estudio", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<MetasPropuestas>> getMateriasMetasIdiomas(PlanEstudio planEst) {
+        try {
+            final List<MetasPropuestas> idomas = em.createQuery("SELECT m FROM MetasPropuestas m INNER JOIN m.idPlanMateria pem INNER JOIN pem.idMateria a  INNER JOIN a.idAreaConocimiento c WHERE m.idPlanMateria.idPlan.idPlanEstudio = :idPlanEstudio AND (c.idAreaConocimiento=:tsu OR c.idAreaConocimiento=:ling)", MetasPropuestas.class)
+                    .setParameter("idPlanEstudio", planEst.getIdPlanEstudio())
+                    .setParameter("tsu", 3)
+                    .setParameter("ling", 8)
+                    .getResultList();
+            List<MetasPropuestas> metasplane = idomas.stream().filter(t -> !t.getIdPlanMateria().getIdMateria().getNombre().contains("Oral")).collect(Collectors.toList());
+            
             return ResultadoEJB.crearCorrecto(metasplane, "Lista de Metas propuestas activas por plan de estudio");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "Imposible obtener el listado de Metas Propuestas del plan de estudio", e, null);
@@ -796,6 +811,60 @@ public ResultadoEJB<List<MetasPropuestas>> getMateriasMetas(PlanEstudio planEst)
         List<PlanEstudioMateria> pems = em.createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", PlanEstudioMateria.class)
                 .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                 .getResultList();
+        AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
+                .setParameter("area", estudio.getIdPe())
+                .getSingleResult();
+        
+        if (!pems.isEmpty()) {
+            pems.forEach((t) -> {
+                switch (tipo) {
+                    case "Ob":
+                        if (!t.getObjetivoEducacionalPlanMateriaList().isEmpty()) {
+                            t.getObjetivoEducacionalPlanMateriaList().forEach((ob) -> {
+                                ObjetivoEducacional oe = ob.getObjetivoEducacional1();
+                                daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getObjetivoEducacional(), oe.getClave(), oe.getDescripcion(), ob.getNivelAportacion(), 0D, oe.getPlanEstudio(), t,auv,tipo));
+                            });
+                        }
+                        break;
+                    case "Ae":
+                        if (!t.getAtributoEgresoList().isEmpty()) {
+                            t.getAtributoEgresoList().forEach((ob) -> {
+                                daas.add(new DtoAlineacionAcedemica.Presentacion(ob.getAtributoEgreso(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t,auv,tipo));
+                            });
+                        }
+                        break;
+                    case "Cr":
+                        if (!t.getCriterioDesempenioList().isEmpty()) {
+                            t.getCriterioDesempenioList().forEach((ob) -> {
+                                daas.add(new DtoAlineacionAcedemica.Presentacion(ob.getCriteriDesempenio(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t,auv,tipo));
+                            });
+                        }
+                        break;
+                    case "In":
+                        if (!t.getIndicadorAlineacionPlanMateriaList().isEmpty()) {
+                            t.getIndicadorAlineacionPlanMateriaList().forEach((ob) -> {
+                                IndicadorAlineacion oe = ob.getIndicadorAlineacion();
+                                daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getIndicadorPem(), oe.getClave(), oe.getDescripcion(), "", ob.getMetaIndicador(), oe.getPlanEstudio(), t,auv,tipo));
+                            });
+                        }
+                        break;
+                }
+            });
+            return daas;
+        } else {
+            return new ArrayList<>();
+        }
+    }
+    
+    public List<DtoAlineacionAcedemica.Presentacion> generarDtoAlineacionAcedemicaIdiomas(PlanEstudio estudio,String tipo) {
+        List<DtoAlineacionAcedemica.Presentacion> daas = new ArrayList<>();
+        List<PlanEstudioMateria> idomas = em.createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan INNER JOIN pem.idMateria m INNER JOIN m.idAreaConocimiento c WHERE plan.idPlanEstudio = :idPlanEstudio AND (c.idAreaConocimiento=:tsu OR c.idAreaConocimiento=:ling)", PlanEstudioMateria.class)
+                .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
+                .setParameter("tsu", 3)
+                .setParameter("ling", 8)
+                .getResultList();
+        List<PlanEstudioMateria> pems =idomas.stream().filter(t -> !t.getIdMateria().getNombre().contains("Oral")).collect(Collectors.toList());
+        
         AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
                 .setParameter("area", estudio.getIdPe())
                 .getSingleResult();
