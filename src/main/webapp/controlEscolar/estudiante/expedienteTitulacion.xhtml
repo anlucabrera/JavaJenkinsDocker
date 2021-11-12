@@ -48,7 +48,7 @@
                                 <h:form id="frmExpTitPeriodoAct">
                                 <p:toolbar id="tb">
                                     <f:facet name="left">
-                                        <p:outputLabel value="Periodo Escolar: #{caster.clavePeriodoToString(integracionExpedienteTitulacionEstudiante.rol.periodoActivo)}" />
+                                        <p:outputLabel value="Evento activo para la generación #{caster.generacionToString(integracionExpedienteTitulacionEstudiante.rol.generacion)} y nivel #{integracionExpedienteTitulacionEstudiante.rol.nivelEducativo.nombre}" />
                                         <p:spacer width="5" />
 
                                     </f:facet>
@@ -138,28 +138,28 @@
                                                                             <div class="col-sm-12 col-md-12 col-lg-2">
                                                                                 <strong>Matricula</strong> 
                                                                                 <p class="text-muted">
-                                                                                #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.expediente.matricula.matricula}
+                                                                                #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.expediente.estudiante.matricula}
                                                                                 </p>
                                                                                 <hr/>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                 <strong>Nombre</strong>               
                                                                                 <p class="text-muted">
-                                                                                #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.nombre}
+                                                                                #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.expediente.estudiante.aspirante.idPersona.nombre}
                                                                                 </p>
                                                                                 <hr/>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
                                                                                 <strong>Apellido Paterno</strong>
                                                                                 <p class="text-muted">
-                                                                                #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.apellidoPaterno}
+                                                                                #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.expediente.estudiante.aspirante.idPersona.apellidoPaterno}
                                                                                 </p>
                                                                                 <hr/>
                                                                             </div>
                                                                             <div class="col-sm-12 col-md-12 col-lg-3">
                                                                                 <strong>Apellido Materno</strong>
                                                                                 <p class="text-muted">
-                                                                                #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.apellidoMaterno}
+                                                                                #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.expediente.estudiante.aspirante.idPersona.apellidoMaterno}
                                                                                 </p>
                                                                                 <hr/>
                                                                             </div>
@@ -181,7 +181,7 @@
                                                                             <div class="col-sm-12 col-md-12 col-lg-6">
                                                                                 <strong>CURP</strong>       
                                                                                 <p class="text-muted">
-                                                                                #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.curp}
+                                                                                #{integracionExpedienteTitulacionEstudiante.rol.dtoExpedienteTitulacion.expediente.estudiante.aspirante.idPersona.curp}
                                                                                 </p>
                                                                                 <hr/>
                                                                             </div>

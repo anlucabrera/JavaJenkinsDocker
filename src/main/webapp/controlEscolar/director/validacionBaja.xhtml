@@ -124,7 +124,7 @@
                                                             <c:set var="statusBaja" value="#{validacionBajaDirector.consultarStatus(baja)}" />
                                                             <p:commandButton actionListener="#{validacionBajaDirector.validarBaja(registro)}"
                                                                                   class="btn btn-sm #{statusBaja.validacionBaja eq 'Hecha'?'btn-info':'btn-danger'}" icon="#{statusBaja.validacionBaja eq 'Hecha'?'fa fa-close':'fa fa-check'}"
-                                                                                  title="#{statusBaja.validacionBaja eq 'Hecha'?'Invalidar baja.':'Validar baja.'}" disabled="#{statusBaja.areaValidacionBaja eq 'Servicios Escolares'}"
+                                                                                  title="#{statusBaja.validacionBaja eq 'Hecha'?'Invalidar baja.':'Validar baja.'}" disabled="#{validacionBajaDirector.deshabilitarOpcion(baja)}"
                                                                                   onsuccess="actualizar();" />
                                                             <p:commandButton actionListener="#{validacionBajaDirector.buscarMateriasReprobadas(registro)}"
                                                             class="btn btn-sm btn-warning" 
@@ -134,7 +134,7 @@
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-file-text-o"
                                                                                   title="Generar Formato de Baja"  disabled="#{baja.dtoRegistroBaja.registroBaja.idBajas eq null}"/> 
-                                                            <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{validacionBajaDirector.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{statusBaja.areaValidacionBaja eq 'Servicios Escolares'}">
+                                                            <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{validacionBajaDirector.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{validacionBajaDirector.deshabilitarOpcion(baja)}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert"/>
                                                             </p:commandButton>
                                                         </div>

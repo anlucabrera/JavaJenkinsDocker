@@ -43,6 +43,7 @@ import org.primefaces.event.CellEditEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Objects;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCapturaCalificaciones;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Messages;
@@ -160,6 +161,7 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
         ResultadoEJB<DtoDatosEstudiante> res = ejb.buscarDatosEstudiante(claveEstudiante);
         if(res.getCorrecto()){
         rol.setDatosEstudiante(res.getValor());
+        deshabilitarRegistro();
         tiposBaja();
         causasBaja();
         rangoFechasPermiso();
@@ -167,8 +169,14 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
         Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
     }
-     
     
+    public void deshabilitarRegistro(){
+        rol.setDeshabilitarRegistro(false);
+        if(rol.getDatosEstudiante().getEstudiante().getTipoEstudiante().getIdTipoEstudiante()!=1){
+            rol.setDeshabilitarRegistro(true);
+        }
+    }
+   
     /**
      * Permite obtener la lista de tipos de baja 
      */
@@ -251,6 +259,10 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
        if(res.getCorrecto()){
             rol.setRegistroBajaEstudiante(res.getValor());
             mostrarMensajeResultadoEJB(res);
+            rol.setDeshabilitarEliminar(false);
+            if(!Objects.equals(rol.getRegistroBajaEstudiante().getPeriodoEscolar().getPeriodo(), rol.getPeriodoActivo())){
+                rol.setDeshabilitarEliminar(true);
+            }
             Ajax.update("frm");
         }
      }

@@ -82,6 +82,8 @@ public class Estudiante implements Serializable {
     @Size(min = 1, max = 51)
     @Column(name = "tipo_registro")
     private String tipoRegistro;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
+    private List<ExpedienteTitulacion> expedienteTitulacionList;
     @ManyToMany(mappedBy = "estudianteList", fetch = FetchType.LAZY)
     private List<Asesoria> asesoriaList;
     @ManyToMany(mappedBy = "estudianteList", fetch = FetchType.LAZY)
@@ -503,6 +505,15 @@ public class Estudiante implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante[ idEstudiante=" + idEstudiante + " ]";
+    }
+    
+    @XmlTransient
+    public List<ExpedienteTitulacion> getExpedienteTitulacionList() {
+        return expedienteTitulacionList;
+    }
+
+    public void setExpedienteTitulacionList(List<ExpedienteTitulacion> expedienteTitulacionList) {
+        this.expedienteTitulacionList = expedienteTitulacionList;
     }
     
 }

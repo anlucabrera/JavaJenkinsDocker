@@ -77,6 +77,7 @@ public enum ControlEscolarVistaControlador {
     CARTA_NO_ADUEDO_SE("/controlEscolar/se/cartaNoAdeudoServiciosEscolares.xhtml", CartaNoAdeudoSE.class),
     SEGUIMIENTO_ESTADIA_ESCOLARES("/controlEscolar/se/seguimientoEstadiaEscolares.xhtml", SeguimientoEstadiaEscolares.class),
     REGISTRO_EGRESADO_TERMINACION_ESTUDIOS("/controlEscolar/se/registroEgresados.xhtml", RegistroEgresadoTerminacionEstudioServiciosEscolares.class),
+    ELIMINAR_INSCRIPCION("/controlEscolar/se/eliminarInscripcion.xhtml", EliminarInscripcionServiciosEscolares.class),
 
     CARTA_NO_ADUEDO_FINANZAS("/controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml", CartaNoAdeudoFinanzas.class),
 

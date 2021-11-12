@@ -90,6 +90,8 @@ public class IntegracionExpedienteTitulacionEstudiante extends ViewScopedRol imp
             if(!resEvento.getCorrecto()) mostrarMensajeResultadoEJB(resEvento);
             rol.setNivelRol(NivelRol.OPERATIVO);
             rol.setEventoActivo(resEvento.getValor());
+            rol.setGeneracion(ejb.getGeneracionEventoActivo(rol.getEventoActivo().getGeneracion()).getValor());
+            rol.setNivelEducativo(ejb.getNivelEventoActivo(rol.getEventoActivo().getNivel()).getValor());
             existeExpedienteTitulacion();
 
             rol.getInstrucciones().add("Es importante que sigas con las instrucciones que te irá mostrando el sistema.");
@@ -107,22 +109,22 @@ public class IntegracionExpedienteTitulacionEstudiante extends ViewScopedRol imp
         return mostrar(request, map.containsValue(valor));
     }
     
-    public void existeExpedienteTitulacion() {
+   public void existeExpedienteTitulacion() {
         ResultadoEJB<ExpedienteTitulacion> res = ejb.buscarExpedienteRegistrado(rol.getEstudiante());
         if(res.getCorrecto()){
             if (res.getValor() != null) {
-                rol.setExisteExpediente(true);
-                rol.setExpedienteRegistrado(res.getValor());
-                rol.setPasoRegistro(rol.getExpedienteRegistrado().getPasoRegistro());
-                progresoRegistro();
-                pestaniaRegistro();
-                crearDtoExpedienteTitulacion();
-                Ajax.update("contenedorExp");
+            rol.setExisteExpediente(true);
+            rol.setExpedienteRegistrado(res.getValor());
+            rol.setPasoRegistro(rol.getExpedienteRegistrado().getPasoRegistro());
+            progresoRegistro();
+            pestaniaRegistro();
+            crearDtoExpedienteTitulacion();
+            Ajax.update("contenedorExp");
             } else {
-                rol.setExisteExpediente(false);
-                rol.setProgresoExpediente(0);
-                rol.setPestaniaActiva(0);
-            }
+            rol.setExisteExpediente(false);
+            rol.setProgresoExpediente(0);
+            rol.setPestaniaActiva(0);
+        } 
         }
         rol.setListaEstadosDomicilioRadica(eJBSelectItems.itemEstados());
         selectMunicipio();

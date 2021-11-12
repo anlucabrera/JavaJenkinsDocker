@@ -226,21 +226,21 @@ public class EjbRegistroExpediente {
             if(expedienteTitulacion.getExpediente()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar un expediente con clave nula.", DtoNuevoExpedienteTitulacion.class);
      
             SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
-            String fechaNacimiento = sm.format(expedienteTitulacion.getMatricula().getAspirante().getIdPersona().getFechaNacimiento());
+            String fechaNacimiento = sm.format(expedienteTitulacion.getEstudiante().getAspirante().getIdPersona().getFechaNacimiento());
             
-            AreasUniversidad progEdu = em.find(AreasUniversidad.class,  expedienteTitulacion.getMatricula().getGrupo().getIdPe());
+            AreasUniversidad progEdu = em.find(AreasUniversidad.class,  expedienteTitulacion.getEstudiante().getGrupo().getIdPe());
             Generaciones generacion = em.find(Generaciones.class, expedienteTitulacion.getEvento().getGeneracion());
             ProgramasEducativosNiveles nivel = em.find(ProgramasEducativosNiveles.class, progEdu.getNivelEducativo().getNivel());
             
-            Generos genero = em.find(Generos.class,  expedienteTitulacion.getMatricula().getAspirante().getIdPersona().getGenero());
-            Domicilio domicilio = em.find(Domicilio.class, expedienteTitulacion.getMatricula().getAspirante().getIdAspirante());
+            Generos genero = em.find(Generos.class,  expedienteTitulacion.getEstudiante().getAspirante().getIdPersona().getGenero());
+            Domicilio domicilio = em.find(Domicilio.class, expedienteTitulacion.getEstudiante().getAspirante().getIdAspirante());
             Estado estadoDom = em.find(Estado.class, domicilio.getIdEstado());
             MunicipioPK mpk = new MunicipioPK(estadoDom.getIdestado(), domicilio.getIdMunicipio());
             Municipio munDom = em.find(Municipio.class, mpk);
             AsentamientoPK apk = new AsentamientoPK(estadoDom.getIdestado(), munDom.getMunicipioPK().getClaveMunicipio(), domicilio.getIdAsentamiento());
             Asentamiento asentDom = em.find(Asentamiento.class, apk);
-            MedioComunicacion comunicaciones = em.find(MedioComunicacion.class, expedienteTitulacion.getMatricula().getAspirante().getIdPersona().getIdpersona());
-            DatosAcademicos datosAcademicos = em.find(DatosAcademicos.class, expedienteTitulacion.getMatricula().getAspirante().getIdAspirante());
+            MedioComunicacion comunicaciones = em.find(MedioComunicacion.class, expedienteTitulacion.getEstudiante().getAspirante().getIdPersona().getIdpersona());
+            DatosAcademicos datosAcademicos = em.find(DatosAcademicos.class, expedienteTitulacion.getEstudiante().getAspirante().getIdAspirante());
             Iems iems = em.find(Iems.class, datosAcademicos.getInstitucionAcademica());
             Localidad locIems = em.find(Localidad.class, iems.getLocalidad().getLocalidadPK());
             
@@ -268,7 +268,7 @@ public class EjbRegistroExpediente {
     public ResultadoEJB<ExpedienteTitulacion> getExisteExpedienteTitulacion(Estudiante estudiante, Generaciones generacion, ProgramasEducativosNiveles nivel){
         try{
             
-            ExpedienteTitulacion expedienteTitulacion = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.matricula.matricula =:matricula AND e.evento.generacion =:generacion AND e.evento.nivel =:nivel", ExpedienteTitulacion.class)
+            ExpedienteTitulacion expedienteTitulacion = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.estudiante.matricula=:matricula AND e.evento.generacion =:generacion AND e.evento.nivel =:nivel", ExpedienteTitulacion.class)
                     .setParameter("matricula", estudiante.getMatricula())
                     .setParameter("generacion", generacion.getGeneracion())
                     .setParameter("nivel", nivel.getNivel())
@@ -294,7 +294,7 @@ public class EjbRegistroExpediente {
             ExpedienteTitulacion expedienteTitulacion = new ExpedienteTitulacion();
             expedienteTitulacion.setEvento(evento);
             expedienteTitulacion.setFechaRegistro(fechaIntExp);
-            expedienteTitulacion.setMatricula(estudiante);
+            expedienteTitulacion.setEstudiante(estudiante);
             expedienteTitulacion.setValidado(false);
             expedienteTitulacion.setFechaValidacion(null);
             expedienteTitulacion.setPersonalValido(null);
@@ -302,6 +302,7 @@ public class EjbRegistroExpediente {
             expedienteTitulacion.setFechaPaso(new Date());
             expedienteTitulacion.setPromedio((float)0.0);
             expedienteTitulacion.setServicioSocial(Boolean.FALSE);
+            expedienteTitulacion.setActivo(true);
             em.persist(expedienteTitulacion);
             f.flush();
             

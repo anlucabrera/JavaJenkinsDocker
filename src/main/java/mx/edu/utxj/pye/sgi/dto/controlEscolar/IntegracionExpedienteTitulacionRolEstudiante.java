@@ -16,6 +16,8 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioComunicacion;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 /**
  *
@@ -42,6 +44,16 @@ public class IntegracionExpedienteTitulacionRolEstudiante{
      * Clave del periodo activo
      */
     @Getter private Integer  periodoActivo;
+    
+     /**
+     * Generación del evento activo
+     */
+    @Getter private Generaciones generacion;
+    
+     /**
+     * Nivel educativo del evento activo
+     */
+    @Getter private ProgramasEducativosNiveles  nivelEducativo;
     
     /**
      * Lista de instrucciones para utilizar el módulo
@@ -143,6 +155,14 @@ public class IntegracionExpedienteTitulacionRolEstudiante{
 
     public void setPeriodoActivo(Integer periodoActivo) {
         this.periodoActivo = periodoActivo;
+    }
+    
+    public void setGeneracion(Generaciones generacion) {
+        this.generacion = generacion;
+    }
+    
+    public void setNivelEducativo(ProgramasEducativosNiveles nivelEducativo) {
+        this.nivelEducativo = nivelEducativo;
     }
 
     public void setInstrucciones(List<String> instrucciones) {

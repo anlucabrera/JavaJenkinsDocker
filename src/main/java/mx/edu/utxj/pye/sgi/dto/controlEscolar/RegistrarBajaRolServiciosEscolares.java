@@ -122,6 +122,17 @@ public class RegistrarBajaRolServiciosEscolares extends AbstractRol {
      */
     @Getter @NonNull private Estudiante estudianteActualizado;
     
+      /**
+     * Representa valor para definir si se deshabilita o no el botón para registrar baja
+     */
+    @Getter @NonNull private Boolean deshabilitarRegistro;
+    
+    
+      /**
+     * Representa valor para definir si se deshabilita o no el botón para eliminar baja
+     */
+    @Getter @NonNull private Boolean deshabilitarEliminar;
+    
     public RegistrarBajaRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo personal) {
         super(filtro);
         this.personal = personal;
@@ -207,5 +218,12 @@ public class RegistrarBajaRolServiciosEscolares extends AbstractRol {
     public void setEstudianteActualizado(Estudiante estudianteActualizado) {
         this.estudianteActualizado = estudianteActualizado;
     }
-    
+
+    public void setDeshabilitarRegistro(Boolean deshabilitarRegistro) {
+        this.deshabilitarRegistro = deshabilitarRegistro;
+    }
+
+    public void setDeshabilitarEliminar(Boolean deshabilitarEliminar) {
+        this.deshabilitarEliminar = deshabilitarEliminar;
+    }
 }

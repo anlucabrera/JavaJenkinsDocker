@@ -13,16 +13,15 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -48,7 +47,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "ExpedienteTitulacion.findByPasoRegistro", query = "SELECT e FROM ExpedienteTitulacion e WHERE e.pasoRegistro = :pasoRegistro")
     , @NamedQuery(name = "ExpedienteTitulacion.findByFechaPaso", query = "SELECT e FROM ExpedienteTitulacion e WHERE e.fechaPaso = :fechaPaso")
     , @NamedQuery(name = "ExpedienteTitulacion.findByPromedio", query = "SELECT e FROM ExpedienteTitulacion e WHERE e.promedio = :promedio")
-    , @NamedQuery(name = "ExpedienteTitulacion.findByServicioSocial", query = "SELECT e FROM ExpedienteTitulacion e WHERE e.servicioSocial = :servicioSocial")})
+    , @NamedQuery(name = "ExpedienteTitulacion.findByServicioSocial", query = "SELECT e FROM ExpedienteTitulacion e WHERE e.servicioSocial = :servicioSocial")
+    , @NamedQuery(name = "ExpedienteTitulacion.findByActivo", query = "SELECT e FROM ExpedienteTitulacion e WHERE e.activo = :activo")})
 public class ExpedienteTitulacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -89,15 +89,21 @@ public class ExpedienteTitulacion implements Serializable {
     @NotNull
     @Column(name = "servicio_social")
     private boolean servicioSocial;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "activo")
+    private boolean activo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "expediente", fetch = FetchType.LAZY)
     private List<DocumentoExpedienteTitulacion> documentoExpedienteTitulacionList;
     @JoinColumn(name = "evento", referencedColumnName = "evento")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private EventoTitulacion evento;
-    @JoinColumn(name = "matricula", referencedColumnName = "matricula")
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    private Estudiante matricula;
-
+    @JoinColumns({
+        @JoinColumn(name = "matricula", referencedColumnName = "matricula")
+        , @JoinColumn(name = "periodo", referencedColumnName = "periodo")})
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    private Estudiante estudiante;
+    
     public ExpedienteTitulacion() {
     }
 
@@ -187,6 +193,14 @@ public class ExpedienteTitulacion implements Serializable {
         this.servicioSocial = servicioSocial;
     }
 
+    public boolean getActivo() {
+        return activo;
+    }
+    
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+    
     @XmlTransient
     public List<DocumentoExpedienteTitulacion> getDocumentoExpedienteTitulacionList() {
         return documentoExpedienteTitulacionList;
@@ -202,14 +216,6 @@ public class ExpedienteTitulacion implements Serializable {
 
     public void setEvento(EventoTitulacion evento) {
         this.evento = evento;
-    }
-
-    public Estudiante getMatricula() {
-        return matricula;
-    }
-
-    public void setMatricula(Estudiante matricula) {
-        this.matricula = matricula;
     }
 
     @Override
@@ -235,6 +241,14 @@ public class ExpedienteTitulacion implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.ExpedienteTitulacion[ expediente=" + expediente + " ]";
+    }
+
+    public Estudiante getEstudiante() {
+        return estudiante;
+    }
+
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
     }
     
 }
