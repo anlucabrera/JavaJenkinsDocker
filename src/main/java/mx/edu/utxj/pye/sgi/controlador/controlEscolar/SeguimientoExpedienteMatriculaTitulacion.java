@@ -7,10 +7,13 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
@@ -21,12 +24,11 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoTitulacionEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.SeguimientoExpedienteMatriculaRolTitulacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbIntegracionExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoExpedienteGeneracion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosAcademicos;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -34,7 +36,6 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
-import org.omnifaces.util.Messages;
 
 /**
  *
@@ -55,6 +56,7 @@ public class SeguimientoExpedienteMatriculaTitulacion extends ViewScopedRol impl
     @Getter @Setter private Integer expediente;
     @Getter @Setter private ExpedienteTitulacion expedienteTit;
     @Getter @Setter private DtoExpedienteTitulacion nuevoDtoExpMat;
+    @Getter @Setter private Date fechaTerminacion;
     
     @Getter @Setter private List<DtoDocumentoTitulacionEstudiante> listaDocsExp;
     
@@ -88,9 +90,6 @@ public class SeguimientoExpedienteMatriculaTitulacion extends ViewScopedRol impl
             rol.getInstrucciones().add("Seleccione el registro.");
             rol.getInstrucciones().add("De clic en el botón Cargar Expediente");
            
-            expedientesRegistrados();
-            
-            rol.setSeleccionoExpediente(Boolean.FALSE);
         }catch (Exception e){mostrarExcepcion(e); }
     }
     
@@ -101,28 +100,47 @@ public class SeguimientoExpedienteMatriculaTitulacion extends ViewScopedRol impl
         return mostrar(request, map.containsValue(valor));
     }
     
-    /**
-     * Permite obtener la lista de generaciones 
+     /**
+     * Método para proporcionar lista de docentes sugeridos en un autocomplete donde se puede ingresar el número de nómina, nombre o área del docente
+     * @param pista
+     * @return Lista de sugerencias
      */
-    public void expedientesRegistrados(){
-        ResultadoEJB<List<DtoExpedienteTitulacion>> res = ejb.getExpedientesRegistrados();
+    public List<DtoEstudianteComplete> completeEstudiantes(String pista){
+        ResultadoEJB<List<DtoEstudianteComplete>> res = ejb.buscarExpediente(pista);
         if(res.getCorrecto()){
-            if (res.getValor().size() != 0) {
-                rol.setExpedientesTitulacion(res.getValor());
-            }
-        }else mostrarMensajeResultadoEJB(res);
+            return res.getValor();
+        }else{
+            mostrarMensajeResultadoEJB(res);
+            return Collections.emptyList();
+        }
     }
-
+    
+    /**
+     * Permite que al cambiar o seleccionar un estudiante se pueda actualizar la información
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarEstudiante(ValueChangeEvent e){
+        if(e.getNewValue() instanceof DtoEstudianteComplete){
+            DtoEstudianteComplete estudiante = (DtoEstudianteComplete) e.getNewValue();
+            rol.setDtoEstudianteComplete(estudiante);
+            Ajax.update("frm");
+            Ajax.update("formMuestraExpediente");
+            mostrarExpediente();
+        }else mostrarMensaje("El valor seleccionado como estudiante no es del tipo necesario.");
+    }
+    
     /**
      * Permite mostrar expediente de titulación
      */
     public void mostrarExpediente(){
+        expediente = ejbIntegracionExpedienteTitulacion.buscarExpedienteRegistrado(rol.getDtoEstudianteComplete().getEstudiantes()).getValor().getExpediente();
         expedienteTit = new ExpedienteTitulacion();
         expedienteTit = ejbIntegracionExpedienteTitulacion.buscarExpedienteRegistradoClave(expediente).getValor();
         rol.setDtoExpedienteTitulacion(ejbIntegracionExpedienteTitulacion.getDtoExpedienteTitulacion(expedienteTit).getValor());
-        rol.setSeleccionoExpediente(Boolean.TRUE);
-        consultarExpediente();
+        fechaTerminacion = rol.getDtoExpedienteTitulacion().getDatosAcademicos().getFechaTerminacion();
+        Ajax.update("frm");
         Ajax.update("formMuestraExpediente");
+        consultarExpediente();
     }
     
     /**
@@ -136,42 +154,21 @@ public class SeguimientoExpedienteMatriculaTitulacion extends ViewScopedRol impl
         Ajax.update("frmDocExp");
         Ajax.update("frmFotoExp");
     }
-   
-     /**
-     * Permite validar expediente
-     */
-    public void validarExpediente(){
-        ResultadoEJB<ExpedienteTitulacion> res = ejb.validarExpediente(rol.getDtoExpedienteTitulacion().getExpediente(), rol.getPersonal().getPersonal());
-        if(res.getCorrecto()){
-            consultarExpediente();
-        }
-    }
     
-    public void actualizarFechaTerminacion() {
-        ResultadoEJB<DatosAcademicos> res = ejbIntegracionExpedienteTitulacion.actualizarDatosAcademicos(rol.getDtoExpedienteTitulacion().getDatosAcademicos());
-        if(res.getCorrecto()){
-            Messages.addGlobalInfo("Se actualizó la fecha de terminación correctamente.");
-            consultarExpediente();
-        }
-    }
-    
-    public void guardarDatosTitulacion() {
-        System.err.println("guardarDatosTitulacion");
-//        expedienteTit = rol.getDtoExpedienteTitulacion().getExpediente();
-//        ResultadoEJB<ExpedienteTitulacion> res = ejbIntegracionExpedienteTitulacion.actualizarDatosTitulacion(expedienteTit);
-//        if(res.getCorrecto()){
-//            Messages.addGlobalInfo("Se actualizó el promedio y el dato de servicio social correctamente.");
-//            consultarExpediente();
-//        }
-    }
-    
-     public void obtenerListaDocumentosExpediente() {
+    public void obtenerListaDocumentosExpediente() {
         ResultadoEJB<List<DtoDocumentoTitulacionEstudiante>> res = ejb.obtenerListaDocumentosExpediente(rol.getDtoExpedienteTitulacion().getExpediente());
         if(res.getCorrecto()){
             setListaDocsExp(res.getValor());
             Ajax.update("frmDocsExp");
             Ajax.update("frmDocExp");
         } 
+    }
+    
+     public void validarExpediente(){
+        ResultadoEJB<ExpedienteTitulacion> res = ejb.validarExpediente(expedienteTit, rol.getPersonal().getPersonal());
+        if(res.getCorrecto()){
+            mostrarExpediente();
+        }
     }
     
 }

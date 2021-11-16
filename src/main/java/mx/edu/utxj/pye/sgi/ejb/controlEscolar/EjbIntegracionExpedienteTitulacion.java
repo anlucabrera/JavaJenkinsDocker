@@ -109,14 +109,19 @@ public class EjbIntegracionExpedienteTitulacion {
                         .setParameter("listaTipos", listaTipos)
                         .setParameter("grado", 6)
                         .getResultStream().findFirst().orElse(null);
-                
+                    
                     if(estudianteTSU != null){
                         ExpedienteTitulacion expedienteTitulacionTSU = buscarExpedienteRegistrado(estudianteTSU).getValor();
-                        if(!expedienteTitulacionTSU.getPasoRegistro().equals("Fin Integración")){
+                        if(expedienteTitulacionTSU != null){
+                            if(!expedienteTitulacionTSU.getPasoRegistro().equals("Fin Integración")){
+                                e = estudianteTSU;
+                            }
+                        }else{
                             e = estudianteTSU;
                         }
                     }
                 }
+                
             return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El estudiante no se pudo validar. (EjbIntegracionExpedienteTitulacion.validadEstudiante)", e, null);

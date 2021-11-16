@@ -30,601 +30,612 @@
     <ui:define name="body">
         <c:if test="#{seguimientoExpedienteMatriculaTitulacion.cargado}">
         <adm:breadcrumb title="Seguimiento Expediente por Matricula"/>
-        <div class="contenedor" id="contenedor">
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
             <c:if test="#{seguimientoExpedienteMatriculaTitulacion.tieneAcceso}">
                 <!-- zona de importación de enums -->
-                <p:panel id="informacion" class="hidden-xs hidden-sm">
-                <section class="content">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="nav-tabs-custom">
-                                <div class="row">
-                                    <div class="col-lg-10 col-xs-10"/>
-                                    <div class="col-lg-2 col-xs-2">
-                                        <p:link  href="seguimientoGeneracion.xhtml">
-                                            <i class="fa fa-reply"></i>
-                                            <span>Regresar a concentrado</span>
-                                        </p:link>
-                                    </div> 
-                                    <br />
-                                    <br />
-                                    <div class="col-lg-12 col-xs-12">
-                                        <h:form id="frmExpedientes">
-                                        <p:outputLabel value="Matricula del estudiante" for="clave" class="col-sm-2 control-label"/>
-                                        <div class="col-sm-6">
-                                            <p:selectOneMenu id="clave" value="#{seguimientoExpedienteMatriculaTitulacion.expediente}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
-                                                <f:selectItem itemValue="0" itemLabel=" Regresar " itemDescription="Descripción del valor." />
-                                                <f:selectItems value="#{seguimientoExpedienteMatriculaTitulacion.rol.expedientesTitulacion}" var="dtoExp" itemValue="#{dtoExp.expediente.expediente}" itemLabel="#{dtoExp.expediente.matricula.matricula} - #{dtoExp.expediente.matricula.aspirante.idPersona.apellidoPaterno} #{dtoExp.expediente.matricula.aspirante.idPersona.apellidoMaterno} #{dtoExp.expediente.matricula.aspirante.idPersona.nombre}- #{dtoExp.programaEducativo.nombre}" />
-                                            </p:selectOneMenu>  
-                                            <p:message for="clave"/>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <p:commandButton id="btnBuscarExpediente" value="Cargar Expediente" actionListener="#{seguimientoExpedienteMatriculaTitulacion.mostrarExpediente()}" icon="fa fa-paper-plane" class="btn-primary btn-block col-md-3" update="@form :frmExpedientes :informacion" process="@form :frmExpedientes"  /> 
-                                        </div>
-                                        </h:form>
-                                    </div> 
-                                </div>
-                                    <c:if test="#{seguimientoExpedienteMatriculaTitulacion.rol.seleccionoExpediente eq true}">
-                                        <p:panel id="ET" >
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                        <h:form id="formMuestraExpediente">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <h1><strong>Expediente Titulación</strong></h1>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div id="tituloCV" class="col-sm-12">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <c:set var="expTit" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion}"/>
-                                                                        <!--<c:set var="status" value="# {controladorTitSegGen.consultarStatus(expTitExp)}" />-->
-                                                                        <h4>No. Expediente: #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.expediente}</h4>
-                                                                        <h4><p:commandButton actionListener="#{seguimientoExpedienteMatriculaTitulacion.validarExpediente()}"
-                                                                                         class="btn btn-sm #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.validado?'btn-info':'btn-danger'}" icon="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.validado?'fa fa-close':'fa fa-check'}"
-                                                                                         title="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.validado?'Invalidar expediente.':'Validar expediente.'}" 
-                                                                                         value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.validado?'Invalidar expediente.':'Validar expediente.'}"/></h4>
-                                                                        <div class="description-block" style="text-align: center" >
-                                                                            <p:graphicImage cache="false" height="255" id="dimage" title="Fotografía del expediente" value="#{mostrarFotoExpSegMatriculaTitulacion.graphicImage}" width="170"></p:graphicImage>
-                                                                        </div> 
-                                                                        <h4>#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.situacionAcademica}</h4>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <hr/>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <h3><strong>Datos personales</strong></h3>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <hr/>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="box box-primary">
-                                                                            <div class="box-header with-border">                                                                    
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Nombre</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.nombre}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Apellido Paterno</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.apellidoPaterno}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Apellido Materno</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.apellidoMaterno} 
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>CURP</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.curp}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Fecha de Nacimiento</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.matricula.aspirante.idPersona.fechaNacimiento}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Género</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.genero.nombre}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <h3><strong>Datos de Contacto</strong></h3>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <hr/>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="box box-primary">
-                                                                            <div class="box-header with-border">                                                                    
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Teléfono Fijo</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.medioComunicacion.telefonoFijo}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Teléfono Móvil</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.medioComunicacion.telefonoMovil}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Correo Electrónico</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.medioComunicacion.email}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <h3><strong>Domicilio</strong></h3>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <hr/>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="box box-primary">
-                                                                            <div class="box-header with-border">                                                                    
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Calle</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.domicilio.calle}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Número</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.domicilio.numero}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Código Postal</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.asentDom.codigoPostal}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Asentamiento</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.asentDom.nombreAsentamiento}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Municipio</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.munDom.nombre}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <strong>Estado</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.estadoDom.nombre}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <h3><strong>Antecedentes Académicos</strong></h3>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <hr/>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="box box-primary">
-                                                                            <div class="box-header with-border">                                                                    
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                                             <strong>Grado Académico</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    Bachillerato
-                                                                                                </p>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                                             <strong>Nombre del Instituto de Educación Media Superior</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.iems.nombre}
-                                                                                                </p>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                                            <strong>Estado</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.iems.localidad.municipio.estado.nombre}
-                                                                                                </p>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                                            <strong>Fecha Terminación</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    <p:calendar id="fechaTerminacion" locale="es" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.datosAcademicos.fechaTerminacion}" pattern="dd-MM-yyyy" mask="true" />
-                                                                                                </p>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                        <strong></strong>
-                                                                        <p class="text-muted"></p>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                        <p:commandButton id="btnGuardarFechaTerminacion" value="Actualizar informacion" actionListener="#{seguimientoExpedienteMatriculaTitulacion.actualizarFechaTerminacion()}" 
-                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  update="@form"  process="@form" />
-                                                                    </div>
-                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                        <strong></strong>
-                                                                        <p class="text-muted"></p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                             <hr/>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block" style="text-align: center">
-                                                                        <h3><strong>Datos de Titulación</strong></h3>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <hr/>
-                                                             <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="box box-primary">
-                                                                            <div class="box-header with-border">                                                                    
-                                                                                <div class="col-sm-12">
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Nivel Académico</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.nivelEducativo}                                                                                       </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                             <strong>Programa Académico</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.programaEducativo.nombre}
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <strong>Modalidad de Titulación</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    Por Reporte de Estadía 
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <c:set var="fecIni" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaInicio}" />
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <strong>Fecha Inicio</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    <c:if test="#{fecIni ne null}">
-                                                                                                    <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                                                                    </c:if>
-                                                                                                    <c:if test="#{fecIni eq null}">
-                                                                                                    <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
-                                                                                                    </c:if>
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                        <c:set var="fecTer" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaFin}" />
-                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <strong>Fecha Terminación</strong>
-                                                                                            <p class="text-muted">
-                                                                                                <c:if test="#{fecTer ne null}">
-                                                                                                    <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                                                                </c:if>
-                                                                                                <c:if test="#{fecTer eq null}">
-                                                                                                    <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
-                                                                                                </c:if>
-                                                                                            </p>
-                                                                                            <hr/>
-                                                                                        </div>
-                                                                                        <c:set var="fecActa" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.actaExencion}" />
-                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <strong>Fecha Acta Exención</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    <c:if test="#{fecActa ne null}">
-                                                                                                        <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.actaExencion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
-                                                                                                    </c:if>
-                                                                                                    <c:if test="#{fecActa eq null}">
-                                                                                                        <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
-                                                                                                    </c:if>
-                                                                                                </p>
-                                                                                                <hr/>
-                                                                                        </div>
-                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <strong>Promedio Final</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    <p:inputNumber id="promedio" class="form-control" decimalPlaces="1"  required="true" decimalSeparator="." style="border: none;" size="5" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.promedio}"/> 
-                                                                                                </p>
-                                                                                        </div>
-                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                                            <strong>¿Cumplió Servicio Social?</strong>
-                                                                                                <p class="text-muted">
-                                                                                                    <p:selectOneMenu id="servSoc" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.servicioSocial}" required="true" requiredMessage="Es necesario que seleccione una opción">
-                                                                                                        <f:selectItem itemLabel="Si" itemValue="true" />
-                                                                                                        <f:selectItem itemLabel="No" itemValue="false" />
-                                                                                                    </p:selectOneMenu>
-                                                                                                    <p:message for="servSoc"><p:autoUpdate/></p:message>
-                                                                                                </p>
-                                                                                        </div>
-                                                                                        <c:set var="promedio" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.promedio}" />
-                                                                                        <c:if test="#{promedio eq 0}">
-                                                                                            <div class="col-sm-12 col-md-12 col-lg-4" style="background: red;">
-                                                                                            <strong>Aviso:</strong>
-                                                                                            <p class="text-muted" style="color: white;">
-                                                                                                Registre Promedio Final e indique si <br />cumplió con Servicio Social 
-                                                                                            </p>
-                                                                                            </div>
-                                                                                        </c:if>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                        <strong></strong>
-                                                                        <p class="text-muted"></p>
-                                                                    </div>
-                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                        <p:commandButton id="btnGuardarDatExpTit" value="Actualizar informacion" actionListener="#{seguimientoExpedienteMatriculaTitulacion.guardarDatosTitulacion()}" 
-                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  update="@form"  process="@form" />
-                                                                    </div>
-                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                        <strong></strong>
-                                                                        <p class="text-muted"></p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </h:form>
-                                                            <hr/>
-                                                             <div class="row">
-                                                                    <div class="description-block">
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-12 border-right">
-                                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                               <h:form id="frmDocsExp">
-                                                                                                    <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" />
-                                                                                                    <p:dataTable id="tblDocsExp" emptyMessage="No se ha agregado ningún documento al expediente." value="#{seguimientoExpedienteMatriculaTitulacion.listaDocsExp}" var="docsExp"
-                                                                                                                 resizeMode="expand"
-                                                                                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
-                                                                                                        <p:columnGroup type="header">
-                                                                                                            <p:row>
-                                                                                                                <p:column headerText="Opciones" width="120"/>
-                                                                                                                <p:column headerText="Documento" width="200" />
-                                                                                                                <p:column headerText="Fecha de Carga" width="100" />
-                                                                                                                <p:column headerText="Validado" width="80" />
-                                                                                                                <p:column headerText="Observaciones" width="200" />
-                                                                                                                <p:column headerText="Fecha de Validación" width="100" />
-                                                                                                            </p:row>
-                                                                                                        </p:columnGroup>
-                                                                                                        <c:set var="existeDoc" value="#{cargaDocumentosExpSegMatriculaTitulacion.docExiste(docsExp.documentoProceso.documento.documento, seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion)}" />
-                                                                                                        <p:column style="text-align: center;">
-                                                                                                            <div class="btn-group">
-                                                                                                                <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-sm #{existeDoc?'btn-info':'btn-danger'}" actionListener="#{cargaDocumentosExpSegMatriculaTitulacion.seleccionarDocumento(docsExp)}" disabled="#{existeDoc}"/>
-                                                                                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{cargaDocumentosExpSegMatriculaTitulacion.descargarDocumento(docsExp.documentoExpedienteTitulacion)}" target="_blank" title="Descargar documento." disabled="#{!existeDoc}"><i class="fa fa-download" /></p:commandLink>
-                                                                                                                <p:commandButton actionListener="#{cargaDocumentosExpSegMatriculaTitulacion.editarRegistro(docsExp)}" class="btn btn-sm btn-primary" icon="fa fa-edit" title="Editar observaciones" disabled="#{!existeDoc}"/>
-                                                                                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{cargaDocumentosExpSegMatriculaTitulacion.eliminarDocumento(docsExp.documentoExpedienteTitulacion)}" onsuccess="actualizarListaDocs();" title="Eliminar documento." disabled="#{(!existeDoc or docsExp.documentoExpedienteTitulacion.validado)}">
-                                                                                                                    <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docsExp.documentoExpedienteTitulacion.ruta)}?" icon="ui-icon-alert"/>
-                                                                                                                </p:commandButton>
-                                                                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                                                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
-                                                                                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
-                                                                                                                </p:confirmDialog> 
-                                                                                                            </div>
-                                                                                                        </p:column>
-                                                                                                        <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.descripcion}" /></p:column>
-                                                                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoExpedienteTitulacion.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
-                                                                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoExpedienteTitulacion.validado?'Si':'No'}"/></p:column>
-                                                                                                        <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoExpedienteTitulacion.observaciones}" /></p:column>
-                                                                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoExpedienteTitulacion.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>  
-                                                                                                    </p:dataTable>
-                                                                                                </h:form>  
-                                                                                                <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
-                                                                                                    <center>
-                                                                                                        <h:form id="formularioContenedor" enctype="multipart/form-data">
-                                                                                                            <div class="row">
-                                                                                                                <div class="col-md-12">
-                                                                                                                    <o:inputFile id="file" value="#{cargaDocumentosExpSegMatriculaTitulacion.file}" 
-                                                                                                                                 accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG o documentos PDF." 
-                                                                                                                                 maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
-                                                                                                                                 required="true" requiredMessage="Debe elegir un archivo." >
-                                                                                                                    </o:inputFile>
-                                                                                                                    <p:messages for="file" ><p:autoUpdate/></p:messages>
-                                                                                                                </div>
-                                                                                                                <p:separator />
-                                                                                                                <div class="col-md-12">
-                                                                                                                    <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn btn-primary" action="#{cargaDocumentosExpSegMatriculaTitulacion.subirDocumento()}" />
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                        </h:form>
-                                                                                                        <p:blockUI block="formularioContenedor" widgetVar="bloqueoCargaFile" trigger="formularioContenedor:btnuploadFile">
-                                                                                                            Cargando archivo espere por favor.<br />
-                                                                                                        </p:blockUI>
-                                                                                                    </center>
-                                                                                                </p:dialog>  
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                    </div>
-                                                                     </div>   
-                                                             </div>
-                                                                    </div>
-                                                                </div>
-                                        </p:panel>
-                                    </c:if>
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <h:form id="frmSup">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo Escolar: #{caster.clavePeriodoToString(seguimientoExpedienteMatriculaTitulacion.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                                </h:form>
                             </div>
-                        </div>
-                    </div>
-                </section>
-            <!-- Modal para editar registro seleccionado -->
-             <p:dialog id="modalEdicion" 
-                              widgetVar="modalEdicion" 
-                              width="1200" 
-                              height="auto"  
-                              closeOnEscape="true" 
-                              visible="#{cargaDocumentosExpSegMatriculaTitulacion.aperturaDialogo}"
-                              showEffect="fade" 
-                              hideEffect="fade" 
-                              modal="true" 
-                              draggable="true" 
-                              header="Editar" 
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">
-                        
-                             <h:form id="frmModalEdicion" enctype="multipart/form-data"> 
-                                        <p:outputPanel>
+                            <br />
+                            <br />
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row">
+                                        <h:form id="formMuestraExpediente">
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-12'}" />
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:autoComplete id="estudiante" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoEstudianteComplete}" completeMethod="#{seguimientoExpedienteMatriculaTitulacion.completeEstudiantes}" queryDelay="800"
+                                                                valueChangeListener="#{seguimientoExpedienteMatriculaTitulacion.cambiarEstudiante}"
+                                                                var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.datosComplete}" converter="entityConverter" forceSelection="true" size="70">
+                                                    <p:column>#{estudiante.datosComplete}</p:column>
+                                                    <p:column>#{estudiante.programaEducativo.nombre}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Estudiante - Matricula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
+                                                <p:message for="estudiante" /> 
+                                            </div>
+                                        </div>
+                                        <p:outputPanel rendered="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion ne null}">
+                                            <section class="content">
                                             <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                 <div class="col-md-12">
                                                     <div class="box box-widget widget-user-2">
                                                         <div class="row">
-                                                            <div class="form-group">
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel for="claveDoc" value="Clave del Documento" style="text-align: center;"/>
-                                                                    <p:inputText id="claveDoc" class="form-control" disabled="true" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.documentoExpediente}"/>
-                                                                    <p:message for="claveDoc" display="tooltip" />
-                                                                    <hr/>
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h1><strong>Expediente Titulación</strong></h1>
+                                                                    <h3>Generación: #{caster.generacionToString(seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.generacion)}</h3>
                                                                 </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel value="Documento" for="documento" style="text-align: center;"/>
-                                                                    <p:inputText id="documento" disabled="true" class="form-control" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoProceso.documento.descripcion}"/>
-                                                                    <p:message for="documento" display="tooltip" />
-                                                                    <hr/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div id="tituloCV" class="col-sm-12">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <c:set var="expTit" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion}"/>
+                                                                    <!--<c:set var="status" value="# {controladorTitSegGen.consultarStatus(expTitExp)}" />-->
+                                                                    <h4>No. Expediente: #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.expediente}</h4>
+                                                                    <h4><p:commandButton actionListener="#{seguimientoExpedienteMatriculaTitulacion.validarExpediente()}"
+                                                                                         class="btn btn-sm #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.validado?'btn-info':'btn-danger'}" icon="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.validado?'fa fa-close':'fa fa-check'}"
+                                                                                         title="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.validado?'Invalidar expediente.':'Validar expediente.'}" 
+                                                                                         value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.validado?'Invalidar expediente.':'Validar expediente.'}"/></h4>
+                                                                    <div class="description-block" style="text-align: center" >
+                                                                        <p:graphicImage cache="false" height="255" id="dimage" title="Fotografía del expediente" value="#{mostrarFotoExpSegMatriculaTitulacion.graphicImage}" width="170"></p:graphicImage>
+                                                                    </div> 
+                                                                    <h4>#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.situacionAcademica}</h4>
                                                                 </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel for="fechaCarga" value="Fecha de Carga" style="text-align: center;"/>
-                                                                    <p:inputText id="fechaCarga" class="form-control" disabled="true" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText> 
-                                                                    <p:message for="fechaCarga" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                
-                                                                <div class="col-sm-12 col-md-12 col-lg-8">
-                                                                    <p:outputLabel for="ruta" value="Ruta del documento" style="text-align: center;"/>
-                                                                    <p:inputText id="ruta" class="form-control" disabled="true" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.ruta}"/>
-                                                                    <p:message for="ruta" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel for="validado" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Validado"/>
-                                                                    <p:selectOneMenu id="validado" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.validado}" required="true" requiredMessage="Es necesario que seleccione una opción" style="height:100%; width: 100%; object-fit: contain;">
-                                                                        <f:selectItem itemLabel="Si" itemValue="true" />
-                                                                        <f:selectItem itemLabel="No" itemValue="false" />
-                                                                    </p:selectOneMenu>
-                                                                    <p:message for="validado"><p:autoUpdate/></p:message>
-                                                                    <hr/>
-                                                                </div>  
-                                                                <div class="col-sm-12 col-md-12 col-lg-4">
-                                                                    <p:outputLabel for="fechaValicacion" value="Fecha de Validación" style="text-align: center;"/>
-                                                                    <p:inputText id="fechaValicacion" class="form-control" disabled="true" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText> 
-                                                                    <p:message for="fechaValicacion" display="tooltip" />
-                                                                    <hr/>
-                                                                </div>  
-                                                                
-                                                                <div class="col-sm-12 col-md-12 col-lg-8">
-                                                                    <p:outputLabel for="observaciones" value="Observaciones" style="text-align: center;"/>
-                                                                    <p:inputText id="observaciones" class="form-control" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.observaciones}" maxlength="255"/> 
-                                                                    <p:message for="observaciones" display="tooltip" />
-                                                                    <hr/>
-                                                                </div> 
-                                                                 <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-6">
-                                                                    <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{cargaDocumentosExpSegMatriculaTitulacion.guardarEdicion()}" 
-                                                                                     icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
-                                                                                     update="@form"  process="@form" />
-                                                                </div>
-                                                                <div class="col-sm-12 col-md-12 col-lg-3">
-                                                                </div>  
                                                             </div>
                                                         </div>
                                                         <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Información del expediente</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="box box-primary">
+                                                                        <div class="box-header with-border">                                                                    
+                                                                            <div class="col-sm-12">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Fecha integración</strong>
+                                                                                        <p class="text-muted">
+                                                                                            <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.fechaRegistro}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Paso registro</strong>
+                                                                                        <p class="text-muted">
+                                                                                            <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.pasoRegistro}"/>
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Fecha paso registro</strong>
+                                                                                        <p class="text-muted">
+                                                                                            <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.fechaPaso}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Datos personales</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="box box-primary">
+                                                                        <div class="box-header with-border">                                                                    
+                                                                            <div class="col-sm-12">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Nombre</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.estudiante.aspirante.idPersona.nombre}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Apellido Paterno</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.estudiante.aspirante.idPersona.apellidoPaterno}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Apellido Materno</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.estudiante.aspirante.idPersona.apellidoMaterno} 
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>CURP</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.estudiante.aspirante.idPersona.curp}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Fecha de Nacimiento</strong>
+                                                                                        <p class="text-muted">
+                                                                                            <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.estudiante.aspirante.idPersona.fechaNacimiento}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Género</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.genero.nombre}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Datos de Contacto</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="box box-primary">
+                                                                        <div class="box-header with-border">                                                                    
+                                                                            <div class="col-sm-12">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Teléfono Fijo</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.medioComunicacion.telefonoFijo}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Teléfono Móvil</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.medioComunicacion.telefonoMovil}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Correo Electrónico</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.medioComunicacion.email}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Domicilio</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="box box-primary">
+                                                                        <div class="box-header with-border">                                                                    
+                                                                            <div class="col-sm-12">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Calle</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.domicilio.calle}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Número</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.domicilio.numero}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Código Postal</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.asentDom.codigoPostal}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Asentamiento</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.asentDom.nombreAsentamiento}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Municipio</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.munDom.nombre}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Estado</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.estadoDom.nombre}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Antecedentes Académicos</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="box box-primary">
+                                                                        <div class="box-header with-border">                                                                    
+                                                                            <div class="col-sm-12">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                        <strong>Grado Académico</strong>
+                                                                                        <p class="text-muted">
+                                                                                            Bachillerato
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                        <strong>Nombre del Instituto de Educación Media Superior</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.iems.nombre}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                        <strong>Estado</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.iems.localidad.municipio.estado.nombre}
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                                        <strong>Fecha Terminación</strong>
+                                                                                        <p class="text-muted">
+                                                                                            <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.datosAcademicos.fechaTerminacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block" style="text-align: center">
+                                                                    <h3><strong>Datos de Titulación</strong></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="box box-primary">
+                                                                        <div class="box-header with-border">                                                                    
+                                                                            <div class="col-sm-12">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Nivel Académico</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.nivelEducativo}                                                                                       </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Programa Académico</strong>
+                                                                                        <p class="text-muted">
+                                                                                                    #{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.programaEducativo.nombre}
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Modalidad de Titulación</strong>
+                                                                                        <p class="text-muted">
+                                                                                            Por Reporte de Estadía 
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <c:set var="fecIni" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaInicio}" />
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Fecha Inicio</strong>
+                                                                                        <p class="text-muted">
+                                                                                            <c:if test="#{fecIni ne null}">
+                                                                                                <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaInicio}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                            </c:if>
+                                                                                            <c:if test="#{fecIni eq null}">
+                                                                                                <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
+                                                                                            </c:if>
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <c:set var="fecTer" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaFin}" />
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Fecha Terminación</strong>
+                                                                                        <p class="text-muted">
+                                                                                            <c:if test="#{fecTer ne null}">
+                                                                                                <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.fechaFin}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                            </c:if>
+                                                                                            <c:if test="#{fecTer eq null}">
+                                                                                                <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
+                                                                                            </c:if>
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <c:set var="fecActa" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.actaExencion}" />
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Fecha Acta Exención</strong>
+                                                                                        <p class="text-muted">
+                                                                                            <c:if test="#{fecActa ne null}">
+                                                                                                <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.fechaTerminacionTitulacion.actaExencion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                            </c:if>
+                                                                                            <c:if test="#{fecActa eq null}">
+                                                                                                <h:outputText value="Sin fecha" style="background-color: red; color: white;"/>
+                                                                                            </c:if>
+                                                                                        </p>
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>Promedio Final</strong>
+                                                                                        <p class="text-muted">
+                                                                                            <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.promedio}"/> 
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <strong>¿Cumplió Servicio Social?</strong>
+                                                                                        <p class="text-muted">
+                                                                                          <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.servicioSocial?'Sí':'No'}"/>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <c:set var="promedio" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.promedio}" />
+                                                                                    <c:if test="#{promedio eq 0}">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4" style="background: red;">
+                                                                                            <strong>Aviso:</strong>
+                                                                                            <p class="text-muted" style="color: white;">
+                                                                                                Registre Promedio Final e indique si <br />cumplió con Servicio Social 
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    </c:if>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            </section>
                                         </p:outputPanel>
-                                    </h:form>
-                    </p:dialog>       
-        </p:panel>
+                                        </h:form>
+                                            <center>
+                                                <h:form id="frmDocsExp">
+                                                    <p:remoteCommand name="actualizarListaDocs" update="@form:tblDocsExp" rendered="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion ne null}"/>
+                                                    <p:dataTable id="tblDocsExp" emptyMessage="No se ha agregado ningún documento al expediente." value="#{seguimientoExpedienteMatriculaTitulacion.listaDocsExp}" var="docsExp"
+                                                                 resizeMode="expand"
+                                                                 tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
+                                                        <p:columnGroup type="header">
+                                                            <p:row>
+                                                                <p:column headerText="Opciones" width="120"/>
+                                                                <p:column headerText="Documento" width="200" />
+                                                                <p:column headerText="Fecha de Carga" width="100" />
+                                                                <p:column headerText="Validado" width="80" />
+                                                                <p:column headerText="Observaciones" width="200" />
+                                                                <p:column headerText="Fecha de Validación" width="100" />
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        <c:set var="existeDoc" value="#{cargaDocumentosExpSegMatriculaTitulacion.docExiste(docsExp.documentoProceso.documento.documento, seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion)}" />
+                                                        <p:column style="text-align: center;">
+                                                            <div class="btn-group">
+                                                                <p:commandButton icon="fa fa-upload" onclick="PF('modalCargaArchivo').show()" class="btn btn-sm #{existeDoc?'btn-info':'btn-danger'}" actionListener="#{cargaDocumentosExpSegMatriculaTitulacion.seleccionarDocumento(docsExp)}" disabled="#{existeDoc}"/>
+                                                                <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{cargaDocumentosExpSegMatriculaTitulacion.descargarDocumento(docsExp.documentoExpedienteTitulacion)}" target="_blank" title="Descargar documento." disabled="#{!existeDoc}"><i class="fa fa-download" /></p:commandLink>
+                                                                <p:commandButton actionListener="#{cargaDocumentosExpSegMatriculaTitulacion.editarRegistro(docsExp)}" class="btn btn-sm btn-primary" icon="fa fa-edit" title="Editar observaciones" disabled="#{!existeDoc}"/>
+                                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{cargaDocumentosExpSegMatriculaTitulacion.eliminarDocumento(docsExp.documentoExpedienteTitulacion)}" onsuccess="actualizarListaDocs();" title="Eliminar documento." disabled="#{(!existeDoc or docsExp.documentoExpedienteTitulacion.validado)}">
+                                                                    <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docsExp.documentoExpedienteTitulacion.ruta)}?" icon="ui-icon-alert"/>
+                                                                </p:commandButton>
+                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+                                                                </p:confirmDialog> 
+                                                            </div>
+                                                        </p:column>
+                                                        <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoProceso.documento.descripcion}" /></p:column>
+                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoExpedienteTitulacion.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
+                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoExpedienteTitulacion.validado?'Si':'No'}"/></p:column>
+                                                        <p:column style="text-align: justify;"><h:outputText value="#{docsExp.documentoExpedienteTitulacion.observaciones}" /></p:column>
+                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.documentoExpedienteTitulacion.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>  
+                                                    </p:dataTable>
+                                                </h:form> 
+                                            </center>
+                                        <p:dialog widgetVar="modalCargaArchivo" width="400" height="auto" showEffect="fade" hideEffect="fade" modal="true" header="Carga de Archivo" styleClass="panel panel-primary" responsive="true" resizable="false" maximizable="false">
+                                            <center>
+                                                <h:form id="formularioContenedor" enctype="multipart/form-data">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <o:inputFile id="file" value="#{cargaDocumentosExpSegMatriculaTitulacion.file}" 
+                                                                         accept="image/png,image/jpg,image/jpeg,application/pdf" acceptMessage="Sólo se permiten imágenes JPG/PNG o documentos PDF." 
+                                                                         maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." 
+                                                                         required="true" requiredMessage="Debe elegir un archivo." >
+                                                            </o:inputFile>
+                                                            <p:messages for="file" ><p:autoUpdate/></p:messages>
+                                                        </div>
+                                                        <p:separator />
+                                                        <div class="col-md-12">
+                                                            <h:commandButton id="btnuploadFile" value="Subir archivo" class="btn btn-primary" action="#{cargaDocumentosExpSegMatriculaTitulacion.subirDocumento()}" />
+                                                        </div>
+                                                    </div>
+                                                </h:form>
+                                                <p:blockUI block="formularioContenedor" widgetVar="bloqueoCargaFile" trigger="formularioContenedor:btnuploadFile">
+                                                    Cargando archivo espere por favor.<br />
+                                                </p:blockUI>
+                                            </center>
+                                        </p:dialog> 
+                                        <!-- Modal para editar registro seleccionado -->
+                                        <p:dialog id="modalEdicion" 
+                                                  widgetVar="modalEdicion" 
+                                                  width="1200" 
+                                                  height="auto"  
+                                                  closeOnEscape="true" 
+                                                  visible="#{cargaDocumentosExpSegMatriculaTitulacion.aperturaDialogo}"
+                                                  showEffect="fade" 
+                                                  hideEffect="fade" 
+                                                  modal="true" 
+                                                  draggable="true" 
+                                                  header="Editar" 
+                                                  styleClass="panel panel-primary" 
+                                                  responsive="true" 
+                                                  resizable="false" 
+                                                  maximizable="false">
+
+                                            <h:form id="frmModalEdicion" enctype="multipart/form-data"> 
+                                                <p:outputPanel>
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                            <p:outputLabel for="claveDoc" value="Clave del Documento" style="text-align: center;"/>
+                                                                            <p:inputText id="claveDoc" class="form-control" disabled="true" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.documentoExpediente}"/>
+                                                                            <p:message for="claveDoc" display="tooltip" />
+                                                                            <hr/>
+                                                                        </div>
+                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                            <p:outputLabel value="Documento" for="documento" style="text-align: center;"/>
+                                                                            <p:inputText id="documento" disabled="true" class="form-control" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoProceso.documento.descripcion}"/>
+                                                                            <p:message for="documento" display="tooltip" />
+                                                                            <hr/>
+                                                                        </div>
+                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                            <p:outputLabel for="fechaCarga" value="Fecha de Carga" style="text-align: center;"/>
+                                                                            <p:inputText id="fechaCarga" class="form-control" disabled="true" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText> 
+                                                                            <p:message for="fechaCarga" display="tooltip" />
+                                                                            <hr/>
+                                                                        </div>
+
+                                                                        <div class="col-sm-12 col-md-12 col-lg-8">
+                                                                            <p:outputLabel for="ruta" value="Ruta del documento" style="text-align: center;"/>
+                                                                            <p:inputText id="ruta" class="form-control" disabled="true" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.ruta}"/>
+                                                                            <p:message for="ruta" display="tooltip" />
+                                                                            <hr/>
+                                                                        </div>
+                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                            <p:outputLabel for="validado" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Validado"/>
+                                                                            <p:selectOneMenu id="validado" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.validado}" required="true" requiredMessage="Es necesario que seleccione una opción" style="height:100%; width: 100%; object-fit: contain;">
+                                                                                <f:selectItem itemLabel="Si" itemValue="true" />
+                                                                                <f:selectItem itemLabel="No" itemValue="false" />
+                                                                            </p:selectOneMenu>
+                                                                            <p:message for="validado"><p:autoUpdate/></p:message>
+                                                                            <hr/>
+                                                                        </div>  
+                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                            <p:outputLabel for="fechaValicacion" value="Fecha de Validación" style="text-align: center;"/>
+                                                                            <p:inputText id="fechaValicacion" class="form-control" disabled="true" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></p:inputText> 
+                                                                            <p:message for="fechaValicacion" display="tooltip" />
+                                                                            <hr/>
+                                                                        </div>  
+
+                                                                        <div class="col-sm-12 col-md-12 col-lg-8">
+                                                                            <p:outputLabel for="observaciones" value="Observaciones" style="text-align: center;"/>
+                                                                            <p:inputText id="observaciones" class="form-control" value="#{cargaDocumentosExpSegMatriculaTitulacion.dtoDocumentoTitulacionEstudiante.documentoExpedienteTitulacion.observaciones}" maxlength="255"/> 
+                                                                            <p:message for="observaciones" display="tooltip" />
+                                                                            <hr/>
+                                                                        </div> 
+                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                        </div>
+                                                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                                                            <p:commandButton id="btnGuardarEdicion" value="Guardar" actionListener="#{cargaDocumentosExpSegMatriculaTitulacion.guardarEdicion()}" 
+                                                                                             icon="fa fa-save" class="btn-primary btn-block col-md-3" oncomplete="PF('frmModalEdicion')update();"
+                                                                                             update="@form"  process="@form" />
+                                                                        </div>
+                                                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                                                        </div>  
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </p:outputPanel>
+                                            </h:form>
+                                        </p:dialog> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
             </c:if>
             <c:if test="#{!seguimientoExpedienteMatriculaTitulacion.tieneAcceso}">
                 <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">

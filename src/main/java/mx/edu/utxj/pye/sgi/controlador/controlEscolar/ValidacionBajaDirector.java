@@ -263,4 +263,13 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
         periodosBajasRegistradas();
         Ajax.update("frm");
     }
+    
+     public boolean deshabilitarOpcion(DtoTramitarBajas dtoTramitarBajas){
+        Boolean valor = false;
+        DtoValidacionesBaja dtoValidacionesBaja = ejb.buscarValidacionesBaja(dtoTramitarBajas.getDtoRegistroBaja().getRegistroBaja()).getValor();
+        if(dtoValidacionesBaja.getAreaValidacionBaja().equals("Servicios Escolares") || dtoTramitarBajas.getDtoEstudiante().getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==4 || dtoTramitarBajas.getDtoRegistroBaja().getPeriodoEscolar().getPeriodo()!= rol.getPeriodoActivo()){
+                valor = true;
+        }
+        return valor;
+    }  
 }

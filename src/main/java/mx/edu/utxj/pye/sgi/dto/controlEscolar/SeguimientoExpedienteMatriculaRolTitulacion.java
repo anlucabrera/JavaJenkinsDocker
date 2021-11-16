@@ -21,6 +21,11 @@ public class SeguimientoExpedienteMatriculaRolTitulacion extends AbstractRol{
      */
     @Getter @NonNull private PersonalActivo personal;
     
+     /**
+     * Estudiante seleccionado
+     */
+    @Getter @NonNull private DtoEstudianteComplete dtoEstudianteComplete;
+    
     /**
      * Lista expedientes registrados en la generación seleccionada
      */
@@ -41,17 +46,15 @@ public class SeguimientoExpedienteMatriculaRolTitulacion extends AbstractRol{
      */
     @Getter @NonNull private List<DtoPagosEstudianteFinanzas> listaPagosEstudianteFinanzas;
     
-    
-    /**
-     * Valor de selección del expediente
-     */
-    @Getter @NonNull private Boolean seleccionoExpediente;
-    
      /**
      * Valor modal del concentrado de pagos
      */
     @Getter @NonNull private Boolean aperturaPagos;
     
+     /**
+     * Lista de pasos registro
+     */
+    @Getter @NonNull private List<String> pasosRegistro;
     
     public SeguimientoExpedienteMatriculaRolTitulacion(Filter<PersonalActivo> filtro, PersonalActivo personal) {
         super(filtro);
@@ -62,6 +65,10 @@ public class SeguimientoExpedienteMatriculaRolTitulacion extends AbstractRol{
         this.personal = personal;
     }
 
+    public void setDtoEstudianteComplete(DtoEstudianteComplete dtoEstudianteComplete) {
+        this.dtoEstudianteComplete = dtoEstudianteComplete;
+    }
+    
     public void setExpedientesTitulacion(List<DtoExpedienteTitulacion> expedientesTitulacion) {
         this.expedientesTitulacion = expedientesTitulacion;
     }
@@ -69,7 +76,7 @@ public class SeguimientoExpedienteMatriculaRolTitulacion extends AbstractRol{
     public void setDtoExpedienteTitulacion(DtoExpedienteTitulacion dtoExpedienteTitulacion) {
         this.dtoExpedienteTitulacion = dtoExpedienteTitulacion;
     }
-
+    
     public void setPeriodoActivo(Integer periodoActivo) {
         this.periodoActivo = periodoActivo;
     }
@@ -82,8 +89,8 @@ public class SeguimientoExpedienteMatriculaRolTitulacion extends AbstractRol{
         this.aperturaPagos = aperturaPagos;
     }
 
-    public void setSeleccionoExpediente(Boolean seleccionoExpediente) {
-        this.seleccionoExpediente = seleccionoExpediente;
+    public void setPasosRegistro(List<String> pasosRegistro) {
+        this.pasosRegistro = pasosRegistro;
     }
     
 }

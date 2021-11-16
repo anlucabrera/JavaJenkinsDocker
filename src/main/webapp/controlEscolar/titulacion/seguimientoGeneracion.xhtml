@@ -45,6 +45,9 @@
 
                                     </f:facet>
                                     <f:facet name="right">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{seguimientoExpedienteGeneracionTitulacion.descargarBaseGeneracion()}" 
+                                                       target="_blank" title="Descargar base en excel"><i class="fa fa-file-excel-o" />
+                                        </p:commandLink>
                                         <p:commandLink
                                                 class="btn btn-info"
                                                 rendered="#{true}"
@@ -101,17 +104,16 @@
                                                          <p:remoteCommand name="actualizar" update="@form:dtbExpTitGenPE" />
                                                          <p:dataTable id="dtbExpTitGenPE" emptyMessage="Sin datos en la generación seleccionada." value="#{seguimientoExpedienteGeneracionTitulacion.rol.expedientesTitulacionPE}" var="expTit"
                                                                       paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
-                                                                      resizeMode="expand"
+                                                                      resizeMode="expand" editable="true" editMode="cell" expandableRowGroups="true"
                                                                       tableStyleClass="table table-bordered table-hover table-condensed table-responsive">
                                                              <p:column headerText="Opciones" style="width: 200px; text-align: center;">
-                                                                 <p:commandButton actionListener="#{seguimientoExpedienteIndividualTitulacion.consultarExpediente(expTit)}" action="/controlEscolar/titulacion/seguimientoGeneracionIndividual?faces-redirect=true" 
-                                                                                  class="btn btn-sm btn-primary" 
-                                                                                  icon="fa fa-search"
-                                                                                  title="Consultar Expediente Titulación"/>  
+                                                                 <p:commandLink actionListener="#{seguimientoExpedienteIndividualTitulacion.consultarExpediente(expTit)}" action="/controlEscolar/titulacion/seguimientoGeneracionIndividual?faces-redirect=true" 
+                                                                                class="btn btn-sm btn-primary" target="_blank" ajax="false" 
+                                                                                title="Consultar Expediente Titulación"><i class="fa fa-search" /></p:commandLink>  
                                                                  <p:commandButton actionListener="#{seguimientoExpedienteGeneracionTitulacion.validarExpediente(expTit.expediente)}"
                                                                                   class="btn btn-sm #{expTit.expediente.validado?'btn-info':'btn-danger'}" icon="#{expTit.expediente.validado?'fa fa-close':'fa fa-check'}"
                                                                                   title="#{expTit.expediente.validado?'Invalidar expediente.':'Validar expediente.'}" onsuccess="actualizar();"/>
-                                                                 <p:commandButton actionListener="#{seguimientoExpedienteGeneracionTitulacion.consultarListaPagos(expTit.expediente.matricula.matricula)}" 
+                                                                 <p:commandButton actionListener="#{seguimientoExpedienteGeneracionTitulacion.consultarListaPagos(expTit.expediente.estudiante.matricula)}" 
                                                                                   class="btn btn-sm btn-success" 
                                                                                   icon="fa fa-usd"
                                                                                   title="Consultar Lista de Pagos"/>  
@@ -128,12 +130,12 @@
                                                                  <h:outputText value="#{expTit.expediente.fechaRegistro}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                              </p:column>
 
-                                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;" sortBy="#{expTit.expediente.matricula.matricula}" filterBy="#{expTit.expediente.matricula.matricula}" filterMatchMode="contains">
-                                                                 <h:outputText value="#{expTit.expediente.matricula.matricula}"/>
+                                                             <p:column headerText="Matricula" style="width: 150px; text-align: center;" sortBy="#{expTit.expediente.estudiante.matricula}" filterBy="#{expTit.expediente.estudiante.matricula}" filterMatchMode="contains">
+                                                                 <h:outputText value="#{expTit.expediente.estudiante.matricula}"/>
                                                              </p:column>
 
-                                                             <p:column headerText="Nombre" style="width: 250px; text-align: center;" sortBy="#{expTit.expediente.matricula.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.matricula.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.matricula.aspirante.idPersona.nombre} " filterBy="#{expTit.expediente.matricula.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.matricula.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.matricula.aspirante.idPersona.nombre} " filterMatchMode="contains">
-                                                                 <h:outputText value="#{expTit.expediente.matricula.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.matricula.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.matricula.aspirante.idPersona.nombre} "/>
+                                                             <p:column headerText="Nombre" style="width: 250px; text-align: center;" sortBy="#{expTit.expediente.estudiante.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.estudiante.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.estudiante.aspirante.idPersona.nombre} " filterBy="#{expTit.expediente.estudiante.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.estudiante.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.estudiante.aspirante.idPersona.nombre} " filterMatchMode="contains">
+                                                                 <h:outputText value="#{expTit.expediente.estudiante.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.estudiante.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.estudiante.aspirante.idPersona.nombre} "/>
                                                              </p:column>
 
                                                              <p:column headerText="Programa Educativo" style="width: 300px; text-align: center;">
@@ -144,7 +146,7 @@
                                                                  <h:outputText value="#{expTit.generacion.inicio} - #{expTit.generacion.fin}"/>
                                                              </p:column>
                                                              
-                                                             <p:column headerText="Situación Académica" style="width: 200px; text-align: center;" sortBy="#{expTit.expediente.matricula.tipoEstudiante.descripcion}">
+                                                             <p:column headerText="Situación Académica" style="width: 200px; text-align: center;" sortBy="#{expTit.expediente.estudiante.tipoEstudiante.descripcion}">
                                                                  <h:outputText value="#{expTit.situacionAcademica}"/>
                                                              </p:column>
                                                              
@@ -159,9 +161,17 @@
                                                              <p:column headerText="Documentos" style="width: 200px; text-align: center;" sortBy="#{expTit.docsExp} de #{expTit.docsTotalExp}">
                                                                  <h:outputText value="#{expTit.docsExp} de #{expTit.docsTotalExp}" />
                                                              </p:column>
-                                                             
+                                                            <p:ajax event="cellEdit" listener="#{seguimientoExpedienteGeneracionTitulacion.onCellEdit}"/>
                                                             <p:column headerText="Paso de Integración" style="width: 200px; text-align: center;" sortBy="#{expTit.expediente.pasoRegistro}">
-                                                                 <h:outputText value="#{expTit.expediente.pasoRegistro}" />
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"><h:outputText value="#{expTit.expediente.pasoRegistro}" /></f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:selectOneMenu id="pasoRegistro" value="#{expTit.expediente.pasoRegistro}" converter="entityConverter">
+                                                                            <f:selectItems value="#{seguimientoExpedienteGeneracionTitulacion.rol.pasosRegistro}" var="pasoRegistro"
+                                                                                           itemValue="#{pasoRegistro}" itemLabel="#{pasoRegistro}"/>
+                                                                        </p:selectOneMenu>
+                                                                    </f:facet>
+                                                                </p:cellEditor> 
                                                             </p:column>
 
                                                             <p:column headerText="Validado/Invalidado por" style="width: 200px; text-align: center;" sortBy="#{expTit.personal}">

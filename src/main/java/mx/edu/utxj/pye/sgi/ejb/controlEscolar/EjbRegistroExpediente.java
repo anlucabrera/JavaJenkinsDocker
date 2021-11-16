@@ -30,7 +30,6 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.ExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.FechaTerminacionTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioComunicacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.ListaEstudiantesGeneral;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
@@ -185,29 +184,28 @@ public class EjbRegistroExpediente {
      */
     public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(String pista, Generaciones generacion, ProgramasEducativosNiveles nivel){
         try{
-            List<ListaEstudiantesGeneral> listaEstudiantes = em.createQuery("select l from ListaEstudiantesGeneral l WHERE concat(l.apellidoPaterno, l.apellidoMaterno, l.nombre, l.matricula) like concat('%',:pista,'%') ORDER BY l.apellidoPaterno, l.apellidoMaterno, l.nombre DESC", ListaEstudiantesGeneral.class)
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
+            List<Short> tiposEstudiante = new ArrayList<>(); tiposEstudiante.add((short)1); tiposEstudiante.add((short)4);
+            
+             //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
+            List<Estudiante> estudiantesGeneracionNivel = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') AND e.tipoEstudiante.idTipoEstudiante IN :tiposEstudiante AND e.grupo.generacion=:generacion AND e.grupo.grado IN :grados ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo DESC", Estudiante.class)
                     .setParameter("pista", pista)
+                    .setParameter("tiposEstudiante", tiposEstudiante)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("grados", grados)
                     .getResultList();
             
             List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
             
-            listaEstudiantes.forEach(listaEst -> {
-                
-                Estudiante estudiante = em.createQuery("select e from Estudiante e WHERE e.matricula =:matricula ORDER BY e.periodo DESC", Estudiante.class)
-                    .setParameter("matricula", listaEst.getMatricula())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-                
-                AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
-                ProgramasEducativosNiveles programasEducativosNiveles = em.find(ProgramasEducativosNiveles.class, programa.getNivelEducativo().getNivel());
-                
-                    String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre()+ " - " + estudiante.getMatricula();
-                    PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
-                    String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
-                    AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
-                    DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
-                    listaDtoEstudiantes.add(dtoEstudianteComplete);
+            estudiantesGeneracionNivel.forEach(estudiante -> {
+                    AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
+                    if(programaEducativo.getNivelEducativo().equals(nivel)){
+                        String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno() + " " + estudiante.getAspirante().getIdPersona().getApellidoMaterno() + " " + estudiante.getAspirante().getIdPersona().getNombre() + " - " + estudiante.getMatricula();
+                        PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+                        String periodoEscolar = periodo.getMesInicio().getAbreviacion() + " - " + periodo.getMesFin().getAbreviacion() + " " + periodo.getAnio();
+                        DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
+                        listaDtoEstudiantes.add(dtoEstudianteComplete);
+                    }
             });
             return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Lista para mostrar en autocomplete");
         }catch (Exception e){

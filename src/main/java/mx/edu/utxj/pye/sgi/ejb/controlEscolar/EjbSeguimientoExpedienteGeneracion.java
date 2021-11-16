@@ -10,7 +10,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -19,6 +21,7 @@ import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoTitulacionEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -35,6 +38,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
+import net.sf.jxls.transformer.XLSTransformer;
 
 /**
  *
@@ -51,6 +55,8 @@ public class EjbSeguimientoExpedienteGeneracion {
     @EJB EjbCarga ejbCarga;
     
     @EJB EjbIntegracionExpedienteTitulacion ejbIntegracionExpedienteTitulacion;
+    
+    public static final String ACTUALIZADO_TSU = "expTitulacion_tsu.xlsx", ACTUALIZADO_ING = "expTitulacion_ing.xlsx";
 
     @PostConstruct
     public  void init(){
@@ -244,9 +250,10 @@ public class EjbSeguimientoExpedienteGeneracion {
         try{
             String nivelE = obtenerClaveNivelEducativo(nivel);
             
-            List<ExpedienteTitulacion> expedientesReg = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.evento.generacion=:generacion AND e.evento.nivel=:nivel",  ExpedienteTitulacion.class)
+            List<ExpedienteTitulacion> expedientesReg = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.evento.generacion=:generacion AND e.evento.nivel=:nivel AND e.estudiante.grupo.idPe=:programa",  ExpedienteTitulacion.class)
                     .setParameter("generacion", generacion.getGeneracion())
                     .setParameter("nivel", nivelE)
+                    .setParameter("programa", programa.getArea())
                     .getResultStream()
                     .collect(Collectors.toList());
             
@@ -254,9 +261,7 @@ public class EjbSeguimientoExpedienteGeneracion {
           
             expedientesReg.forEach(expediente -> {
                 DtoExpedienteTitulacion dto = ejbIntegracionExpedienteTitulacion.getDtoExpedienteTitulacion(expediente).getValor();
-                if(dto.getProgramaEducativo().equals(programa)){
-                    listaExpedientes.add(dto);
-                }
+                listaExpedientes.add(dto);
             });
            
             return ResultadoEJB.crearCorrecto(listaExpedientes, "La lista de expedientes registrados del programa educativo, generación y nivel seleccionado se obtuvieron correctamente.");
@@ -473,5 +478,91 @@ public class EjbSeguimientoExpedienteGeneracion {
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el paso de registro del expediente de titulación seleccionado. (EjbSeguimientoExpedienteGeneracion.actualizarPasoRegistro)", e, null);
         }
+    }
+    
+     /**
+     * Permite identificar a una lista de posibles expedientes de titulación que coincida con el nombre o matricula ingresada
+     * @param pista Contenido que la vista que puede incluir parte del nombre, apellidos o matricula del estudiante
+     * @return Resultado del proceso con expedientes de un estudiante ordenador por nombre
+     */
+    public ResultadoEJB<List<DtoEstudianteComplete>> buscarExpediente(String pista){
+        try{
+             //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
+            List<ExpedienteTitulacion> expedientesReg = em.createQuery("select e from ExpedienteTitulacion e INNER JOIN e.estudiante est INNER JOIN est.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, est.matricula) like concat('%',:pista,'%') AND e.activo=:activo ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, est.periodo DESC", ExpedienteTitulacion.class)
+                    .setParameter("pista", pista)
+                    .setParameter("activo", true)
+                    .getResultList();
+            
+            List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
+            
+            expedientesReg.forEach(expediente -> {
+                String datosComplete = expediente.getEstudiante().getMatricula()+ " - " +expediente.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+" "+ expediente.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno()+" "+ expediente.getEstudiante().getAspirante().getIdPersona().getNombre();
+                PeriodosEscolares periodo = em.find(PeriodosEscolares.class, expediente.getEstudiante().getPeriodo());
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, expediente.getEstudiante().getGrupo().getIdPe());
+                String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
+                DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(expediente.getEstudiante(), datosComplete, periodoEscolar, programaEducativo);
+                listaDtoEstudiantes.add(dtoEstudianteComplete);
+            });
+           
+            
+            return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Lista para mostrar en autocomplete");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo localizar la lista de expedientes activos. (EjbSeguimientoExpedienteGeneracion.buscarExpediente)", e, null);
+        }
+    }
+    
+     /**
+     * Permite obtener la base de expedientes registrados de la generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivel
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoExpedienteTitulacion>> obtenerBaseExpedientes(Generaciones generacion, String nivel){
+        try{
+            String nivelE = obtenerClaveNivelEducativo(nivel);
+            
+            List<ExpedienteTitulacion> expedientesReg = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.evento.generacion=:generacion AND e.evento.nivel=:nivel",  ExpedienteTitulacion.class)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("nivel", nivelE)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            List<DtoExpedienteTitulacion> listaExpedientes = new ArrayList<>();
+          
+            expedientesReg.forEach(expediente -> {
+                DtoExpedienteTitulacion dto = ejbIntegracionExpedienteTitulacion.getDtoExpedienteTitulacion(expediente).getValor();
+                listaExpedientes.add(dto);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaExpedientes, "La base de expedientes registrados de la generación y nivel seleccionado se obtuvieron correctamente.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la base de expedientes registrado con los parametros selecionados. (EjbSeguimientoExpedienteGeneracion.obtenerBaseExpedientes)", e, null);
+        }
+    }
+   
+      /**
+     * Permite generar reporte de base de expedientes registrados por generaicón y nivel educativo seleccionado
+     * @param generacion
+     * @param nivel
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    public String getReporteBaseGeneracion(Generaciones generacion, String nivel) throws Throwable {
+        String gen = generacion.getInicio() + "-" + generacion.getFin();
+        String rutaPlantilla = "C:\\archivos\\formatosTitulacion\\reporteTitulacionCE.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompletoTit(gen);
+        
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_ING);
+        
+        if(nivel.equals("Técnico Superior Universitario")){
+            plantillaC = rutaPlantillaC.concat(ACTUALIZADO_TSU);
+        }
+       
+        Map beans = new HashMap();
+        beans.put("baseExpGen", obtenerBaseExpedientes(generacion, nivel).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
     }
 }

@@ -170,7 +170,7 @@
                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
                                                                         <strong>Matricula</strong>   
                                                                         <p class="text-muted">
-                                                                        #{registroExpedienteTitulacion.rol.datosNuevoExpediente.expedienteTitulacion.matricula.matricula}
+                                                                        #{registroExpedienteTitulacion.rol.datosNuevoExpediente.expedienteTitulacion.estudiante.matricula}
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -185,21 +185,21 @@
                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
                                                                         <strong>Nombre</strong>                
                                                                         <p class="text-muted">
-                                                                        #{registroExpedienteTitulacion.rol.datosNuevoExpediente.expedienteTitulacion.matricula.aspirante.idPersona.nombre}
+                                                                        #{registroExpedienteTitulacion.rol.datosNuevoExpediente.expedienteTitulacion.estudiante.aspirante.idPersona.nombre}
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
                                                                         <strong>Apellido Paterno </strong> 
                                                                         <p class="text-muted">
-                                                                        #{registroExpedienteTitulacion.rol.datosNuevoExpediente.expedienteTitulacion.matricula.aspirante.idPersona.apellidoPaterno}
+                                                                        #{registroExpedienteTitulacion.rol.datosNuevoExpediente.expedienteTitulacion.estudiante.aspirante.idPersona.apellidoPaterno}
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
                                                                         <strong>Apellido Materno</strong> 
                                                                         <p class="text-muted">
-                                                                        #{registroExpedienteTitulacion.rol.datosNuevoExpediente.expedienteTitulacion.matricula.aspirante.idPersona.apellidoMaterno}
+                                                                        #{registroExpedienteTitulacion.rol.datosNuevoExpediente.expedienteTitulacion.estudiante.aspirante.idPersona.apellidoMaterno}
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -207,7 +207,7 @@
                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
                                                                         <strong>CURP</strong>             
                                                                         <p class="text-muted">
-                                                                        #{registroExpedienteTitulacion.rol.datosNuevoExpediente.expedienteTitulacion.matricula.aspirante.idPersona.curp}
+                                                                        #{registroExpedienteTitulacion.rol.datosNuevoExpediente.expedienteTitulacion.estudiante.aspirante.idPersona.curp}
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -337,7 +337,7 @@
                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
                                                                         <strong>Teléfono fijo *</strong> 
                                                                         <p class="text-muted">                               
-                                                                            <p:inputMask id="telefono" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.medioComunicacion.telefonoFijo}" mask="(99)(999)999-9999" required="true" requiredMessage="Es necesario que ingrese teléfono fijo de contacto"/>
+                                                                            <p:inputMask id="telefono" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.medioComunicacion.telefonoFijo}" mask="(999)999-9999" required="true" requiredMessage="Es necesario que ingrese teléfono fijo de contacto"/>
                                                                             <p:message for="telefono" display="tooltip" />
                                                                         </p>
                                                                         <hr/>

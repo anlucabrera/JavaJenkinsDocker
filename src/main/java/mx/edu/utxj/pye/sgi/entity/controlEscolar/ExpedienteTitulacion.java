@@ -111,7 +111,7 @@ public class ExpedienteTitulacion implements Serializable {
         this.expediente = expediente;
     }
 
-    public ExpedienteTitulacion(Integer expediente, Date fechaRegistro, boolean validado, String pasoRegistro, Date fechaPaso, float promedio, boolean servicioSocial) {
+    public ExpedienteTitulacion(Integer expediente, Date fechaRegistro, boolean validado, String pasoRegistro, Date fechaPaso, float promedio, boolean servicioSocial,  boolean activo) {
         this.expediente = expediente;
         this.fechaRegistro = fechaRegistro;
         this.validado = validado;
@@ -119,6 +119,7 @@ public class ExpedienteTitulacion implements Serializable {
         this.fechaPaso = fechaPaso;
         this.promedio = promedio;
         this.servicioSocial = servicioSocial;
+        this.activo = activo;
     }
 
     public Integer getExpediente() {

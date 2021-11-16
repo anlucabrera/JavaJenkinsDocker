@@ -7,6 +7,8 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -35,6 +37,7 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
@@ -236,5 +239,14 @@ public class SeguimientoExpedienteGeneracionTitulacion extends ViewScopedRol imp
         ResultadoEJB<ExpedienteTitulacion> resAct = ejb.actualizarPasoRegistro(registroNew.getExpediente());
         mostrarMensajeResultadoEJB(resAct);
 
+    }
+    
+    /**
+     * Método que permite descargar en excel el reporte correspondiente del periodo seleccionado
+     * @throws java.io.IOException
+     */
+     public void descargarBaseGeneracion() throws IOException, Throwable{
+         File f = new File(ejb.getReporteBaseGeneracion(rol.getGeneracion(), rol.getNivelEducativo()));
+         Faces.sendFile(f, true);
     }
 }
