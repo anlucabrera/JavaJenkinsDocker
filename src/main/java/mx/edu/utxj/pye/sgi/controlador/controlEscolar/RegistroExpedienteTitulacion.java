@@ -293,7 +293,6 @@ public class RegistroExpedienteTitulacion extends ViewScopedRol implements Desar
     
     
      public void guardarDatosExpediente() {
-        System.err.println("guardarDatosExpediente - entra");
         rol.setPasoRegistroInd("Datos Personales");
         ResultadoEJB<ExpedienteTitulacion> res = ejb.actualizarExpediente(rol.getDatosNuevoExpediente().getExpedienteTitulacion(), rol.getPasoRegistroInd());
         if(res.getCorrecto()){
