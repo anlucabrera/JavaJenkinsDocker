@@ -2583,7 +2583,7 @@ public class EjbCartaNoAdeudo {
                 biblioteca.setStatusRev("No ha iniciado revisión");
             }
             //Obtiene el correo del area
-            biblioteca.setCorreo("servicios.estudiantiles@utxicotepec.edu.mx");
+            biblioteca.setCorreo("biblioteca@utxicotepec.edu.mx");
             dtoGeneral.setBiblioteca(biblioteca);
             // ///////////   IyE         /////////////////////
             ResultadoEJB<NoAdeudoEstudiante> resEstadistica = getNoAdeudobyArea(estudiante, AreaCartaNoAdeudo.ESTADISTICA, nivelEstudios);

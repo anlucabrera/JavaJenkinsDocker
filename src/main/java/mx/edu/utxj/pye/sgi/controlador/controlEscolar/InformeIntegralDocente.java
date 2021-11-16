@@ -172,6 +172,7 @@ public class InformeIntegralDocente extends ViewScopedRol implements Desarrollab
                 rol.setPeriodosEscolares(new ArrayList<>());
                 rol.getInformeIntegral().setEvIntegral(dtoEvIntegral);
                 rol.setInformeIntegral(dto);
+                rol.setMappedList(new HashMap<>());
               // mostrarMensajeResultadoEJB(resPeriodos);
                 }
         }catch (Exception e){

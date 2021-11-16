@@ -146,6 +146,7 @@ public class ControlEscolarMenu implements Desarrollable, Desplegable {
         get = Faces.evaluateExpressionGet("#{consultaEmpresasEstadiaVinculacion.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{registroEgresadoTerminacionEstudioServiciosEscolares.tieneAcceso}"); if(get) return true;
         get = Faces.evaluateExpressionGet("#{informeIntegralDocente.tieneAcceso}"); if(get) return true;
+        get = Faces.evaluateExpressionGet("#{evaluacionCodigoEticaConducta.tieneAcceso}"); if(get) return true;
 
         return false;
     }

@@ -531,6 +531,8 @@
                             <c:if test="#{evaluacion360Admin1.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/360_1.xhtml"><i class="fa fa-group"></i><span>360 grados</span></p:link></li></c:if>
                             <c:if test="#{evaluacionControlInterno.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/evaControlInterno.xhtml"><i class="fa fa-group"></i><span>Evaluación de control interno</span></p:link></li></c:if>
                             <c:if test="#{climaLaboral.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/climaLaboral.xhtml"><i class="fa fa-group"></i><span>Clima laboral</span></p:link></li></c:if>
+                            <c:if test="#{evaluacionCodigoEticaConducta.mostrarEnDesarrollo(request) and evaluacionCodigoEticaConducta.tieneAcceso}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/evaluacionCodigoEyConducta.xhtml"><i class="fa fa-balance-scale"></i><span>Evaluación código de ética y conducta </span><span class="pull-right-container"></span></p:link></li></c:if>
+
                         </ul>
                     </li>
                 </c:if>
