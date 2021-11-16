@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Eliminar inscripción
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{eliminarInscripcionServiciosEscolares.cargado}">
+        <adm:breadcrumb title="Eliminar inscripción"/>
+
+        <div class="contenedor">
+            <c:if test="#{eliminarInscripcionServiciosEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(eliminarInscripcionServiciosEscolares.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                            <div class="ui-material">
+                                                <p:autoComplete id="estudiante" value="#{eliminarInscripcionServiciosEscolares.rol.estudianteSeleccionado}" completeMethod="#{eliminarInscripcionServiciosEscolares.completeEstudiantes}" queryDelay="800"
+                                                                valueChangeListener="#{eliminarInscripcionServiciosEscolares.cambiarEstudiante}"
+                                                                var="estudiante" itemValue="#{estudiante}" itemLabel="#{estudiante.datosComplete}" converter="entityConverter" forceSelection="true" size="70">
+                                                    <p:column>#{estudiante.datosComplete}</p:column>
+                                                    <p:column>#{estudiante.periodoEscolar}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Estudiante - Matricula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
+                                                <p:message for="estudiante" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <c:if test="#{eliminarInscripcionServiciosEscolares.rol.estudianteSeleccionado ne null}">
+                                        <div class="row margin-bottom" style="margin-top: 30px;">
+                                            <div class="col-sm-12 col-md-12 col-lg-6">
+                                                <div class="ui-material">
+                                                    <strong>Grado - Grupo - Programa Educativo</strong>
+                                                    <p class="text-muted">
+                                                        #{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.estudiante.grupo.grado}° "#{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.estudiante.grupo.literal}" #{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.estudiante.grupo.idSistema.nombre} de #{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.programaEducativo.nombre}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                <div class="ui-material">
+                                                    <strong>Situación Actual</strong>
+                                                    <p class="text-muted">
+                                                        #{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.estudiante.tipoEstudiante.descripcion}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12 col-md-12 col-lg-3">
+                                                <div class="ui-material">
+                                                    <strong>Periodo Escolar</strong>
+                                                    <p class="text-muted">
+                                                        #{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.periodoEscolar.mesInicio.mes} - #{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.periodoEscolar.mesFin.mes} #{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.periodoEscolar.anio}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row margin-bottom" style="margin-top: 30px;">
+                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                <center>
+                                                    <p:commandButton id="btnEliminar" value="Eliminar" class="btn-danger" icon="fa fa-trash" actionListener="#{eliminarInscripcionServiciosEscolares.eliminarInscripcion()}" title="Eliminar registro.">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la inscripción del estudiante y los registros relacionados?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </center> 
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </div>
+                                        </div> 
+                                     </c:if>
+                                    <c:if test="#{eliminarInscripcionServiciosEscolares.rol.existenRegistros}">
+                                    <div class="row margin-bottom" style="margin-top: 60px;">
+                                            <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">
+                                                    <p:dataTable id="tbRegistros" var="regEst" value="#{eliminarInscripcionServiciosEscolares.rol.registrosEstudiante}" 
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive" style="width: auto;">
+                                                        <f:facet name="header">
+                                                            <center>Registros del estudiante del periodo #{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.periodoEscolar.mesInicio.mes} - #{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.periodoEscolar.mesFin.mes} #{eliminarInscripcionServiciosEscolares.rol.datosEstudiante.periodoEscolar.anio}</center>
+                                                        </f:facet>
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="success">
+                                                                <p:column headerText="Tipo de registro" style="width: 300px;"/> 
+                                                                <p:column headerText="Número de registros" style="width: 100px;"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        <p:column style="text-align: justify;">
+                                                            <h:outputText value="#{regEst.tipoRegistro}"/>
+                                                        </p:column>
+                                                        <p:column style="text-align: center;">
+                                                            <h:outputText value="#{regEst.numeroRegistros}"/>
+                                                        </p:column>
+                                                    </p:dataTable>
+                                                </div>
+                                                <p></p>
+                                            </center>
+                                    </div>
+                                    </c:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty eliminarInscripcionServiciosEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{eliminarInscripcionServiciosEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para eliminar inscripción activa y registros relacionados</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{eliminarInscripcionServiciosEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!eliminarInscripcionServiciosEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal de servicios escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

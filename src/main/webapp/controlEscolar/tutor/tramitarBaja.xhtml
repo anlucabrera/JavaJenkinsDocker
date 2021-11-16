@@ -121,7 +121,7 @@
                                                             <p:commandButton actionListener="#{tramitarBajaTutor.editarBaja(estudiante)}"
                                                             class="btn btn-sm btn-info" 
                                                             icon="fa fa-edit"
-                                                            title="Tramitar baja" disabled="#{statusBaja.validacionBaja eq 'Hecha' and statusBaja.areaValidacionBaja ne 'Servicios Escolares'}"/>
+                                                            title="Tramitar baja" disabled="#{tramitarBajaTutor.deshabilitarOpcion(estudiante)}"/>
                                                             <p:commandButton actionListener="#{tramitarBajaTutor.buscarMateriasReprobadas(registro)}"
                                                             class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"
@@ -130,7 +130,7 @@
                                                                                   class="btn btn-sm btn-primary" 
                                                                                   icon="fa fa-file-text-o"
                                                                                   title="Generar Formato de Baja"  disabled="# {estudiante.dtoRegistroBaja.registroBaja.idBajas eq null}"/>  -->
-                                                            <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{tramitarBajaTutor.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{statusBaja.validacionBaja eq 'Hecha'}">
+                                                            <p:commandButton title="Eliminar baja" class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{tramitarBajaTutor.eliminarRegistroBaja(registro)}" onsuccess="actualizar();" disabled="#{tramitarBajaTutor.deshabilitarOpcion(estudiante)}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </div>

@@ -35,6 +35,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.AsentamientoPK;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
@@ -133,7 +134,7 @@ public class EjbIntegracionExpedienteTitulacion {
      * @return Evento escolar detectado o null de lo contrario
      */
     public ResultadoEJB<EventoTitulacion> verificarEvento(Estudiante estudiante){
-        try{
+         try{
             EventoTitulacion evento = null;
             
             if(estudiante.getTipoEstudiante().getIdTipoEstudiante()==1 || estudiante.getTipoEstudiante().getIdTipoEstudiante()==4){
@@ -146,7 +147,7 @@ public class EjbIntegracionExpedienteTitulacion {
                         .findFirst()
                         .orElse(null);
             }
-            
+           
             if(evento == null){
                 return ResultadoEJB.crearErroneo(2,evento, "No existe evento aperturado actualmente.");// .crearCorrecto(map.entrySet().iterator().next(), "Evento aperturado.");
             }else{
@@ -168,10 +169,11 @@ public class EjbIntegracionExpedienteTitulacion {
          try{
             AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
             //verificar apertura del evento
-            ExpedienteTitulacion expediente = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.matricula.matricula =:matricula AND e.evento.generacion =:generacion AND e.evento.nivel =:nivel", ExpedienteTitulacion.class)
+           ExpedienteTitulacion expediente = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.estudiante.matricula =:matricula AND e.evento.generacion =:generacion AND e.evento.nivel =:nivel AND e.activo =:valor", ExpedienteTitulacion.class)
                     .setParameter("matricula", estudiante.getMatricula())
                     .setParameter("generacion", estudiante.getGrupo().getGeneracion())
                     .setParameter("nivel", programa.getNivelEducativo().getNivel())
+                    .setParameter("valor", Boolean.TRUE)
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
@@ -181,9 +183,37 @@ public class EjbIntegracionExpedienteTitulacion {
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo verificar la existencia del expediente de titulación (EjbIntegracionExpedienteTitulacion.buscarExpedienteRegistrado).", e, ExpedienteTitulacion.class);
         }
-         
-         
     }
+    
+    
+     /**
+     * Permite obtener la generación de la integración del expediente de titulación
+     * @param generacion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Generaciones> getGeneracionEventoActivo(Short generacion) {
+       try{
+            Generaciones generacionBD = em.find(Generaciones.class, generacion);
+            return ResultadoEJB.crearCorrecto(generacionBD, "Generación del evento activo.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar la generación del evento activo (EjbIntegracionExpedienteTitulacion.getGeneracionExpediente).", e, Generaciones.class);
+        }
+    }
+    
+    /**
+     * Permite obtener el nivel educativo de la integración del expediente de titulación
+     * @param nivel
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<ProgramasEducativosNiveles> getNivelEventoActivo(String nivel) {
+       try{
+            ProgramasEducativosNiveles nivelEducativoBD = em.find(ProgramasEducativosNiveles.class, nivel);
+            return ResultadoEJB.crearCorrecto(nivelEducativoBD, "Nivel educativo del evento activo.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar el nivel educativo del evento activo (EjbIntegracionExpedienteTitulacion.getNivelEventoActivo).", e, ProgramasEducativosNiveles.class);
+        }
+    }
+    
     
     /**
      * Permite buscar expediente por su clave de registro
@@ -202,8 +232,6 @@ public class EjbIntegracionExpedienteTitulacion {
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo verificar la existencia del expediente de titulación (EjbIntegracionExpedienteTitulacion.buscarExpedienteRegistradoClave).", e, ExpedienteTitulacion.class);
         }
-         
-         
     }
     
      /**
@@ -217,7 +245,7 @@ public class EjbIntegracionExpedienteTitulacion {
             ExpedienteTitulacion expedienteTitulacion = new ExpedienteTitulacion();
             expedienteTitulacion.setEvento(evento);
             expedienteTitulacion.setFechaRegistro(new Date());
-            expedienteTitulacion.setMatricula(estudiante);
+            expedienteTitulacion.setEstudiante(estudiante);
             expedienteTitulacion.setValidado(false);
             expedienteTitulacion.setFechaValidacion(null);
             expedienteTitulacion.setPersonalValido(null);
@@ -225,6 +253,7 @@ public class EjbIntegracionExpedienteTitulacion {
             expedienteTitulacion.setFechaPaso(new Date());
             expedienteTitulacion.setPromedio(0);
             expedienteTitulacion.setServicioSocial(false);
+            expedienteTitulacion.setActivo(true);
             em.persist(expedienteTitulacion);
             f.flush();
             
@@ -249,26 +278,26 @@ public class EjbIntegracionExpedienteTitulacion {
             
             
             Estudiante ultRegEstudiante = em.createQuery("SELECT e FROM Estudiante e where e.matricula=:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo DESC", Estudiante.class)
-                    .setParameter("matricula", expediente.getMatricula().getMatricula())
-                    .setParameter("generacion", expediente.getEvento().getGeneracion())
+                    .setParameter("matricula", expedienteBD.getEstudiante().getMatricula())
+                    .setParameter("generacion", expedienteBD.getEvento().getGeneracion())
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
             
-            String personal = "";
+            String personal = "Sin información";
             
-            if(expedienteBD.getValidado()){   
+            if(expedienteBD.getPersonalValido()!= null){   
                 Personal personalBD = em.find(Personal.class, expedienteBD.getPersonalValido());
                 personal = personalBD.getNombre();
             }
            
             SimpleDateFormat sm = new SimpleDateFormat("yyyy-MM-dd");
             String fechaIntExp = sm.format(expedienteBD.getFechaRegistro());
-            String fechaNacimiento = sm.format(expedienteBD.getMatricula().getAspirante().getIdPersona().getFechaNacimiento());
+            String fechaNacimiento = sm.format(expedienteBD.getEstudiante().getAspirante().getIdPersona().getFechaNacimiento());
             
-            AreasUniversidad progEdu = em.find(AreasUniversidad.class, ultRegEstudiante.getCarrera());
+            AreasUniversidad progEdu = em.find(AreasUniversidad.class, ultRegEstudiante.getGrupo().getIdPe());
             
-            List<DtoPagosEstudianteFinanzas> listaPagos = getListaDtoPagosEstudianteFinanzas(expedienteBD.getMatricula().getMatricula()).getValor();
+            List<DtoPagosEstudianteFinanzas> listaPagos = getListaDtoPagosEstudianteFinanzas(expedienteBD.getEstudiante().getMatricula()).getValor();
             
             DtoPagosEstudianteFinanzas dtoPagoTit = new DtoPagosEstudianteFinanzas();
             
@@ -290,15 +319,15 @@ public class EjbIntegracionExpedienteTitulacion {
                     break;
             }
             Generaciones generacion = em.find(Generaciones.class, expedienteBD.getEvento().getGeneracion());
-            Generos genero = em.find(Generos.class, expedienteBD.getMatricula().getAspirante().getIdPersona().getGenero());
-            Domicilio domicilio = em.find(Domicilio.class, expedienteBD.getMatricula().getAspirante().getIdAspirante());
+            Generos genero = em.find(Generos.class, expedienteBD.getEstudiante().getAspirante().getIdPersona().getGenero());
+            Domicilio domicilio = em.find(Domicilio.class, expedienteBD.getEstudiante().getAspirante().getIdAspirante());
             Estado estadoDom = em.find(Estado.class, domicilio.getIdEstado());
             MunicipioPK mpk = new MunicipioPK(estadoDom.getIdestado(), domicilio.getIdMunicipio());
             Municipio munDom = em.find(Municipio.class, mpk);
             AsentamientoPK apk = new AsentamientoPK(estadoDom.getIdestado(), munDom.getMunicipioPK().getClaveMunicipio(), domicilio.getIdAsentamiento());
             Asentamiento asentDom = em.find(Asentamiento.class, apk);
-            MedioComunicacion comunicaciones = em.find(MedioComunicacion.class, expedienteBD.getMatricula().getAspirante().getIdPersona().getIdpersona());
-            DatosAcademicos datosAcademicos = em.find(DatosAcademicos.class, expedienteBD.getMatricula().getAspirante().getIdAspirante());
+            MedioComunicacion comunicaciones = em.find(MedioComunicacion.class, expedienteBD.getEstudiante().getAspirante().getIdPersona().getIdpersona());
+            DatosAcademicos datosAcademicos = em.find(DatosAcademicos.class, expedienteBD.getEstudiante().getAspirante().getIdAspirante());
             Iems iems = em.find(Iems.class, datosAcademicos.getInstitucionAcademica());
             Localidad locIems = em.find(Localidad.class, iems.getLocalidad().getLocalidadPK());
             

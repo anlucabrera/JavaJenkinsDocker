@@ -56,6 +56,8 @@ public class EjbRegistroBajas {
     @EJB EjbEstudianteBean ejbEstudianteBean;
     @EJB EjbPropiedades ep;
     @EJB EjbSeguimientoEstadia ejbSeguimientoEstadia;
+    @EJB EjbIntegracionExpedienteTitulacion ejbIntegracionExpedienteTitulacion;
+    @EJB EjbSeguimientoExpedienteGeneracion ejbSeguimientoExpedienteGeneracion;
     @EJB Facade f;
     private EntityManager em;
     
@@ -283,6 +285,23 @@ public class EjbRegistroBajas {
     }
     
      /**
+     * Permite desactivar o activar expediente de titulación, en caso de que exista un registro del estudiante
+     * @param estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<ExpedienteTitulacion> desactivarActivarExpedienteTitulacionBaja(Estudiante estudiante){
+         try{
+            
+            ExpedienteTitulacion expedienteTitulacion = ejbIntegracionExpedienteTitulacion.buscarExpedienteRegistrado(estudiante).getValor();
+            ejbSeguimientoExpedienteGeneracion.desactivarExpedienteTitulacion(expedienteTitulacion).getValor();
+           
+            return ResultadoEJB.crearCorrecto(expedienteTitulacion, "El expediente de titulación se ha desactivado o activado correctamente");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo desactivar o activar el expediente de titulación correctamente. (EjbRegistroBajas.desactivarActivarExpedienteTitulacionBaja)", e, null);
+        }
+    }
+    
+     /**
      * Permite guardar el registro de la baja
      * @param periodoEscolar Clave del periodo escolar activo
      * @param estudiante Estudiante que se dará de baja
@@ -328,6 +347,7 @@ public class EjbRegistroBajas {
             }
             
             desactivarActivarSeguimientoEstadiaBaja(registroBaja.getEstudiante());
+            desactivarActivarExpedienteTitulacionBaja(registroBaja.getEstudiante());
             
             if(registroBaja.getCausaBaja() == 3)
             {
@@ -424,6 +444,7 @@ public class EjbRegistroBajas {
                         .executeUpdate();
                
                desactivarActivarSeguimientoEstadiaBaja(registro.getEstudiante());
+               desactivarActivarExpedienteTitulacionBaja(registro.getEstudiante());
            }
 
             return ResultadoEJB.crearCorrecto(delete, "El registro de la baja se eliminó correctamente.");
@@ -1245,7 +1266,7 @@ public class EjbRegistroBajas {
             }
             
             desactivarActivarSeguimientoEstadiaBaja(registro.getEstudiante());
-            
+            desactivarActivarExpedienteTitulacionBaja(registro.getEstudiante());
                        
             return ResultadoEJB.crearCorrecto(validar, mensaje);
         }catch (Throwable e){
@@ -1286,7 +1307,7 @@ public class EjbRegistroBajas {
        try{
           
             TipoEstudiante tipoEstudiante = em.find(TipoEstudiante.class, (short) 1);
-
+           
             Integer update = em.createQuery("update Estudiante e set e.tipoEstudiante =:tipoEstudiante where e.idEstudiante =:estudiante")
                        .setParameter("tipoEstudiante", tipoEstudiante)
                        .setParameter("estudiante", registro.getEstudiante().getIdEstudiante())

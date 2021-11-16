@@ -138,7 +138,7 @@
                                         <div class="row margin-bottom" style="margin-top: 30px;">
                                             <div class="col-sm-12 col-md-12 col-lg-12">
                                                 <center>
-                                                    <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{registrarBajaServiciosEscolares.guardarRegistroBaja()}" icon="fa fa-pencil-square-o" class="btn-primary" disabled="#{registrarBajaServiciosEscolares.rol.datosEstudiante.estudiante.tipoEstudiante.descripcion ne 'Regular'}"/>
+                                                    <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{registrarBajaServiciosEscolares.guardarRegistroBaja()}" icon="fa fa-pencil-square-o" class="btn-primary" disabled="#{registrarBajaServiciosEscolares.rol.deshabilitarRegistro}"/>
                                                 </center> 
                                             </div>
                                         </div> 
@@ -178,7 +178,7 @@
                                                                                   icon="fa fa-file-text-o"
                                                                                   title="Generar Formato de Baja"/>  
                                                             
-                                                            <p:commandButton class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{registrarBajaServiciosEscolares.eliminarRegistroBaja(registro)}" title="Eliminar registro.">
+                                                            <p:commandButton class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{registrarBajaServiciosEscolares.eliminarRegistroBaja(registro)}" title="Eliminar registro." disabled="#{registrarBajaServiciosEscolares.rol.deshabilitarEliminar}">
                                                                 <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el registro de la baja?" icon="ui-icon-alert" />
                                                             </p:commandButton>
                                                         </div>

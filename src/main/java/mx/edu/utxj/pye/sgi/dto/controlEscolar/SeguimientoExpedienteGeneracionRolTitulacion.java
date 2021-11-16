@@ -84,6 +84,11 @@ public class SeguimientoExpedienteGeneracionRolTitulacion extends AbstractRol{
      */
     @Getter @NonNull private Boolean aperturaPagos;
     
+     /**
+     * Lista de pasos registro
+     */
+    @Getter @NonNull private List<String> pasosRegistro;
+    
     
     public SeguimientoExpedienteGeneracionRolTitulacion(Filter<PersonalActivo> filtro, PersonalActivo personal) {
         super(filtro);
@@ -140,5 +145,9 @@ public class SeguimientoExpedienteGeneracionRolTitulacion extends AbstractRol{
 
     public void setAperturaPagos(Boolean aperturaPagos) {
         this.aperturaPagos = aperturaPagos;
+    }
+    
+    public void setPasosRegistro(List<String> pasosRegistro) {
+        this.pasosRegistro = pasosRegistro;
     }
 }

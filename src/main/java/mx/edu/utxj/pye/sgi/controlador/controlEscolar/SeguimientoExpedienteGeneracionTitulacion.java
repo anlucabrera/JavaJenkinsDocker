@@ -7,6 +7,8 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -35,6 +37,9 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 /**
  *
@@ -85,7 +90,8 @@ public class SeguimientoExpedienteGeneracionTitulacion extends ViewScopedRol imp
             rol.getInstrucciones().add("Puede validar y/o invalidar el expediente según lo requiera.");
             rol.getInstrucciones().add("Si da clic en Consultar lista de pagos, podrá visualizar una ventana con los pagos del estudiante registrados por finanzas.");
            
-            expedientesRegistrados();
+            listaGeneracionesExpedientesRegistrados();
+            pasosRegistro();
             
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -95,16 +101,6 @@ public class SeguimientoExpedienteGeneracionTitulacion extends ViewScopedRol imp
         String valor = "seguimiento expediente generacion";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
-    }
-    
-    public void expedientesRegistrados(){
-        ResultadoEJB<List<DtoExpedienteTitulacion>> res = ejb.getExpedientesRegistrados();
-        if(res.getCorrecto()){
-            if (res.getValor().size() != 0) {
-                rol.setExpedientesTitulacion(res.getValor());
-                listaGeneracionesExpedientesRegistrados();
-            }
-        }else mostrarMensajeResultadoEJB(res);
     }
     
     public void listaGeneracionesExpedientesRegistrados(){
@@ -117,7 +113,6 @@ public class SeguimientoExpedienteGeneracionTitulacion extends ViewScopedRol imp
             }
         }else mostrarMensajeResultadoEJB(res);
     }
-    
     
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
@@ -222,5 +217,36 @@ public class SeguimientoExpedienteGeneracionTitulacion extends ViewScopedRol imp
            Ajax.oncomplete("PF('modalPagos').show();");
            rol.setAperturaPagos(Boolean.FALSE);
         }
+    }
+    
+    /**
+     * Permite obtener la lista de pasos de registro 
+     */
+    public void pasosRegistro(){
+        ResultadoEJB<List<String>> res = ejb.getPasosRegistro();
+        if(res.getCorrecto()){
+            rol.setPasosRegistro(res.getValor());
+        }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite actualizar el paso de registro del expediente de titulación seleccionado
+     * @param event
+     */
+    public void onCellEdit(CellEditEvent event) {
+        DataTable dataTable = (DataTable) event.getSource();
+        DtoExpedienteTitulacion registroNew = (DtoExpedienteTitulacion) dataTable.getRowData();
+        ResultadoEJB<ExpedienteTitulacion> resAct = ejb.actualizarPasoRegistro(registroNew.getExpediente());
+        mostrarMensajeResultadoEJB(resAct);
+
+    }
+    
+    /**
+     * Método que permite descargar en excel el reporte correspondiente del periodo seleccionado
+     * @throws java.io.IOException
+     */
+     public void descargarBaseGeneracion() throws IOException, Throwable{
+         File f = new File(ejb.getReporteBaseGeneracion(rol.getGeneracion(), rol.getNivelEducativo()));
+         Faces.sendFile(f, true);
     }
 }

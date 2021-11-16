@@ -388,4 +388,18 @@ public class TramitarBajaTutor extends ViewScopedRol implements Desarrollable{
         return rol.getDtoValidacionesBaja();
     }
     
+    public boolean deshabilitarOpcion(DtoTramitarBajas dtoTramitarBajas){
+        Boolean valor = false;
+        if(dtoTramitarBajas.getDtoRegistroBaja().getRegistroBaja()!= null){
+            if(dtoTramitarBajas.getDtoRegistroBaja().getRegistroBaja().getValidada()==1 || dtoTramitarBajas.getDtoEstudiante().getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==4 || dtoTramitarBajas.getDtoRegistroBaja().getPeriodoEscolar().getPeriodo()!= rol.getPeriodoActivo()){
+                valor = true;
+            }
+        }else{
+            if(dtoTramitarBajas.getDtoEstudiante().getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==4 || dtoTramitarBajas.getDtoEstudiante().getPeriodoEscolar().getPeriodo()!= rol.getPeriodoActivo()){
+                valor = true;
+            }
+        }
+        return valor;
+    }  
+    
 }

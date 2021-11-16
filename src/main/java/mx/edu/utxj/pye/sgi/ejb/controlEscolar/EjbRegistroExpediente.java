@@ -30,7 +30,6 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.ExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.FechaTerminacionTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioComunicacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.view.ListaEstudiantesGeneral;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodoEscolarFechas;
@@ -185,29 +184,28 @@ public class EjbRegistroExpediente {
      */
     public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudiante(String pista, Generaciones generacion, ProgramasEducativosNiveles nivel){
         try{
-            List<ListaEstudiantesGeneral> listaEstudiantes = em.createQuery("select l from ListaEstudiantesGeneral l WHERE concat(l.apellidoPaterno, l.apellidoMaterno, l.nombre, l.matricula) like concat('%',:pista,'%') ORDER BY l.apellidoPaterno, l.apellidoMaterno, l.nombre DESC", ListaEstudiantesGeneral.class)
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
+            List<Short> tiposEstudiante = new ArrayList<>(); tiposEstudiante.add((short)1); tiposEstudiante.add((short)4);
+            
+             //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
+            List<Estudiante> estudiantesGeneracionNivel = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') AND e.tipoEstudiante.idTipoEstudiante IN :tiposEstudiante AND e.grupo.generacion=:generacion AND e.grupo.grado IN :grados ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo DESC", Estudiante.class)
                     .setParameter("pista", pista)
+                    .setParameter("tiposEstudiante", tiposEstudiante)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("grados", grados)
                     .getResultList();
             
             List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
             
-            listaEstudiantes.forEach(listaEst -> {
-                
-                Estudiante estudiante = em.createQuery("select e from Estudiante e WHERE e.matricula =:matricula ORDER BY e.periodo DESC", Estudiante.class)
-                    .setParameter("matricula", listaEst.getMatricula())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null);
-                
-                AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
-                ProgramasEducativosNiveles programasEducativosNiveles = em.find(ProgramasEducativosNiveles.class, programa.getNivelEducativo().getNivel());
-                
-                    String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre()+ " - " + estudiante.getMatricula();
-                    PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
-                    String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
-                    AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
-                    DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
-                    listaDtoEstudiantes.add(dtoEstudianteComplete);
+            estudiantesGeneracionNivel.forEach(estudiante -> {
+                    AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
+                    if(programaEducativo.getNivelEducativo().equals(nivel)){
+                        String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno() + " " + estudiante.getAspirante().getIdPersona().getApellidoMaterno() + " " + estudiante.getAspirante().getIdPersona().getNombre() + " - " + estudiante.getMatricula();
+                        PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+                        String periodoEscolar = periodo.getMesInicio().getAbreviacion() + " - " + periodo.getMesFin().getAbreviacion() + " " + periodo.getAnio();
+                        DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
+                        listaDtoEstudiantes.add(dtoEstudianteComplete);
+                    }
             });
             return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Lista para mostrar en autocomplete");
         }catch (Exception e){
@@ -226,21 +224,21 @@ public class EjbRegistroExpediente {
             if(expedienteTitulacion.getExpediente()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar un expediente con clave nula.", DtoNuevoExpedienteTitulacion.class);
      
             SimpleDateFormat sm = new SimpleDateFormat("dd-MM-yyyy");
-            String fechaNacimiento = sm.format(expedienteTitulacion.getMatricula().getAspirante().getIdPersona().getFechaNacimiento());
+            String fechaNacimiento = sm.format(expedienteTitulacion.getEstudiante().getAspirante().getIdPersona().getFechaNacimiento());
             
-            AreasUniversidad progEdu = em.find(AreasUniversidad.class,  expedienteTitulacion.getMatricula().getGrupo().getIdPe());
+            AreasUniversidad progEdu = em.find(AreasUniversidad.class,  expedienteTitulacion.getEstudiante().getGrupo().getIdPe());
             Generaciones generacion = em.find(Generaciones.class, expedienteTitulacion.getEvento().getGeneracion());
             ProgramasEducativosNiveles nivel = em.find(ProgramasEducativosNiveles.class, progEdu.getNivelEducativo().getNivel());
             
-            Generos genero = em.find(Generos.class,  expedienteTitulacion.getMatricula().getAspirante().getIdPersona().getGenero());
-            Domicilio domicilio = em.find(Domicilio.class, expedienteTitulacion.getMatricula().getAspirante().getIdAspirante());
+            Generos genero = em.find(Generos.class,  expedienteTitulacion.getEstudiante().getAspirante().getIdPersona().getGenero());
+            Domicilio domicilio = em.find(Domicilio.class, expedienteTitulacion.getEstudiante().getAspirante().getIdAspirante());
             Estado estadoDom = em.find(Estado.class, domicilio.getIdEstado());
             MunicipioPK mpk = new MunicipioPK(estadoDom.getIdestado(), domicilio.getIdMunicipio());
             Municipio munDom = em.find(Municipio.class, mpk);
             AsentamientoPK apk = new AsentamientoPK(estadoDom.getIdestado(), munDom.getMunicipioPK().getClaveMunicipio(), domicilio.getIdAsentamiento());
             Asentamiento asentDom = em.find(Asentamiento.class, apk);
-            MedioComunicacion comunicaciones = em.find(MedioComunicacion.class, expedienteTitulacion.getMatricula().getAspirante().getIdPersona().getIdpersona());
-            DatosAcademicos datosAcademicos = em.find(DatosAcademicos.class, expedienteTitulacion.getMatricula().getAspirante().getIdAspirante());
+            MedioComunicacion comunicaciones = em.find(MedioComunicacion.class, expedienteTitulacion.getEstudiante().getAspirante().getIdPersona().getIdpersona());
+            DatosAcademicos datosAcademicos = em.find(DatosAcademicos.class, expedienteTitulacion.getEstudiante().getAspirante().getIdAspirante());
             Iems iems = em.find(Iems.class, datosAcademicos.getInstitucionAcademica());
             Localidad locIems = em.find(Localidad.class, iems.getLocalidad().getLocalidadPK());
             
@@ -268,7 +266,7 @@ public class EjbRegistroExpediente {
     public ResultadoEJB<ExpedienteTitulacion> getExisteExpedienteTitulacion(Estudiante estudiante, Generaciones generacion, ProgramasEducativosNiveles nivel){
         try{
             
-            ExpedienteTitulacion expedienteTitulacion = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.matricula.matricula =:matricula AND e.evento.generacion =:generacion AND e.evento.nivel =:nivel", ExpedienteTitulacion.class)
+            ExpedienteTitulacion expedienteTitulacion = em.createQuery("SELECT e FROM ExpedienteTitulacion e WHERE e.estudiante.matricula=:matricula AND e.evento.generacion =:generacion AND e.evento.nivel =:nivel", ExpedienteTitulacion.class)
                     .setParameter("matricula", estudiante.getMatricula())
                     .setParameter("generacion", generacion.getGeneracion())
                     .setParameter("nivel", nivel.getNivel())
@@ -294,7 +292,7 @@ public class EjbRegistroExpediente {
             ExpedienteTitulacion expedienteTitulacion = new ExpedienteTitulacion();
             expedienteTitulacion.setEvento(evento);
             expedienteTitulacion.setFechaRegistro(fechaIntExp);
-            expedienteTitulacion.setMatricula(estudiante);
+            expedienteTitulacion.setEstudiante(estudiante);
             expedienteTitulacion.setValidado(false);
             expedienteTitulacion.setFechaValidacion(null);
             expedienteTitulacion.setPersonalValido(null);
@@ -302,6 +300,7 @@ public class EjbRegistroExpediente {
             expedienteTitulacion.setFechaPaso(new Date());
             expedienteTitulacion.setPromedio((float)0.0);
             expedienteTitulacion.setServicioSocial(Boolean.FALSE);
+            expedienteTitulacion.setActivo(true);
             em.persist(expedienteTitulacion);
             f.flush();
             

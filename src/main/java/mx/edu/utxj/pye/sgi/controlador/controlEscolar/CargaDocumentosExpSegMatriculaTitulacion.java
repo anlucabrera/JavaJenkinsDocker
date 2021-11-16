@@ -73,7 +73,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
         try {
             claveDocumento = 14;
             
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -93,7 +93,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileCURP, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -112,7 +112,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 15;
             
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -132,7 +132,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileAN, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -151,7 +151,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 16;    
                 
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -171,7 +171,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileCB, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -190,7 +190,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 24;    
                 
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -210,7 +210,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileAEIL, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -230,7 +230,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 25; 
             
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -250,7 +250,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileFotoIL, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -270,7 +270,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 18;    
                 
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -290,7 +290,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileFotoT, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -310,7 +310,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 26;
             
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -330,7 +330,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileAEEIL, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -350,7 +350,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 19;    
                 
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -370,7 +370,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileAEET, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -390,7 +390,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 27;    
                 
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -410,7 +410,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileCSSIL, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -430,7 +430,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 20;    
                 
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -450,7 +450,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileCSST, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -470,7 +470,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 28;    
                 
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -490,7 +490,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileCEIL, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -510,7 +510,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 21;    
                 
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -530,7 +530,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileCET, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -550,7 +550,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             try {
             claveDocumento = 31;    
                 
-            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula()); 
+            String matricula = Integer.toString(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula()); 
 
             String nivel = "";
             if (dtoExpedienteTitulacion.getExpediente().getEvento().getNivel().equals("5A") ) {
@@ -570,7 +570,7 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
             documentoExpedienteTit.setExpediente(dtoExpedienteTitulacion.getExpediente());
             documentoExpedienteTit.setDocumento(documentoTitulacion);
 
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + matricula;
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + matricula;
             documentoExpedienteTit.setRuta(utilidadesCH.agregarDocExpTit(fileCTT, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, documentoTitulacion.getNomenclatura(), matricula));
             documentoExpedienteTit.setFechaCarga(new Date());
             documentoExpedienteTit.setObservaciones("Sin revisar");
@@ -624,8 +624,8 @@ public class CargaDocumentosExpSegMatriculaTitulacion implements Serializable{
 
             nuevoDocumento.setExpediente(dtoExpedienteTitulacion.getExpediente());
             nuevoDocumento.setDocumento(dtoDocumentoTitulacionEstudiante.getDocumentoProceso().getDocumento());
-            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getMatricula().getAspirante().getIdPersona().getNombre() + "_" + String.valueOf(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula());
-            nuevoDocumento.setRuta(utilidadesCH.agregarDocExpTit(file, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, dtoDocumentoTitulacionEstudiante.getDocumentoProceso().getDocumento().getNomenclatura(), String.valueOf(dtoExpedienteTitulacion.getExpediente().getMatricula().getMatricula())));
+            String nombreEstMat = dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno()+ "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno() + "_" + dtoExpedienteTitulacion.getExpediente().getEstudiante().getAspirante().getIdPersona().getNombre() + "_" + String.valueOf(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula());
+            nuevoDocumento.setRuta(utilidadesCH.agregarDocExpTit(file, generacion , nivel, dtoExpedienteTitulacion.getProgramaEducativo().getSiglas(), nombreEstMat, dtoDocumentoTitulacionEstudiante.getDocumentoProceso().getDocumento().getNomenclatura(), String.valueOf(dtoExpedienteTitulacion.getExpediente().getEstudiante().getMatricula())));
             nuevoDocumento.setFechaCarga(new Date());
             nuevoDocumento.setObservaciones("Sin revisar");
             nuevoDocumento.setValidado(false);

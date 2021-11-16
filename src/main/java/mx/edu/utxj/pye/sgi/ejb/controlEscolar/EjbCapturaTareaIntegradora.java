@@ -375,8 +375,12 @@ public class EjbCapturaTareaIntegradora {
                 calificacionNivelacion.setEstudiante(dtoEstudianteToDtoInscripcionPorCargaAcademica.getValor().getInscripcion());
 //                System.out.println("calificacionNivelacion = " + calificacionNivelacion.getIndicador());
                 if(em.contains(calificacionNivelacion)){
-//                    System.out.println(1);
-                    em.merge(calificacionNivelacion);
+                    if(calificacionNivelacion.getValor()==0){
+                        em.remove(calificacionNivelacion);
+                    }else{
+//                      System.out.println(1);
+                        em.merge(calificacionNivelacion);
+                    }
                 }else {
 //                    System.out.println(2);
                     em.persist(calificacionNivelacion);
