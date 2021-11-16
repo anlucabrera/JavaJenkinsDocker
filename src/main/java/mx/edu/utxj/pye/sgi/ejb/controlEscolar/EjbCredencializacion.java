@@ -78,11 +78,11 @@ public class EjbCredencializacion {
     public ResultadoEJB<Estudiante> getEstudiantebyMatricula(String matricula){
         try{
             Estudiante estudiante = new Estudiante();
-            //TODO: Comprobar que la matricula no venga nula
+            //Comprobar que la matricula no venga nula
             if(matricula ==null){return  ResultadoEJB.crearErroneo(2, estudiante,"La matricula no debe ser nula");}
             else{
-                //TODO:Se hace la consulta
-                estudiante = em.createQuery("select e from  Estudiante e where e.matricula=:matricula",Estudiante.class)
+                //Se hace la consulta
+                estudiante = em.createQuery("select e from  Estudiante e where e.matricula=:matricula order by e.periodo desc ",Estudiante.class)
                 .setParameter("matricula",Integer.parseInt(matricula))
                 .getResultStream()
                 .findAny()
