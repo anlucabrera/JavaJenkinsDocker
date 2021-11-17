@@ -564,7 +564,7 @@ public class EjbInformeIntegralDocente {
                 });
                 List<String> materias = resu.stream().distinct().collect(Collectors.toList());
                 //System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion --2"+ materias.size());
-                return ResultadoEJB.crearCorrecto(resu,"Lista materias");
+                return ResultadoEJB.crearCorrecto(materias,"Lista materias");
             }
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
