@@ -30,6 +30,7 @@
     <ui:define name="body">
         <c:if test="#{seguimientoExpedienteGeneracionTitulacion.cargado}">
         <adm:breadcrumb title="Seguimiento Expediente Individual"/>
+        <adm:sidebar collapsed="true"/>
         <div class="contenedor" id="contenedor">
             <c:if test="#{seguimientoExpedienteGeneracionTitulacion.tieneAcceso}">
                 <!-- zona de importación de enums -->
@@ -392,7 +393,7 @@
                                                                                                 </p>
                                                                                                 <hr/>
                                                                                         </div>
-                                                                                         <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                                        <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                             <strong>Promedio Final</strong>
                                                                                                 <p class="text-muted">
                                                                                                     <p:inputNumber id="promedio" class="form-control" decimalPlaces="1"  required="true" decimalSeparator="." style="border: none;" size="5" value="#{seguimientoExpedienteIndividualTitulacion.dtoExpedienteTitulacion.expediente.promedio}"/> 

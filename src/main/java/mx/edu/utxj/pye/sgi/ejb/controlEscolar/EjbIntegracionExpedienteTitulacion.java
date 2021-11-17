@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -30,6 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.FechaTerminacionTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioComunicacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.NoAdeudoEstudiante;
 import mx.edu.utxj.pye.sgi.entity.finanzascarlos.Viewregalumnosnoadeudo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
@@ -113,7 +115,7 @@ public class EjbIntegracionExpedienteTitulacion {
                     if(estudianteTSU != null){
                         ExpedienteTitulacion expedienteTitulacionTSU = buscarExpedienteRegistrado(estudianteTSU).getValor();
                         if(expedienteTitulacionTSU != null){
-                            if(!expedienteTitulacionTSU.getPasoRegistro().equals("Fin Integración")){
+                            if(!expedienteTitulacionTSU.getPasoRegistro().equals("Fin Integración") && !expedienteTitulacionTSU.getValidado()){
                                 e = estudianteTSU;
                             }
                         }else{
@@ -355,7 +357,9 @@ public class EjbIntegracionExpedienteTitulacion {
                     .setParameter("nivel", expedienteBD.getEvento().getNivel())
                     .getResultStream().findFirst().orElse(null);
             
-            DtoExpedienteTitulacion dto = new DtoExpedienteTitulacion(expedienteBD, ultRegEstudiante.getTipoEstudiante().getDescripcion(), personal, fechaIntExp, fechaNacimiento, progEdu, nivelEdu, generacion, genero, domicilio, estadoDom, munDom, asentDom, comunicaciones, datosAcademicos, iems, locIems, dtoPagoTit, expedienteBD.getDocumentoExpedienteTitulacionList().size(), numTotal.size(), fechaTerminacionTitulacion);
+            String situacionCartaNoAdeudo = consultarSituacionCartaNoAdeudo(ultRegEstudiante).getValor();
+            
+            DtoExpedienteTitulacion dto = new DtoExpedienteTitulacion(expedienteBD, ultRegEstudiante.getTipoEstudiante().getDescripcion(), personal, fechaIntExp, fechaNacimiento, progEdu, nivelEdu, generacion, genero, domicilio, estadoDom, munDom, asentDom, comunicaciones, datosAcademicos, iems, locIems, dtoPagoTit, expedienteBD.getDocumentoExpedienteTitulacionList().size(), numTotal.size(), fechaTerminacionTitulacion, situacionCartaNoAdeudo);
             return ResultadoEJB.crearCorrecto(dto, "Expediente de titulación empaquetado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el expediente de titulación (EjbIntegracionExpedienteTitulacion.getDtoExpedienteTitulacion).", e, DtoExpedienteTitulacion.class);
@@ -844,5 +848,46 @@ public class EjbIntegracionExpedienteTitulacion {
         Messages.addGlobalInfo("<b>Se actualizó la validación y observaciones del documento correctamente </b>");
             
         return documentoExpedienteTitulacion;
+    }
+    
+     /**
+     * Permite consultar situación carta no adeudo de un estudiante
+     * @param estudiante
+     * @return Situacion carta de no adeudo
+     */
+    public ResultadoEJB<String> consultarSituacionCartaNoAdeudo(Estudiante estudiante) {
+        try{
+            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
+            
+            String situacion = "Sin registro";
+            
+            List<NoAdeudoEstudiante> listaNoAdeudo = em.createQuery("SELECT n FROM NoAdeudoEstudiante n WHERE n.estudiante.matricula=:matricula AND n.generacion=:generacion AND n.estudiante.grupo.grado IN :grados", NoAdeudoEstudiante.class)
+                    .setParameter("matricula", estudiante.getMatricula())
+                    .setParameter("generacion", estudiante.getGrupo().getGeneracion())
+                    .setParameter("grados", grados)
+                    .getResultStream().collect(Collectors.toList());
+            
+            if(!listaNoAdeudo.isEmpty()){
+                
+                Integer liberados = (int) listaNoAdeudo.stream().filter(p->p.getStatus().equals("Liberado")).count();
+                Integer noLiberados = (int) listaNoAdeudo.stream().filter(p->p.getStatus().equals("No liberado")).count();
+                Integer enRevision = (int) listaNoAdeudo.stream().filter(p->p.getStatus().equals("En revisión")).count();
+                
+                if(listaNoAdeudo.size() == liberados){
+                    situacion = "Liberado";
+                }else{
+                    if(noLiberados > 0){
+                        situacion = "No liberado";
+                    }else{
+                        if(enRevision > 0){
+                            situacion = "En revisión";
+                        }
+                    }
+                }
+            }
+            return ResultadoEJB.crearCorrecto(situacion, "Se realizó la consulta de la situación de carta de no adeudo del estudiante correctamente.");
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la consulta de la situación de no adeudo del estudiante. (EjbIntegracionExpedienteTitulacion.consultarSituacionCartaNoAdeudo)", e, null);
+        }
     }
 }

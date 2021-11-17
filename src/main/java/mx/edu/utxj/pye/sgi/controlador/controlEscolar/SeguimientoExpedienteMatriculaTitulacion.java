@@ -29,6 +29,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.SeguimientoExpedienteMatriculaRolT
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbIntegracionExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoExpedienteGeneracion;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosAcademicos;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -36,6 +37,7 @@ import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -137,7 +139,6 @@ public class SeguimientoExpedienteMatriculaTitulacion extends ViewScopedRol impl
         expedienteTit = new ExpedienteTitulacion();
         expedienteTit = ejbIntegracionExpedienteTitulacion.buscarExpedienteRegistradoClave(expediente).getValor();
         rol.setDtoExpedienteTitulacion(ejbIntegracionExpedienteTitulacion.getDtoExpedienteTitulacion(expedienteTit).getValor());
-        fechaTerminacion = rol.getDtoExpedienteTitulacion().getDatosAcademicos().getFechaTerminacion();
         Ajax.update("frm");
         Ajax.update("formMuestraExpediente");
         consultarExpediente();
@@ -165,9 +166,26 @@ public class SeguimientoExpedienteMatriculaTitulacion extends ViewScopedRol impl
     }
     
      public void validarExpediente(){
-        ResultadoEJB<ExpedienteTitulacion> res = ejb.validarExpediente(expedienteTit, rol.getPersonal().getPersonal());
+        ResultadoEJB<ExpedienteTitulacion> res = ejb.validarExpediente(rol.getDtoExpedienteTitulacion().getExpediente(), rol.getPersonal().getPersonal());
         if(res.getCorrecto()){
+            Messages.addGlobalInfo("Se validó/invalidó el expediente de titulación correctamente.");
             mostrarExpediente();
+        }
+    }
+     
+    public void actualizarFechaTerminacion() {
+        ResultadoEJB<DatosAcademicos> res = ejbIntegracionExpedienteTitulacion.actualizarDatosAcademicos(rol.getDtoExpedienteTitulacion().getDatosAcademicos());
+        if(res.getCorrecto()){
+            Messages.addGlobalInfo("Se actualizó la fecha de terminación correctamente.");
+            mostrarExpediente();
+        }
+    }
+    
+    public void guardarDatosTitulacion() {
+        ResultadoEJB<ExpedienteTitulacion> res = ejbIntegracionExpedienteTitulacion.actualizarDatosTitulacion(rol.getDtoExpedienteTitulacion().getExpediente());
+        if(res.getCorrecto()){
+            Messages.addGlobalInfo("Se actualizó el promedio y el dato de servicio social correctamente.");
+             mostrarExpediente();
         }
     }
     

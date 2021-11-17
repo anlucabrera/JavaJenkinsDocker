@@ -950,7 +950,7 @@ public class EjbCasoCritico implements Serializable {
     public ResultadoEJB<DtoCasoCriticoAlineacion> registrarPorReprobacionAlineacion(DtoCapturaCalificacionAlineacion dtoCapturaCalificacion){
         try{
 //            System.out.println("EjbCasoCritico.registrarPorReprobacion");
-            if(dtoCapturaCalificacion.getPromedio().compareTo(ejbCapturaCalificaciones.leerCalificacionMínimaAprobatoria()) < 0){
+            if(dtoCapturaCalificacion.getPromedio().compareTo(ejbCapturaCalificaciones.leerCalificacionMínimaAprobatoria()) < 0 && dtoCapturaCalificacion.getPromedio().compareTo(BigDecimal.ZERO) != 0){
 //                System.out.println("Es reprobatorio");
                 ResultadoEJB<Boolean> verificarCapturaCompleta = ejbCapturaCalificaciones.verificarCapturaCompletaAlineacion(dtoCapturaCalificacion);
                 if(!verificarCapturaCompleta.getCorrecto()){
