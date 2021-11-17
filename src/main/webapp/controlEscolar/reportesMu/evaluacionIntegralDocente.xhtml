@@ -121,108 +121,164 @@
                                                 </div>
                                             </div>
                                         </div>
-                                            <c:set var="informe" value="#{informeIntegralDocente.rol.dtoInformeIntegralDocente}"/>
-                                            <p:panel id="IN" style="overflow: hidden">
-                                                <p:panelGrid style="width: 100%" >
-                                                    <!--f:facet name="header"-->
-                                                    <p:row>
-                                                        <p:column colspan="2" style="width: 50%">
-                                                            <img src="../../resources/img/utxj.png" alt="" height="100px"/>
-                                                        </p:column>
-                                                        <p:column colspan="13" style="font-weight: bold; text-align: center; font-size: x-large; width: 50%">
-                                                            <h3><strong>Universidad Tecnológica De</strong></h3>
-                                                            <h3><strong>Xicotepec de Juárez</strong></h3>
-                                                            <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>
-                                                        </p:column>
-                                                    </p:row>
-                                                    <p:row>
-                                                        <p:column colspan="1" style="text-align: right;width: 20%"><strong>NOMBRE: </strong></p:column>
-                                                        <p:column colspan="11" style="text-align: left ; width: 30%">#{informeIntegralDocente.rol.docente.nombre}</p:column>
-                                                        <p:column colspan="1" style="text-align: right;width: 20%"><strong>NÚMERO DE TRABAJADOR:</strong></p:column>
-                                                        <p:column colspan="2" style="text-align: left;width: 30%">#{informeIntegralDocente.rol.docente.clave}</p:column>
-                                                    </p:row>
-                                                    <p:row >
-                                                        <p:column colspan="1" style="text-align: right; width: 20%"><strong>ÁREA ACADÉMICA: </strong></p:column>
-                                                        <p:column colspan="11" style="text-align: left;width: 30%">#{informeIntegralDocente.rol.informeIntegral.areaAcademica.nombre}</p:column>
-                                                        <p:column colspan="1" style="text-align: right;width: 20%"><strong>FECHA:</strong></p:column>
-                                                        <p:column colspan="2" style="text-align: left;width: 30%">#{caster.fechaToString(informeIntegralDocente.rol.fechaImpresion)}</p:column>
-                                                    </p:row>
-                                                    <p:row>
-                                                        <p:column colspan="15" style="text-align: center;width: 50%">
-                                                            <h3><strong>EVALUACIÓN   INTEGRAL - #{informeIntegralDocente.rol.informeIntegral.porcetanjeObtenido}%</strong></h3>
-                                                        </p:column>
-                                                    </p:row>
-                                                    <p:row>
-                                                        <p:column colspan="15" style="font-weight: bold;width: 100% ">
-                                                            <hf:chart yaxisLabel="Porcentaje" colors="olivedrab, red" type="column" value="#{informeIntegralDocente.rol.mappedList}" var="valores" stacking="normal"
-                                                                      point="#{valores.valor}" tickLabel="#{valores.nombreApartado}- #{valores.valor}%"/>
-                                                        </p:column>
-                                                    </p:row>
-                                                    <p:row >
-                                                        <p:column colspan="15" styleClass="actividad" style="font-weight: bold; text-align: center;width: 100%"> NIVELES DE DESEMPEÑO</p:column>
+                                        <c:set var="informe" value="#{informeIntegralDocente.rol.dtoInformeIntegralDocente}"/>
+                                        <p:panel id="IN" style="overflow: hidden">
+                                            <p:panelGrid style="width: 100%" >
+                                                <!--f:facet name="header"-->
+                                                <p:row>
+                                                    <p:column colspan="2" style="width: 50%">
+                                                        <img src="../../resources/img/utxj.png" alt="" height="100px"/>
+                                                    </p:column>
+                                                    <p:column colspan="13" style="font-weight: bold; text-align: center; font-size: x-large; width: 50%">
+                                                        <h3><strong>Universidad Tecnológica De</strong></h3>
+                                                        <h3><strong>Xicotepec de Juárez</strong></h3>
+                                                        <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="1" style="text-align: right;width: 20%"><strong>NOMBRE: </strong></p:column>
+                                                    <p:column colspan="11" style="text-align: left ; width: 30%">#{informeIntegralDocente.rol.docente.nombre}</p:column>
+                                                    <p:column colspan="1" style="text-align: right;width: 20%"><strong>NÚMERO DE TRABAJADOR:</strong></p:column>
+                                                    <p:column colspan="2" style="text-align: left;width: 30%">#{informeIntegralDocente.rol.docente.clave}</p:column>
+                                                </p:row>
+                                                <p:row >
+                                                    <p:column colspan="1" style="text-align: right; width: 20%"><strong>ÁREA ACADÉMICA: </strong></p:column>
+                                                    <p:column colspan="11" style="text-align: left;width: 30%">#{informeIntegralDocente.rol.informeIntegral.areaAcademica.nombre}</p:column>
+                                                    <p:column colspan="1" style="text-align: right;width: 20%"><strong>FECHA:</strong></p:column>
+                                                    <p:column colspan="2" style="text-align: left;width: 30%">#{caster.fechaToString(informeIntegralDocente.rol.fechaImpresion)}</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="15" style="text-align: center;width: 50%">
+                                                        <h3><strong>EVALUACIÓN   INTEGRAL - #{informeIntegralDocente.rol.informeIntegral.porcetanjeObtenido}%</strong></h3>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="15" style="font-weight: bold;width: 100% ">
+                                                        <hf:chart yaxisLabel="Porcentaje" colors="olivedrab, red" type="column" value="#{informeIntegralDocente.rol.mappedList}" var="valores" stacking="normal"
+                                                                  point="#{valores.valor}" tickLabel="#{valores.nombreApartado}- #{valores.valor}% "/>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row >
+                                                    <p:column colspan="15" styleClass="actividad" style="font-weight: bold; text-align: center;width: 100%"> NIVELES DE DESEMPEÑO</p:column>
 
-                                                    </p:row>
-                                                    <p:row>
-                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(10, 181, 16, 0.8) !important">
-                                                            <strong>Muy satisfecho</strong>
-                                                        </p:column>
-                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 90% a 100%</p:column>
-                                                        <p:column colspan="11" style="text-align: justify-all;width: 20%">El docente demuestra de manera muy satisfecha los aspectos evaluados por los estudiantes como docente y/o tutor, su jefe directo y pares académicos. Se caracteriza por lograr todos los aspectos de un docente distinguido en el desempeño de sus funciones.</p:column>
-                                                    </p:row>
-                                                    <p:row>
-                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(149, 255, 152, 0.8) !important">
-                                                            <strong>Satisfecho</strong>
-                                                        </p:column>
-                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 80% a 89%</p:column>
-                                                        <p:column colspan="11"  style="text-align: justify;width: 20%">El docente demuestra de manera satisfecha los aspectos evaluados por los estudiantes como docente y/o tutor, su jefe directo y pares académicos. Se caracteriza por lograr la mayoría de los aspectos de un docente distinguido en el cumplimiento de sus funciones, pero es necesario fortalecer algunos aspectos que se especifican en el informe detallado.</p:column>
-                                                    </p:row>
-                                                    <p:row>
-                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(251, 243, 3, 0.8) !important">
-                                                            <strong>Regularmente satisfecho</strong>
-                                                        </p:column>
-                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 70% a 79%</p:column>
-                                                        <p:column colspan="11"  style="text-align: justify;width: 20%">El docente demuestra de manera regularmente satisfecho los aspectos evaluados por los estudiantes como docente y/o tutor, su jefe directo y pares académicos.  Se caracteriza por lograr algunos de los aspectos de un docente distinguido en el cumplimiento de sus funciones, pero es necesario fortalecer algunos aspectos que se presentan en el informe detallado.</p:column>
-                                                    </p:row>
-                                                    <p:row>
-                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(255, 151, 23, 0.8) !important">
-                                                            <strong>Poco satisfecho</strong>
-                                                        </p:column>
-                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 60% a 69%</p:column>
-                                                        <p:column colspan="11" style="text-align: justify;width: 20%">El docente demuestra de manera poco satisfecho los aspectos evaluados por los estudiantes como docente y/o tutor, su jefe directo y pares académicos. Cuenta con algunos aspectos de un docente distinguido en el cumplimiento de sus funciones, pero es necesario fortalecer la mayoría de los aspectos que se presentan en el informe detallado.</p:column>
-                                                    </p:row>
-                                                    <p:row>
-                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(255, 0, 0, 0.8) !important">
-                                                            <strong>No satisfecho</strong>
-                                                        </p:column>
-                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 0% a 59%</p:column>
-                                                        <p:column colspan="11"  style="text-align: justify;width: 20%">El docente demuestra de manera no satisfecho los aspectos evaluados por los estudiantes como docente y/o tutor, su jefe directo y pares académicos. Se caracteriza por no lograr todos los aspectos de un docente distinguido en el desempeño de sus funciones, por lo que es necesario fortalecer todos los aspectos que se presentan en el informe detallado.</p:column>
-                                                    </p:row>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(10, 181, 16, 0.8) !important">
+                                                        <strong>Muy satisfecho</strong>
+                                                    </p:column>
+                                                    <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 90% a 100%</p:column>
+                                                    <p:column colspan="11" style="text-align: justify-all;width: 20%">El docente demuestra de manera muy satisfecha los aspectos evaluados por los estudiantes como docente y/o tutor, su jefe directo y pares académicos. Se caracteriza por lograr todos los aspectos de un docente distinguido en el desempeño de sus funciones.</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(149, 255, 152, 0.8) !important">
+                                                        <strong>Satisfecho</strong>
+                                                    </p:column>
+                                                    <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 80% a 89%</p:column>
+                                                    <p:column colspan="11"  style="text-align: justify;width: 20%">El docente demuestra de manera satisfecha los aspectos evaluados por los estudiantes como docente y/o tutor, su jefe directo y pares académicos. Se caracteriza por lograr la mayoría de los aspectos de un docente distinguido en el cumplimiento de sus funciones, pero es necesario fortalecer algunos aspectos que se especifican en el informe detallado.</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(251, 243, 3, 0.8) !important">
+                                                        <strong>Regularmente satisfecho</strong>
+                                                    </p:column>
+                                                    <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 70% a 79%</p:column>
+                                                    <p:column colspan="11"  style="text-align: justify;width: 20%">El docente demuestra de manera regularmente satisfecho los aspectos evaluados por los estudiantes como docente y/o tutor, su jefe directo y pares académicos.  Se caracteriza por lograr algunos de los aspectos de un docente distinguido en el cumplimiento de sus funciones, pero es necesario fortalecer algunos aspectos que se presentan en el informe detallado.</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(255, 151, 23, 0.8) !important">
+                                                        <strong>Poco satisfecho</strong>
+                                                    </p:column>
+                                                    <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 60% a 69%</p:column>
+                                                    <p:column colspan="11" style="text-align: justify;width: 20%">El docente demuestra de manera poco satisfecho los aspectos evaluados por los estudiantes como docente y/o tutor, su jefe directo y pares académicos. Cuenta con algunos aspectos de un docente distinguido en el cumplimiento de sus funciones, pero es necesario fortalecer la mayoría de los aspectos que se presentan en el informe detallado.</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(255, 0, 0, 0.8) !important">
+                                                        <strong>No satisfecho</strong>
+                                                    </p:column>
+                                                    <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 0% a 59%</p:column>
+                                                    <p:column colspan="11"  style="text-align: justify;width: 20%">El docente demuestra de manera no satisfecho los aspectos evaluados por los estudiantes como docente y/o tutor, su jefe directo y pares académicos. Se caracteriza por no lograr todos los aspectos de un docente distinguido en el desempeño de sus funciones, por lo que es necesario fortalecer todos los aspectos que se presentan en el informe detallado.</p:column>
+                                                </p:row>
 
-                                                    <p:row style="height: 25px">
-                                                        <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
-                                                    </p:row>
-                                                    <!-- -->
-                                                    <!--/f:facet-->
-                                                    <!--Evaluacion al desempeño -->
+                                                <p:row style="height: 25px">
+                                                    <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
+                                                </p:row>
+                                                <!-- -->
+                                                <!--/f:facet-->
+                                                <!--Evaluacion al desempeño -->
+                                                <p:row>
+                                                    <p:column colspan="14" styleClass="ui-widget-header est" style="text-align: center;width: 100%;">
+                                                        <h4><font color="#f0f8ff"><strong> Evaluación de Desempeño</strong></font></h4>
+                                                    </p:column>
+                                                    <c:set var="evDes" value="#{informeIntegralDocente.rol.evDesempeño}"/>
+                                                    <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{evDes.style}) !important">#{caster.decimalesPromedio(evDes.promedio)}%</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="15" style="font-weight: bold;width: 100%">
+                                                        <hf:chart colors="coral" type="column" value="#{evDes.resultados}" var="apartados"  xaxisLabel="Apartado" yaxisLabel="Porcentaje"
+                                                                  point="#{apartados.promedioApartado}" tickLabel="#{apartados.nombreApartado} - #{caster.decimalesPromedio(apartados.promedioApartado)}% "
+                                                        />
+                                                    </p:column>
+                                                </p:row>
+                                                <c:forEach var="apartados" items="#{informeIntegralDocente.rol.evDesempeño.resultados}">
                                                     <p:row>
-                                                        <p:column colspan="14" styleClass="ui-widget-header est" style="text-align: center;width: 100%;">
-                                                            <h4><font color="#f0f8ff"><strong> Evaluación de Desempeño</strong></font></h4>
+                                                        <p:column colspan="14" styleClass="actividad" style="font-weight: bold; text-align: center;width: 90%">#{apartados.nombreApartado}</p:column>
+                                                        <p:column colspan="1"  style="font-weight: bold; text-align: center;width: 10%;background:rgba(#{apartados.style}) !important">#{caster.decimalesPromedio(apartados.promedioApartado)}%</p:column>
+                                                    </p:row>
+                                                    <c:forEach var="preguntas" items="#{apartados.resultadoPreguntas}">
+                                                        <p:row>
+                                                            <p:column colspan="14" style="width: 95%">#{preguntas.pregunta}</p:column>
+                                                            <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{preguntas.style}) !important">#{caster.decimalesPromedio(preguntas.promedio)}%</p:column>
+                                                        </p:row>
+                                                    </c:forEach>
+                                                </c:forEach>
+                                                <p:row style="height: 25px">
+                                                    <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
+                                                </p:row>
+                                                <!--Evaluacion entre pares académicos -->
+                                                <p:row>
+                                                    <p:column colspan="14" styleClass="ui-widget-header est" style="text-align: center;width: 100%;">
+                                                        <h4><font color="#f0f8ff"><strong> Evaluación entre pares académicos</strong></font> </h4>
+                                                    </p:column>
+                                                    <c:set var="evPares" value="#{informeIntegralDocente.rol.evPares}"/>
+                                                    <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{evPares.style}) !important">#{caster.decimalesPromedio(evPares.promedio)}%</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="15" style="font-weight: bold;width: 100%">
+                                                        <hf:chart colors="olivedrab" type="column" value="#{informeIntegralDocente.rol.resultadosPares}" var="r"  xaxisLabel="Pregunta" yaxisLabel="Porcentaje"
+                                                                  point="#{r.promedio}" tickLabel="#{r.numeroPregunta} - #{caster.decimalesPromedio(r.promedio)}%"
+                                                        />
+                                                    </p:column>
+                                                </p:row>
+
+
+                                                <c:forEach var="apartados" items="#{informeIntegralDocente.rol.evPares.resultados}">
+                                                    <c:forEach var="preguntas" items="#{apartados.resultadoPreguntas}">
+                                                        <p:row>
+                                                            <p:column colspan="14" style="width: 95%">#{preguntas.pregunta}</p:column>
+                                                            <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{preguntas.style}) !important">#{caster.decimalesPromedio(preguntas.promedio)}%</p:column>
+                                                        </p:row>
+                                                    </c:forEach>
+                                                </c:forEach>
+                                                <p:row style="height: 25px">
+                                                    <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
+                                                </p:row>
+                                                <!--Evaluacion a tutor -->
+
+                                                <c:set var="eTutor" value="#{informeIntegralDocente.rol.evTutor}"/>
+                                                <c:if test="#{informeIntegralDocente.rol.tutor}" >
+                                                    <p:row>
+                                                        <p:column colspan="14" styleClass="ui-widget-header est" style="text-align: center;width: 100%;height:20px">
+                                                            <h4><font color="#f0f8ff"> <strong> Evaluación a Tutor</strong></font></h4>
                                                         </p:column>
-                                                        <c:set var="evDes" value="#{informeIntegralDocente.rol.evDesempeño}"/>
-                                                        <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{evDes.style}) !important">#{caster.decimalesPromedio(evDes.promedio)}%</p:column>
+                                                        <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{eTutor.style}) !important">#{caster.decimalesPromedio(eTutor.promedio)}%</p:column>
                                                     </p:row>
                                                     <p:row>
                                                         <p:column colspan="15" style="font-weight: bold;width: 100%">
-                                                            <hf:chart colors="coral" type="column" value="#{evDes.resultados}" var="apartados"  xaxisLabel="Apartado" yaxisLabel="Porcentaje"
-                                                                      point="#{apartados.promedioApartado}" tickLabel="#{apartados.nombreApartado} "
+                                                            <hf:chart colors="lightseagreen" type="column" value="#{informeIntegralDocente.rol.resultadosTutor}" var="r"  xaxisLabel="Pregunta" yaxisLabel="Porcentaje"
+                                                                      point="#{r.promedio}" tickLabel="#{r.numeroPregunta} - #{caster.decimalesPromedio(r.promedio)}%"
                                                             />
                                                         </p:column>
                                                     </p:row>
-                                                    <c:forEach var="apartados" items="#{informeIntegralDocente.rol.evDesempeño.resultados}">
-                                                        <p:row>
-                                                            <p:column colspan="14" styleClass="actividad" style="font-weight: bold; text-align: center;width: 90%">#{apartados.nombreApartado}</p:column>
-                                                            <p:column colspan="1"  style="font-weight: bold; text-align: center;width: 10%;background:rgba(#{apartados.style}) !important">#{caster.decimalesPromedio(apartados.promedioApartado)}%</p:column>
-                                                        </p:row>
+                                                    <c:forEach var="apartados" items="#{eTutor.resultados}">
                                                         <c:forEach var="preguntas" items="#{apartados.resultadoPreguntas}">
                                                             <p:row>
                                                                 <p:column colspan="14" style="width: 95%">#{preguntas.pregunta}</p:column>
@@ -230,66 +286,11 @@
                                                             </p:row>
                                                         </c:forEach>
                                                     </c:forEach>
-                                                    <p:row style="height: 25px">
-                                                        <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
-                                                    </p:row>
-                                                    <!--Evaluacion entre pares académicos -->
-                                                    <p:row>
-                                                        <p:column colspan="14" styleClass="ui-widget-header est" style="text-align: center;width: 100%;">
-                                                            <h4><font color="#f0f8ff"><strong> Evaluación entre pares académicos</strong></font> </h4>
-                                                        </p:column>
-                                                        <c:set var="evPares" value="#{informeIntegralDocente.rol.evPares}"/>
-                                                        <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{evPares.style}) !important">#{caster.decimalesPromedio(evPares.promedio)}%</p:column>
-                                                    </p:row>
-                                                    <p:row>
-                                                        <p:column colspan="15" style="font-weight: bold;width: 100%">
-                                                            <hf:chart colors="olivedrab" type="column" value="#{informeIntegralDocente.rol.resultadosPares}" var="r"  xaxisLabel="Pregunta" yaxisLabel="Porcentaje"
-                                                                      point="#{r.promedio}" tickLabel="#{r.numeroPregunta} "
-                                                            />
-                                                        </p:column>
-                                                    </p:row>
-
-
-                                                    <c:forEach var="apartados" items="#{informeIntegralDocente.rol.evPares.resultados}">
-                                                        <c:forEach var="preguntas" items="#{apartados.resultadoPreguntas}">
-                                                            <p:row>
-                                                                <p:column colspan="14" style="width: 95%">#{preguntas.pregunta}</p:column>
-                                                                <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{preguntas.style}) !important">#{caster.decimalesPromedio(preguntas.promedio)}%</p:column>
-                                                            </p:row>
-                                                        </c:forEach>
-                                                    </c:forEach>
-                                                    <p:row style="height: 25px">
-                                                        <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
-                                                    </p:row>
-                                                    <!--Evaluacion a tutor -->
-
-                                                    <c:set var="eTutor" value="#{informeIntegralDocente.rol.evTutor}"/>
-                                                    <c:if test="#{informeIntegralDocente.rol.tutor}" >
-                                                        <p:row>
-                                                            <p:column colspan="14" styleClass="ui-widget-header est" style="text-align: center;width: 100%;height:20px">
-                                                                <h4><font color="#f0f8ff"> <strong> Evaluación a Tutor</strong></font></h4>
-                                                            </p:column>
-                                                            <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{eTutor.style}) !important">#{caster.decimalesPromedio(eTutor.promedio)}%</p:column>
-                                                        </p:row>
-                                                        <p:row>
-                                                            <p:column colspan="15" style="font-weight: bold;width: 100%">
-                                                                <hf:chart colors="lightseagreen" type="column" value="#{informeIntegralDocente.rol.resultadosTutor}" var="r"  xaxisLabel="Pregunta" yaxisLabel="Porcentaje"
-                                                                          point="#{r.promedio}" tickLabel="#{r.numeroPregunta} "
-                                                                />
-                                                            </p:column>
-                                                        </p:row>
-                                                        <c:forEach var="apartados" items="#{eTutor.resultados}">
-                                                            <c:forEach var="preguntas" items="#{apartados.resultadoPreguntas}">
-                                                                <p:row>
-                                                                    <p:column colspan="14" style="width: 95%">#{preguntas.pregunta}</p:column>
-                                                                    <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{preguntas.style}) !important">#{caster.decimalesPromedio(preguntas.promedio)}%</p:column>
-                                                                </p:row>
-                                                            </c:forEach>
-                                                        </c:forEach>
-                                                    </c:if>
-                                                    <p:row style="height: 25px">
-                                                        <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
-                                                    </p:row>
+                                                </c:if>
+                                                <p:row style="height: 25px">
+                                                    <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
+                                                </p:row>
+                                                <c:if test="#{informeIntegralDocente.rol.fueDocente}">
                                                     <!-- Evaluacion Docente-->
                                                     <c:set var="evDocente" value="#{informeIntegralDocente.rol.evDocente}"/>
                                                     <p:row>
@@ -301,7 +302,7 @@
                                                     <p:row>
                                                         <p:column colspan="15" style="font-weight: bold;width: 100%">
                                                             <hf:chart colors="darkcyan" type="column" value="#{evDocente.resultados}" var="materia"  xaxisLabel="Materia" yaxisLabel="Porcentaje"
-                                                                      point="#{materia.promedioMateria}" tickLabel="#{materia.claveMateria.concat(' - ').concat(materia.nombreMateria)} "
+                                                                      point="#{materia.promedioMateria}" tickLabel="#{materia.claveMateria.concat(' - ').concat(materia.nombreMateria)} - #{caster.decimalesPromedio(materia.promedioMateria)}%"
                                                             />
                                                         </p:column>
                                                     </p:row>
@@ -322,15 +323,11 @@
                                                                     <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{preguntas.style}) !important">#{caster.decimalesPromedio(preguntas.promedio)}%</p:column>
                                                                 </p:row>
                                                             </c:forEach>
-
                                                         </c:forEach>
-
                                                     </c:forEach>
-
-                                                </p:panelGrid>
-                                            </p:panel>
-
-
+                                                </c:if>
+                                            </p:panelGrid>
+                                        </p:panel>
                                     </div>
                                 </div>
                             </div>

@@ -28,7 +28,7 @@ public class InformeIntegralDocenteRolMultiple {
     @Getter @NonNull private AreasUniversidad areaSeleccionada;
     @Getter @NonNull private Personal docente;
     @Getter @NonNull private    Date fechaImpresion;
-    @Getter @NonNull private    Boolean tutor;
+    @Getter @NonNull private    Boolean tutor,fueDocente;
     @Getter @NonNull private    Boolean esDocente,esDirector,esSA,esFDA;
     @Getter @NonNull private PeriodosEscolares periodoSeleccionado;
     @Getter @NonNull private DtoInformeIntegralDocente dtoInformeIntegralDocente;
@@ -66,4 +66,5 @@ public class InformeIntegralDocenteRolMultiple {
     public void setEsSA(Boolean esSA) { this.esSA = esSA; }
     public void setEsFDA(Boolean esFDA) { this.esFDA = esFDA; }
     public void setMappedList(Map<String, List<DtoInformeIntegralDocente.EvaluacionIntegral>> mappedList) { this.mappedList = mappedList; }
+    public void setFueDocente(Boolean fueDocente) { this.fueDocente = fueDocente; }
 }

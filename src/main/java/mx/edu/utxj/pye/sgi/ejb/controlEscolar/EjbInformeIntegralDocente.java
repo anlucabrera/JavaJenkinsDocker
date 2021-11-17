@@ -555,15 +555,17 @@ public class EjbInformeIntegralDocente {
                     .getResultStream()
                     .collect(Collectors.toList());
             ;
-            List<String> resu= new ArrayList<>();
-            //System.out.println("EjbInformeIntegralDocente.getMaterias4 "+resultados);
-            resultados.stream().forEach(r->{
-                resu.add(r.getEvaluacionDocentesMateriaResultados5PK().getCveMateria());
-            });
-            List<String> materias = resu.stream().distinct().collect(Collectors.toList());
-            //System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion --2"+ materias.size());
-            if(resultados==null || resultados.isEmpty()){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"No tiene resultados de la evaluación a tutor");}
-            else {return ResultadoEJB.crearCorrecto(materias,"Resultados");}
+            if (resultados == null|| resultados.isEmpty()) { return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no fue evaluado en el periodo seleccionado");}
+            else {
+                List<String> resu= new ArrayList<>();
+                //System.out.println("EjbInformeIntegralDocente.getMaterias4 "+resultados);
+                resultados.stream().forEach(r->{
+                    resu.add(r.getEvaluacionDocentesMateriaResultados5PK().getCveMateria());
+                });
+                List<String> materias = resu.stream().distinct().collect(Collectors.toList());
+                //System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion --2"+ materias.size());
+                return ResultadoEJB.crearCorrecto(resu,"Lista materias");
+            }
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
         }
@@ -1897,7 +1899,7 @@ public class EjbInformeIntegralDocente {
     public ResultadoEJB<DtoInformeIntegralDocente.Docente> packEvDocente (@NonNull Personal docente, @NonNull PeriodosEscolares periodo){
         try{
             //System.out.println("EjbInformeIntegralDocente.packEvDocente");
-            DtoInformeIntegralDocente.Docente dto = new DtoInformeIntegralDocente.Docente(new Evaluaciones(),new ArrayList<>(),new Double(0.0),new String());
+            DtoInformeIntegralDocente.Docente dto = new DtoInformeIntegralDocente.Docente(new Evaluaciones(),new ArrayList<>(),new Double(0.0),new String(),Boolean.FALSE);
             if(docente ==null){return ResultadoEJB.crearErroneo(2,dto,"La evaluación no debe ser nulo");}
             if(periodo ==null){return ResultadoEJB.crearErroneo(2,dto,"La evaluación no debe ser nulo");}
 
@@ -1912,26 +1914,35 @@ public class EjbInformeIntegralDocente {
                     List<String> resResultados= getMaterias1(docente,resEv.getValor()).getValor();
                     ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> resMaterias = packResultadosMateria(apartados, EvaluacionesTipo.DOCENTE,resEv.getValor(),docente,resResultados,new ArrayList<>());
                     if(resMaterias.getCorrecto()){
+                        dto.setFueDocente(Boolean.TRUE);
                         dto.setResultados(resMaterias.getValor());
                         dto.setEvaluacion(resEv.getValor());
                         dto.setPromedio(promedioEvaluacionDocente(resMaterias.getValor()).getValor());
                         dto.setStyle(getStilobyPromedio(dto.getPromedio()).getValor());
                         return ResultadoEJB.crearCorrecto(dto,"Evaluación docente empaquetada");
-                    }else {return ResultadoEJB.crearErroneo(3,dto,"Error al empaquetar el resultado de la evaluación por maateria");}
+                    }else {
+                        //System.out.println("EjbInformeIntegralDocente.packEvDocente - No docente");
+                        dto.setFueDocente(Boolean.FALSE);
+                        return ResultadoEJB.crearErroneo(3,dto,"Error al empaquetar el resultado de la evaluación por maateria");}
 
                 }else if(resEv.getValor().getTipo().equals(EvaluacionesTipo.DOCENTE_4.getLabel())){
                     //Docente Materia (Cuestionario 4 por contingencia)
                     List<Apartado> apartados = getApartadosDocentebyTipo(EvaluacionesTipo.DOCENTE_4).getValor();
-                    List<String> resResultados= getMaterias4(docente,resEv.getValor()).getValor();
-                    //System.out.println("EjbInformeIntegralDocente.packEvDocente Materias "+resResultados);
-                    ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> resMaterias = packResultadosMateria(apartados, EvaluacionesTipo.DOCENTE_4,resEv.getValor(),docente,new ArrayList<>(),resResultados);
-                    if(resMaterias.getCorrecto()){
+                   ResultadoEJB<List<String>> resResultados= getMaterias4(docente,resEv.getValor());
+                   // System.out.println("EjbInformeIntegralDocente.packEvDocente Materias "+resResultados);
+                    ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> resMaterias = packResultadosMateria(apartados, EvaluacionesTipo.DOCENTE_4,resEv.getValor(),docente,new ArrayList<>(),resResultados.getValor());
+                    if(resResultados.getCorrecto()){
+                        //System.out.println("EjbInformeIntegralDocente.packEvDocente 1111");
+                        dto.setFueDocente(Boolean.TRUE);
                         dto.setResultados(resMaterias.getValor());
                         dto.setEvaluacion(resEv.getValor());
                         dto.setPromedio(promedioEvaluacionDocente(resMaterias.getValor()).getValor());
                         dto.setStyle(getStilobyPromedio(dto.getPromedio()).getValor());
                         return ResultadoEJB.crearCorrecto(dto,"Evaluación docente empaquetada");
-                    }else {return ResultadoEJB.crearErroneo(3,dto,"Error al empaquetar el resultado de la evaluación por maateria");}
+                    }else {
+                        //System.out.println("EjbInformeIntegralDocente.packEvDocente no docente 2");
+                        dto.setFueDocente(Boolean.FALSE);
+                        return ResultadoEJB.crearErroneo(3,dto,"Error al empaquetar el resultado de la evaluación por maateria");}
 
                 }else {return ResultadoEJB.crearErroneo(3,dto,"Se aplico un cuestionario que no está considerada en el informe");}
 
@@ -1950,7 +1961,7 @@ public class EjbInformeIntegralDocente {
 
     public ResultadoEJB<DtoInformeIntegralDocente.InformeIntegral> packInformeIntegral (@NonNull PeriodosEscolares periodo, @NonNull Personal docente){
         try{
-            DtoInformeIntegralDocente.Docente dtoDocente = new DtoInformeIntegralDocente.Docente(new Evaluaciones(),new ArrayList<>(),new Double(0.0),new String());
+            DtoInformeIntegralDocente.Docente dtoDocente = new DtoInformeIntegralDocente.Docente(new Evaluaciones(),new ArrayList<>(),new Double(0.0),new String(),Boolean.FALSE);
             DtoInformeIntegralDocente.Tutor dtoTutor = new DtoInformeIntegralDocente.Tutor(new Evaluaciones(),Boolean.FALSE,new ArrayList<>(),new Double(0),new String());
             DtoInformeIntegralDocente.Desempeño dtoDes = new DtoInformeIntegralDocente.Desempeño(new DesempenioEvaluaciones(),new ArrayList<>(),new Double(0),new String());
             DtoInformeIntegralDocente.Pares dtoPares = new DtoInformeIntegralDocente.Pares(new Evaluaciones(),new ArrayList<>(),new Double(0),new String());
@@ -1969,44 +1980,76 @@ public class EjbInformeIntegralDocente {
             dto.setDocente(docente);
             dto.setAreaAcademica(getAreabyClave(docente.getAreaSuperior()).getValor());
             dto.setAreaOperativa(getAreabyClave(docente.getAreaOperativa()).getValor());
-            if (resDes.getCorrecto() & resPares.getCorrecto() &resDocente.getCorrecto()){
-                dtoDes = resDes.getValor();
-                dtoPares= resPares.getValor();
-                dtoDocente= resDocente.getValor();
-                dto.setEvDesempeño(dtoDes);
-                dto.setEvPares(dtoPares);
-                dto.setEvDocente(dtoDocente);
-                dto.setEvTutor(resTutor.getValor());
-                // Evaluacion Integral
-                DtoInformeIntegralDocente.EvaluacionIntegral dtoDesIntegral= new DtoInformeIntegralDocente.EvaluacionIntegral(new Double(0.0),new String());
-                dtoDesIntegral.setNombreApartado("Desempeño");
-                dtoDesIntegral.setValor(promedioIntegral(dto.getEvDesempeño().getPromedio(),100.00,40).getValor());
-                DtoInformeIntegralDocente.EvaluacionIntegral dtoParesIntegral= new DtoInformeIntegralDocente.EvaluacionIntegral(new Double(0.0),new String());
-                dtoParesIntegral.setNombreApartado("Pares");
-                dtoParesIntegral.setValor(promedioIntegral(dto.getEvPares().getPromedio(),100.00,20).getValor());
-                DtoInformeIntegralDocente.EvaluacionIntegral dtoDocenteIntegral= new DtoInformeIntegralDocente.EvaluacionIntegral(new Double(0.0),new String());
-                DtoInformeIntegralDocente.EvaluacionIntegral dtoTutorIntegral= new DtoInformeIntegralDocente.EvaluacionIntegral(new Double(0.0),new String());
-                //Comprueba si fue tutor para hacer los calculos correspondientes a la evaluacion integral
-                if(dto.getEvTutor().getEsTutor()==true){
-                    //El valor es de 20 y 20 en docente y tutor
-                    dtoDocenteIntegral.setNombreApartado("Estudiante/Docente");
-                    dtoDocenteIntegral.setValor(promedioIntegral(dto.getEvDocente().getPromedio(),100.00,20).getValor());
-                    dtoTutorIntegral.setNombreApartado("Estudiante/Tutor");
-                    dtoTutorIntegral.setValor(promedioIntegral(dto.getEvTutor().getPromedio(),100.00,20).getValor());
-                    dtoEvIntegral.add(dtoDocenteIntegral);
-                    dtoEvIntegral.add(dtoTutorIntegral);
+            // Evaluacion Integral
+            DtoInformeIntegralDocente.EvaluacionIntegral dtoDesIntegral= new DtoInformeIntegralDocente.EvaluacionIntegral(new Double(0.0),new String());
+            DtoInformeIntegralDocente.EvaluacionIntegral dtoDocenteIntegral= new DtoInformeIntegralDocente.EvaluacionIntegral(new Double(0.0),new String());
+            DtoInformeIntegralDocente.EvaluacionIntegral dtoTutorIntegral= new DtoInformeIntegralDocente.EvaluacionIntegral(new Double(0.0),new String());
+            DtoInformeIntegralDocente.EvaluacionIntegral dtoParesIntegral= new DtoInformeIntegralDocente.EvaluacionIntegral(new Double(0.0),new String());
+            if (resDes.getCorrecto() & resPares.getCorrecto()){
+                //System.out.println("EjbInformeIntegralDocente.packInformeIntegral 1");
+                if(resDocente.getCorrecto()){
+                   // System.out.println("EjbInformeIntegralDocente.packInformeIntegral Fue docente");
+                    //Fue docente en ese periodo
+                    dtoDes = resDes.getValor();
+                    dtoPares= resPares.getValor();
+                    dtoDocente= resDocente.getValor();
+                    dto.setEvDesempeño(dtoDes);
+                    dto.setEvPares(dtoPares);
+                    dto.setEvDocente(dtoDocente);
+                    dto.setEvTutor(resTutor.getValor());
+                    dtoDesIntegral.setNombreApartado("Desempeño");
+                    dtoDesIntegral.setValor(promedioIntegral(dto.getEvDesempeño().getPromedio(),100.00,40).getValor());
+                    dtoParesIntegral.setNombreApartado("Pares");
+                    dtoParesIntegral.setValor(promedioIntegral(dto.getEvPares().getPromedio(),100.00,20).getValor());
+                    //Comprueba si fue tutor para hacer los calculos correspondientes a la evaluacion integral
+                    if(dto.getEvTutor().getEsTutor()==true){
+                        //El valor es de 20 y 20 en docente y tutor
+                        dtoDocenteIntegral.setNombreApartado("Estudiante/Docente");
+                        dtoDocenteIntegral.setValor(promedioIntegral(dto.getEvDocente().getPromedio(),100.00,20).getValor());
+                        dtoTutorIntegral.setNombreApartado("Estudiante/Tutor");
+                        dtoTutorIntegral.setValor(promedioIntegral(dto.getEvTutor().getPromedio(),100.00,20).getValor());
+                        dtoEvIntegral.add(dtoDocenteIntegral);
+                        dtoEvIntegral.add(dtoTutorIntegral);
 
+                    }else {
+                        //Se queda solo Estudiante/Docente con el 40
+                        dtoDocenteIntegral.setNombreApartado("Estudiante/Docente");
+                        dtoDocenteIntegral.setValor(promedioIntegral(dto.getEvDocente().getPromedio(),100.00,40).getValor());
+                        dtoEvIntegral.add(dtoDocenteIntegral);
+                    }
+                    dtoEvIntegral.add(dtoDesIntegral);
+                    dtoEvIntegral.add(dtoParesIntegral);
+                    dto.setEvIntegral(dtoEvIntegral);
+                    dto.setPorcetanjeObtenido(dtoEvIntegral.stream().mapToDouble(d->d.getValor()).sum());
+                    return ResultadoEJB.crearCorrecto(dto,"Evaluación Integral Docente generada con éxito");
                 }else {
-                    //Se queda solo Estudiante/Docente con el 40
-                    dtoDocenteIntegral.setNombreApartado("Estudiante/Docente");
-                    dtoDocenteIntegral.setValor(promedioIntegral(dto.getEvDocente().getPromedio(),100.00,40).getValor());
-                    dtoEvIntegral.add(dtoDocenteIntegral);
+                   // System.out.println("EjbInformeIntegralDocente.packInformeIntegral No feu docente");
+                    dto.setEvTutor(resTutor.getValor());
+                    dto.setEvPares(resPares.getValor());
+                    dto.setEvDesempeño(resDes.getValor());
+                    //No fue docente en ese periodo
+                    if(dto.getEvTutor().getEsTutor()==true){
+                        //La evaluación a tutor se mantiene con 40%
+                        dtoTutorIntegral.setNombreApartado("Estudiante/Tutor");
+                        dtoTutorIntegral.setValor(promedioIntegral(dto.getEvTutor().getPromedio(),100.00,40).getValor());
+                        dtoDesIntegral.setNombreApartado("Desempeño");
+                        dtoDesIntegral.setValor(promedioIntegral(dto.getEvDesempeño().getPromedio(),100.00,40).getValor());
+                        dtoParesIntegral.setNombreApartado("Pares");
+                        dtoParesIntegral.setValor(promedioIntegral(dto.getEvPares().getPromedio(),100.00,20).getValor());
+                        dtoEvIntegral.add(dtoTutorIntegral);
+                    }else {
+                        //No fue tutor, se le asigna el 70% a la evaluacion del desempeño y 30% a pares
+                        dtoDesIntegral.setNombreApartado("Desempeño");
+                        dtoDesIntegral.setValor(promedioIntegral(dto.getEvDesempeño().getPromedio(),100.00,70).getValor());
+                        dtoParesIntegral.setNombreApartado("Pares");
+                        dtoParesIntegral.setValor(promedioIntegral(dto.getEvPares().getPromedio(),100.00,30).getValor());
+                    }
+                    dtoEvIntegral.add(dtoDesIntegral);
+                    dtoEvIntegral.add(dtoParesIntegral);
+                    dto.setEvIntegral(dtoEvIntegral);
+                    dto.setPorcetanjeObtenido(dtoEvIntegral.stream().mapToDouble(d->d.getValor()).sum());
+                    return ResultadoEJB.crearCorrecto(dto,"Evaluación Integral Docente generada con éxito");
                 }
-                dtoEvIntegral.add(dtoDesIntegral);
-                dtoEvIntegral.add(dtoParesIntegral);
-                dto.setEvIntegral(dtoEvIntegral);
-                dto.setPorcetanjeObtenido(dtoEvIntegral.stream().mapToDouble(d->d.getValor()).sum());
-                return ResultadoEJB.crearCorrecto(dto,"Evaluación Integral Docente generada con éxito");
             }else {return ResultadoEJB.crearErroneo(3,dto,"Error en empaquetado de las evaluaciones");}
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Error al empaquetar el informe integral (EjbInformeIntegralDocente.packInformeIntegral)", e, null);

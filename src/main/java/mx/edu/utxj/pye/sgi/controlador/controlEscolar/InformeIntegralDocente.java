@@ -65,7 +65,7 @@ public class InformeIntegralDocente extends ViewScopedRol implements Desarrollab
             rol.setEsDirector(Boolean.FALSE);
             rol.setEsFDA(Boolean.FALSE);
             rol.setEsSA(Boolean.FALSE);
-            DtoInformeIntegralDocente.Docente dtoDocente = new DtoInformeIntegralDocente.Docente(new Evaluaciones(),new ArrayList<>(),new Double(0.0),new String());
+            DtoInformeIntegralDocente.Docente dtoDocente = new DtoInformeIntegralDocente.Docente(new Evaluaciones(),new ArrayList<>(),new Double(0.0),new String(),Boolean.FALSE);
             DtoInformeIntegralDocente.Tutor dtoTutor = new DtoInformeIntegralDocente.Tutor(new Evaluaciones(),Boolean.FALSE,new ArrayList<>(),new Double(0),new String());
             DtoInformeIntegralDocente.Desempeño dtoDes = new DtoInformeIntegralDocente.Desempeño(new DesempenioEvaluaciones(),new ArrayList<>(),new Double(0),new String());
             DtoInformeIntegralDocente.Pares dtoPares = new DtoInformeIntegralDocente.Pares(new Evaluaciones(),new ArrayList<>(),new Double(0),new String());
@@ -156,7 +156,7 @@ public class InformeIntegralDocente extends ViewScopedRol implements Desarrollab
                 rol.setPeriodoSeleccionado(resPeriodos.getValor().get(0));
                 getInforme();
             }else {
-                DtoInformeIntegralDocente.Docente dtoDocente = new DtoInformeIntegralDocente.Docente(new Evaluaciones(),new ArrayList<>(),new Double(0.0),new String());
+                DtoInformeIntegralDocente.Docente dtoDocente = new DtoInformeIntegralDocente.Docente(new Evaluaciones(),new ArrayList<>(),new Double(0.0),new String(),Boolean.FALSE);
                 DtoInformeIntegralDocente.Tutor dtoTutor = new DtoInformeIntegralDocente.Tutor(new Evaluaciones(),Boolean.FALSE,new ArrayList<>(),new Double(0),new String());
                 DtoInformeIntegralDocente.Desempeño dtoDes = new DtoInformeIntegralDocente.Desempeño(new DesempenioEvaluaciones(),new ArrayList<>(),new Double(0),new String());
                 DtoInformeIntegralDocente.Pares dtoPares = new DtoInformeIntegralDocente.Pares(new Evaluaciones(),new ArrayList<>(),new Double(0),new String());
@@ -185,34 +185,73 @@ public class InformeIntegralDocente extends ViewScopedRol implements Desarrollab
         HashMap<String,List<DtoInformeIntegralDocente.EvaluacionIntegral>> map= new HashMap();
         //Random r = new Random();
         map.put("Alcanzado", rol.getInformeIntegral().getEvIntegral());
+        //System.out.println("InformeIntegralDocente.cargarGraficoIntegral "+ rol.getInformeIntegral());
         List<DtoInformeIntegralDocente.EvaluacionIntegral> faltante= new ArrayList<>();
         rol.getInformeIntegral().getEvIntegral().stream().forEach(i->{
             DtoInformeIntegralDocente.EvaluacionIntegral dtoIntegral = new DtoInformeIntegralDocente.EvaluacionIntegral(new Double(0.0),"");
-           if(rol.getTutor()==true){
-               if(i.getNombreApartado().equals("Estudiante/Docente")){
-                   dtoIntegral.setNombreApartado("Falante Docente");
-                   dtoIntegral.setValor(20.00 -i.getValor());
-               }
-               if(i.getNombreApartado().equals("Estudiante/Tutor")){
-                   dtoIntegral.setNombreApartado("Falante Tutor");
-                   dtoIntegral.setValor(20.00 -i.getValor());
-               }
-           }else {
-               //No fue tutor
-               if(i.getNombreApartado().equals("Estudiante/Docente")){
-                   dtoIntegral.setNombreApartado("Falante Docente");
-                   dtoIntegral.setValor(40.00 -i.getValor());
-               }
-           }
-           //Desempeño
-            if(i.getNombreApartado().equals("Desempeño")){
-                dtoIntegral.setNombreApartado("Falante Desempeño");
-                dtoIntegral.setValor(40.00 -i.getValor());
-            }
-            if(i.getNombreApartado().equals("Pares")){
-                dtoIntegral.setNombreApartado("Falante Desempeño");
-                dtoIntegral.setValor(20.00 -i.getValor());
-
+            if(rol.getEvDocente().getFueDocente()==false){
+                //System.out.println("InformeIntegralDocente.cargarGraficoIntegral 1");
+                //No fue docente en el periodo seleccionado
+                //Si fue tutor se le da 40% a la evaluacion del tutor, en caso de que no haya sido tutor se le da 30% a la evaluación de desempeño y 10% a la de pares
+                //comprobar si fue tutor
+                if(rol.getTutor()==true){
+                    //System.out.println("InformeIntegralDocente.cargarGraficoIntegral");
+                    if(i.getNombreApartado().equals("Estudiante/Tutor")){
+                        dtoIntegral.setNombreApartado("Faltante Tutor");
+                        dtoIntegral.setValor(40.00-i.getValor());
+                    }
+                    //Desempeño
+                    if(i.getNombreApartado().equals("Desempeño")){
+                        dtoIntegral.setNombreApartado("Falante Desempeño");
+                        dtoIntegral.setValor(40.00 -i.getValor());
+                    }
+                    //Pares
+                    if(i.getNombreApartado().equals("Pares")){
+                        dtoIntegral.setNombreApartado("Falante Desempeño");
+                        dtoIntegral.setValor(20.00 -i.getValor());
+                    }
+                }else {
+                    //System.out.println("InformeIntegralDocente.cargarGraficoIntegral 2");
+                    //Desempeño
+                    if(i.getNombreApartado().equals("Desempeño")){
+                        dtoIntegral.setNombreApartado("Falante Desempeño");
+                        dtoIntegral.setValor(70.00 -i.getValor());
+                    }
+                    //Pares
+                    if(i.getNombreApartado().equals("Pares")){
+                        dtoIntegral.setNombreApartado("Falante Desempeño");
+                        dtoIntegral.setValor(30.00 -i.getValor());
+                    }
+                }
+            }else {
+                //System.out.println("InformeIntegralDocente.cargarGraficoIntegral 2");
+                //Fue docente en el periodo seleccionado
+                if(rol.getTutor()==true){
+                    if(i.getNombreApartado().equals("Estudiante/Docente")){
+                        dtoIntegral.setNombreApartado("Falante Docente");
+                        dtoIntegral.setValor(20.00 -i.getValor());
+                    }
+                    if(i.getNombreApartado().equals("Estudiante/Tutor")){
+                        dtoIntegral.setNombreApartado("Falante Tutor");
+                        dtoIntegral.setValor(20.00 -i.getValor());
+                    }
+                }else {
+                    //No fue tutor
+                    if(i.getNombreApartado().equals("Estudiante/Docente")){
+                        dtoIntegral.setNombreApartado("Falante Docente");
+                        dtoIntegral.setValor(40.00 -i.getValor());
+                    }
+                }
+                //Desempeño
+                if(i.getNombreApartado().equals("Desempeño")){
+                    dtoIntegral.setNombreApartado("Falante Desempeño");
+                    dtoIntegral.setValor(40.00 -i.getValor());
+                }
+                //Pares
+                if(i.getNombreApartado().equals("Pares")){
+                    dtoIntegral.setNombreApartado("Falante Desempeño");
+                    dtoIntegral.setValor(20.00 -i.getValor());
+                }
             }
             faltante.add(dtoIntegral);
         });
@@ -230,6 +269,7 @@ public class InformeIntegralDocente extends ViewScopedRol implements Desarrollab
               mostrarMensajeResultadoEJB(resInforme);
               rol.setInformeIntegral(resInforme.getValor());
               rol.setTutor(resInforme.getValor().getEvTutor().getEsTutor());
+              rol.setFueDocente(resInforme.getValor().getEvDocente().getFueDocente());
               if(resInforme.getValor().getEvTutor().getEsTutor()==true){
                   rol.setEvTutor(resInforme.getValor().getEvTutor());
                   rol.setTutor(resInforme.getValor().getEvTutor().getEsTutor());
@@ -243,7 +283,7 @@ public class InformeIntegralDocente extends ViewScopedRol implements Desarrollab
               rol.getEvPares().getResultados().stream().forEach(p->rol.setResultadosPares(p.getResultadoPreguntas()));
               cargarGraficoIntegral();
           }else {
-              DtoInformeIntegralDocente.Docente dtoDocente = new DtoInformeIntegralDocente.Docente(new Evaluaciones(),new ArrayList<>(),new Double(0.0),new String());
+              DtoInformeIntegralDocente.Docente dtoDocente = new DtoInformeIntegralDocente.Docente(new Evaluaciones(),new ArrayList<>(),new Double(0.0),new String(),Boolean.FALSE);
               DtoInformeIntegralDocente.Tutor dtoTutor = new DtoInformeIntegralDocente.Tutor(new Evaluaciones(),Boolean.FALSE,new ArrayList<>(),new Double(0),new String());
               DtoInformeIntegralDocente.Desempeño dtoDes = new DtoInformeIntegralDocente.Desempeño(new DesempenioEvaluaciones(),new ArrayList<>(),new Double(0),new String());
               DtoInformeIntegralDocente.Pares dtoPares = new DtoInformeIntegralDocente.Pares(new Evaluaciones(),new ArrayList<>(),new Double(0),new String());

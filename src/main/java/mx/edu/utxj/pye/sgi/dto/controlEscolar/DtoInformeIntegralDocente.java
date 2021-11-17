@@ -68,7 +68,7 @@ public class DtoInformeIntegralDocente {
         @Getter     @Setter     @NonNull    List<ResultadosMateria> resultados;
         @Getter     @Setter     @NonNull    Double              promedio;
         @Getter    @Setter      @NonNull    String style;
-
+        @Getter     @Setter     @NonNull    Boolean fueDocente;
     }
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
