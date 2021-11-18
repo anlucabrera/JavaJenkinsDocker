@@ -194,7 +194,7 @@
                                 <p:panel  header="Historial Academico">
                                     <p:tabView id="resultadosTSU" activeIndex="#{reincorporacionCalificacionesServiciosEscolares.rol.pestaniaActiva}">
                                         <p:tab title="TSU Externo" rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesTSU.size() ne 0?false:true}">
-                                            <p:dataTable rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.historialCalificacionesTsus.size() eq 0 ?false:true}" id="calificacionTSUExterno" var="promediosTSU" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.historialCalificacionesTsus}" editable="true" sortBy="#{promediosTSU.grado}">
+                                            <p:dataTable rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.historialCalificacionesTsus.size() eq 0 ?false:true}" id="calificacionTSUExterno" var="promediosTSU" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.calificacionesHistorialTsuOtrosPes}" editable="true" sortBy="#{promediosTSU.grado}">
                                                 <p:headerRow>
                                                     <p:column colspan="4" styleClass="lac" style="text-align: left">
                                                         <h:outputText value="#{promediosTSU.grado}-- #{promediosTSU.idplanEstudio.nombre} -- #{promediosTSU.idplanEstudio.anio}"/>
@@ -242,7 +242,7 @@
                                                 </p:column>
                                             </p:dataTable>
 
-                                            <p:dataTable rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.historialCalificacionesSaiiuts.size() eq 0 ?false:true}" id="calificacionTSUESaiiut" var="promediosTSUInt" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.historialCalificacionesSaiiuts}" editable="true" sortBy="#{promediosTSUInt.idPlanMateria.grado}">
+                                            <p:dataTable rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.historialCalificacionesSaiiuts.size() eq 0 ?false:true}" id="calificacionTSUESaiiut" var="promediosTSUInt" value="#{reincorporacionCalificacionesServiciosEscolares.rol.tsu.calificacionesHistorialTsu}" editable="true" sortBy="#{promediosTSUInt.idPlanMateria.grado}">
                                                 <p:headerRow>
                                                     <p:column colspan="4" styleClass="lac" style="text-align: left">
                                                         <h:outputText value="#{promediosTSUInt.idPlanMateria.grado}"/>
@@ -390,6 +390,12 @@
                                     <p:inputText id="grado" class="form-control" value="#{reincorporacionCalificacionesServiciosEscolares.rol.historialTsu.grado}">
                                         <p:ajax update="grado" global="false"/>
                                     </p:inputText>
+                                </div>
+                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                    <p:outputLabel for="integ" style="font-size: large;text-align: center;" value="Integradora" />
+                                    <p:selectBooleanButton id="integ" onLabel="Yes" offLabel="No" value="#{reincorporacionCalificacionesServiciosEscolares.rol.historialTsu.integradora}" style="width:6rem">
+                                        <p:ajax update="integ" global="false"/>
+                                    </p:selectBooleanButton>
                                 </div>
                             </div> 
                             <hr/>

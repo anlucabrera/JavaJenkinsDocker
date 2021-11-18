@@ -39,7 +39,9 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "PlanEstudioMateria.findByIdPlanMateria", query = "SELECT p FROM PlanEstudioMateria p WHERE p.idPlanMateria = :idPlanMateria")
     , @NamedQuery(name = "PlanEstudioMateria.findByClaveMateria", query = "SELECT p FROM PlanEstudioMateria p WHERE p.claveMateria = :claveMateria")
     , @NamedQuery(name = "PlanEstudioMateria.findByGrado", query = "SELECT p FROM PlanEstudioMateria p WHERE p.grado = :grado")
-    , @NamedQuery(name = "PlanEstudioMateria.findByIntegradora", query = "SELECT p FROM PlanEstudioMateria p WHERE p.integradora = :integradora")})
+    , @NamedQuery(name = "PlanEstudioMateria.findByIntegradora", query = "SELECT p FROM PlanEstudioMateria p WHERE p.integradora = :integradora")
+    , @NamedQuery(name = "PlanEstudioMateria.findByHorasTeoricas", query = "SELECT p FROM PlanEstudioMateria p WHERE p.horasTeoricas = :horasTeoricas")
+    , @NamedQuery(name = "PlanEstudioMateria.findByHorasPracticas", query = "SELECT p FROM PlanEstudioMateria p WHERE p.horasPracticas = :horasPracticas")})
 public class PlanEstudioMateria implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -59,6 +61,10 @@ public class PlanEstudioMateria implements Serializable {
     @NotNull
     @Column(name = "integradora")
     private boolean integradora;
+    @Column(name = "horasTeoricas")
+    private Integer horasTeoricas;
+    @Column(name = "horasPracticas")
+    private Integer horasPracticas;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria")
     private List<CalificacionesHistorialTsu> calificacionesHistorialTsuList;
     @ManyToMany(mappedBy = "planEstudioMateriaList", fetch = FetchType.LAZY)
@@ -129,6 +135,22 @@ public class PlanEstudioMateria implements Serializable {
 
     public void setIntegradora(boolean integradora) {
         this.integradora = integradora;
+    }
+    
+    public Integer getHorasTeoricas() {
+        return horasTeoricas;
+    }
+
+    public void setHorasTeoricas(Integer horasTeoricas) {
+        this.horasTeoricas = horasTeoricas;
+    }
+
+    public Integer getHorasPracticas() {
+        return horasPracticas;
+    }
+
+    public void setHorasPracticas(Integer horasPracticas) {
+        this.horasPracticas = horasPracticas;
     }
 
     @XmlTransient

@@ -37,7 +37,8 @@ import javax.xml.bind.annotation.XmlTransient;
     , @NamedQuery(name = "PlanEstudio.findByDescripcion", query = "SELECT p FROM PlanEstudio p WHERE p.descripcion = :descripcion")
     , @NamedQuery(name = "PlanEstudio.findByAnio", query = "SELECT p FROM PlanEstudio p WHERE p.anio = :anio")
     , @NamedQuery(name = "PlanEstudio.findByEstatus", query = "SELECT p FROM PlanEstudio p WHERE p.estatus = :estatus")
-    , @NamedQuery(name = "PlanEstudio.findByIdPe", query = "SELECT p FROM PlanEstudio p WHERE p.idPe = :idPe")})
+    , @NamedQuery(name = "PlanEstudio.findByIdPe", query = "SELECT p FROM PlanEstudio p WHERE p.idPe = :idPe")
+    , @NamedQuery(name = "PlanEstudio.findByNotas", query = "SELECT p FROM PlanEstudio p WHERE p.notas = :notas")})
 public class PlanEstudio implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -63,6 +64,9 @@ public class PlanEstudio implements Serializable {
     @NotNull
     @Column(name = "id_pe")
     private short idPe;
+    @Size(max = 255)
+    @Column(name = "notas")
+    private String notas;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudios", fetch = FetchType.LAZY)
     private List<Competencia> competenciaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "plan", fetch = FetchType.LAZY)
@@ -133,6 +137,14 @@ public class PlanEstudio implements Serializable {
         this.idPe = idPe;
     }
 
+    public String getNotas() {
+        return notas;
+    }
+
+    public void setNotas(String notas) {
+        this.notas = notas;
+    }
+
     @XmlTransient
     public List<Competencia> getCompetenciaList() {
         return competenciaList;
@@ -184,11 +196,11 @@ public class PlanEstudio implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio[ idPlanEstudio=" + idPlanEstudio + " ]";
     }
-
+    
     @XmlTransient
     public List<IndicadorAlineacion> getIndicadorAlineacionList() {
         return indicadorAlineacionList;
-    }
+}
 
     public void setIndicadorAlineacionList(List<IndicadorAlineacion> indicadorAlineacionList) {
         this.indicadorAlineacionList = indicadorAlineacionList;

@@ -238,7 +238,7 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull        EstudianteHistorialTsu historialTsu;
         @Getter        @Setter        @NonNull        PlanesEstudioExternos externos;
         @Getter        @Setter        @NonNull        List<CalificacionesHistorialTsuOtrosPe> calificacionesHistorialTsuOtrosPes;
-        @Getter        @Setter        @NonNull        List<CalificacionesHistorialTsu> CalificacionesHistorialTsu;
+        @Getter        @Setter        @NonNull        List<CalificacionesHistorialTsu> calificacionesHistorialTsu;
     }
     
     @RequiredArgsConstructor    @ToString    @EqualsAndHashCode

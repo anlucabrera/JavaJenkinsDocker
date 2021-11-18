@@ -23,6 +23,7 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -151,6 +152,23 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
     
     public void estudianteConsultado() {
         buscarAlineacionCalificaciones();
+        if (!rol.getTsu().getHistorialTsu().getPeriodoCarrera().equals("")) {
+            System.out.println("rol.getTsu().getHistorialTsu().getGeneracion()"+rol.getTsu().getHistorialTsu().getPeriodoCarrera());
+            String[] parts = rol.getTsu().getHistorialTsu().getPeriodoCarrera().split(" ");
+            List<String> textoSeparado = Arrays.asList(parts);
+            for (int i = 0; i < textoSeparado.size(); i++) {
+                System.out.println("textoSeparado.get("+i+")"+textoSeparado.get(i));
+                if(!textoSeparado.get(i).equals("-")){
+                    
+                }
+            }
+            
+            rol.setMesIni("Septiembre");
+            rol.setMesFin("Agosto");
+
+            rol.setAnioIni(LocalDate.now().getYear() - 2);
+            rol.setAnioFin(LocalDate.now().getYear());
+        }
     }
     
     public void getUniversidades (){
