@@ -87,7 +87,7 @@
                                                                         <p:ajax process="@this" update="@this"/>
                                                                         <p:autoUpdate />
                                                                     </p:selectOneMenu>
-                                                                    <p:message for="generacionE" />  
+                                                                    <p:message for="generacionE" display="display"/>  
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
@@ -99,7 +99,7 @@
                                                                         <p:ajax process="@this" update="@this"/>
                                                                         <p:autoUpdate />
                                                                     </p:selectOneMenu>
-                                                                    <p:message for="nivelE" />
+                                                                    <p:message for="nivelE" display="display"/>
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
@@ -111,7 +111,7 @@
                                                                         <p:ajax process="@this" update="@this"/>
                                                                         <p:autoUpdate />
                                                                     </p:selectOneMenu>
-                                                                    <p:message for="procesoIntegracion" />
+                                                                    <p:message for="procesoIntegracion" display="display"/>
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
@@ -126,7 +126,7 @@
                                                                         <p:column>#{estudiante.periodoEscolar}</p:column>
                                                                         <p:ajax event="itemSelect" update="@this" process="@this"/>
                                                                     </p:autoComplete>
-                                                                    <p:message for="estudiante" />
+                                                                    <p:message for="estudiante" display="display"/>
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
@@ -255,7 +255,7 @@
                                                                                 <f:selectItems value="#{registroExpedienteTitulacion.rol.listaEstadosIEMS}"/>
                                                                                 <p:ajax listener="#{registroExpedienteTitulacion.selectMunicipioIems()}" update="municipioIEMS"/>
                                                                             </p:selectOneMenu>
-                                                                            <p:message for="estadoIEMS"><p:autoUpdate/></p:message>
+                                                                            <p:message for="estadoIEMS" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -267,7 +267,7 @@
                                                                                 <f:selectItems value="#{registroExpedienteTitulacion.rol.listaMunicipiosIEMS}"/>
                                                                                 <p:ajax listener="#{registroExpedienteTitulacion.selectLocalidadIems()}" update="localidadIEMS"/>
                                                                             </p:selectOneMenu>
-                                                                            <p:message for="municipioIEMS"><p:autoUpdate/></p:message>
+                                                                            <p:message for="municipioIEMS" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -279,7 +279,7 @@
                                                                                 <f:selectItems value="#{registroExpedienteTitulacion.rol.listaLocalidadesIEMS}"/>
                                                                                 <p:ajax listener="#{registroExpedienteTitulacion.selectIems()}" update="iems"/>
                                                                             </p:selectOneMenu>
-                                                                            <p:message for="localidadIEMS"><p:autoUpdate/></p:message>
+                                                                            <p:message for="localidadIEMS" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -292,7 +292,7 @@
                                                                                 <f:selectItems value="#{registroExpedienteTitulacion.rol.listaIEMS}"/>
                                                                                 <p:ajax/>
                                                                             </p:selectOneMenu>
-                                                                            <p:message for="iems"><p:autoUpdate/></p:message>
+                                                                            <p:message for="iems" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -300,7 +300,7 @@
                                                                         <strong>Fecha Terminación *</strong>
                                                                         <p class="text-muted">
                                                                             <p:calendar locale="es" id="fecTer" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.datosAcademicos.fechaTerminacion}" pattern="yyyy-MM-dd" mask="true" required="true" requiredMessage="Es necesario que ingrese la fecha de terminación"/>
-                                                                            <p:message for="fecTer" display="tooltip" />
+                                                                            <p:message for="fecTer" display="display" />
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -330,7 +330,7 @@
                                                                         <strong>Celular *</strong> 
                                                                         <p class="text-muted">                             
                                                                             <p:inputMask id="celular" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.medioComunicacion.telefonoMovil}" mask="(999)999-9999" required="true" requiredMessage="Es necesario que ingrese teléfono móvil de contacto"/>
-                                                                            <p:message for="celular" display="tooltip" />
+                                                                            <p:message for="celular" display="display" />
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -338,7 +338,7 @@
                                                                         <strong>Teléfono fijo *</strong> 
                                                                         <p class="text-muted">                               
                                                                             <p:inputMask id="telefono" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.medioComunicacion.telefonoFijo}" mask="(999)999-9999" required="true" requiredMessage="Es necesario que ingrese teléfono fijo de contacto"/>
-                                                                            <p:message for="telefono" display="tooltip" />
+                                                                            <p:message for="telefono" display="display" />
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -346,7 +346,7 @@
                                                                         <strong>Email *</strong> 
                                                                         <p class="text-muted">                             
                                                                             <p:inputText id="email" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.medioComunicacion.email}" size="250" required="true" requiredMessage="Es necesario que ingrese un correo electrónico"/>
-                                                                            <p:message for="email" ><p:autoUpdate/></p:message>
+                                                                            <p:message for="email" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -355,7 +355,7 @@
                                                                         <strong>Calle *</strong>      
                                                                         <p class="text-muted">
                                                                             <p:inputText id="calle" class="form-control" value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.domicilio.calle}" size="150" required="true" requiredMessage="Es necesario que ingrese el nombre de la calle"/>
-                                                                            <p:message for="calle"><p:autoUpdate/></p:message>
+                                                                            <p:message for="calle" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -363,7 +363,7 @@
                                                                         <strong>Número *</strong>
                                                                         <p class="text-muted">
                                                                             <p:inputText id="num" class="form-control" placeholder="14,14-B"  value="#{registroExpedienteTitulacion.rol.datosNuevoExpediente.domicilio.numero}" required="true" requiredMessage="Es necesario que ingrese el número exterior"/>
-                                                                            <p:message for="num"><p:autoUpdate/></p:message>
+                                                                            <p:message for="num" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -376,7 +376,7 @@
                                                                                 <f:selectItems value="#{registroExpedienteTitulacion.rol.listaEstadosDomicilioRadica}"/>
                                                                                 <p:ajax listener="#{registroExpedienteTitulacion.selectMunicipio()}" update="municipio"/>
                                                                             </p:selectOneMenu>
-                                                                            <p:message for="estado"><p:autoUpdate/></p:message>
+                                                                            <p:message for="estado" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -388,7 +388,7 @@
                                                                                 <f:selectItems value="#{registroExpedienteTitulacion.rol.listaMunicipiosRadica}"/>
                                                                                 <p:ajax listener="#{registroExpedienteTitulacion.selectAsentamiento()}" update="asentamiento"/>
                                                                             </p:selectOneMenu>
-                                                                            <p:message for="municipio"><p:autoUpdate/></p:message>
+                                                                            <p:message for="municipio" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -400,7 +400,7 @@
                                                                                 <f:selectItems value="#{registroExpedienteTitulacion.rol.listaAsentamientos}"/>
                                                                                 <p:ajax/>
                                                                             </p:selectOneMenu>
-                                                                            <p:message for="asentamiento"><p:autoUpdate/></p:message>
+                                                                            <p:message for="asentamiento" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
@@ -447,7 +447,7 @@
                                                                                 <f:selectItem itemLabel="Si" itemValue="true" />
                                                                                 <f:selectItem itemLabel="No" itemValue="false" />
                                                                             </p:selectOneMenu>
-                                                                            <p:message for="servSoc"><p:autoUpdate/></p:message>
+                                                                            <p:message for="servSoc" display="display"><p:autoUpdate/></p:message>
                                                                         </p>
                                                                         <hr/>
                                                                     </div>

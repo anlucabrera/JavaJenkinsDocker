@@ -105,7 +105,7 @@ public class IntegracionExpedienteTitulacionRolEstudiante{
      */
     @Getter private Boolean valDoc = false;
     
-    /**
+     /**
      * Medios de comunicaicón registrados
      */
     @Getter private MedioComunicacion medioComunicacion;
@@ -204,7 +204,7 @@ public class IntegracionExpedienteTitulacionRolEstudiante{
     public void setValDoc(Boolean valDoc) {
         this.valDoc = valDoc;
     }
-    
+
     public void setMedioComunicacion(MedioComunicacion medioComunicacion) {
         this.medioComunicacion = medioComunicacion;
     }
