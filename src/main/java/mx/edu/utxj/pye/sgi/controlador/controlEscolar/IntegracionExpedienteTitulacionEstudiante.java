@@ -158,9 +158,16 @@ public class IntegracionExpedienteTitulacionEstudiante extends ViewScopedRol imp
         if(res.getCorrecto()){
             rol.setListaDocExpTit(res.getValor());
             if(rol.getListaDocExpTit().size() > 0)
-            {
-                rol.setProgresoExpediente(100);
-                rol.setExisteDocs(true);
+            {   
+                Integer fotografia = (int) rol.getListaDocExpTit().stream().filter(p->p.getDocumento().getDescripcion().contains("Fotografía")).count();
+                if(fotografia == 0){
+                    progresoRegistro();
+                    pestaniaRegistro();
+                    rol.setExisteDocs(false);
+                }else{
+                 rol.setProgresoExpediente(100);
+                 rol.setExisteDocs(true);
+                }
             } else {
                 progresoRegistro();
                 pestaniaRegistro();
@@ -295,11 +302,18 @@ public class IntegracionExpedienteTitulacionEstudiante extends ViewScopedRol imp
         rol.setPestaniaActiva(2);
     }
     
-    public void consultarStatusDocumento(Integer claveDoc){
-        ResultadoEJB<Boolean> res = ejb.consultarStatusDocumento(claveDoc);
-        if(res.getCorrecto()){
-            rol.setValDoc(res.getValor());
-//            mostrarMensajeResultadoEJB(res);
-        }else mostrarMensajeResultadoEJB(res);
+     /**
+     * Método para verificar si se habilita la opción de eliminar el archivo, únicamente se debe habilitar si es el archivo de fotografía y no está validada por titulación
+     * @param documentoExpedienteTitulacion
+     * @return Verdadero o Falso, según sea el caso
+     */
+    public Boolean opcionEliminar(DocumentoExpedienteTitulacion documentoExpedienteTitulacion){
+        Boolean permiso= Boolean.FALSE;
+        
+        if(documentoExpedienteTitulacion.getRuta().contains("fotografia") && !documentoExpedienteTitulacion.getValidado()){
+            permiso = Boolean.TRUE;
+        }
+        
+        return permiso;
     }
 }

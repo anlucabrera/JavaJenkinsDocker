@@ -525,10 +525,10 @@
                                                                                                 <p:column headerText="Fecha de Validación" width="100" />
                                                                                             </p:row>
                                                                                         </p:columnGroup>
-                                                                                        <c:set var="status" value="#{integracionExpedienteTitulacionEstudiante.consultarStatusDocumento(docsExp.documentoExpediente)}" />
+                                                                                        <c:set var="opcionEliminar" value="#{integracionExpedienteTitulacionEstudiante.opcionEliminar(docsExp)}" />
                                                                                         <p:column style="text-align: center;">
                                                                                             <div class="btn-group">
-                                                                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{cargaDocumentosExpedienteEstudiante.eliminarDocumento(docsExp)}" title="Eliminar documento." disabled="#{!empty status ||  integracionExpedienteTitulacionEstudiante.rol.pasoRegistro eq 'Fin Integración'}">
+                                                                                                <p:commandButton class="btn btn-info btn-sm" icon="fa fa-trash" actionListener="#{cargaDocumentosExpedienteEstudiante.eliminarDocumento(docsExp)}" title="Eliminar documento." disabled="#{integracionExpedienteTitulacionEstudiante.rol.pasoRegistro eq 'Fin Integración' || !opcionEliminar}">
                                                                                                     <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento #{caster.rutaToArchivoNombre(docsExp.ruta)}?" icon="ui-icon-alert"/>
                                                                                                 </p:commandButton>
                                                                                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -540,7 +540,7 @@
                                                                                         </p:column>
                                                                                         <p:column style="text-align: justify;"><h:outputText value="#{caster.rutaToArchivoNombre(docsExp.ruta)}" /></p:column>
                                                                                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.fechaCarga}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>                                                               
-                                                                                        <p:column style="text-align: center;"><h:outputText value="#{!empty status?'Si':'No'}"/></p:column>
+                                                                                        <p:column style="text-align: center;"><h:outputText value="#{docsExp.validado?'Si':'No'}"/></p:column>
                                                                                         <p:column style="text-align: justify;"><h:outputText value="#{docsExp.observaciones}" /></p:column>
                                                                                         <p:column style="text-align: center;"><h:outputText value="#{docsExp.fechaValidacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText></p:column>
                                                                                      </p:dataTable>

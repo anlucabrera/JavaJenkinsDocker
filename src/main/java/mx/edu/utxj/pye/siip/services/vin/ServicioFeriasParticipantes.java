@@ -111,11 +111,26 @@ public class ServicioFeriasParticipantes implements EjbFeriasParticipantes{
                 }
                 switch (fila.getCell(23).getCellTypeEnum()) {
                     case NUMERIC: 
-                       feriasParticipantes.setParticipantes((int) fila.getCell(23).getNumericCellValue());
+                       feriasParticipantes.setHombres((int) fila.getCell(23).getNumericCellValue());
                         break;
                     default:
                         break;
                 }
+                switch (fila.getCell(24).getCellTypeEnum()) {
+                    case NUMERIC: 
+                       feriasParticipantes.setMujeres((int) fila.getCell(24).getNumericCellValue());
+                        break;
+                    default:
+                        break;
+                }
+                switch (fila.getCell(25).getCellTypeEnum()) {
+                    case NUMERIC: 
+                       feriasParticipantes.setParticipantes((int) fila.getCell(25).getNumericCellValue());
+                        break;
+                    default:
+                        break;
+                }
+                
                     dTOFeriasParticipantes.setFeriasParticipantes(feriasParticipantes);
                     listaDtoFeriasParticipantes.add(dTOFeriasParticipantes);
                     

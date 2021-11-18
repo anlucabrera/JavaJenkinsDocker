@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "FeriasParticipantes.findAll", query = "SELECT f FROM FeriasParticipantes f")
     , @NamedQuery(name = "FeriasParticipantes.findByRegistro", query = "SELECT f FROM FeriasParticipantes f WHERE f.registro = :registro")
+    , @NamedQuery(name = "FeriasParticipantes.findByHombres", query = "SELECT f FROM FeriasParticipantes f WHERE f.hombres = :hombres")
+    , @NamedQuery(name = "FeriasParticipantes.findByMujeres", query = "SELECT f FROM FeriasParticipantes f WHERE f.mujeres = :mujeres")
     , @NamedQuery(name = "FeriasParticipantes.findByParticipantes", query = "SELECT f FROM FeriasParticipantes f WHERE f.participantes = :participantes")})
 public class FeriasParticipantes implements Serializable {
 
@@ -39,6 +41,14 @@ public class FeriasParticipantes implements Serializable {
     @NotNull
     @Column(name = "registro")
     private Integer registro;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "hombres")
+    private int hombres;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "mujeres")
+    private int mujeres;
     @Basic(optional = false)
     @NotNull
     @Column(name = "participantes")
@@ -60,8 +70,10 @@ public class FeriasParticipantes implements Serializable {
         this.registro = registro;
     }
 
-    public FeriasParticipantes(Integer registro, int participantes) {
+    public FeriasParticipantes(Integer registro, int hombres, int mujeres, int participantes) {
         this.registro = registro;
+        this.hombres = hombres;
+        this.mujeres = mujeres;
         this.participantes = participantes;
     }
 
@@ -73,6 +85,22 @@ public class FeriasParticipantes implements Serializable {
         this.registro = registro;
     }
 
+    public int getHombres() {
+        return hombres;
+    }
+
+    public void setHombres(int hombres) {
+        this.hombres = hombres;
+    }
+
+    public int getMujeres() {
+        return mujeres;
+    }
+
+    public void setMujeres(int mujeres) {
+        this.mujeres = mujeres;
+    }
+    
     public int getParticipantes() {
         return participantes;
     }

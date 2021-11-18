@@ -57,7 +57,7 @@
                                                 <p:selectOneMenu value="#{feriasPro.dto.ejercicioFiscal}">
                                                     <!--<f:selectItem itemLabel="Ejercicio fiscal"/>-->
                                                     <f:selectItems value="#{feriasPro.dto.selectItemEjercicioFiscal}"/>
-                                                    <p:ajax process="@this" update="somEjercicioF" listener="#{feriasPro.seleccionarMes(feriasPro.dto.ejercicioFiscal)}"/>
+                                                    <p:ajax process="@this" update="somEjercicioF" listener="#{feriasPro.seleccionarMes(feriasPro.dto.ejercicioFiscal)}" onsuccess="actualizarTbl(); actualizarTabla();"/>
                                                 </p:selectOneMenu>
                                             </div>
                                             <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
@@ -68,7 +68,7 @@
                                                 <p:selectOneMenu id="somEjercicioF" value="#{feriasPro.dto.mes}" >
                                                     <!--<f:selectItem itemLabel="Mes"/>-->
                                                     <f:selectItems value="#{feriasPro.dto.selectItemMes}"/>
-                                                    <p:ajax process="@this" update="@this" listener="#{feriasPro.filtroFeriaProf(feriasPro.dto.mes, feriasPro.dto.ejercicioFiscal)}" onsuccess="actualizarTbl()" />
+                                                    <p:ajax process="@this" update="@this" listener="#{feriasPro.filtroFeriaProf(feriasPro.dto.mes, feriasPro.dto.ejercicioFiscal)}" onsuccess="actualizarTbl(); actualizarTabla();" />
                                                 </p:selectOneMenu>
                                             </div>
                                         </c:if>
@@ -189,6 +189,16 @@
 
                                                         <p:column headerText="IEMS" style="width: 250px;">
                                                             <h:outputText value="#{ferproP.feriasParticipantes.iems.nombre}"/>
+                                                        </p:column>
+                                                        
+                                                        <p:column headerText="Hombres" style="width: 80px; text-align: center;" rendered="#{feriasPro.mostrarColumnasSexo}">
+                                                            <h:outputText value="#{ferproP.feriasParticipantes.hombres}">
+                                                            </h:outputText>
+                                                        </p:column>
+                                                        
+                                                        <p:column headerText="Mujeres" style="width: 80px; text-align: center;" rendered="#{feriasPro.mostrarColumnasSexo}">
+                                                            <h:outputText value="#{ferproP.feriasParticipantes.mujeres}">
+                                                            </h:outputText>
                                                         </p:column>
 
                                                         <p:column headerText="Participantes" style="width: 80px; text-align: center;">
@@ -588,6 +598,16 @@
 
                                                             <p:column headerText="IEMS">
                                                                 <h:outputText value="#{ferproP.feriasParticipantes.iems.nombre}"/>
+                                                            </p:column>
+                                                            
+                                                            <p:column headerText="Hombres" style="text-align: center;">
+                                                                <h:outputText value="#{ferproP.feriasParticipantes.hombres}">
+                                                                </h:outputText>
+                                                            </p:column>
+                                                            
+                                                            <p:column headerText="Mujeres" style="text-align: center;">
+                                                                <h:outputText value="#{ferproP.feriasParticipantes.mujeres}">
+                                                                </h:outputText>
                                                             </p:column>
 
                                                             <p:column headerText="Participantes" style="text-align: center;">

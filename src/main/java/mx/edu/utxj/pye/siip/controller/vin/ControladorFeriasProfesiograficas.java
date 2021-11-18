@@ -60,6 +60,7 @@ public class ControladorFeriasProfesiograficas implements Serializable{
 
     private static final long serialVersionUID = 0L;
     @Getter @Setter DtoFeriasProfesiograficas dto;
+    @Getter @Setter Boolean mostrarColumnasSexo = true;
     @EJB EjbFiscalizacion ejbFiscalizacion;
     @EJB EJBSelectItems ejbItems;
     @Inject ControladorFeriasParticipantes cfp;
@@ -154,6 +155,11 @@ public class ControladorFeriasProfesiograficas implements Serializable{
      * se inizializan los filtrados
      */
     public void seleccionarMes(Short ejercicioFiscal) {
+        if(ejercicioFiscal <20){
+            mostrarColumnasSexo = false;
+        }else{
+            mostrarColumnasSexo = true;
+        }
         dto.setSelectItemMes(ejbItems.itemMesesPorRegistro((short) 34, ejercicioFiscal));
         filtroFeriaProf(dto.getSelectItemMes().get(0).getLabel(), ejercicioFiscal);
         cfp.seleccionarMes(ejercicioFiscal);

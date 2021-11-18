@@ -143,7 +143,7 @@ public class ControladorFeriasParticipantes implements Serializable{
         dto.setListaFeriasParticipantesDTO(ejbFeriasParticipantes.getRegistrosFParticipantes(mes, ejercicio)); 
         if (dto.getListaFeriasParticipantesDTO() == null) {
             Messages.addGlobalWarn("No se han registrado Participantes de Ferias en el mes " + mes + " y el ejercicio fiscal " + ejercicio);
-        }
+        } 
     }
    
     public void abrirAlineacionPOA(ListaFeriasParticipantesDTO registro){
