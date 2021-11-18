@@ -361,7 +361,7 @@
                                                                                     <div class="col-sm-12 col-md-12 col-lg-3">
                                                                                         <strong>Fecha Terminación</strong>
                                                                                         <p class="text-muted">
-                                                                                            <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.datosAcademicos.fechaTerminacion}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                                              <p:calendar id="fechaTerminacion" locale="es" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.datosAcademicos.fechaTerminacion}" pattern="dd-MM-yyyy" mask="true" />
                                                                                         </p>
                                                                                     </div>
                                                                                 </div>
@@ -372,6 +372,22 @@
                                                             </div>
                                                         </div>
                                                         <hr/>
+                                                        <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <p:commandButton id="btnGuardarFechaTerminacion" value="Actualizar informacion" actionListener="#{seguimientoExpedienteMatriculaTitulacion.actualizarFechaTerminacion()}" 
+                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  update="@form"  process="@form" />
+                                                                    </div>
+                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                        <strong></strong>
+                                                                        <p class="text-muted"></p>
+                                                                    </div>
+                                                                </div>
+                                                        </div>
                                                         <div class="row">
                                                             <div class="col-sm-12 border-right">
                                                                 <div class="description-block" style="text-align: center">
@@ -449,13 +465,17 @@
                                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                         <strong>Promedio Final</strong>
                                                                                         <p class="text-muted">
-                                                                                            <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.promedio}"/> 
+                                                                                            <p:inputNumber id="promedio" class="form-control" decimalPlaces="1"  required="true" decimalSeparator="." style="border: none;" size="5" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.promedio}"/> 
                                                                                         </p>
                                                                                     </div>
                                                                                     <div class="col-sm-12 col-md-12 col-lg-4">
                                                                                         <strong>¿Cumplió Servicio Social?</strong>
                                                                                         <p class="text-muted">
-                                                                                          <h:outputText value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.servicioSocial?'Sí':'No'}"/>
+                                                                                            <p:selectOneMenu id="servSoc" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.servicioSocial}" required="true" requiredMessage="Es necesario que seleccione una opción">
+                                                                                                <f:selectItem itemLabel="Si" itemValue="true" />
+                                                                                                <f:selectItem itemLabel="No" itemValue="false" />
+                                                                                            </p:selectOneMenu>
+                                                                                            <p:message for="servSoc"><p:autoUpdate/></p:message>
                                                                                         </p>
                                                                                     </div>
                                                                                     <c:set var="promedio" value="#{seguimientoExpedienteMatriculaTitulacion.rol.dtoExpedienteTitulacion.expediente.promedio}" />
@@ -471,6 +491,22 @@
                                                                             </div>
                                                                         </div>
                                                                     </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong></strong>
+                                                                    <p class="text-muted"></p>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <p:commandButton id="btnGuardarDatExpTit" value="Actualizar informacion" actionListener="#{seguimientoExpedienteMatriculaTitulacion.guardarDatosTitulacion()}" 
+                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3"  update="@form"  process="@form" />
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-12 col-lg-4">
+                                                                    <strong></strong>
+                                                                    <p class="text-muted"></p>
                                                                 </div>
                                                             </div>
                                                         </div>

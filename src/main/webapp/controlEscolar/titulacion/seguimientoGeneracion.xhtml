@@ -30,6 +30,7 @@
     <ui:define name="body">
         <c:if test="#{seguimientoExpedienteGeneracionTitulacion.cargado}">
         <adm:breadcrumb title="Seguimiento Expediente por Generación"/>
+        <adm:sidebar collapsed="true"/>
         <div class="contenedor">
             <c:if test="#{seguimientoExpedienteGeneracionTitulacion.tieneAcceso}">
                 <c:if test="#{seguimientoExpedienteGeneracionTitulacion.rol.generaciones ne null}">
@@ -135,7 +136,7 @@
                                                              </p:column>
 
                                                              <p:column headerText="Nombre" style="width: 250px; text-align: center;" sortBy="#{expTit.expediente.estudiante.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.estudiante.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.estudiante.aspirante.idPersona.nombre} " filterBy="#{expTit.expediente.estudiante.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.estudiante.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.estudiante.aspirante.idPersona.nombre} " filterMatchMode="contains">
-                                                                 <h:outputText value="#{expTit.expediente.estudiante.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.estudiante.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.estudiante.aspirante.idPersona.nombre} "/>
+                                                                 <h:outputText style="text-align: justify;" value="#{expTit.expediente.estudiante.aspirante.idPersona.apellidoPaterno} #{expTit.expediente.estudiante.aspirante.idPersona.apellidoMaterno} #{expTit.expediente.estudiante.aspirante.idPersona.nombre} "/>
                                                              </p:column>
 
                                                              <p:column headerText="Programa Educativo" style="width: 300px; text-align: center;">
@@ -154,8 +155,8 @@
                                                                  <h:outputText value="#{expTit.pagEstFinanzas.fechaPago}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                                              </p:column>
                                                              
-                                                             <p:column headerText="Carta de No Adeudo" style="width: 200px; text-align: center;" sortBy="#{expTit.pagEstFinanzas.valcartanoadueudoTSU}">
-                                                                 <h:outputText value="#{expTit.pagEstFinanzas.valcartanoadueudoTSU == 1?'Si':'No'}"/>
+                                                             <p:column headerText="Carta de No Adeudo" style="width: 200px; text-align: center;" sortBy="#{expTit.situacionCartaNoAdeudo}">
+                                                                 <h:outputText value="#{expTit.situacionCartaNoAdeudo}"/>
                                                              </p:column>
                                                              
                                                              <p:column headerText="Documentos" style="width: 200px; text-align: center;" sortBy="#{expTit.docsExp} de #{expTit.docsTotalExp}">
@@ -198,13 +199,15 @@
                 <c:if test="#{!empty seguimientoExpedienteGeneracionTitulacion.alertas || true}">
                     <div class="box box-info">
                         <div class="box-header">
-                           Pasos de integración del expediente de titulación:
-                           1. Inicio Integración
-                           2. Datos Personales
-                           3. Domicilio y Comunicaciones
-                           4. Antecedentes Académicos
-                           5. Fotografía Titulación
-                           6. Fin Integración
+                           <p>Pasos de integración del expediente de titulación:</p>
+                           <p>1. Inicio Integración: El o la estudiante inició la integración del expediente.</p>
+                           <p>2. Datos Personales: El o la estudiante validó sus datos personales correctamente. </p>
+                           <p>3. Domicilio y Comunicaciones: El o la estudiante validó su domicilio y medios de comunicación correctamente. (Domicilio de residencia, teléfono móvil y correo electrónico)</p>
+                           <p>4. Antecedentes Académicos: El o la estudiante validó sus antecedentes académicos correctamente. (IEMS y fecha de terminación) </p>
+                           <p>5. Fotografía Titulación: El o la estudiante subió su fotografía correctamente. </p>
+                           <p>6. Fin Integración: El o la estudiante finalizó la integración de su expediente correctamente.</p>
+                           <br />
+                           <p>Nota: Puede modificar esta información un paso antes para habilitar el apartado correspondiente al estudiante, desde la columna "Paso de integración" en la tabla.</p>
                         </div>
                     </div>
                 </c:if>

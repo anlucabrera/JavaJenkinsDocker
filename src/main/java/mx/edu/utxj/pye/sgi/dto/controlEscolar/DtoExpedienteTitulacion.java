@@ -53,11 +53,12 @@ public class DtoExpedienteTitulacion implements Serializable{
     @Getter @Setter Integer docsExp;
     @Getter @Setter Integer docsTotalExp;
     @Getter @Setter FechaTerminacionTitulacion fechaTerminacionTitulacion;
+    @Getter @Setter String situacionCartaNoAdeudo;
 
     public DtoExpedienteTitulacion() {
     }
     
-    public DtoExpedienteTitulacion(ExpedienteTitulacion expediente, String situacionAcademica, String personal, String fechaIntExp, String fechaNacimiento, AreasUniversidad programaEducativo, String nivelEducativo, Generaciones generacion, Generos genero, Domicilio domicilio, Estado estadoDom, Municipio munDom, Asentamiento asentDom, MedioComunicacion medioComunicacion, DatosAcademicos datosAcademicos, Iems iems, Localidad locIems, DtoPagosEstudianteFinanzas pagEstFinanzas, Integer docsExp, Integer docsTotalExp, FechaTerminacionTitulacion fechaTerminacionTitulacion) {
+    public DtoExpedienteTitulacion(ExpedienteTitulacion expediente, String situacionAcademica, String personal, String fechaIntExp, String fechaNacimiento, AreasUniversidad programaEducativo, String nivelEducativo, Generaciones generacion, Generos genero, Domicilio domicilio, Estado estadoDom, Municipio munDom, Asentamiento asentDom, MedioComunicacion medioComunicacion, DatosAcademicos datosAcademicos, Iems iems, Localidad locIems, DtoPagosEstudianteFinanzas pagEstFinanzas, Integer docsExp, Integer docsTotalExp, FechaTerminacionTitulacion fechaTerminacionTitulacion, String situacionCartaNoAdeudo) {
         this.expediente = expediente;
         this.situacionAcademica = situacionAcademica;
         this.personal = personal;
@@ -79,6 +80,7 @@ public class DtoExpedienteTitulacion implements Serializable{
         this.docsExp = docsExp;
         this.docsTotalExp = docsTotalExp;
         this.fechaTerminacionTitulacion = fechaTerminacionTitulacion;
+        this.situacionCartaNoAdeudo = situacionCartaNoAdeudo;
     }
    
 }
