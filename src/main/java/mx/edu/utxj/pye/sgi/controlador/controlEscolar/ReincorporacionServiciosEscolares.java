@@ -137,7 +137,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
             rol.setDacademicos(new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE));
             rol.setEncuesta(new DtoReincorporacion.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE));
             rol.setRein(new DtoReincorporacion.ProcesoInscripcionRein("", "", 0, Boolean.TRUE, 0, "", new ArrayList<>(), new Documentosentregadosestudiante()));
-            rol.setTsu(new DtoReincorporacion.HistorialTsu(new Persona(), new Aspirante(), new Estudiante(), new UniversidadEgresoAspirante(), Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos(), new ArrayList<>(), new ArrayList<>()));
+            rol.setTsu(new DtoReincorporacion.HistorialTsu(new Persona(), new Aspirante(), new Estudiante(), new UniversidadEgresoAspirante(), Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos(), new ArrayList<>(), new ArrayList<>(), Boolean.FALSE));
             rol.setEstudianteR(new ArrayList<>());
             rol.setCalificacionesR(new ArrayList<>());
             rol.setEstudiantesReincorporaciones(new ArrayList<>());
@@ -190,7 +190,7 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
         rol.setDacademicos(new DtoReincorporacion.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE));
         rol.setEncuesta(new DtoReincorporacion.EncuestaR(new EncuestaAspirante(), new LenguaIndigena(), new MedioDifusion(), Operacion.PERSISTIR, Boolean.FALSE));
         rol.setRein(new DtoReincorporacion.ProcesoInscripcionRein("", "", 0, Boolean.TRUE, 0, "", new ArrayList<>(), new Documentosentregadosestudiante()));
-        rol.setTsu(new DtoReincorporacion.HistorialTsu(new Persona(), new Aspirante(), new Estudiante(), new UniversidadEgresoAspirante(), Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos(), new ArrayList<>(), new ArrayList<>()));
+        rol.setTsu(new DtoReincorporacion.HistorialTsu(new Persona(), new Aspirante(), new Estudiante(), new UniversidadEgresoAspirante(), Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos(), new ArrayList<>(), new ArrayList<>(), Boolean.FALSE));
         rol.setEstudianteR(new ArrayList<>());
         rol.setCalificacionesR(new ArrayList<>());
         rol.setEstudiantesReincorporaciones(new ArrayList<>());

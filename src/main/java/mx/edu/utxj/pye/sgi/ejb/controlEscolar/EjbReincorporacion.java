@@ -810,7 +810,7 @@ public class EjbReincorporacion {
             
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getCalificaciones()"+das.size());
             List<DtoReincorporacion.HistorialTsu> rr = new ArrayList<>();
-            DtoReincorporacion.HistorialTsu ht = new DtoReincorporacion.HistorialTsu(a.getIdPersona(), a, new Estudiante(), new UniversidadEgresoAspirante(), Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos(), new ArrayList<>(), new ArrayList<>());
+            DtoReincorporacion.HistorialTsu ht = new DtoReincorporacion.HistorialTsu(a.getIdPersona(), a, new Estudiante(), new UniversidadEgresoAspirante(), Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos(), new ArrayList<>(), new ArrayList<>(),Boolean.FALSE);
             List<Integer> idEstudiantes= new ArrayList<>();
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.getCalificacionesHistoricas(estr)"+estr.size());
             if(!estr.isEmpty()){
@@ -833,7 +833,7 @@ public class EjbReincorporacion {
                             uea = ueas.get(0);
                             enocntrado= Boolean.TRUE;
                         }
-                        rr.add(new DtoReincorporacion.HistorialTsu(a.getIdPersona(), a, t.getIdEstudiante(), uea,enocntrado, t, new PlanesEstudioExternos(), t.getCalificacionesHistorialTsuOtrosPe(), t.getCalificacionesHistorialTsuList()));
+                        rr.add(new DtoReincorporacion.HistorialTsu(a.getIdPersona(), a, t.getIdEstudiante(), uea,enocntrado, t, new PlanesEstudioExternos(), t.getCalificacionesHistorialTsuOtrosPe(), t.getCalificacionesHistorialTsuList(),Boolean.TRUE));
                     });
                     ht=rr.get(0);
                 }
@@ -1392,7 +1392,7 @@ public class EjbReincorporacion {
 //System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesEstudianteR()"+tipor);
                 if (!tipor.equals("TSU")) {
 //                    System.out.println("Dentro");
-                    operacionesHistoricoTSU(new DtoReincorporacion.HistorialTsu(a.getIdPersona(), a, e, new UniversidadEgresoAspirante(),Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos() , new ArrayList<>(), new ArrayList<>()));
+                    operacionesHistoricoTSU(new DtoReincorporacion.HistorialTsu(a.getIdPersona(), a, e, new UniversidadEgresoAspirante(),Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos() , new ArrayList<>(), new ArrayList<>(),Boolean.FALSE));
                 }
             }
             return ResultadoEJB.crearCorrecto(rr, "DTOPersona Encontrados");
@@ -2178,68 +2178,73 @@ public class EjbReincorporacion {
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesHistorialTsu()"+rr.getHistorialTsu());
             
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesHistorialTsu(pdec.getId())"+pdec.getId());
-            
-            if(idPlam.equals("0-E")){
+            List<CalificacionesHistorialTsu> calInternas = em.createQuery("SELECT e FROM CalificacionesHistorialTsu e INNER JOIN e.estudianteHistoricoTSU g WHERE g.estudianteHistoricoTSU=:estudianteHistoricoTSU", CalificacionesHistorialTsu.class).setParameter("estudianteHistoricoTSU", rr.getHistorialTsu().getEstudianteHistoricoTSU()).getResultList();
+            List<CalificacionesHistorialTsuOtrosPe> calexternas = em.createQuery("SELECT e FROM CalificacionesHistorialTsuOtrosPe e INNER JOIN e.estudianteHistoricoTSU g WHERE g.estudianteHistoricoTSU=:estudianteHistoricoTSU", CalificacionesHistorialTsuOtrosPe.class).setParameter("estudianteHistoricoTSU", rr.getHistorialTsu().getEstudianteHistoricoTSU()).getResultList();
+
+            if (calInternas.isEmpty() && calexternas.isEmpty()) {
+
+                if (idPlam.equals("0-E")) {
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesHistorialTsu(0-E)");
-                em.persist(rr.getExternos());
-                f.setEntityClass(PlanesEstudioExternos.class);
-                f.flush();
-                List<PlanesEstudioExternos> pees = f.findAll();
-                CalificacionesHistorialTsuOtrosPe c = new CalificacionesHistorialTsuOtrosPe();
-                c.setEstudianteHistoricoTSU(new EstudianteHistorialTsu());
-                c.setIdplanEstudio(new PlanesEstudioExternos());
-                c.setEstudianteHistoricoTSU(rr.getHistorialTsu());
-                c.setIdplanEstudio(pees.get(pees.size() - 1));
-                c.setValor(0.0);
-                c.setGrado(1);
-                c.setHoras(1);
-                c.setMateria("Nueva Materia");
-                em.persist(c);
-                f.setEntityClass(CalificacionesHistorialTsuOtrosPe.class);
-                f.flush();
-            }else if (pdec.getTipo().equals("E")) {
+                    em.persist(rr.getExternos());
+                    f.setEntityClass(PlanesEstudioExternos.class);
+                    f.flush();
+                    List<PlanesEstudioExternos> pees = f.findAll();
+                    CalificacionesHistorialTsuOtrosPe c = new CalificacionesHistorialTsuOtrosPe();
+                    c.setEstudianteHistoricoTSU(new EstudianteHistorialTsu());
+                    c.setIdplanEstudio(new PlanesEstudioExternos());
+                    c.setEstudianteHistoricoTSU(rr.getHistorialTsu());
+                    c.setIdplanEstudio(pees.get(pees.size() - 1));
+                    c.setValor(0.0);
+                    c.setGrado(1);
+                    c.setHoras(1);
+                    c.setMateria("Nueva Materia");
+                    em.persist(c);
+                    f.setEntityClass(CalificacionesHistorialTsuOtrosPe.class);
+                    f.flush();
+                } else if (pdec.getTipo().equals("E")) {
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesHistorialTsu(E)");
 //                em.merge(rr.getExternos());
 //                f.setEntityClass(PlanesEstudioExternos.class);
 //                f.flush();
 //                System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesHistorialTsu(1)");
-                PlanesEstudioExternos pees = em.find(PlanesEstudioExternos.class, pdec.getId());
-                CalificacionesHistorialTsuOtrosPe c = new CalificacionesHistorialTsuOtrosPe();
+                    PlanesEstudioExternos pees = em.find(PlanesEstudioExternos.class, pdec.getId());
+                    CalificacionesHistorialTsuOtrosPe c = new CalificacionesHistorialTsuOtrosPe();
 //                System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesHistorialTsu(2)");
-                c.setEstudianteHistoricoTSU(new EstudianteHistorialTsu());
-                c.setIdplanEstudio(new PlanesEstudioExternos());
-                c.setEstudianteHistoricoTSU(rr.getHistorialTsu());
-                c.setIdplanEstudio(pees);
-                c.setValor(0.0);
-                c.setGrado(1);
-                c.setHoras(1);
-                c.setMateria("Nueva Materia");
+                    c.setEstudianteHistoricoTSU(new EstudianteHistorialTsu());
+                    c.setIdplanEstudio(new PlanesEstudioExternos());
+                    c.setEstudianteHistoricoTSU(rr.getHistorialTsu());
+                    c.setIdplanEstudio(pees);
+                    c.setValor(0.0);
+                    c.setGrado(1);
+                    c.setHoras(1);
+                    c.setMateria("Nueva Materia");
 //                System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesHistorialTsu(3)");
-                em.persist(c);
-                f.setEntityClass(CalificacionesHistorialTsuOtrosPe.class);
-                f.flush();
+                    em.persist(c);
+                    f.setEntityClass(CalificacionesHistorialTsuOtrosPe.class);
+                    f.flush();
 //                System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesHistorialTsu(4)");
-            }
-            
+                }
+
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesHistorialTsu()"+pdec.getTipo());
             
-            if (pdec.getTipo().equals("I")) {
-                List<PlanEstudioMateria> materias = em.createQuery("select e from PlanEstudioMateria e INNER JOIN e.idPlan g WHERE g.idPlanEstudio=:idPlanEstudio", PlanEstudioMateria.class).setParameter("idPlanEstudio", pdec.getId()).getResultList();
-                if (!materias.isEmpty()) {
-                    materias.forEach((t) -> {
-                        CalificacionesHistorialTsu c = new CalificacionesHistorialTsu();
-                        c.setEstudianteHistoricoTSU(new EstudianteHistorialTsu());
-                        c.setIdPlanMateria(new PlanEstudioMateria());
-                        c.setEstudianteHistoricoTSU(rr.getHistorialTsu());
-                        c.setIdPlanMateria(t);
-                        c.setValor(0.0);
-                        em.persist(c);
-                        f.setEntityClass(CalificacionesHistorialTsu.class);
-                        f.flush();
-                    });
+                if (pdec.getTipo().equals("I")) {
+                    List<PlanEstudioMateria> materias = em.createQuery("select e from PlanEstudioMateria e INNER JOIN e.idPlan g WHERE g.idPlanEstudio=:idPlanEstudio", PlanEstudioMateria.class).setParameter("idPlanEstudio", pdec.getId()).getResultList();
+                    if (!materias.isEmpty()) {
+                        materias.forEach((t) -> {
+                            CalificacionesHistorialTsu c = new CalificacionesHistorialTsu();
+                            c.setEstudianteHistoricoTSU(new EstudianteHistorialTsu());
+                            c.setIdPlanMateria(new PlanEstudioMateria());
+                            c.setEstudianteHistoricoTSU(rr.getHistorialTsu());
+                            c.setIdPlanMateria(t);
+                            c.setValor(0.0);
+                            em.persist(c);
+                            f.setEntityClass(CalificacionesHistorialTsu.class);
+                            f.flush();
+                        });
+                    }
                 }
-            }
 //            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.operacionesHistorialTsu()");
+            }
             
             if (!rr.getUniversidadEncontrada()) {
                 UniversidadEgresoAspirante aspirante = new UniversidadEgresoAspirante();

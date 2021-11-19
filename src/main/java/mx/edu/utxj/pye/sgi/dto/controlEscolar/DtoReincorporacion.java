@@ -239,6 +239,7 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull        PlanesEstudioExternos externos;
         @Getter        @Setter        @NonNull        List<CalificacionesHistorialTsuOtrosPe> calificacionesHistorialTsuOtrosPes;
         @Getter        @Setter        @NonNull        List<CalificacionesHistorialTsu> calificacionesHistorialTsu;
+        @Getter        @Setter        @NonNull        Boolean econtrado;
     }
     
     @RequiredArgsConstructor    @ToString    @EqualsAndHashCode

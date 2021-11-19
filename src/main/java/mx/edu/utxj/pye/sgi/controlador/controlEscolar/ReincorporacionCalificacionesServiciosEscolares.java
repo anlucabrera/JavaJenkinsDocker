@@ -40,6 +40,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.UniversidadesUT;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
@@ -152,23 +153,6 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
     
     public void estudianteConsultado() {
         buscarAlineacionCalificaciones();
-        if (!rol.getTsu().getHistorialTsu().getPeriodoCarrera().equals("")) {
-            System.out.println("rol.getTsu().getHistorialTsu().getGeneracion()"+rol.getTsu().getHistorialTsu().getPeriodoCarrera());
-            String[] parts = rol.getTsu().getHistorialTsu().getPeriodoCarrera().split(" ");
-            List<String> textoSeparado = Arrays.asList(parts);
-            for (int i = 0; i < textoSeparado.size(); i++) {
-                System.out.println("textoSeparado.get("+i+")"+textoSeparado.get(i));
-                if(!textoSeparado.get(i).equals("-")){
-                    
-                }
-            }
-            
-            rol.setMesIni("Septiembre");
-            rol.setMesFin("Agosto");
-
-            rol.setAnioIni(LocalDate.now().getYear() - 2);
-            rol.setAnioFin(LocalDate.now().getYear());
-        }
     }
     
     public void getUniversidades (){
@@ -189,7 +173,7 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
         rol.setCalificacionesTSU(resAccesoTSU.getValor()); 
         
         if(rol.getCalificacionesTSU().isEmpty()){
-            rol.setTsu(new DtoReincorporacion.HistorialTsu(new Persona(), new Aspirante(), new Estudiante(), new UniversidadEgresoAspirante(), Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos(), new ArrayList<>(), new ArrayList<>())); 
+            rol.setTsu(new DtoReincorporacion.HistorialTsu(new Persona(), new Aspirante(), new Estudiante(), new UniversidadEgresoAspirante(), Boolean.FALSE, new EstudianteHistorialTsu(), new PlanesEstudioExternos(), new ArrayList<>(), new ArrayList<>(),Boolean.FALSE)); 
             ResultadoEJB<DtoReincorporacion.HistorialTsu> resAccesoTSUHistorico = ejb.getCalificacionesHistoricas(rol.getEstudiante().getAspirante(),rol.getEstudiante().getMatricula()); 
             if(!resAccesoTSUHistorico.getCorrecto()){ mostrarMensajeResultadoEJB(resAccesoTSUHistorico);return;}
             rol.setTsu(resAccesoTSUHistorico.getValor()); 
@@ -216,6 +200,20 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
                 CalificacionesHistorialTsuOtrosPe c = rol.getTsu().getCalificacionesHistorialTsuOtrosPes().get(0);
                 rol.setIdPlanEstudio(c.getIdplanEstudio().getIdplanEstudio() + "-E");
                 rol.getTsu().setExternos(c.getIdplanEstudio());
+            }
+            
+            if(rol.getTsu().getEcontrado()){
+                if (!rol.getTsu().getHistorialTsu().getPeriodoCarrera().equals("")) {
+                    String[] parts = rol.getTsu().getHistorialTsu().getPeriodoCarrera().split(" ");
+                    List<String> textoSeparado = Arrays.asList(parts);
+                    if (textoSeparado.size() == 5) {
+                        rol.setMesIni(textoSeparado.get(0));
+                        rol.setMesFin(textoSeparado.get(3));
+
+                        rol.setAnioIni(Integer.parseInt(textoSeparado.get(1)));
+                        rol.setAnioFin(Integer.parseInt(textoSeparado.get(4)));
+                    }
+                }
             }
         }
         
@@ -278,7 +276,18 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
 //        System.out.println("rol.getHistorialTsu()"+rol.getHistorialTsu().getMateria());
         ResultadoEJB<CalificacionesHistorialTsuOtrosPe> rejb = ejb.operacionesCalificacionesHistorialTsu(rol.getHistorialTsu(),"I");
         if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
-        buscarAlineacionCalificaciones();
+        
+        rol.setHistorialTsu(new CalificacionesHistorialTsuOtrosPe());
+        
+        ResultadoEJB<List<CalificacionesHistorialTsuOtrosPe>> calTSU = ejb.getCalificacionesHistorialTsu(rol.getTsu()); 
+        if(!calTSU.getCorrecto()){ mostrarMensajeResultadoEJB(calTSU);return;}
+        rol.setHistorialCalificacionesTsus(calTSU.getValor()); 
+
+        ResultadoEJB<List<CalificacionesHistorialTsu>> calSaiiut = ejb.getCalificacionestsuotrasaiiut(rol.getTsu()); 
+        if(!calSaiiut.getCorrecto()){ mostrarMensajeResultadoEJB(calSaiiut);return;}
+        rol.setHistorialCalificacionesSaiiuts(calSaiiut.getValor()); 
+        
+        Ajax.update("frmHistorialCalificaciones");
     }
     
      
