@@ -92,6 +92,7 @@ public enum ControlEscolarVistaControlador {
     FECHAS_TERMINACION_TITULACION("/controlEscolar/titulacion/fechasTerminacion.xhtml", FechasTerminacionTitulacion.class),
     REGISTRO_EVENTOS_TITULACION("/controlEscolar/titulacion/registroEventosTitulacion.xhtml",  RegistroEventosTitulacion.class),
     CARTA_NO_ADUEDO_TITULACION("/controlEscolar/titulacion/cartaNoAdeudoTitulacion.xhtml", CartaNoAdeudoTitulacion.class),
+    REPORTES_EXPEDIENTES_TITULACION("/controlEscolar/titulacion/reporesExpedientes.xhtml", ReportesExpedientesTitulacion.class),
 
 
     DICTAMEN_BAJAS("/controlEscolar/psicopedagogia/dictamenBaja.xhtml",  DictamenBajaPsicopedagogia.class),

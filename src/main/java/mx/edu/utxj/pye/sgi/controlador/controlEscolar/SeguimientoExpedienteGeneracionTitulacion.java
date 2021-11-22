@@ -58,7 +58,7 @@ public class SeguimientoExpedienteGeneracionTitulacion extends ViewScopedRol imp
     @Getter Boolean tieneAcceso = false;
     @Getter private Boolean cargado = false;
 
-@PostConstruct
+    @PostConstruct
     public void init(){
      if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
         cargado = true;
