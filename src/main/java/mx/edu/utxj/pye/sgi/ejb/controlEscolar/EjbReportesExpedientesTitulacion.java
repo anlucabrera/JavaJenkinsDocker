@@ -68,7 +68,7 @@ public class EjbReportesExpedientesTitulacion {
     }
     
      /**
-     * Permite validar si el usuario autenticado es personal adscrito al departamento de servicios escolares
+     * Permite validar si el usuario autenticado es personal con acceso a reportes de titulación
      * @param clave Número de nómina del usuario autenticado
      * @return Resultado del proceso
      */
@@ -90,7 +90,7 @@ public class EjbReportesExpedientesTitulacion {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
-            else if (p.getPersonal().getAreaOperativa() == 16 && p.getPersonal().getAreaSuperior() == 5 && p.getPersonal().getStatus()!='B') {
+            else if (p.getPersonal().getAreaOperativa() == 16 && p.getPersonal().getAreaOficial()== 16 && p.getPersonal().getStatus()!='B') {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
@@ -102,9 +102,9 @@ public class EjbReportesExpedientesTitulacion {
 //                filtro.setEntity(p);
 //                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
 //            }
-            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal con acceso a reportes académicos.");
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal con acceso a reportes de titulación.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbReportesExpedientesTitulacion.validarRolesReportesAcademicos)", e, null);
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbReportesExpedientesTitulacion.validarRolesReportesTitulacion)", e, null);
         }
     }
     
@@ -360,7 +360,7 @@ public class EjbReportesExpedientesTitulacion {
     }
     
      /**
-     * Permite obtener el reporte estadístico de imtegración de expedientes de titulación por generación y nivel educativo seleccionado
+     * Permite obtener el reporte estadístico de integración de expedientes de titulación por generación y nivel educativo seleccionado
      * @param generacion
      * @param nivel
      * @return Resultado del proceso
@@ -413,10 +413,17 @@ public class EjbReportesExpedientesTitulacion {
             });
             return ResultadoEJB.crearCorrecto(listaReporteEstadistico, "Reporte estadístico de imtegración de expedientes de titulación por generación y nivel educativo seleccionado se obtuvo correctamente.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el reporte estadístico de imtegración de expedientes de titulación por generación y nivel educativo seleccionado. (EjbReportesExpedientesTitulacion.getListaAprovechamientoEscolarPrograma)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el reporte estadístico de imtegración de expedientes de titulación por generación y nivel educativo seleccionado. (EjbReportesExpedientesTitulacion.getReporteEstadisticoTitulacion)", e, null);
         }
     }
     
+    /**
+     * Permite descargar un archivo que contiene el reporte estadístico de titulación por generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivel
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
     public String getDescargarReporteEstadístico(Generaciones generacion, ProgramasEducativosNiveles nivel) throws Throwable {
         String gen = generacion.getInicio() + "-" + generacion.getFin();
         String rutaPlantilla = "C:\\archivos\\formatosTitulacion\\reporteEstadistico.xlsx";
@@ -432,6 +439,14 @@ public class EjbReportesExpedientesTitulacion {
         return plantillaC;
     }
     
+    /**
+     * Permite descargar un archivo que contiene el listado de fotografías de titulación por generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivel
+     * @param programas
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
     public String getDescargarReporteFotografia(Generaciones generacion, ProgramasEducativosNiveles nivel, List<AreasUniversidad> programas) throws Throwable {
         String gen = generacion.getInicio() + "-" + generacion.getFin();
         String rutaPlantilla = "C:\\archivos\\formatosTitulacion\\listadoFotografia.xlsx";
@@ -447,6 +462,13 @@ public class EjbReportesExpedientesTitulacion {
         return plantillaC;
     }
     
+    /**
+     * Permite descargar un archivo .zip que contiene las fotografías de titulación por generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivel
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
     public String getDescargarFotografias(Generaciones generacion, ProgramasEducativosNiveles nivel) throws Throwable {
         
         String rutaGeneral = "C:\\archivos\\expedientesTitulacion\\" +generacion.getInicio()+"-"+generacion.getFin()+"\\"+nivel.getNivel();
@@ -461,10 +483,10 @@ public class EjbReportesExpedientesTitulacion {
     }
     
     /**
-     * This method zips the directory
-     *
+     * Permite generar el archivo que contiene las fotografías de titulación por generación y nivel educativo
      * @param dir
      * @param zipDirName
+     * @return Resultado del proceso
      */
     private void zipDirectory(File dir, String zipDirName) {
         try {
@@ -494,11 +516,10 @@ public class EjbReportesExpedientesTitulacion {
         }
     }
     
-     /**
-     * This method populates all the files in a directory to a List
-     *
+    /**
+     * Permite obtener la lista de archivos que contiene el directorio que incluirá el archivo .zip
      * @param dir
-     * @throws IOException
+     * @return Resultado del proceso
      */
     private void populateFilesList(File dir) throws IOException {
         File[] files = dir.listFiles();

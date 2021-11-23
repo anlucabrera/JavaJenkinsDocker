@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -738,6 +739,43 @@ public class EjbRegistroEvidInstEvalMaterias {
             return ResultadoEJB.crearCorrecto(delete, "Se han eliminado correctamente los registro del plan de estudio seleccionado.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se eliminaron los registros del plan de estudio seleccionado. (EjbRegistroEvidInstEvalMaterias.eliminarRegistroPlanEstudio)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de unidades y materias de evaluaciones sugeridas incompletas
+     * @param evaluacionesSugeridas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<String>> getEvaluacionesSugeridasCiteriosIncompletos(List<DtoRegistroEvidInstEvaluacionMateria> evaluacionesSugeridas){
+        try {
+            
+            List<String> unidadesIncompletas = new ArrayList<>();
+            
+            List<UnidadMateria> unidadesMaterias = evaluacionesSugeridas.stream().map(p->p.getEvaluacionSugerida().getUnidadMateria()).distinct().collect(Collectors.toList());
+            
+            unidadesMaterias.forEach(unidadMateria -> {
+                
+                List<EvaluacionSugerida> evaluacionesRegistradas = evaluacionesSugeridas.stream().filter(p->Objects.equals(p.getEvaluacionSugerida().getUnidadMateria().getIdUnidadMateria(), unidadMateria.getIdUnidadMateria())).map(p->p.getEvaluacionSugerida()).collect(Collectors.toList());
+                
+                List<String> conteoCriterios = evaluacionesRegistradas.stream().map(p->p.getEvidencia().getCriterio().getTipo()).distinct().collect(Collectors.toList());
+                
+                if(conteoCriterios.size() < 3){
+                    if(conteoCriterios.stream().filter(p->p.equals("Ser")).findFirst().orElse(null) == null){
+                        unidadesIncompletas.add("Falta Criterio SER: En la UNIDAD ".concat(String.valueOf(unidadMateria.getNoUnidad())).concat(". ").concat(unidadMateria.getNombre()).concat(" de la MATERIA ").concat(unidadMateria.getIdMateria().getNombre()));
+                    }
+                    if(conteoCriterios.stream().filter(p->p.equals("Saber")).findFirst().orElse(null) == null){
+                        unidadesIncompletas.add("Falta Criterio SABER: En la UNIDAD ".concat(String.valueOf(unidadMateria.getNoUnidad())).concat(". ").concat(unidadMateria.getNombre()).concat(" de la MATERIA ").concat(unidadMateria.getIdMateria().getNombre()));
+                    }
+                    if(conteoCriterios.stream().filter(p->p.equals("Saber hacer")).findFirst().orElse(null) == null){
+                        unidadesIncompletas.add("Falta Criterio SABER HACER: En la UNIDAD ".concat(String.valueOf(unidadMateria.getNoUnidad())).concat(". ").concat(unidadMateria.getNombre()).concat(" de la MATERIA ").concat(unidadMateria.getIdMateria().getNombre()));
+                    }
+                }
+            });
+            
+            return ResultadoEJB.crearCorrecto(unidadesIncompletas, "Lista de unidades y materias de evaluaciones sugeridas incompletas.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de unidades y materias de evaluaciones sugeridas incompletas. (EjbRegistroEvidInstEvalMaterias.getEvaluacionesSugeridasCiteriosIncompletos)", e, null);
         }
     }
     

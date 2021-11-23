@@ -64,7 +64,7 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
         cargado = true;
         try{
             setVistaControlador(ControlEscolarVistaControlador.REPORTES_EXPEDIENTES_TITULACION);
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarRolesReportesTitulacion(logonMB.getPersonal().getClave());//validar si es personal de servicios escolares
+            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarRolesReportesTitulacion(logonMB.getPersonal().getClave());//validar si es personal con acceso a reportes de titulación
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
 
             Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
@@ -81,13 +81,16 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
 //            rol.setSoloLectura(true);
             rol.setPeriodoActivo(ejbSeguimientoExpedienteGeneracion.getPeriodoActual().getPeriodo());
             
-            rol.getInstrucciones().add("Seleccione generación para consultar expedientes registrados.");
+            rol.getInstrucciones().add("Seleccione generación.");
             rol.getInstrucciones().add("Seleccione nivel educativo.");
+            rol.getInstrucciones().add("Seleccione tipo de búsqueda: por programa eductivo o general.");
             rol.getInstrucciones().add("Seleccione programa educativo.");
-            rol.getInstrucciones().add("En la columna OPCIONES, usted puede: Consultar expediente, Validar o Invalidar expediente, Consultar lista de pagos.");
-            rol.getInstrucciones().add("Al dar clic en el botón de Consultar expediente se abrirá en una nueva ventana el expediente individual.");
-            rol.getInstrucciones().add("Puede validar y/o invalidar el expediente según lo requiera.");
-            rol.getInstrucciones().add("Si da clic en Consultar lista de pagos, podrá visualizar una ventana con los pagos del estudiante registrados por finanzas.");
+            rol.getInstrucciones().add("Seleccione reporte que desea consultar.");
+            rol.getInstrucciones().add("A continuación, visualizará una tabla con la información correspondiente a los filtros seleccionados.");
+            rol.getInstrucciones().add("En la parte superior derecha de la interfaz, encontrará los iconos para descargar la siguiente información:");
+            rol.getInstrucciones().add("1. El primer icono descarga el reporte estadístico por generación y nivel educativo.");
+            rol.getInstrucciones().add("2. El segundo icono descarga el listado de fotografías de titulación por generación, nivel educativo, programa educativo o general.");
+            rol.getInstrucciones().add("3. El tercer icono descarga las fotografías por generación y nivel educativo en un archivo zip.");
            
             rol.setDeshabilitarTipoBusqueda(false);
             rol.setTipoBusqueda("busquedaPrograma");
@@ -132,7 +135,7 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
         if(res.getCorrecto()){
             if((rol.getPersonal().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getPersonal().getPersonal().getAreaSuperior()==2) || (rol.getPersonal().getPersonal().getCategoriaOperativa().getCategoria()==48  && rol.getPersonal().getPersonal().getAreaSuperior()==2)){
                 rol.setProgramasEducativos(res.getValor().stream().filter(p->p.getAreaSuperior().equals(rol.getPersonal().getAreaOperativa().getArea())).collect(Collectors.toList()));
-            }else if(rol.getPersonal().getPersonal().getAreaOperativa()==60 || (rol.getPersonal().getPersonal().getAreaOperativa()==16 && rol.getPersonal().getAreaSuperior().getArea()==5)){
+            }else if(rol.getPersonal().getPersonal().getAreaOperativa()==60 || (rol.getPersonal().getPersonal().getAreaOperativa()==16 && rol.getPersonal().getAreaOficial().getArea()==16)){
                 rol.setProgramasEducativos(res.getValor());
             }
             if(!rol.getProgramasEducativos().isEmpty()){
@@ -146,12 +149,12 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
     }
     
     /**
-     * Permite obtener la lista de reportes de estadía
+     * Permite obtener la lista de reportes de titulación dependiendo del personal que ingresa
      */
     public void listaReportes(){
         List<String> listaReportes = new ArrayList<>();
         
-        if((rol.getPersonal().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getPersonal().getPersonal().getAreaSuperior()==2) || (rol.getPersonal().getPersonal().getCategoriaOperativa().getCategoria()==48  && rol.getPersonal().getPersonal().getAreaSuperior()==2) || (rol.getPersonal().getPersonal().getAreaOperativa()==16 && rol.getPersonal().getAreaSuperior().getArea()==5)){
+        if((rol.getPersonal().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getPersonal().getPersonal().getAreaSuperior()==2) || (rol.getPersonal().getPersonal().getCategoriaOperativa().getCategoria()==48  && rol.getPersonal().getPersonal().getAreaSuperior()==2) || (rol.getPersonal().getPersonal().getAreaOperativa()==16 && rol.getPersonal().getAreaOficial().getArea()==16)){
             listaReportes.add("Expediente con fotografía");
         }
         else if(rol.getPersonal().getPersonal().getAreaOperativa()==60){
@@ -278,22 +281,35 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
      /**
      * Permite descargar el archivo de la fotografía
      * @param ruta
+     * @throws java.io.IOException
      */
     public void descargarDocumento(String ruta) throws IOException{
         File f = new File(ruta);
         Faces.sendFile(f, false);
     }
     
+     /**
+     * Permite descargar el reporte estadístico por generación y nivel educativo
+     * @throws java.io.IOException
+     */
     public void descargarReporteEstadisticoGeneracionNivel() throws IOException, Throwable{
         File f = new File(ejb.getDescargarReporteEstadístico(rol.getGeneracion(), rol.getNivelEducativo()));
         Faces.sendFile(f, true);
     }  
     
+     /**
+     * Permite descargar el listado de fotografías de titulación por generación y nivel educativo
+     * @throws java.io.IOException
+     */
     public void descargarListadoFotografiasGeneracionNivel() throws IOException, Throwable{
         File f = new File(ejb.getDescargarReporteFotografia(rol.getGeneracion(), rol.getNivelEducativo(), rol.getProgramasEducativos()));
         Faces.sendFile(f, true);
     } 
     
+     /**
+     * Permite descargar las fotografías por generación y nivel educativo en un archivo .zip
+     * @throws java.io.IOException
+     */
     public void descargarFotografiasGeneracionNivel() throws IOException, Throwable{
         File f = new File(ejb.getDescargarFotografias(rol.getGeneracion(), rol.getNivelEducativo()));
         Faces.sendFile(f, true);
