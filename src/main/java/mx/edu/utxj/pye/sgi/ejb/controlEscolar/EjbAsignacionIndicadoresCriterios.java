@@ -1218,26 +1218,67 @@ public class EjbAsignacionIndicadoresCriterios {
             List<DtoAsigEvidenciasInstrumentosEval> listaEvidenciasInstrumentos = new ArrayList<>();
             
             if(!listaUnidadesConfiguradas.isEmpty()){
-
-            listaUnidadesConfiguradas.forEach(unidadConfigurada -> {
                 
-                List<EvaluacionSugerida> listaEvaluacionesSugeridas = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.unidadMateria.idUnidadMateria=:unidad AND e.activo=:valor", EvaluacionSugerida.class)
-                        .setParameter("unidad", unidadConfigurada.getIdUnidadMateria().getIdUnidadMateria())
-                        .setParameter("valor", Boolean.TRUE)
-                        .getResultStream()
-                        .collect(Collectors.toList());
-
-                listaEvaluacionesSugeridas.forEach(evaluacionSug -> {
-                    Integer valorPorcentual = 0;
-                    DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadConfigurada, evaluacionSug.getEvidencia(), evaluacionSug.getInstrumento(), valorPorcentual, evaluacionSug.getMetaInstrumento(), Boolean.TRUE);
-                    listaEvidenciasInstrumentos.add(dtoAsigEvidenciasInstrumentosEval);
+              Boolean criteriosIncompletos = getCriteriosIncompletosMateria(listaUnidadesConfiguradas).getValor();
+                
+              if(!criteriosIncompletos){
+                 
+                listaUnidadesConfiguradas.forEach(unidadConfigurada -> {
+                
+                    List<EvaluacionSugerida> listaEvaluacionesSugeridas = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.unidadMateria.idUnidadMateria=:unidad AND e.activo=:valor", EvaluacionSugerida.class)
+                            .setParameter("unidad", unidadConfigurada.getIdUnidadMateria().getIdUnidadMateria())
+                            .setParameter("valor", Boolean.TRUE)
+                            .getResultStream()
+                            .collect(Collectors.toList());
+                
+                        listaEvaluacionesSugeridas.forEach(evaluacionSug -> {
+                            Integer valorPorcentual = 0;
+                            DtoAsigEvidenciasInstrumentosEval dtoAsigEvidenciasInstrumentosEval = new DtoAsigEvidenciasInstrumentosEval(unidadConfigurada, evaluacionSug.getEvidencia(), evaluacionSug.getInstrumento(), valorPorcentual, evaluacionSug.getMetaInstrumento(), Boolean.TRUE);
+                            listaEvidenciasInstrumentos.add(dtoAsigEvidenciasInstrumentosEval);
+                        });
                 });
-                
-              });
+              }
             }
             return ResultadoEJB.crearCorrecto(listaEvidenciasInstrumentos, "Lista de evidencias e instrumentos de evaluación sugeridos.");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de evidencias e instrumentos de evaluación sugeridos. (EjbAsignacionIndicadoresCriterios.getEvidenciasInstrumentosSugeridos)", e, null);
+        }
+    }
+    
+    /**
+     * Permite verificar si la evaluación sugerida de la materia está incompleta
+     * @param listaUnidadesConfiguradas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Boolean> getCriteriosIncompletosMateria(List<UnidadMateriaConfiguracion> listaUnidadesConfiguradas){
+        try {
+            Boolean criteriosIncompletos = false;
+            
+            List<Integer> unidadesIncompletas = new ArrayList<>();
+            
+            List<Integer> unidadesMateria = listaUnidadesConfiguradas.stream().map(p->p.getIdUnidadMateria().getIdUnidadMateria()).collect(Collectors.toList());
+            
+            List<EvaluacionSugerida> evaluacionesSugeridas = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.unidadMateria.idUnidadMateria IN :unidades AND e.activo=:valor", EvaluacionSugerida.class)
+                            .setParameter("unidades", unidadesMateria)
+                            .setParameter("valor", Boolean.TRUE)
+                            .getResultStream()
+                            .collect(Collectors.toList());
+            
+            evaluacionesSugeridas.forEach(evaluacion -> {
+                List<String> conteoCriterios = evaluacionesSugeridas.stream().filter(p->Objects.equals(p.getUnidadMateria().getIdUnidadMateria(), evaluacion.getUnidadMateria().getIdUnidadMateria())).map(p->p.getEvidencia().getCriterio().getTipo()).distinct().collect(Collectors.toList());
+                
+                if(conteoCriterios.size() < 3){
+                   unidadesIncompletas.add(evaluacion.getUnidadMateria().getIdUnidadMateria());
+                }
+            });
+            
+            if(!unidadesIncompletas.isEmpty()){
+                criteriosIncompletos = true;
+            }
+            
+            return ResultadoEJB.crearCorrecto(criteriosIncompletos, "Se verificó si la evaluación sugerida de la materia está incompleta.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar si la evaluación sugerida de la materia está incompleta. (EjbAsignacionIndicadoresCriterios.getCriteriosIncompletosMateria)", e, null);
         }
     }
     

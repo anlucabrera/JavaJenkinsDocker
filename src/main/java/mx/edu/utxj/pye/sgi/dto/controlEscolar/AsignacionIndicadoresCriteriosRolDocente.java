@@ -21,7 +21,6 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionEvide
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.InstrumentoEvaluacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**

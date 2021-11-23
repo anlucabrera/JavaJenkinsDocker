@@ -747,7 +747,7 @@ public class EjbRegistroEvidInstEvalMaterias {
      * @param evaluacionesSugeridas
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<String>> getEvaluacionesSugeridasCiteriosIncompletos(List<DtoRegistroEvidInstEvaluacionMateria> evaluacionesSugeridas){
+    public ResultadoEJB<List<String>> getEvaluacionesSugeridasCategoriasIncompletos(List<DtoRegistroEvidInstEvaluacionMateria> evaluacionesSugeridas){
         try {
             
             List<String> unidadesIncompletas = new ArrayList<>();
@@ -762,20 +762,20 @@ public class EjbRegistroEvidInstEvalMaterias {
                 
                 if(conteoCriterios.size() < 3){
                     if(conteoCriterios.stream().filter(p->p.equals("Ser")).findFirst().orElse(null) == null){
-                        unidadesIncompletas.add("Falta Criterio SER: En la UNIDAD ".concat(String.valueOf(unidadMateria.getNoUnidad())).concat(". ").concat(unidadMateria.getNombre()).concat(" de la MATERIA ").concat(unidadMateria.getIdMateria().getNombre()));
+                        unidadesIncompletas.add("Falta Categoría SER: En la UNIDAD ".concat(String.valueOf(unidadMateria.getNoUnidad())).concat(". ").concat(unidadMateria.getNombre()).concat(" de la MATERIA ").concat(unidadMateria.getIdMateria().getNombre()));
                     }
                     if(conteoCriterios.stream().filter(p->p.equals("Saber")).findFirst().orElse(null) == null){
-                        unidadesIncompletas.add("Falta Criterio SABER: En la UNIDAD ".concat(String.valueOf(unidadMateria.getNoUnidad())).concat(". ").concat(unidadMateria.getNombre()).concat(" de la MATERIA ").concat(unidadMateria.getIdMateria().getNombre()));
+                        unidadesIncompletas.add("Falta Categoría SABER: En la UNIDAD ".concat(String.valueOf(unidadMateria.getNoUnidad())).concat(". ").concat(unidadMateria.getNombre()).concat(" de la MATERIA ").concat(unidadMateria.getIdMateria().getNombre()));
                     }
                     if(conteoCriterios.stream().filter(p->p.equals("Saber hacer")).findFirst().orElse(null) == null){
-                        unidadesIncompletas.add("Falta Criterio SABER HACER: En la UNIDAD ".concat(String.valueOf(unidadMateria.getNoUnidad())).concat(". ").concat(unidadMateria.getNombre()).concat(" de la MATERIA ").concat(unidadMateria.getIdMateria().getNombre()));
+                        unidadesIncompletas.add("Falta Categoría SABER HACER: En la UNIDAD ".concat(String.valueOf(unidadMateria.getNoUnidad())).concat(". ").concat(unidadMateria.getNombre()).concat(" de la MATERIA ").concat(unidadMateria.getIdMateria().getNombre()));
                     }
                 }
             });
             
             return ResultadoEJB.crearCorrecto(unidadesIncompletas, "Lista de unidades y materias de evaluaciones sugeridas incompletas.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de unidades y materias de evaluaciones sugeridas incompletas. (EjbRegistroEvidInstEvalMaterias.getEvaluacionesSugeridasCiteriosIncompletos)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de unidades y materias de evaluaciones sugeridas incompletas. (EjbRegistroEvidInstEvalMaterias.getEvaluacionesSugeridasCategoriasIncompletos)", e, null);
         }
     }
     
