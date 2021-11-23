@@ -623,28 +623,28 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         Integer sumaSer = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Ser")).mapToInt(p->p.getValorPorcentual()).sum();
        
         if(sumaSer < sumaTotalUnidades){
-            Messages.addGlobalWarn("Categorías SER: La suma de los porcentajes por indicador es menor a 100%.");
+            Messages.addGlobalWarn("Categorías SER: La suma de los porcentajes por evidencia de evaluación es menor a 100%.");
             evidenciasValor= Boolean.FALSE;
         }else if(sumaSer > sumaTotalUnidades){
-            Messages.addGlobalWarn("Categorías SER: La suma de los porcentajes por indicador es mayor a 100%.");
+            Messages.addGlobalWarn("Categorías SER: La suma de los porcentajes por evidencia de evaluación es mayor a 100%.");
             evidenciasValor= Boolean.FALSE;
         }
         
         Integer sumaSaber = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber")).mapToInt(p->p.getValorPorcentual()).sum();
         if(sumaSaber < sumaTotalUnidades){
-             Messages.addGlobalWarn("Categorías SABER: La suma de los porcentajes por indicador es menor a 100%.");
+             Messages.addGlobalWarn("Categorías SABER: La suma de los porcentajes por evidencia de evaluación es menor a 100%.");
              evidenciasValor= Boolean.FALSE;
         }else if(sumaSaber > sumaTotalUnidades){
-             Messages.addGlobalWarn("Categorías SABER: La suma de los porcentajes por indicador es mayor a 100%.");
+             Messages.addGlobalWarn("Categorías SABER: La suma de los porcentajes por evidencia de evaluación es mayor a 100%.");
              evidenciasValor= Boolean.FALSE;
         }
         
         Integer sumaSaberHacer = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber hacer")).mapToInt(p->p.getValorPorcentual()).sum();
         if(sumaSaberHacer < sumaTotalUnidades){
-            Messages.addGlobalWarn("Categorías SABER - HACER: La suma de los porcentajes por indicador es menor a 100%.");
+            Messages.addGlobalWarn("Categorías SABER - HACER: La suma de los porcentajes por evidencia de evaluación es menor a 100%.");
             evidenciasValor= Boolean.FALSE;
         }else if(sumaSaberHacer > sumaTotalUnidades){
-            Messages.addGlobalWarn("Categorías SABER - HACER: La suma de los porcentajes por indicador es mayor a 100%.");
+            Messages.addGlobalWarn("Categorías SABER - HACER: La suma de los porcentajes por evidencia de evaluación es mayor a 100%.");
             evidenciasValor= Boolean.FALSE;
         }
         

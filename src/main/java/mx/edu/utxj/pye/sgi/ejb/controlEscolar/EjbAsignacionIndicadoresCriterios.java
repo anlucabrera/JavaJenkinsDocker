@@ -1219,9 +1219,9 @@ public class EjbAsignacionIndicadoresCriterios {
             
             if(!listaUnidadesConfiguradas.isEmpty()){
                 
-              Boolean criteriosIncompletos = getCriteriosIncompletosMateria(listaUnidadesConfiguradas).getValor();
+              Boolean categoriasIncompletas = getCategoriasIncompletasMateria(listaUnidadesConfiguradas).getValor();
                 
-              if(!criteriosIncompletos){
+              if(!categoriasIncompletas){
                  
                 listaUnidadesConfiguradas.forEach(unidadConfigurada -> {
                 
@@ -1250,9 +1250,9 @@ public class EjbAsignacionIndicadoresCriterios {
      * @param listaUnidadesConfiguradas
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Boolean> getCriteriosIncompletosMateria(List<UnidadMateriaConfiguracion> listaUnidadesConfiguradas){
+    public ResultadoEJB<Boolean> getCategoriasIncompletasMateria(List<UnidadMateriaConfiguracion> listaUnidadesConfiguradas){
         try {
-            Boolean criteriosIncompletos = false;
+            Boolean categoriasIncompletas = false;
             
             List<Integer> unidadesIncompletas = new ArrayList<>();
             
@@ -1273,12 +1273,12 @@ public class EjbAsignacionIndicadoresCriterios {
             });
             
             if(!unidadesIncompletas.isEmpty()){
-                criteriosIncompletos = true;
+                categoriasIncompletas = true;
             }
             
-            return ResultadoEJB.crearCorrecto(criteriosIncompletos, "Se verificó si la evaluación sugerida de la materia está incompleta.");
+            return ResultadoEJB.crearCorrecto(categoriasIncompletas, "Se verificó si la evaluación sugerida de la materia está incompleta.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo verificar si la evaluación sugerida de la materia está incompleta. (EjbAsignacionIndicadoresCriterios.getCriteriosIncompletosMateria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar si la evaluación sugerida de la materia está incompleta. (EjbAsignacionIndicadoresCriterios.getCategoriasIncompletasMateria)", e, null);
         }
     }
     
