@@ -416,7 +416,7 @@
 
                                                             <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
                                                                 <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
-                                                                    <p:dataTable id="dtbBajas" var="recurso" 
+                                                                    <p:dataTable id="dtbBajas" var="recurso" editable="true" editMode="row"
                                                                                  style="background:  #cccccc"                                                                        
                                                                                  sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{poa.recursosActividadList}">
 
@@ -428,6 +428,7 @@
                                                                                 <p:column rowspan="2" headerText="Unidad de Medida" style="width: 80px;" styleClass="hederTablesTitle"/>
                                                                                 <p:column colspan="12" headerText="Calendarización de Metas" style="width: 650px;" styleClass="hederTablesTitle"/>  
                                                                                 <p:column rowspan="2" headerText="Total" style="width: 70px;" styleClass="hederTablesTitle"/>
+                                                                                <p:column rowspan="2" headerText="Opciones" style="width:140px; background-color: #d9d9d9; color: #000000;"/>
                                                                             </p:row>
                                                                             <p:row class="success">
                                                                                 <p:column headerText="Ene" styleClass="hederSubTablesTitle"/>
@@ -454,6 +455,9 @@
                                                                             </p:column>
                                                                         </p:headerRow>
 
+                                                                        <p:ajax event="rowEdit" listener="#{adminPoaValidacionPresupuestacion.onCellEditProductos}" update="@this" oncomplete="actualizarTabla()"/>
+                                                                        <p:ajax event="rowEditCancel" listener="#{adminPoaValidacionPresupuestacion.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+
                                                                         <p:column> 
                                                                             <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
                                                                         </p:column>
@@ -461,43 +465,93 @@
                                                                             <h:outputText value="#{recurso.productoArea.productos.unidadMedida}" style="font-size: xx-small"/>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPEnero}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPEnero}" /></f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPEnero}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPFebero}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPFebero}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPFebero}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPMarzo}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPMarzo}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPMarzo}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPAbril}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPAbril}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPAbril}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPMayo}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPMayo}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPMayo}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPJunio}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPJunio}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPJunio}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPJulio}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPJulio}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPJulio}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPAgosto}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPAgosto}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPAgosto}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPSeptiembre}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPSeptiembre}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPSeptiembre}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPOctubre}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPOctubre}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPOctubre}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPNoviembre}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPNoviembre}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPNoviembre}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
-                                                                            <h:outputText value="#{recurso.RPDiciembre}" />
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPDiciembre}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPDiciembre}" title="" /></f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column> 
                                                                             <h:outputText value="#{recurso.total}" /> 
+                                                                        </p:column>
+                                                                        <p:column>
+                                                                            <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
+                                                                                <a href="#" class="ui-row-editor-pencil">
+                                                                                    <span class="ui-icon ui-icon-pencil"></span>
+                                                                                </a>
+                                                                                <a href="#" class="ui-row-editor-check">
+                                                                                    <span class="ui-icon ui-icon-check ui-c"></span>
+                                                                                </a>
+                                                                                <p:spacer width="20px"/>
+                                                                                <a href="#" class="ui-row-editor-close">
+                                                                                    <span class="ui-icon ui-icon-close ui-c"></span>
+                                                                                </a>
+                                                                            </div> 
                                                                         </p:column>
                                                                     </p:dataTable>
                                                                 </p:panelGrid>

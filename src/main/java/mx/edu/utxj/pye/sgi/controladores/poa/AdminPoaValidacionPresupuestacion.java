@@ -36,6 +36,7 @@ import org.omnifaces.util.Messages;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.primefaces.event.RowEditEvent;
 
 @Named
 @ManagedBean
@@ -59,6 +60,7 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     @Getter    @Setter    private List<RecursosActividad> recursosActividads2 = new ArrayList<>(),recursosActividads3 = new ArrayList<>(),recursosActividads4 = new ArrayList<>(),recursosActividads5 = new ArrayList<>(),recursosActividadscdh = new ArrayList<>();
     @Getter    @Setter    private Double pretecho2000=0D,pretecho3000=0D,pretecho4000=0D,pretecho5000=0D,pretechoCPDD=0D,totalPretecho=0D;
     @Getter    @Setter    private Double totalCaptitulos=0D,totalCaptitulo2000 = 0D,totalCaptitulo3000 = 0D,totalCaptitulo4000 = 0D,totalCaptitulo5000 = 0D,totalCaptituloCPDD = 0D;
+    @Getter    @Setter    private Double totalRecursoActividad = 0D;
     
     @Getter    @Setter    private List<CapitulosLista> capitulo2000 = new ArrayList<>();
     @Getter    @Setter    private List<CapitulosLista> capitulo3000 = new ArrayList<>();
@@ -68,7 +70,7 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     
     
     
-   @EJB    EjbCatalogosPoa ejbCatalogosPoa;
+    @EJB    EjbCatalogosPoa ejbCatalogosPoa;
     @EJB    EjbRegistroActividades ejbRegistroActividades;
     @EJB    EjbPresupuestacion ejbPresupuestacion;
     @EJB    EjbAreasLogeo ejbAreasLogeo;
@@ -348,6 +350,18 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
                 }
             });
         }
+    }
+    
+    public void onCellEditProductos(RowEditEvent event) {
+        RecursosActividad modificada = (RecursosActividad) event.getObject();
+        totalRecursoActividad = modificada.getRPEnero() + modificada.getRPFebero() + modificada.getRPMarzo() + modificada.getRPAbril() + modificada.getRPMayo() + modificada.getRPJunio() + modificada.getRPJulio() + modificada.getRPAgosto() + modificada.getRPSeptiembre() + modificada.getRPOctubre() + modificada.getRPNoviembre() + modificada.getRPDiciembre();
+        modificada.setTotal(totalRecursoActividad);
+        ejbPresupuestacion.actualizaRecursosActividad(modificada);
+        consultarListasValidacionFinal();
+    }
+    
+    public void onRowCancel(RowEditEvent event) {
+        Messages.addGlobalWarn("!!Operación cancelada!!");
     }
 
     public static class ListaEjesEsLaAp {
