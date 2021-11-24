@@ -229,7 +229,6 @@
 
 
                     <c:if test="#{fusionGruposDirector.mostrarEnDesarrollo(request) and fusionGruposDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                    <c:if test="#{avanceProgramaticoDirector.mostrarEnDesarrollo(request) and avanceProgramaticoDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
                     <c:if test="#{cedulaIdentificacionDirector.mostrarEnDesarrollo(request) and cedulaIdentificacionDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cedulaIdentificacionDirector.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
                     <c:if test="#{validacionPlanAccionTutorialDirector.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacion_plan_accion_tutorial.xhtml"><i class="fa fa-check-square-o"></i><span>Validación de Plan de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{seguimientoEvaluacionEstadiaDirector.mostrarEnDesarrollo(request) and seguimientoEvaluacionEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/seguimientoEvaluacionEstadia.xhtml"><i class="fa fa-check-square-o"></i><span>Seguimiento Evaluación Estadía</span></p:link></li></c:if>
@@ -425,9 +424,23 @@
                             </ul>
                         </li>
                     </c:if>
-                    <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/paseLista.xhtml"><i class="fa fa-list"></i><span>Lista de asistencia</span></p:link></li></c:if>
-                    <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de <br/>Lista Docente</span></p:link></li></c:if>
-                    <c:if test="#{avanceProgramaticoDocente.mostrarEnDesarrollo(request) and avanceProgramaticoDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
+
+                    <c:if test="#{(paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso) or (avanceProgramaticoDocente.mostrarEnDesarrollo(request) and avanceProgramaticoDocente.tieneAcceso)}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-list"></i><span>Asistencias <br/>y Avance programático</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/paseLista.xhtml"><i class="fa fa-list"></i><span>Lista de asistencia</span></p:link></li></c:if>
+                                <c:if test="#{paseListaDoc.mostrarEnDesarrollo(request) and paseListaDoc.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/seguimientoPaseLista.xhtml"><i class="fa fa-calendar"></i><span>Seguimiento Pase de <br/>Lista Docente</span></p:link></li></c:if>
+                                <c:if test="#{avanceProgramaticoDocente.mostrarEnDesarrollo(request) and avanceProgramaticoDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/avanceP.xhtml"><i class="fa fa-clock-o"></i><span>Seguimiento de <br/>avance programático</span></p:link></li></c:if>
+                            </ul>
+                        </li>
+                    </c:if>
+
                     <c:if test="#{registroAsesoriaDocente.mostrarEnDesarrollo(request) and registroAsesoriaDocente.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/docente/registro_asesorias.xhtml"><i class="fa fa-slideshare"></i><span>Registro de Asesorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <!--                    <c:if test="# {permisoAperturaExtemporaneaDocente.mostrarEnDesarrollo(request) and permisoAperturaExtemporaneaDocente.tieneAcceso}">
                                         <li class="treeview">

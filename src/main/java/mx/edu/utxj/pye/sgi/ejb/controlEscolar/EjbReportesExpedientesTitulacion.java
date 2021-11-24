@@ -5,7 +5,6 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
-import com.github.adminfaces.starter.bean.CrearZipPrueba;
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.io.File;
 import java.io.FileInputStream;
