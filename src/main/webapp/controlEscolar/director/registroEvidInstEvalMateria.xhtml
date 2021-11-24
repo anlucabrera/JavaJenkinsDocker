@@ -157,6 +157,14 @@
                                                                         </p>
                                                                         <hr/>
                                                                     </div>
+                                                                    <c:if test="#{!empty registroEvidInstEvalMateriasDireccion.rol.registrosIncompletos}">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                        <p style="color: red; text-align: center; font-size: 20px;">
+                                                                            <strong>#{registroEvidInstEvalMateriasDireccion.rol.registrosIncompletos}</strong>
+                                                                        </p>
+                                                                        <hr/>
+                                                                    </div>
+                                                                    </c:if>
                                                                 </div>
                                                             </div>
                                                         </div>

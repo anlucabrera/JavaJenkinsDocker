@@ -310,7 +310,20 @@
                     <c:if test="#{resultadosPlaneacionesConsulta.mostrarEnDesarrollo(request) and resultadosPlaneacionesConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/resultadosPlaneaciones.xhtml"><i class="fa fa-list-ol"></i><span>Resultado de Planeaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{registroDeEstudianteConsulta.mostrarEnDesarrollo(request) and registroDeEstudianteConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/registroEstudianteConsulta.xhtml"><i class="fa fa-list-ol"></i><span>Resultado Registro del <br/> estudiante</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{segimientoAcademicoConsulta.mostrarEnDesarrollo(request) and segimientoAcademicoConsulta.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesMu/segimientoAcademico.xhtml"><i class="fa fa-folder"></i><span>Concentrado Calificaciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                    <c:if test="#{reportesAcademicos.mostrarEnDesarrollo(request) and reportesAcademicos.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesAcademicos.xhtml"><i class="fa fa-table"></i><span>Reportes Académicos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{(reportesAcademicos.mostrarEnDesarrollo(request) and reportesAcademicos.tieneAcceso) or (reportesExpedientesTitulacion.mostrarEnDesarrollo(request) and reportesExpedientesTitulacion.tieneAcceso)}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-table"></i><span>Reportes</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <c:if test="#{reportesAcademicos.mostrarEnDesarrollo(request) and reportesAcademicos.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesAcademicos.xhtml"><i class="fa fa-book"></i><span>Académicos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                                <c:if test="#{reportesExpedientesTitulacion.mostrarEnDesarrollo(request) and reportesExpedientesTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesTitulacion.xhtml"><i class="fa fa-graduation-cap"></i><span>Titulación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                            </ul>
+                        </li>
+                    </c:if>
                     <c:if test="#{seguimientoEvaluacionEstadiaMultiple.mostrarEnDesarrollo(request) and seguimientoEvaluacionEstadiaMultiple.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/seguimientoEvaluacionEstadia.xhtml"><i class="fa fa-check-square-o"></i><span>Seguimiento Evaluación Estadía</span></p:link></li></c:if>
 
                     <!-- Estadía - Secretaría Académica -->

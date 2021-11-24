@@ -599,17 +599,17 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         
         Integer cerosSer = (int)(long) rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Ser") && p.getValorPorcentual()==0).count();
         if(cerosSer > 0){
-            Messages.addGlobalWarn("Criterios SER: El valor porcentual de una o más evidencias es 0, verificar.");
+            Messages.addGlobalWarn("Categorías SER: El valor porcentual de una o más evidencias es 0, verificar.");
         }
         
         Integer cerosSaber = (int)(long) rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber") && p.getValorPorcentual()==0).count();
         if(cerosSaber > 0){
-            Messages.addGlobalWarn("Criterios SABER: El valor porcentual de una o más evidencias es 0, verificar.");
+            Messages.addGlobalWarn("Categorías SABER: El valor porcentual de una o más evidencias es 0, verificar.");
         }
         
         Integer cerosSaberHacer = (int)(long) rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber hacer") && p.getValorPorcentual()==0).count();
         if(cerosSaberHacer > 0){
-            Messages.addGlobalWarn("Criterios SABER - HACER: El valor porcentual de una o más evidencias es 0, verificar.");
+            Messages.addGlobalWarn("Categorías SABER - HACER: El valor porcentual de una o más evidencias es 0, verificar.");
         }
         
         if(cerosSer==0 && cerosSaber==0 && cerosSaberHacer==0){
@@ -623,23 +623,29 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
         Integer sumaSer = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Ser")).mapToInt(p->p.getValorPorcentual()).sum();
        
         if(sumaSer < sumaTotalUnidades){
-            Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es menor a 100%.");
+            Messages.addGlobalWarn("Categorías SER: La suma de los porcentajes por evidencia de evaluación es menor a 100%.");
+            evidenciasValor= Boolean.FALSE;
         }else if(sumaSer > sumaTotalUnidades){
-            Messages.addGlobalWarn("Criterios SER: La suma de los porcentajes por indicador es mayor a 100%.");
+            Messages.addGlobalWarn("Categorías SER: La suma de los porcentajes por evidencia de evaluación es mayor a 100%.");
+            evidenciasValor= Boolean.FALSE;
         }
         
         Integer sumaSaber = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber")).mapToInt(p->p.getValorPorcentual()).sum();
         if(sumaSaber < sumaTotalUnidades){
-             Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es menor a 100%.");
+             Messages.addGlobalWarn("Categorías SABER: La suma de los porcentajes por evidencia de evaluación es menor a 100%.");
+             evidenciasValor= Boolean.FALSE;
         }else if(sumaSaber > sumaTotalUnidades){
-             Messages.addGlobalWarn("Criterios SABER: La suma de los porcentajes por indicador es mayor a 100%.");
+             Messages.addGlobalWarn("Categorías SABER: La suma de los porcentajes por evidencia de evaluación es mayor a 100%.");
+             evidenciasValor= Boolean.FALSE;
         }
         
         Integer sumaSaberHacer = rol.getListaEvidenciasSugeridas().stream().filter(p->p.getEvidenciaEvaluacion().getCriterio().getTipo().equals("Saber hacer")).mapToInt(p->p.getValorPorcentual()).sum();
         if(sumaSaberHacer < sumaTotalUnidades){
-            Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es menor a 100%.");
+            Messages.addGlobalWarn("Categorías SABER - HACER: La suma de los porcentajes por evidencia de evaluación es menor a 100%.");
+            evidenciasValor= Boolean.FALSE;
         }else if(sumaSaberHacer > sumaTotalUnidades){
-            Messages.addGlobalWarn("Criterios SABER - HACER: La suma de los porcentajes por indicador es mayor a 100%.");
+            Messages.addGlobalWarn("Categorías SABER - HACER: La suma de los porcentajes por evidencia de evaluación es mayor a 100%.");
+            evidenciasValor= Boolean.FALSE;
         }
         
         Integer comparador = sumaTotalUnidades * 3;
@@ -657,6 +663,8 @@ public class AsignacionIndicadoresCriteriosDocente extends ViewScopedRol impleme
                 mostrarMensajeResultadoEJB(resGuardar);
             }
         
+        }else{
+            Messages.addGlobalWarn("Verifique las sumatorias, la suma de los porcentajes de los instrumentos de evaluación por categoría y unidad debe ser 100%.");
         }
     }
     

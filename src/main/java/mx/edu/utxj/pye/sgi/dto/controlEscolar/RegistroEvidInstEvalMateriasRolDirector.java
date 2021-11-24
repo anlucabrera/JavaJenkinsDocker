@@ -168,8 +168,11 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
      */
     @Getter @NonNull private Integer metaInstrumento;
     
+    /**
+     * Lista de registros con criterios incompletos 
+     */
+    @Getter private List<String> registrosIncompletos;
     
-   
     public RegistroEvidInstEvalMateriasRolDirector(Filter<PersonalActivo> filtro, PersonalActivo director) {
         super(filtro);
         this.director = director;
@@ -288,5 +291,9 @@ public class RegistroEvidInstEvalMateriasRolDirector extends AbstractRol{
 
     public void setMetaInstrumento(Integer metaInstrumento) {
         this.metaInstrumento = metaInstrumento;
+    }
+
+    public void setRegistrosIncompletos(List<String> registrosIncompletos) {
+        this.registrosIncompletos = registrosIncompletos;
     }
 }

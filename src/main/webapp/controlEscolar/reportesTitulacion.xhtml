@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Reportes expedientes de titulación
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{reportesExpedientesTitulacion.cargado}">
+        <adm:breadcrumb title="Reportes expedientes de titulación"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{reportesExpedientesTitulacion.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(reportesExpedientesTitulacion.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesExpedientesTitulacion.descargarReporteEstadisticoGeneracionNivel()}" target="_blank" title="Descargar concentrado en excel" disabled="#{reportesExpedientesTitulacion.rol.reporte ne 'Informe estadístico'}"><i class="fa fa-table" /></p:commandLink>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesExpedientesTitulacion.descargarListadoFotografiasGeneracionNivel()}" target="_blank" title="Descargar listado en excel" disabled="#{reportesExpedientesTitulacion.rol.reporte ne 'Expediente con fotografía'}"><i class="fa fa-list" /></p:commandLink>
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesExpedientesTitulacion.descargarFotografiasGeneracionNivel()}" target="_blank" title="Descargar archivo zip" disabled="#{reportesExpedientesTitulacion.rol.reporte ne 'Expediente con fotografía'}"><i class="fa fa-download" /></p:commandLink>
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-12 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{reportesExpedientesTitulacion.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{reportesExpedientesTitulacion.cambiarGeneracion}">
+                                                    <f:selectItems value="#{reportesExpedientesTitulacion.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generación" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                                <div class="ui-material">
+                                                    <p:selectOneRadio id="tipoBusqueda" value="#{reportesExpedientesTitulacion.rol.tipoBusqueda}" valueChangeListener="#{reportesExpedientesTitulacion.cambiarTipoBusqueda}" disabled="#{reportesExpedientesTitulacion.rol.deshabilitarTipoBusqueda}">
+                                                        <f:selectItem itemLabel="Búsqueda por Programa" itemValue="busquedaPrograma"/>
+                                                        <f:selectItem itemLabel="Búsqueda General" itemValue="busquedaGeneral"/>
+                                                        <p:ajax update="@this" process="@this"/>
+                                                        <p:autoUpdate />
+                                                    </p:selectOneRadio> 
+                                                </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="reporte" value="#{reportesExpedientesTitulacion.rol.reporte}" converter="entityConverter" valueChangeListener="#{reportesExpedientesTitulacion.cambiarReporte}">
+                                                    <f:selectItems value="#{reportesExpedientesTitulacion.rol.reportes}" var="reporte" itemValue="#{reporte}" itemLabel="#{reporte}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Reporte" for="reporte"/>
+                                                <p:message for="reporte" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-12"><p style="color: #ffffff;">Prueba de texto</p></div>
+                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{reportesExpedientesTitulacion.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{reportesExpedientesTitulacion.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{reportesExpedientesTitulacion.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-4">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programa" value="#{reportesExpedientesTitulacion.rol.programaEducativo}" converter="entityConverter" valueChangeListener="#{reportesExpedientesTitulacion.cambiarProgramaEducativo}" disabled="#{reportesExpedientesTitulacion.rol.tipoBusqueda eq 'busquedaGeneral' || reportesExpedientesTitulacion.rol.deshabilitarTipoBusqueda}">
+                                                    <f:selectItems value="#{reportesExpedientesTitulacion.rol.programasEducativos}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa educativo" for="programa"/>
+                                                <p:message for="programa" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-4"></div>
+                                    </div>
+                                    <div class="row">
+                                         <c:if test="#{reportesExpedientesTitulacion.rol.reporte eq 'Expediente con fotografía'}">
+                                            <center>
+                                                 <p:remoteCommand name="actualizar" update="@form:tbReporteFotografia" />
+                                                 <p:dataTable id="tbReporteFotografia" var="repFot" value="#{reportesExpedientesTitulacion.rol.reporteFotografiasTitulacion}" emptyMessage="No hay información en la generación y nivel educativo seleccionado"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <f:facet name="header">
+                                                        #{fn:length(reportesExpedientesTitulacion.rol.reporteFotografiasTitulacion)} resultados obtenidos.
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Programa educativo" style="width: 200px;" sortBy="#{repFot.programaEducativo.nombre}" filterBy="#{repFot.programaEducativo.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{repFot.estudiante.matricula}" filterBy="#{repFot.estudiante.matricula}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Estudiante" style="width: 250px;" sortBy="#{repFot.estudiante.aspirante.idPersona.apellidoPaterno} #{repFot.estudiante.aspirante.idPersona.apellidoMaterno} #{repFot.estudiante.aspirante.idPersona.nombre}" filterBy="#{repFot.estudiante.aspirante.idPersona.apellidoPaterno} #{repFot.estudiante.aspirante.idPersona.apellidoMaterno} #{repFot.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Situación académica" style="width: 150px;" sortBy="#{repFot.estudiante.tipoEstudiante.descripcion}" filterBy="#{repFot.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Teléfono móvil" style="width: 180px;" sortBy="#{repFot.medioComunicacion.telefonoMovil}" filterBy="#{estIrreg.medioComunicacion.telefonoMovil}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Correo electrónico" style="width: 250px;" sortBy="#{repFot.medioComunicacion.email}" filterBy="#{repFot.medioComunicacion.email}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Expediente titulación" style="width: 150px;" sortBy="#{repFot.situacionExpediente}" filterBy="#{repFot.situacionExpediente}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Fotografía titulación" style="width: 150px;" sortBy="#{repFot.situacionFotografia}" filterBy="#{repFot.situacionFotografia}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Fecha carga" style="width: 150px;" sortBy="#{repFot.fechaFotografia}" filterBy="#{repFot.fechaFotografia}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column>
+                                                        <h:outputText value="#{repFot.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repFot.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{repFot.estudiante.aspirante.idPersona.apellidoPaterno} #{repFot.estudiante.aspirante.idPersona.apellidoMaterno} #{repFot.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repFot.estudiante.tipoEstudiante.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repFot.medioComunicacion.telefonoMovil}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{repFot.medioComunicacion.email}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{repFot.situacionExpediente}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <h:outputText value="#{repFot.situacionFotografia}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repFot.fechaFotografia}"/>
+                                                    </p:column>
+                                                    <p:column>
+                                                        <center>
+                                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesExpedientesTitulacion.descargarDocumento(repFot.rutaFotografia)}" target="_blank" title="Descargar documento." disabled="#{repFot.rutaFotografia eq 'Sin información'}"><i class="fa fa-download" /></p:commandLink>
+                                                        </center>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
+                                        <c:if test="#{reportesExpedientesTitulacion.rol.reporte eq 'Informe estadístico'}">
+                                            <center>
+<!--                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">-->
+                                                 <p:remoteCommand name="actualizar" update="@form:tbReporteEstadistico" />
+                                                 <p:dataTable id="tbReporteEstadistico" var="repEst" value="#{reportesExpedientesTitulacion.rol.reporteEstadisticoTitulacion}" emptyMessage="No hay reporte de aprovechamiento escolar del programa educativo en el periodo seleccionado"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;">
+                                                    <f:facet name="header">
+                                                        #{fn:length(reportesExpedientesTitulacion.rol.reporteEstadisticoTitulacion)} resultados obtenidos.
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Generación" style="width: 150px;" sortBy="#{repEst.generacion.inicio} - #{repEst.generacion.fin}" filterBy="#{repEst.generacion.inicio} - #{repEst.generacion.fin}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Programa educativo" style="width: 300px;" sortBy="#{repEst.programaEducativo.nombre}" filterBy="#{repEst.programaEducativo.claveMateria}" filterMatchMode="contains"/>  
+                                                            <p:column headerText="Iniciaron" style="width: 150px;" sortBy="#{repEst.estudiantesIniciaron}" filterBy="#{repEst.estudiantesIniciaron}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Activos" style="width: 150px;" sortBy="#{repEst.estudiantesActivos}" filterBy="#{repEst.estudiantesActivos}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Acreditados" style="width: 150px;" sortBy="#{repEst.estudiantesAcreditados}" filterBy="#{repEst.estudiantesAcreditados}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Integraron expediente" style="width: 150px;" sortBy="#{repEst.estudiantesExpediente}" filterBy="#{repEst.estudiantesExpediente}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Expedientes validados" style="width: 150px;" sortBy="#{repEst.estudiantesExpedienteValidado}" filterBy="#{repEst.estudiantesExpedienteValidado}" filterMatchMode="contains"/> 
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repEst.generacion.inicio} - #{repEst.generacion.fin}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{repEst.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repEst.estudiantesIniciaron}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{repEst.estudiantesActivos}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repEst.estudiantesAcreditados}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repEst.estudiantesExpediente}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{repEst.estudiantesExpedienteValidado}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+<!--                                                </div>-->
+                                            </center>
+                                        </c:if>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty reportesExpedientesTitulacion.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{reportesExpedientesTitulacion.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para reportes de estadía</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{reportesExpedientesTitulacion.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if> 
+            <c:if test="#{!reportesExpedientesTitulacion.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal autorizado."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

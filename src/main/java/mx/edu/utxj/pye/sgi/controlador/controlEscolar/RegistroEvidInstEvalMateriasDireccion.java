@@ -179,6 +179,7 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
                 rol.setListaEvidenciasInstrumentos(res.getValor());
             }else mostrarMensajeResultadoEJB(res);  
         }
+        registrosCategoriasIncompletas();
     }
     
     public void listaGrados(){
@@ -444,5 +445,13 @@ public class RegistroEvidInstEvalMateriasDireccion extends ViewScopedRol impleme
             ServicioArchivos.eliminarArchivo(rol.getRutaArchivo());
             rol.setRutaArchivo(null);
         }
+    }
+    
+    public void registrosCategoriasIncompletas(){
+        ResultadoEJB<List<String>> res = ejb.getEvaluacionesSugeridasCategoriasIncompletos(rol.getListaEvidenciasInstrumentos());
+        if(res.getCorrecto()){
+            rol.setRegistrosIncompletos(res.getValor());
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res); 
     }
 }
