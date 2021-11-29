@@ -181,7 +181,6 @@
                                         </c:if>
                                         <c:if test="#{reportesExpedientesTitulacion.rol.reporte eq 'Informe estadístico'}">
                                             <center>
-<!--                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">-->
                                                  <p:remoteCommand name="actualizar" update="@form:tbReporteEstadistico" />
                                                  <p:dataTable id="tbReporteEstadistico" var="repEst" value="#{reportesExpedientesTitulacion.rol.reporteEstadisticoTitulacion}" emptyMessage="No hay reporte de aprovechamiento escolar del programa educativo en el periodo seleccionado"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
@@ -222,7 +221,15 @@
                                                         <h:outputText value="#{repEst.estudiantesExpedienteValidado}"/>
                                                     </p:column>
                                                 </p:dataTable>
-<!--                                                </div>-->
+                                                 <br/>
+                                                 <h6 style="text-align: justify;"><strong>Estudiantes Iniciaron:</strong> Número de estudiantes inscritos en sexto u onceavo cuatrimestre.</h6>
+                                                 <h6 style="text-align: justify;"><strong>Estudiantes Activos:</strong> Número de estudiantes que tienen situación académica diferente a: Baja Temporal, Baja Definitiva y No Concluyó Estadía.</h6>
+                                                 <h6 style="text-align: justify;"><strong>Estudiantes Acreditados:</strong> Número de estudiantes que acreditaron el proceso de estadía y su situación académica es Egresado No Titulado.</h6>
+                                                 <h6 style="text-align: justify;"><strong>Expedientes Integrados:</strong> Número de estudiantes que integraron expediente de titulación en la plataforma.</h6>
+                                                 <h6 style="text-align: justify;"><strong>Expedientes Validados:</strong> Número de estudiantes que integraron expediente de titulación y este ha sido validado por la Coordinación de Titulación.</h6>
+                                                 <br/>
+                                                 <h5 style="text-align: center; color: red;">Nota importante:</h5>
+                                                 <h6 style="text-align: center;">Se toman como base los estudiantes que iniciaron.</h6>
                                             </center>
                                         </c:if>
                                     </div>

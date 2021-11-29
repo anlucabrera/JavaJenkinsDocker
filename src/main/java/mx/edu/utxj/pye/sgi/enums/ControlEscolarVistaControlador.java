@@ -11,9 +11,11 @@ import mx.edu.utxj.pye.sgi.controlador.evaluaciones.*;
 import mx.edu.utxj.pye.sgi.controlador.reporteBecas;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.ValidacionTutoriaGrupalEstudiante;
 import mx.edu.utxj.pye.sgi.entity.ch.EvaluacionDocentesMateriaResultados2;
+import mx.edu.utxj.pye.siip.controlador.pye.GestionModulosRegistroUsuario;
 
 @RequiredArgsConstructor
 public enum ControlEscolarVistaControlador {
+    GESTION_USUARIO_MODULOS_REGISTRO("/siip/modulosRegistro/gestionModulosUsuario.xhtml", GestionModulosRegistroUsuario.class),
     PERMISO_APERTURA_EXTEMPORANEA("/controlEscolar/se/permisoAperturaExtemporanea.xhtml", PermisoAperturaExtemporaneaAdministrador.class),
     REPORTE_APERTURA_EXTEMPORANEA("/controlEscolar/pye/reporteAperturaExtemporanea.xhtml", ReporteAperturaExtemporaneaAdministrador.class),
     CALENDARIO_EVENTOS_ESTADIA("/controlEscolar/calendarioEventosEstadia.xhtml", CalendarioEventosEstadia.class),

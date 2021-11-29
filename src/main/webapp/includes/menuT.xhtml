@@ -750,6 +750,7 @@
                     </c:if>
                 </c:if>
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Registros de información</li>
+                <c:if test="#{gestionModulosRegistroUsuario.tieneAcceso}"><li><p:link href="#{request.contextPath}/siip/modulosRegistro/gestionModulosUsuario.xhtml"><i class="fa fa-lock"></i><span>Gestión de usuarios<br/>módulos registro</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                 <li>
                     <p:link href="#{request.contextPath}/siip/modulosRegistro/menu_general.xhtml">
                         <i class="fa fa-archive"></i>
