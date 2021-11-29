@@ -105,7 +105,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
 
      /**
-     * Permite obtener la lista de periodos escolares en los que existen eventos escolares registrados
+     * Permite obtener la lista de ejes de registro
      */
     public void listadoEjesRegistro(){
         ResultadoEJB<List<EjesRegistro>> res =  ejb.getEjesRegistro();
@@ -117,7 +117,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
      /**
-     * Permite obtener la lista de periodos escolares en los que existen eventos escolares registrados
+     * Permite obtener la lista de tipos de módulo (Registro y/o Seguimiento)
      */
     public void listadoTiposModulo(){
         ResultadoEJB<List<String>> res =  ejb.getTiposModulo();
@@ -129,7 +129,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
      /**
-     * Permite obtener la lista de periodos escolares en los que existen eventos escolares registrados
+     * Permite obtener la lista de módulos de registro
      */
     public void listadoModulosRegistro(){
         ResultadoEJB<List<ModulosRegistro>> res =  ejb.getModulosRegistroEje(rol.getEjeRegistro(), rol.getTipo());
@@ -143,7 +143,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
     /**
-     * Permite obtener la lista de eventos escolares registrados en el periodo escolar seleccionado
+     * Permite obtener la lista de módulos de registro con los usuarios que tiene asignados
      */
     public void listaModulosRegistroAsignados(){
         ResultadoEJB<List<DtoModulosRegistroUsuario>> res = ejb.getModulosRegistroAsignados(rol.getModuloRegistro());
@@ -158,7 +158,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
     /**
-     * Permite obtener la lista de eventos escolares registrados en el periodo escolar seleccionado
+     * Permite obtener la lista de módulos de registros que tiene asignados el personal seleciconado
      */
     public void listaModulosAsignadosPersonal(){
         ResultadoEJB<List<DtoModulosRegistroUsuario>> res = ejb.getModulosAsignadosPersonal(rol.getPersonal().getPersonal());
@@ -175,7 +175,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
     /**
-     * Permite obtener la lista de eventos escolares registrados en el periodo escolar seleccionado
+     * Permite obtener la lista de áreas que tienen POA que tienen módulos de registro que pueden asignarse al registrar una nueva asignación
      */
     public void listaAreas(){
         ResultadoEJB<List<AreasUniversidad>> res = ejb.getAreasDepartamentos(rol.getTipo());
@@ -186,7 +186,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
     /**
-     * Permite obtener la lista de eventos escolares registrados en el periodo escolar seleccionado
+     * Permite obtener la lista de áreas que tienen POA que tienen módulos de registro que pueden asignarse al actualizar un registro
      */
     public void listaAreasRegistro(){
         ResultadoEJB<List<AreasUniversidad>> res = ejb.getAreasDepartamentos(rol.getTipo());
@@ -198,7 +198,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
 
      /**
-     * Método para proporcionar lista de docentes sugeridos en un autocomplete donde se puede ingresar el número de nómina, nombre o área del docente
+     * Método para proporcionar lista de personal sugeridos en un autocomplete donde se puede ingresar el número de nómina, nombre o área del docente
      * @param pista
      * @return Lista de sugerencias
      */
@@ -213,7 +213,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
     /**
-     * Permite que al cambiar o seleccionar un periodo escolar se actualice la información en la tabla que corresponda
+     * Permite que al cambiar o seleccionar el eje de registro se actualice la información en la tabla que corresponda
      * @param e Evento del cambio de valor
      */
     public void cambiarEje(ValueChangeEvent e){
@@ -226,7 +226,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
     /**
-     * Permite que al cambiar o seleccionar un periodo escolar se actualice la información en la tabla que corresponda
+     * Permite que al cambiar o seleccionar un tipo de módulo se actualice la información en la tabla que corresponda
      * @param e Evento del cambio de valor
      */
     public void cambiarTipo(ValueChangeEvent e){
@@ -239,7 +239,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
     /**
-     * Permite que al cambiar o seleccionar un periodo escolar se actualice la información en la tabla que corresponda
+     * Permite que al cambiar o seleccionar un módulo de registro se actualice la información en la tabla que corresponda
      * @param e Evento del cambio de valor
      */
     public void cambiarModulo(ValueChangeEvent e){
@@ -252,7 +252,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
     /**
-     * Permite que al cambiar el valor del input para agregar una apertura y se muestren los componentes correspondientes
+     * Permite que al cambiar el valor del input para agregar una nueva asignación y se muestren los componentes correspondientes
      * @param e Evento del cambio de valor
      */
     public void cambiarAgregarUsuario(ValueChangeEvent e){
@@ -267,7 +267,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
     /**
-     * Permite que al cambiar o seleccionar un docente se puedan actualizar las materias asignadas a este docente
+     * Permite que al cambiar o seleccionar el personal se puedan actualizar la lista de módulo que tiene asignados
      * @param e Evento del cambio de valor
      */
     public void cambiarPersonal(ValueChangeEvent e){
@@ -280,7 +280,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
     /**
-     * Permite cambiar o seleccionar un tipo de búsqueda se actualice el valor de la variable
+     * Permite cambiar o seleccionar si se agregará un área de registro diferente a la que pertenece el personal se actualice el valor de la variable
      * @param e Evento del cambio de valor
      */
     public void cambiarAgregarArea(ValueChangeEvent e){
@@ -307,7 +307,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
 
      /**
-     * Permite guardar una apertura extemporánea por personal
+     * Permite guardar una asignación
      */
     public void guardarAsignacion(){
         if(rol.getAgregarAreaRegistro()){
@@ -330,7 +330,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
     }
     
      /**
-     * Permite guardar una apertura extemporánea por personal
+     * Permite inicializar los valores
      */
     public void inicializarValoresAgregar(){
         rol.setAgregarAreaRegistro(false);
@@ -358,7 +358,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
  
     
      /**
-     * Permite editar la fechas de inicio y fin de la apertura extemporánea seleccionada
+     * Permite editar el área de registro de la asignación correspondiente
      * @param event Evento de edición de la celda
      */
     public void onCellEdit(CellEditEvent event) {

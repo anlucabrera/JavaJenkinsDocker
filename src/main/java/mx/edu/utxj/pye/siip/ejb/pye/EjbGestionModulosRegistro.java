@@ -46,7 +46,7 @@ public class EjbGestionModulosRegistro {
     }
     
      /**
-     * Permite validar si el usuario autenticado es personal con permiso de admisnistrado para el módulo correspondiente
+     * Permite validar si el usuario autenticado es personal con permiso de administrador para el módulo correspondiente
      * @param clave Número de nómina del usuario autenticado
      * @return Resultado del proceso
      */
