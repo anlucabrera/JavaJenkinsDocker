@@ -24,6 +24,7 @@ public enum EvaluacionesTipo {//Tutor, Control interno, Docente, Satisfacción d
     TUTOR_2(12,"Tutor (Cuestionario 2)"),
     TUTOR_1(11,"Tutor"),
     DOCENTE(13,"Docente materia"),
+    DOCENTE_1(20, "Docente materia (Cuestionario 1)"),
     DOCENTE_2(14,"Docente materia (Cuestionario 2 por contingencia)"),
     DOCENTE_3(15,"Docente materia (Cuestionario 3 por contingencia)"),
     DOCENTE_4(16,"Docente materia (Cuestionario 4 por contingencia)"),

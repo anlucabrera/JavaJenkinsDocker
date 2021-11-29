@@ -70,7 +70,7 @@ public class EjbInformeIntegralDocente {
                     //System.out.println("----" );
                     ResultadoEJB<PersonalActivo> resfda = validarFDA(personalActivo);
                     if(resfda.getCorrecto()==true){
-                       // System.out.println("FDA" +resfda.getValor() );
+                        // System.out.println("FDA" +resfda.getValor() );
                         return ResultadoEJB.crearCorrecto(resfda.getValor(),"Validado como personal de FDA");}
                     else {
                         ResultadoEJB<PersonalActivo> resDir= validarDirAc(personalActivo);
@@ -264,8 +264,8 @@ public class EjbInformeIntegralDocente {
             if(area==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"");}
             List<Personal> docentes = new ArrayList<>();
             docentes =  em.createQuery("select p from Personal  p where p.actividad.actividad=:actividad and p.areaSuperior =:area and p.status<>'B' order by   p.clave asc ", Personal.class)
-                .setParameter("actividad",3)
-                .setParameter("area",area.getArea()).getResultList()
+                    .setParameter("actividad",3)
+                    .setParameter("area",area.getArea()).getResultList()
             ;
             if(docentes!=null){return ResultadoEJB.crearCorrecto(docentes,"Lista de personal"); }
             else {return ResultadoEJB.crearErroneo(3,docentes,"No existen docentes en el área seleccionada");}
@@ -316,6 +316,44 @@ public class EjbInformeIntegralDocente {
     }
 
     /**
+     * Obtiene los periodos en los que ha sido evaluado el docente
+     * Se obtiene según los periodos que ha sido evaluado en la evaluación al Desempeño
+     * @param docente Docente seleccionado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<PeriodosEscolares>> getPeriodosEvaluacionPersonalbyDesem (@NonNull Personal docente){
+        try{
+            if(docente ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no debe ser nulo");}
+            List<DesempenioEvaluacionResultados> resultados = em.createQuery("select d from DesempenioEvaluacionResultados d where d.desempenioEvaluacionResultadosPK.evaluado =:clave order by d.desempenioEvaluacionResultadosPK.evaluacion desc ", DesempenioEvaluacionResultados.class)
+                    .setParameter("clave",docente.getClave())
+                    .getResultList()
+                    ;
+            if(resultados.isEmpty()|| resultados ==null){ return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"El docente seleccionado aún no ha sido evaluado"); }
+            else {
+                // Evaluaciones
+                List<DesempenioEvaluaciones> d =new ArrayList<>();
+                resultados.stream().forEach(r->{
+                    DesempenioEvaluaciones des = new DesempenioEvaluaciones();
+                    des = em.find(DesempenioEvaluaciones.class,r.getDesempenioEvaluacionResultadosPK().getEvaluacion());
+                    d.add(des);
+                });
+                //Periodos Escolares
+                List<PeriodosEscolares> periodosEscolares = new ArrayList<>();
+                d.stream().distinct().forEach(e->{
+                    PeriodosEscolares periodo = new PeriodosEscolares();
+                    periodo = em.find(PeriodosEscolares.class,e.getPeriodo());
+                    periodosEscolares.add(periodo);
+                });
+                return ResultadoEJB.crearCorrecto(periodosEscolares,"Periodos Escolares");
+
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener el listado del personal (EjbInformeIntegralDocente.getPeriodosEvaluacionPersonal)", e, null);
+
+        }
+    }
+
+    /**
      * Obtiene la evaluacion del Desempeño  por periodo de Evaluación
      * @param periodosEscolares Periodo Escoalar seleccionado
      * @return Resultado del proceso
@@ -355,7 +393,7 @@ public class EjbInformeIntegralDocente {
                     .orElse(null)
                     ;
             if(evaluacion ==null){return ResultadoEJB.crearErroneo(3,new Evaluaciones(),"No existe la evaluación buscada en el periodo seleccionado");}
-          else {return ResultadoEJB.crearCorrecto(evaluacion,"Evaluacion");}
+            else {return ResultadoEJB.crearCorrecto(evaluacion,"Evaluacion");}
         }catch (Exception e){ return ResultadoEJB.crearErroneo(1, "Error al obtener la evaluacion por tipo y periodo(EjbInformeIntegralDocente.getEvalaucionbyTipoPeriodo)", e, null); }
     }
     /**
@@ -374,7 +412,8 @@ public class EjbInformeIntegralDocente {
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
-            ;
+                    ;
+            //System.out.println("EjbInformeIntegralDocente.getEvalaucionTutorbyPeriodo "+ evaluacion);
             if(evaluacion ==null){return ResultadoEJB.crearErroneo(3,new Evaluaciones(),"No existe la evaluación buscada en el periodo seleccionado");}
             else {return ResultadoEJB.crearCorrecto(evaluacion,"Evaluacion");}
         }catch (Exception e){ return ResultadoEJB.crearErroneo(1, "Error al obtener la evaluacion por tipo y periodo(EjbInformeIntegralDocente.getEvalaucionbyTipoPeriodo)", e, null); }
@@ -388,14 +427,18 @@ public class EjbInformeIntegralDocente {
     public ResultadoEJB<Evaluaciones> getEvalaucionDocentebyPeriodo (@NonNull PeriodosEscolares periodo){
         try{
             if(periodo==null){return ResultadoEJB.crearErroneo(2,new Evaluaciones(),"El periodo no debe ser nulo");}
-            Evaluaciones evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.periodo=:periodo AND (e.tipo=:tipo OR e.tipo=:tipo4) ORDER BY e.evaluacion desc", Evaluaciones.class)
+            Evaluaciones evaluacion = em.createQuery("SELECT e FROM Evaluaciones e WHERE e.periodo=:periodo AND (e.tipo=:tipo OR e.tipo=:tipo1 OR e.tipo=:tipo2 OR e.tipo=:tipo3 OR e.tipo=:tipo4) ORDER BY e.evaluacion desc", Evaluaciones.class)
                     .setParameter("tipo4", EvaluacionesTipo.DOCENTE_4.getLabel())
-                    .setParameter("tipo", "Docente materia")
+                    .setParameter("tipo", EvaluacionesTipo.DOCENTE.getLabel())
+                    .setParameter("tipo1",EvaluacionesTipo.DOCENTE_1.getLabel())
+                    .setParameter("tipo2", EvaluacionesTipo.DOCENTE_2.getLabel())
+                    .setParameter("tipo3",EvaluacionesTipo.DOCENTE_3.getLabel())
                     .setParameter("periodo", periodo.getPeriodo())
                     .getResultStream()
                     .findFirst()
                     .orElse(null)
-            ;
+                    ;
+            //System.out.println("EjbInformeIntegralDocente.getEvalaucionDocentebyPeriodo "+ evaluacion);
             if(evaluacion ==null){return ResultadoEJB.crearErroneo(3,new Evaluaciones(),"No existe la evaluación buscada en el periodo seleccionado");}
             else {return ResultadoEJB.crearCorrecto(evaluacion,"Evaluacion");}
         }catch (Exception e){ return ResultadoEJB.crearErroneo(1, "Error al obtener la evaluacion por tipo y periodo(EjbInformeIntegralDocente.getEvalaucionbyTipoPeriodo)", e, null); }
@@ -417,7 +460,7 @@ public class EjbInformeIntegralDocente {
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
-                    ;
+            ;
             if(resultados !=null & resultados.getR1()!=null){ return ResultadoEJB.crearCorrecto(resultados,"Resultados Evaluación Deseméño"); }
             else {return ResultadoEJB.crearErroneo(3,resultados,"EL docente no ha sido evaluado");}
         }catch (Exception e){
@@ -512,29 +555,132 @@ public class EjbInformeIntegralDocente {
             return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
         }
     }
+    ////////////////////////////////////////// Consultas para obtener lo nombres de las materias /////////////////////////////////////
 
     /**
      * Obtiene la lista de resultados Docente por evaluacio y periodo
      * @param docente Docente selecionado
      * @param evaluacion Evaluacion aplicada en el periodo seleccionado
+     *                   Tipo--> Docente Materia
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<String>> getMaterias(@NonNull Personal docente, @NonNull Evaluaciones evaluacion ){
+        try{
+            if(evaluacion ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"La evaluación no debe ser nulo");}
+            if(docente ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no debe ser nulo");}
+            List<EvaluacionDocentesMateriaResultados2> resultados = em.createQuery("select distinct e from EvaluacionDocentesMateriaResultados2 e where e.evaluacionDocentesMateriaResultados2PK.evaluado=:docente and e.evaluacionDocentesMateriaResultados2PK.evaluacion=:evaluacion and e.completo=true", EvaluacionDocentesMateriaResultados2.class)
+                    .setParameter("evaluacion",evaluacion.getEvaluacion())
+                    .setParameter("docente",docente.getClave())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            ;
+            if (resultados == null|| resultados.isEmpty()) { return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no fue evaluado en el periodo seleccionado");}
+            else {
+                List<String> resu= new ArrayList<>();
+                //System.out.println("EjbInformeIntegralDocente.getMaterias2 "+resultados);
+                resultados.stream().forEach(r->{
+                    resu.add(r.getEvaluacionDocentesMateriaResultados2PK().getCveMateria());
+                });
+                List<String> materias = resu.stream().distinct().collect(Collectors.toList());
+                //System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion --2"+ materias.size());
+                return ResultadoEJB.crearCorrecto(materias,"Lista materias");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
+        }
+    }
+    /**
+     * Obtiene la lista de resultados Docente por evaluacio y periodo
+     * @param docente Docente selecionado
+     * @param evaluacion Evaluacion aplicada en el periodo seleccionado
+     *                   Tipo--> Docente Materia (Cuestionario 1)
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<String>> getMaterias1(@NonNull Personal docente, @NonNull Evaluaciones evaluacion ){
         try{
             if(evaluacion ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"La evaluación no debe ser nulo");}
             if(docente ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no debe ser nulo");}
-            List<EvaluacionDocentesMateriaResultados2> resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados2 e where e.evaluacionDocentesMateriaResultados2PK.evaluado=:docente and e.evaluacionDocentesMateriaResultados2PK.evaluacion=:evaluacion and e.completo=true", EvaluacionDocentesMateriaResultados2.class)
+            List<EvaluacionDocentesMateriaResultados> resultados = em.createQuery("select distinct e from EvaluacionDocentesMateriaResultados e where e.evaluacionDocentesMateriaResultadosPK.evaluado=:docente and e.evaluacionDocentesMateriaResultadosPK.evaluacion=:evaluacion and e.completo=true", EvaluacionDocentesMateriaResultados.class)
                     .setParameter("evaluacion",evaluacion.getEvaluacion())
                     .setParameter("docente",docente.getClave())
                     .getResultStream()
                     .collect(Collectors.toList());
-                    ;
-            List<String> materias= new ArrayList<>();
-            resultados.stream().forEach(r->{materias.add(r.getEvaluacionDocentesMateriaResultados2PK().getCveMateria());});
-
-            //System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion "+ resultados.size());
-            if(resultados==null || resultados.isEmpty()){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"No tiene resultados de la evaluación a tutor");}
-            else {return ResultadoEJB.crearCorrecto(materias,"Resultados");}
+            ;
+            if (resultados == null|| resultados.isEmpty()) { return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no fue evaluado en el periodo seleccionado");}
+            else {
+                List<String> resu= new ArrayList<>();
+                //System.out.println("EjbInformeIntegralDocente.getMaterias1 "+resultados);
+                resultados.stream().forEach(r->{
+                    resu.add(r.getEvaluacionDocentesMateriaResultadosPK().getCveMateria());
+                });
+                List<String> materias = resu.stream().distinct().collect(Collectors.toList());
+                //System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion --1"+ materias.size());
+                return ResultadoEJB.crearCorrecto(materias,"Lista materias");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
+        }
+    }
+    /**
+     * Obtiene la lista de resultados Docente por evaluacio y periodo
+     * @param docente Docente selecionado
+     * @param evaluacion Evaluacion aplicada en el periodo seleccionado
+     *                   Tipo--> Docente materia (Cuestionario 2 por contingencia)
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<String>> getMaterias2(@NonNull Personal docente, @NonNull Evaluaciones evaluacion ){
+        try{
+            if(evaluacion ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"La evaluación no debe ser nulo");}
+            if(docente ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no debe ser nulo");}
+            List<EvaluacionDocentesMateriaResultados3> resultados = em.createQuery("select distinct e from EvaluacionDocentesMateriaResultados3 e where e.evaluacionDocentesMateriaResultados3PK.evaluado=:docente and e.evaluacionDocentesMateriaResultados3PK.evaluacion=:evaluacion and e.completo=true", EvaluacionDocentesMateriaResultados3.class)
+                    .setParameter("evaluacion",evaluacion.getEvaluacion())
+                    .setParameter("docente",docente.getClave())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            ;
+            if (resultados == null|| resultados.isEmpty()) { return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no fue evaluado en el periodo seleccionado");}
+            else {
+                List<String> resu= new ArrayList<>();
+                //System.out.println("EjbInformeIntegralDocente.getMaterias2 "+resultados);
+                resultados.stream().forEach(r->{
+                    resu.add(r.getEvaluacionDocentesMateriaResultados3PK().getCveMateria());
+                });
+                List<String> materias = resu.stream().distinct().collect(Collectors.toList());
+                //System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion --2"+ materias.size());
+                return ResultadoEJB.crearCorrecto(materias,"Lista materias");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
+        }
+    }
+    /**
+     * Obtiene la lista de resultados Docente por evaluacio y periodo
+     * @param docente Docente selecionado
+     * @param evaluacion Evaluacion aplicada en el periodo seleccionado
+     *                   Tipo--> Docente materia (Cuestionario 3 por contingencia)
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<String>> getMaterias3(@NonNull Personal docente, @NonNull Evaluaciones evaluacion ){
+        try{
+            if(evaluacion ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"La evaluación no debe ser nulo");}
+            if(docente ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no debe ser nulo");}
+            List<EvaluacionDocentesMateriaResultados4> resultados = em.createQuery("select distinct e from EvaluacionDocentesMateriaResultados4 e where e.evaluacionDocentesMateriaResultados4PK.evaluado=:docente and e.evaluacionDocentesMateriaResultados4PK.evaluacion=:evaluacion and e.completo=true", EvaluacionDocentesMateriaResultados4.class)
+                    .setParameter("evaluacion",evaluacion.getEvaluacion())
+                    .setParameter("docente",docente.getClave())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            ;
+            if (resultados == null|| resultados.isEmpty()) { return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no fue evaluado en el periodo seleccionado");}
+            else {
+                List<String> resu= new ArrayList<>();
+                //System.out.println("EjbInformeIntegralDocente.getMaterias3 "+resultados);
+                resultados.stream().forEach(r->{
+                    resu.add(r.getEvaluacionDocentesMateriaResultados4PK().getCveMateria());
+                });
+                List<String> materias = resu.stream().distinct().collect(Collectors.toList());
+                //System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion --3"+ materias.size());
+                return ResultadoEJB.crearCorrecto(materias,"Lista materias");
+            }
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
         }
@@ -570,6 +716,111 @@ public class EjbInformeIntegralDocente {
             return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
         }
     }
+
+    ////////////////////////////////// Consultas para obtener los resultados de la evaluacion, por evaluacion, clave materia y docente evaluado //////////////////////
+
+
+    /**
+     * Obtiene la lista de resultados Docente por evaluacio y periodo, y materia
+     * @param docente Docente selecionado
+     * @param evaluacion Evaluacion aplicada en el periodo seleccionado (Docente materia (Cuestionario 1))
+     * @param claveMateria Clave de la materia
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> getResultadosDocentebyMeteria1(@NonNull Personal docente, @NonNull Evaluaciones evaluacion, @NonNull String claveMateria ){
+        try {
+            if (evaluacion == null) { return ResultadoEJB.crearErroneo(2, new ArrayList<>(), "La evaluación no debe ser nulo"); }
+            if (docente == null) { return ResultadoEJB.crearErroneo(2, new ArrayList<>(), "El docente no debe ser nulo"); }
+            List<EvaluacionDocentesMateriaResultados> resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados e where e.evaluacionDocentesMateriaResultadosPK.evaluado=:docente and e.evaluacionDocentesMateriaResultadosPK.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultadosPK.cveMateria=:claveMateria and e.completo=true", EvaluacionDocentesMateriaResultados.class)
+                    .setParameter("evaluacion", evaluacion.getEvaluacion())
+                    .setParameter("docente", docente.getClave())
+                    .setParameter("claveMateria", claveMateria)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            ;
+            //  System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion "+ resultados.size());
+            if(resultados==null || resultados.isEmpty()){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"No tiene resultados de la evaluación a tutor");}
+            else {return ResultadoEJB.crearCorrecto(resultados,"Resultados");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
+        }
+    }
+    /**
+     * Obtiene la lista de resultados Docente por evaluacio y periodo, y materia
+     * @param docente Docente selecionado
+     * @param evaluacion Evaluacion aplicada en el periodo seleccionado (Docente materia)
+     * @param claveMateria Clave de la materia
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados2>> getResultadosDocentebyMeteria(@NonNull Personal docente, @NonNull Evaluaciones evaluacion, @NonNull String claveMateria ){
+        try {
+            if (evaluacion == null) { return ResultadoEJB.crearErroneo(2, new ArrayList<>(), "La evaluación no debe ser nulo"); }
+            if (docente == null) { return ResultadoEJB.crearErroneo(2, new ArrayList<>(), "El docente no debe ser nulo"); }
+            List<EvaluacionDocentesMateriaResultados2> resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados2 e where e.evaluacionDocentesMateriaResultados2PK.evaluado=:docente and e.evaluacionDocentesMateriaResultados2PK.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultados2PK.cveMateria=:claveMateria and e.completo=true", EvaluacionDocentesMateriaResultados2.class)
+                    .setParameter("evaluacion", evaluacion.getEvaluacion())
+                    .setParameter("docente", docente.getClave())
+                    .setParameter("claveMateria", claveMateria)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            ;
+            //  System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion "+ resultados.size());
+            if(resultados==null || resultados.isEmpty()){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"No tiene resultados de la evaluación a tutor");}
+            else {return ResultadoEJB.crearCorrecto(resultados,"Resultados");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
+        }
+    }
+    /**
+     * Obtiene la lista de resultados Docente por evaluacio y periodo, y materia
+     * @param docente Docente selecionado
+     * @param evaluacion Evaluacion aplicada en el periodo seleccionado (Docente materia (Cuestionario 2 por contingencia))
+     * @param claveMateria Clave de la materia
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados3>> getResultadosDocentebyMeteria2(@NonNull Personal docente, @NonNull Evaluaciones evaluacion, @NonNull String claveMateria ){
+        try {
+            if (evaluacion == null) { return ResultadoEJB.crearErroneo(2, new ArrayList<>(), "La evaluación no debe ser nulo"); }
+            if (docente == null) { return ResultadoEJB.crearErroneo(2, new ArrayList<>(), "El docente no debe ser nulo"); }
+            List<EvaluacionDocentesMateriaResultados3> resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados3 e where e.evaluacionDocentesMateriaResultados3PK.evaluado=:docente and e.evaluacionDocentesMateriaResultados3PK.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultados3PK.cveMateria=:claveMateria and e.completo=true", EvaluacionDocentesMateriaResultados3.class)
+                    .setParameter("evaluacion", evaluacion.getEvaluacion())
+                    .setParameter("docente", docente.getClave())
+                    .setParameter("claveMateria", claveMateria)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            ;
+            //  System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion "+ resultados.size());
+            if(resultados==null || resultados.isEmpty()){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"No tiene resultados de la evaluación a tutor");}
+            else {return ResultadoEJB.crearCorrecto(resultados,"Resultados");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
+        }
+    }
+    /**
+     * Obtiene la lista de resultados Docente por evaluacio y periodo, y materia
+     * @param docente Docente selecionado
+     * @param evaluacion Evaluacion aplicada en el periodo seleccionado (Docente materia (Cuestionario 3 por contingencia))
+     * @param claveMateria Clave de la materia
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados4>> getResultadosDocentebyMeteria3(@NonNull Personal docente, @NonNull Evaluaciones evaluacion, @NonNull String claveMateria ){
+        try {
+            if (evaluacion == null) { return ResultadoEJB.crearErroneo(2, new ArrayList<>(), "La evaluación no debe ser nulo"); }
+            if (docente == null) { return ResultadoEJB.crearErroneo(2, new ArrayList<>(), "El docente no debe ser nulo"); }
+            List<EvaluacionDocentesMateriaResultados4> resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados4 e where e.evaluacionDocentesMateriaResultados4PK.evaluado=:docente and e.evaluacionDocentesMateriaResultados4PK.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultados4PK.cveMateria=:claveMateria and e.completo=true", EvaluacionDocentesMateriaResultados4.class)
+                    .setParameter("evaluacion", evaluacion.getEvaluacion())
+                    .setParameter("docente", docente.getClave())
+                    .setParameter("claveMateria", claveMateria)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            ;
+            //System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion "+ resultados.size());
+            if(resultados==null || resultados.isEmpty()){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"No tiene resultados de la evaluación a tutor");}
+            else {return ResultadoEJB.crearCorrecto(resultados,"Resultados");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
+        }
+    }
+
     /**
      * Obtiene la lista de resultados Docente por evaluacio y periodo, y materia (Docente materrai cuestiuonario 4 por contingencia)
      * @param docente Docente selecionado
@@ -592,37 +843,14 @@ public class EjbInformeIntegralDocente {
                     .getResultStream()
                     .collect(Collectors.toList());
             ;
-        //  System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion "+ resultados.size());
+            //  System.out.println("EjbInformeIntegralDocente.getResultadosDocentebyEvaluacion "+ resultados.size());
             if(resultados==null || resultados.isEmpty()){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"No tiene resultados de la evaluación a tutor");}
             else {return ResultadoEJB.crearCorrecto(resultados,"Resultados");}
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
         }
     }
-    /**
-     * Obtiene la lista de resultados Docente por evaluacio y periodo, y materia (Docente materrai cuestiuonario 4 por contingencia)
-     * @param docente Docente selecionado
-     * @param evaluacion Evaluacion aplicada en el periodo seleccionado
-     * @param claveMateria Clave de la materia
-     * @return Resultado del proceso
-     */
-    public ResultadoEJB<List<EvaluacionDocentesMateriaResultados2>> getResultadosDocentebyMeteria(@NonNull Personal docente, @NonNull Evaluaciones evaluacion, @NonNull String claveMateria ){
-        try{
-            if(evaluacion ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"La evaluación no debe ser nulo");}
-            if(docente ==null){return ResultadoEJB.crearErroneo(2,new ArrayList<>(),"El docente no debe ser nulo");}
-            List<EvaluacionDocentesMateriaResultados2> resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados2 e where e.evaluacionDocentesMateriaResultados2PK.evaluado=:docente and e.evaluacionDocentesMateriaResultados2PK.evaluacion=:evaluacion and e.evaluacionDocentesMateriaResultados2PK.cveMateria=:claveMateria and e.completo=true", EvaluacionDocentesMateriaResultados2.class)
-                    .setParameter("evaluacion",evaluacion.getEvaluacion())
-                    .setParameter("docente",docente.getClave())
-                    .setParameter("claveMateria",claveMateria)
-                    .getResultStream()
-                    .collect(Collectors.toList());
-            ;
-            if(resultados==null || resultados.isEmpty()){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"No tiene resultados de la evaluación a tutor");}
-            else {return ResultadoEJB.crearCorrecto(resultados,"Resultados");}
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "Error al obtener los resultados de la evaluacion Tutor 1 (EjbInformeIntegralDocente.getResultadosTutor1byDocente)", e, null);
-        }
-    }
+
 
 
     /**
@@ -696,7 +924,7 @@ public class EjbInformeIntegralDocente {
             switch (tipo){
                 case TUTOR_1:
                     //Cuestionario Tutor
-                  //  System.out.println("EjbInformeIntegralDocente.getApartadosTutorbyTipo 1");
+                   // System.out.println("EjbInformeIntegralDocente.getApartadosTutorbyTipo 1");
                     a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,1.0f, "Me enteré de los servicios y programas de apoyo al estudiante a través de información que me proporcionó mi tutor (becas, cursos, programas de intercambio estudiantil, programas culturales y demás trámites escolares).", ""));
                     a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,2.0f, "El trabajo que desarrollé con mi tutor evidenció que hubo una planeación de las actividades y no una mera improvisación.", ""));
                     a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,3.0f, "El tutor llegó a la impartición de la tutoría en tiempo y forma.", ""));
@@ -706,31 +934,31 @@ public class EjbInformeIntegralDocente {
                     a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,7.0f, "Fue fácil localizar a mi tutor en las sesiones de trabajo acordadas.", ""));
                     a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,8.0f, "En general, el desempeño de mi tutor fue satisfactorio.", ""));
                     break;
-                    case TUTOR_2:
-                       // System.out.println("EjbInformeIntegralDocente.getApartadosTutorbyTipo 2");
-                        //Cuestionario Tutor (Cuestionario 2)
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,1.0f, "Me enteré de los servicios y programas de apoyo al estudiante a través de información que me proporcionó mi Tutor (becas, cursos, programas de intercambio estudiantil, programas culturales y deportivos y demás trámites escolares).", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,2.0f, "Las sesiones que desarrollé con mi Tutor evidenció que hubo una planeación de las actividades y no una improvisación.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,3.0f, "El Tutor llego a la impartición de la tutoría grupal puntualmente.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,4.0f, "Me sentí cómodo en las sesiones de tutoría por el ambiente de respeto y atención que me dio mi Tutor.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,5.0f, "El Tutor me orientó a recibir asesorías académicas cuando lo necesité. (si no fue necesario, puede contestarse como No Aplica).", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,6.0f, "El Tutor me orientó o canalizó al área correspondiente para atender problemas de tipo psicopedagógico, (si no se tuvo problemas puede contestarse como No Aplica).", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,7.0f, "El Tutor me proporcionó información de las becas que ofrece la Universidad.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,8.0f, "El Tutor me proporcionó información del servicio de enfermería que proporciona la Universidad.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,9.0f, "Fue fácil localizar a mi Tutor en las sesiones de Tutoría Individual.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,10.0f, "En general, el desempeño de mi Tutor fue.", ""));
+                case TUTOR_2:
+                    //System.out.println("EjbInformeIntegralDocente.getApartadosTutorbyTipo 2");
+                    //Cuestionario Tutor (Cuestionario 2)
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,1.0f, "Me enteré de los servicios y programas de apoyo al estudiante a través de información que me proporcionó mi Tutor (becas, cursos, programas de intercambio estudiantil, programas culturales y deportivos y demás trámites escolares).", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,2.0f, "Las sesiones que desarrollé con mi Tutor evidenció que hubo una planeación de las actividades y no una improvisación.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,3.0f, "El Tutor llego a la impartición de la tutoría grupal puntualmente.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,4.0f, "Me sentí cómodo en las sesiones de tutoría por el ambiente de respeto y atención que me dio mi Tutor.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,5.0f, "El Tutor me orientó a recibir asesorías académicas cuando lo necesité. (si no fue necesario, puede contestarse como No Aplica).", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,6.0f, "El Tutor me orientó o canalizó al área correspondiente para atender problemas de tipo psicopedagógico, (si no se tuvo problemas puede contestarse como No Aplica).", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,7.0f, "El Tutor me proporcionó información de las becas que ofrece la Universidad.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,8.0f, "El Tutor me proporcionó información del servicio de enfermería que proporciona la Universidad.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,9.0f, "Fue fácil localizar a mi Tutor en las sesiones de Tutoría Individual.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,10.0f, "En general, el desempeño de mi Tutor fue.", ""));
                     break;
-                    case TUTOR:
+                case TUTOR:
                     //Cuestionario Tutor (Cuestionario 1)
-                        //System.out.println("EjbInformeIntegralDocente.getApartadosTutorbyTipo 1-1");
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,1.0f, "Me enteré de los servicios y programas de apoyo al estudiante a través de información que me proporcionó mi tutor (becas, cursos, programas de intercambio estudiantil, programas culturales y deportivos y demás trámites escolares).", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,2.0f, "Las sesiones que desarrollé con mi tutor evidenció que hubo una planeación de las actividades y no una improvisación.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,3.0f, "El tutor llego a la impartición de la tutoría grupal puntualmente.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,4.0f, "Me sentí cómodo en las sesiones de tutoría por el ambiente de respeto y atención que me dio mi tutor.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,5.0f, "El tutor me orientó a recibir asesorías académicas cuando lo necesité.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,6.0f, "El tutor me orientó a instancias de apoyo psicopedagógicas, becas, enfermería, cuando tuve algún problema (si no se tuvo problemas puede contestarse como No Aplica).", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,7.0f, "Fue fácil localizar a mi tutor en las sesiones de Tutoría Individual.", ""));
-                        a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,8.0f, "En general, el desempeño de mi tutor fue.", ""));
+                   // System.out.println("EjbInformeIntegralDocente.getApartadosTutorbyTipo 1-1");
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,1.0f, "Me enteré de los servicios y programas de apoyo al estudiante a través de información que me proporcionó mi tutor (becas, cursos, programas de intercambio estudiantil, programas culturales y deportivos y demás trámites escolares).", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,2.0f, "Las sesiones que desarrollé con mi tutor evidenció que hubo una planeación de las actividades y no una improvisación.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,3.0f, "El tutor llego a la impartición de la tutoría grupal puntualmente.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,4.0f, "Me sentí cómodo en las sesiones de tutoría por el ambiente de respeto y atención que me dio mi tutor.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,5.0f, "El tutor me orientó a recibir asesorías académicas cuando lo necesité.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,6.0f, "El tutor me orientó a instancias de apoyo psicopedagógicas, becas, enfermería, cuando tuve algún problema (si no se tuvo problemas puede contestarse como No Aplica).", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,7.0f, "Fue fácil localizar a mi tutor en las sesiones de Tutoría Individual.", ""));
+                    a1.getPreguntas().add(new Opciones(TipoCuestionario.ETUTOR, 1.0f,8.0f, "En general, el desempeño de mi tutor fue.", ""));
                     break;
             }
             apartados.add(a1);
@@ -774,7 +1002,7 @@ public class EjbInformeIntegralDocente {
                     Apartado a5 = new Apartado(5F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
                     a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 14.0f, "¿El docente te motivó al uso de la biblioteca y/o aplicaciones tecnológicas para reforzar tus conocimientos?", ""));
                     a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 15.0f, "¿Te incentiva a participar en actividades complementarias como: seminarios, lecturas, talleres y congresos?", ""));
-                    Apartado a6 = new Apartado(7F, "PROYECCION SOCIAL", new SerializableArrayList<>());
+                    Apartado a6 = new Apartado(6F, "PROYECCION SOCIAL", new SerializableArrayList<>());
                     a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 16.0f, "¿Involucra a los estudiantes para conservar la disciplina, orden y limpieza en la Institución?", ""));
                     a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 17.0f, "¿Promueve el cuidado de los recursos naturales dentro y fuera de la Institución?", ""));
                     apartados.add(a1);
@@ -784,38 +1012,150 @@ public class EjbInformeIntegralDocente {
                     apartados.add(a5);
                     apartados.add(a6);
                     break;
-                case DOCENTE_4:
-                   // System.out.println("EjbInformeIntegralDocente.getApartadosDocentebyTipo 4");
-                    //Cuestionario Dccente Materia (Cuestionario 4 por contingencia)
-                    Apartado a7 = new Apartado(1F, "METODOLOGÍA", new SerializableArrayList<>());
-                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 1.0f, "¿Te brindó asesorías para fortalecer los contenidos que se te dificultan de la materia?", ""));
-                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 2.0f, "¿Explicó al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
-                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 3.0f, "¿Explicó con claridad los conceptos y contenidos de cada tema?", ""));
-                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 4.0f, " ¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
-                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
-                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
-                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
-                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 8.0f, "¿Se dirige con un lenguaje propio y respetuoso?", ""));
-                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
-                    Apartado a8 = new Apartado(3F, "EVALUACIÓN", new SerializableArrayList<>());
-                    a8.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
-                    a8.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
-                    a8.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta?", ""));
-                    a8.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 13.0f, "¿El docente te entregó y aclaró las evaluaciones antes de registrarlas en el sistema?", ""));
-                    Apartado a9 = new Apartado(4F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
-                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 14.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
-                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 15.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
-                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 16.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclaración de dudas?", ""));
-                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 17.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
-                    Apartado a10 = new Apartado(5F, "PROYECCION SOCIAL", new SerializableArrayList<>());
-                    a10.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 18.0f, "¿El docente asiste puntualmente a las sesiones programadas?", ""));
-                    a10.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 19.0f, "Durante la ejecución de actividades en Aula Virtual ¿Evitó en todo momento improvisar, tener tiempo muerto y/o desorganización en las sesiones?", ""));
-                    a10.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 20.0f, "¿El docente evita prácticas de favoritismo, corrupción y/o alguna otra práctica antiética?", ""));
-                    a10.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 21.0f, "En general, el desempeño del docente fue.", ""));
+                case DOCENTE_1:
+                    Apartado a7 = new Apartado(1F, "ASISTENCIA", new SerializableArrayList<>());
+                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 1.0f, "¿Asiste normalmente a clases y si falta lo justifica?", ""));
+                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 2.0f, "¿Cumple el horario de inicio y finalización de la clase?", ""));
+                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 3.0f, "¿Cumple con su labor de asesorías?", ""));
+                    a7.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 4.0f, "¿Cumple con el temario de la asignatura?", ""));
+                    Apartado a8 = new Apartado(2F, "PROGRAMA", new SerializableArrayList<>());
+                    a8.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 5.0f, "¿Explica al inicio del ciclo los objetivos, contenidos, metodología, evaluación y bibliografía de la materia?", ""));
+                    a8.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 6.0f, "¿Desarrolla en clase los contenidos del programa de la materia?", ""));
+                    a8.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 7.0f, "¿Desarrolla las clases del saber de acuerdo a la Programación Académica?", ""));
+                    a8.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 8.0f, "¿Desarrolla las clases del saber hacer  de acuerdo a la Programación Académica?", ""));
+                    Apartado a9 = new Apartado(3F, "METODOLOGÍA", new SerializableArrayList<>());
+                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 9.0f, "¿Explica con claridad los conceptos de cada tema?", ""));
+                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 10.0f, "¿Las clases están bien preparadas, organizadas y estructuradas?", ""));
+                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 11.0f, "¿Se preocupa de los problemas de aprendizaje de sus estudiantes?", ""));
+                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 12.0f, "¿Te motiva para que participes crítica y activamente en el desarrollo de la clase?", ""));
+                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 13.0f, "¿La comunicación profesor-estudiante es fluida y espontánea, creando un clima de confianza?", ""));
+                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 14.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
+                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 15.0f, "¿Es amable y respetuoso con los estudiantes?", ""));
+                    a9.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 16.0f, "¿Es accesible y está dispuesto a ayudarlos?", ""));
+                    Apartado a10 = new Apartado(4F, "EVALUACIÓN", new SerializableArrayList<>());
+                    a10.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 17.0f, "¿Desarrolla con los estudiantes las pruebas evaluativas realizadas para su mejor comprensión?", ""));
+                    a10.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 18.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
+                    a10.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 19.0f, "¿Entrega las notas en el plazo establecido?", ""));
+                    a10.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 20.0f, "¿Evalúa el  conocimiento del saber a través de un examen escrito u otra  herramienta?", ""));
+                    a10.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 21.0f, "¿Evalúa la parte del saber hacer a través de la práctica, ejercicio práctico  u otra herramienta?", ""));
+                    Apartado a11 = new Apartado(5F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
+                    a11.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 22.0f, "¿Los recursos didácticos utilizados por el docente, te ayudaron a comprender mejor la asignatura?", ""));
+                    a11.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 23.0f, "¿El docente te motivó al uso de la biblioteca y aulas virtuales para reforzar tus conocimientos?", ""));
+                    a11.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 24.0f, "¿Te incentiva a participar en actividades complementarias como: seminarios lecturas, charlas y congresos?", ""));
+                    Apartado a12 = new Apartado(6F, "INVESTIGACIÓN", new SerializableArrayList<>());
+                    a12.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 25.0f, "¿Promueve la investigación?", ""));
+                    a12.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 26.0f, "¿Involucra a los estudiantes en sus proyectos de investigación con su práctica docente?", ""));
+                    a12.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 27.0f, "¿Te motiva a participar en Congresos científico estudiantiles?", ""));
+                    Apartado a13 = new Apartado(7F, "PROYECCION SOCIAL", new SerializableArrayList<>());
+                    a13.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 28.0f, "¿Te incentiva a Participar en los eventos de extensión Universitaria?", ""));
+                    a13.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 29.0f, "¿Te motiva a participar en las charlas, platicas y sesiones de valores?", ""));
+                    a13.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 30.0f, "¿Involucra a los estudiantes para conservar el orden y limpieza del aula?", ""));
+                    a13.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 31.0f, "¿Informa a los estudiantes de todas las actividades de Proyección Social Y Extensión Universitaria?", ""));
                     apartados.add(a7);
                     apartados.add(a8);
                     apartados.add(a9);
                     apartados.add(a10);
+                    apartados.add(a11);
+                    apartados.add(a12);
+                    apartados.add(a13);
+                    break;
+                case DOCENTE_2:
+                    Apartado a14 = new Apartado(1F, "ASISTENCIA", new SerializableArrayList<>());
+                    a14.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 1.0f, "¿Te brindó asesorías para fortalecer los contenidos que se te dificultan de la materia?", ""));
+                    Apartado a15 = new Apartado(2F, "PROGRAMA", new SerializableArrayList<>());
+                    a15.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 2.0f, "¿Explica al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
+                    Apartado a16 = new Apartado(3F, "METODOLOGÍA", new SerializableArrayList<>());
+                    a16.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 3.0f, "¿Explica con claridad los conceptos de cada tema?", ""));
+                    a16.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 4.0f, "¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
+                    a16.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
+                    a16.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
+                    a16.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
+                    a16.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 8.0f, "¿Se dirige con un lenguaje que propio y respetuoso?", ""));
+                    a16.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
+                    Apartado a17 = new Apartado(4F, "EVALUACIÓN", new SerializableArrayList<>());
+                    a17.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
+                    a17.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
+                    a17.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta? ", ""));
+                    Apartado a18 = new Apartado(5F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
+                    a18.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 13.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
+                    a18.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 14.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
+                    a18.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 15.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclarar de dudas?", ""));
+                    a18.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 16.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
+                    Apartado a19 = new Apartado(7F, "PROYECCION SOCIAL", new SerializableArrayList<>());
+                    a19.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 17.0f, "Antes de la contingencia ¿Te involucró para conservar la disciplina, orden y limpieza en la Institución?", ""));
+                    a19.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 18.0f, "Antes de la contingencia ¿Promovió el cuidado de los recursos naturales dentro y fuera de la Institución?", ""));
+                    apartados.add(a14);
+                    apartados.add(a15);
+                    apartados.add(a16);
+                    apartados.add(a17);
+                    apartados.add(a18);
+                    apartados.add(a19);
+                    break;
+                case DOCENTE_3:
+                    Apartado a20 = new Apartado(1F, "ASISTENCIA", new SerializableArrayList<>());
+                    a20.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 1.0f, "¿Te brindó asesorías para fortalecer los contenidos que se te dificultan de la materia?", ""));
+                    Apartado a21 = new Apartado(2F, "PROGRAMA", new SerializableArrayList<>());
+                    a21.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 2.0f, "¿Explicó al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
+                    Apartado a22 = new Apartado(3F, "METODOLOGÍA", new SerializableArrayList<>());
+                    a22.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 3.0f, "¿Explicó con claridad los conceptos y contenidos de cada tema?", ""));
+                    a22.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 4.0f, " ¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
+                    a22.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
+                    a22.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
+                    a22.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
+                    a22.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 8.0f, "¿Se dirige con un lenguaje propio y respetuoso?", ""));
+                    a22.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
+                    Apartado a23 = new Apartado(4F, "EVALUACIÓN", new SerializableArrayList<>());
+                    a23.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
+                    a23.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
+                    a23.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta?", ""));
+                    Apartado a24 = new Apartado(5F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
+                    a24.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 13.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
+                    a24.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 14.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
+                    a24.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 15.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclaración de dudas?", ""));
+                    a24.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 16.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
+                    a24.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 17.0f, "En general, el desempeño del docente fue.", ""));
+                    Apartado a25 = new Apartado(7F, "PROYECCION SOCIAL", new SerializableArrayList<>());
+                    a25.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 18.0f, "Antes de la contingencia ¿Te involucró para conservar la disciplina, orden y limpieza en la Institución?", ""));
+                    a25.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 19.0f, "Antes de la contingencia ¿Promovió el cuidado de los recursos naturales dentro y fuera de la Institución?", ""));
+                    apartados.add(a20);
+                    apartados.add(a21);
+                    apartados.add(a22);
+                    apartados.add(a23);
+                    apartados.add(a24);
+                    apartados.add(a25);
+                    break;
+                case DOCENTE_4:
+                    // System.out.println("EjbInformeIntegralDocente.getApartadosDocentebyTipo 4");
+                    //Cuestionario Dccente Materia (Cuestionario 4 por contingencia)
+                    Apartado a26 = new Apartado(1F, "METODOLOGÍA", new SerializableArrayList<>());
+                    a26.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 1.0f, "¿Te brindó asesorías para fortalecer los contenidos que se te dificultan de la materia?", ""));
+                    a26.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 2.0f, "¿Explicó al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
+                    a26.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 3.0f, "¿Explicó con claridad los conceptos y contenidos de cada tema?", ""));
+                    a26.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 4.0f, " ¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
+                    a26.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
+                    a26.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
+                    a26.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
+                    a26.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 8.0f, "¿Se dirige con un lenguaje propio y respetuoso?", ""));
+                    a26.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
+                    Apartado a27 = new Apartado(3F, "EVALUACIÓN", new SerializableArrayList<>());
+                    a27.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
+                    a27.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
+                    a27.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta?", ""));
+                    a27.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 13.0f, "¿El docente te entregó y aclaró las evaluaciones antes de registrarlas en el sistema?", ""));
+                    Apartado a28 = new Apartado(4F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
+                    a28.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 14.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
+                    a28.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 15.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
+                    a28.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 16.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclaración de dudas?", ""));
+                    a28.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 17.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
+                    Apartado a29 = new Apartado(5F, "PROYECCION SOCIAL", new SerializableArrayList<>());
+                    a29.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 18.0f, "¿El docente asiste puntualmente a las sesiones programadas?", ""));
+                    a29.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 19.0f, "Durante la ejecución de actividades en Aula Virtual ¿Evitó en todo momento improvisar, tener tiempo muerto y/o desorganización en las sesiones?", ""));
+                    a29.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 20.0f, "¿El docente evita prácticas de favoritismo, corrupción y/o alguna otra práctica antiética?", ""));
+                    a29.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 21.0f, "En general, el desempeño del docente fue.", ""));
+                    apartados.add(a26);
+                    apartados.add(a27);
+                    apartados.add(a28);
+                    apartados.add(a29);
                     break;
             }
             return ResultadoEJB.crearCorrecto(apartados,"");
@@ -982,8 +1322,8 @@ public class EjbInformeIntegralDocente {
                         .orElse(null)
                         ;
                 //System.out.println("EjbInformeIntegralDocente.getNombreMateria SAIIUT "+ vista);
-             if(vista==null){ return ResultadoEJB.crearErroneo(3,new String(),"No se encontro la materia");}
-             else { return ResultadoEJB.crearCorrecto(vista.getNombreMateria(),"Nombre de la materia");}
+                if(vista==null){ return ResultadoEJB.crearErroneo(3,new String(),"No se encontro la materia");}
+                else { return ResultadoEJB.crearCorrecto(vista.getNombreMateria(),"Nombre de la materia");}
             }else {
                 return ResultadoEJB.crearCorrecto(materia.getIdMateria().getNombre(),"Materia");
             }
@@ -1112,7 +1452,7 @@ public class EjbInformeIntegralDocente {
      * @return Resultado del proceso
      */
 
-    public ResultadoEJB<Double> getResultadoPreguntaEvTutorbyTipo(List<EvaluacionTutoresResultados> resultados, List<EvaluacionTutoresResultados2> resultados2, List<EvaluacionTutoresResultados3> resultados3, @NonNull String numeroPregunta, @NonNull EvaluacionesTipo tipoEvaluacion){
+    public ResultadoEJB<Double> getResultadoPreguntaEvTutorbyTipo(List<EvaluacionTutoresResultados> resultados, List<EvaluacionTutoresResultados2> resultados2, List<EvaluacionTutoresResultados3> resultados3, @NonNull String numeroPregunta, @NonNull EvaluacionesTipo tipoEvaluacion,@NonNull Integer ponderacion ){
         try{
             if(numeroPregunta==null){return ResultadoEJB.crearErroneo(2,new Double(0),"El valor no debe ser nulo");}
             if(resultados==null){return ResultadoEJB.crearErroneo(2,new Double(0),"El valor no debe ser nulo");}
@@ -1122,46 +1462,93 @@ public class EjbInformeIntegralDocente {
                 case TUTOR_1:
                     switch (numeroPregunta){
                         case "1.0":
-                            promPregunta  = resultados.stream().mapToDouble(d -> d.getR1()).average().orElse(0.0);
-                            resultado = basePregunta(promPregunta,3).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
+                            if(ponderacion==1){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR1()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,3).getValor();
+                            }
+                            else if (ponderacion==2){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR1()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,5).getValor();
+                            }
+
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "2.0":
-                            promPregunta  = resultados.stream().mapToDouble(d -> d.getR2()).average().orElse(0.0);
-                            resultado = basePregunta(promPregunta,3).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
+                            if(ponderacion==1){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR2()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,3).getValor();
+                            }else if(ponderacion==2){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR2()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,5).getValor();
+                            }
+
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "3.0":
-                            promPregunta  = resultados.stream().mapToDouble(d -> d.getR3()).average().orElse(0.0);
-                            resultado = basePregunta(promPregunta,3).getValor();
+                            if(ponderacion==1){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR3()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,3).getValor();
+                            }else if(ponderacion==2){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR3()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,5).getValor();
+                            }
                             //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "4.0":
-                            promPregunta  = resultados.stream().mapToDouble(d -> d.getR4()).average().orElse(0.0);
-                            resultado = basePregunta(promPregunta,3).getValor();
+                            if(ponderacion==1){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR4()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,3).getValor();
+                            }else if(ponderacion==2){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR4()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,5).getValor();
+                            }
                             //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "5.0":
-                            promPregunta  = resultados.stream().mapToDouble(d -> d.getR5()).average().orElse(0.0);
-                            resultado = basePregunta(promPregunta,3).getValor();
+                            if(ponderacion==1){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR5()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,3).getValor();
+                            }else  if(ponderacion==2){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR5()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,5).getValor();
+                            }
                             //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "6.0":
-                            promPregunta  = resultados.stream().mapToDouble(d -> d.getR6()).average().orElse(0.0);
-                            resultado = basePregunta(promPregunta,3).getValor();
+                            if(ponderacion==1){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR6()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,3).getValor();
+                            }else  if(ponderacion==2){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR6()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,5).getValor();
+                            }
+
                             //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "7.0":
-                            promPregunta  = resultados.stream().mapToDouble(d -> d.getR7()).average().orElse(0.0);
-                            resultado = basePregunta(promPregunta,3).getValor();
+                            if(ponderacion==1){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR7()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,3).getValor();
+                            }else  if(ponderacion==2){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR7()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,5).getValor();
+                            }
                             //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "8.0":
-                            promPregunta  = resultados.stream().mapToDouble(d -> d.getR8()).average().orElse(0.0);
-                            resultado = basePregunta(promPregunta,3).getValor();
+                            if(ponderacion==1){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR8()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,3).getValor();
+                            }else if(ponderacion==2){
+                                promPregunta  = resultados.stream().mapToDouble(d -> d.getR8()).average().orElse(0.0);
+                                resultado = basePregunta(promPregunta,5).getValor();
+                            }
+
                             //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                     }
+                    return ResultadoEJB.crearCorrecto(resultado,"Valor");
+
 
                 case TUTOR:
                     switch (numeroPregunta){
@@ -1183,7 +1570,7 @@ public class EjbInformeIntegralDocente {
                         case "4.0":
                             promPregunta  = resultados2.stream().mapToDouble(d -> d.getR4()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
                             break;
                         case "5.0":
                             promPregunta  = resultados2.stream().mapToDouble(d -> d.getR5()).average().orElse(0.0);
@@ -1193,20 +1580,22 @@ public class EjbInformeIntegralDocente {
                         case "6.0":
                             promPregunta  = resultados2.stream().filter(r->r.getR6()!=0).mapToDouble(d -> d.getR6()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
                             break;
                         case "7.0":
                             promPregunta  = resultados2.stream().mapToDouble(d -> d.getR7()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
                             break;
                         case "8.0":
                             promPregunta  = resultados2.stream().mapToDouble(d -> d.getR8()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
                             break;
 
                     }
+                    return ResultadoEJB.crearCorrecto(resultado,"Valor");
+
                 case TUTOR_2:
                     switch (numeroPregunta){
                         case "1.0":
@@ -1217,7 +1606,7 @@ public class EjbInformeIntegralDocente {
                         case "2.0":
                             promPregunta  = resultados3.stream().mapToDouble(d -> d.getR2()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                          //  System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
+                            //  System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
                             break;
                         case "3.0":
                             promPregunta  = resultados3.stream().mapToDouble(d -> d.getR3()).average().orElse(0.0);
@@ -1227,11 +1616,11 @@ public class EjbInformeIntegralDocente {
                         case "4.0":
                             promPregunta  = resultados3.stream().mapToDouble(d -> d.getR4()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
                             break;
                         case "5.0":
                             //Se deben quitar los valores 0
-                           List<EvaluacionTutoresResultados3> l = resultados3.stream().filter(v->v.getR5()!=0).collect(Collectors.toList());
+                            List<EvaluacionTutoresResultados3> l = resultados3.stream().filter(v->v.getR5()!=0).collect(Collectors.toList());
                             promPregunta  = l.stream().mapToDouble(d -> d.getR5()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
                             break;
@@ -1245,24 +1634,25 @@ public class EjbInformeIntegralDocente {
                         case "7.0":
                             promPregunta  = resultados3.stream().mapToDouble(d -> d.getR7()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
                             break;
                         case "8.0":
                             promPregunta  = resultados3.stream().mapToDouble(d -> d.getR8()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
                             break;
                         case "9.0":
                             promPregunta  = resultados3.stream().mapToDouble(d -> d.getR9()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
                             break;
                         case "10.0":
                             promPregunta  = resultados3.stream().mapToDouble(d -> d.getR10()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 2 "+ resultado);
                             break;
                     }
+                    return ResultadoEJB.crearCorrecto(resultado,"Valor");
 
             }
 
@@ -1276,12 +1666,15 @@ public class EjbInformeIntegralDocente {
     /**
      * Obtiene el promedio por pregunta segun el tipo de cuestionario que se aplico
      * @param resultados Resultados Evaluacion DOcente
-     * @param resultados2 Resultados Ev Docentes (Cuestionario tipo 4 por contingencia)
+     * @param resultados1 Resultados evaluacion Docente (Docente materia cuestionario 1)
+     * @param  resultados2 Resultados evaluacion Doncete (Contingencia 2)
+     * @param  resultados3 Resultados evaluacion Doncete (Contingencia 3)
+     * @param  resultados4 Resultados evaluacion Doncete (Contingencia 4)
      * @param numeroPregunta Numero de pregunta
      * @param tipoEvaluacion Tipo de cuestionario
      * @return Resultado del proceso
      */
-    public ResultadoEJB<Double> getResultadoPreguntaDocentebyTipo(List<EvaluacionDocentesMateriaResultados2> resultados, List<EvaluacionDocentesMateriaResultados5> resultados2, @NonNull String numeroPregunta, @NonNull EvaluacionesTipo tipoEvaluacion){
+    public ResultadoEJB<Double> getResultadoPreguntaDocentebyTipo(List<EvaluacionDocentesMateriaResultados2> resultados,List<EvaluacionDocentesMateriaResultados> resultados1,List<EvaluacionDocentesMateriaResultados3> resultados2,List<EvaluacionDocentesMateriaResultados4> resultados3, List<EvaluacionDocentesMateriaResultados5> resultados4, @NonNull String numeroPregunta, @NonNull EvaluacionesTipo tipoEvaluacion){
         try{
             if(numeroPregunta==null){return ResultadoEJB.crearErroneo(2,new Double(0),"El valor no debe ser nulo");}
             if(resultados==null){return ResultadoEJB.crearErroneo(2,new Double(0),"El valor no debe ser nulo");}
@@ -1289,6 +1682,7 @@ public class EjbInformeIntegralDocente {
             Double promPregunta;
             switch (tipoEvaluacion){
                 case DOCENTE:
+                    //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaDocentebyTipo");
                     switch (numeroPregunta){
                         case "1.0":
                             promPregunta  = resultados.stream().mapToDouble(d -> d.getR1()).average().orElse(0.0);
@@ -1333,7 +1727,7 @@ public class EjbInformeIntegralDocente {
                         case "11.0":
                             promPregunta  = resultados.stream().mapToDouble(d -> d.getR11()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
-                           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "12.0":
                             promPregunta  = resultados.stream().mapToDouble(d -> d.getR12()).average().orElse(0.0);
@@ -1362,8 +1756,146 @@ public class EjbInformeIntegralDocente {
                             resultado = basePregunta(promPregunta,5).getValor();
                             break;
                     }
+                    return ResultadoEJB.crearCorrecto(resultado,"Valor");
 
-                case DOCENTE_4:
+                case DOCENTE_1:
+                   // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaDocentebyTipo 1");
+
+                    switch (numeroPregunta){
+                        case "1.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR1()).average().orElse(0.0);
+                            //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaDocentebyTipo PREGUNTA 1 " + promPregunta );
+
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "2.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR2()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "3.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR3()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "4.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR4()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "5.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR5()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "6.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR6()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "7.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR7()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "8.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR8()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "9.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR9()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "10.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR10()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "11.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR11()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
+                            break;
+                        case "12.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR12()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
+                            break;
+                        case "13.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR13()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
+                            break;
+                        case "14.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR14()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "15.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR15()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "16.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR16()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "17.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR17()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "18.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR18()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "19.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR19()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "20.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR20()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "21.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR21()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "22.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR22()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "23.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR23()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "24.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR24()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "25.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR25()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "26.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR26()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "27.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR27()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "28.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR28()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "29.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR29()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "30.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR30()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "31.0":
+                            promPregunta  = resultados1.stream().mapToDouble(d -> d.getR31()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                    }
+                    return ResultadoEJB.crearCorrecto(resultado,"Valor");
+
+                case DOCENTE_2:
+                    //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaDocentebyTipo 2");
                     switch (numeroPregunta){
                         case "1.0":
                             promPregunta  = resultados2.stream().mapToDouble(d -> d.getR1()).average().orElse(0.0);
@@ -1408,14 +1940,17 @@ public class EjbInformeIntegralDocente {
                         case "11.0":
                             promPregunta  = resultados2.stream().mapToDouble(d -> d.getR11()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "12.0":
                             promPregunta  = resultados2.stream().mapToDouble(d -> d.getR12()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
+                            //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "13.0":
                             promPregunta  = resultados2.stream().mapToDouble(d -> d.getR13()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
+                            //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
                             break;
                         case "14.0":
                             promPregunta  = resultados2.stream().mapToDouble(d -> d.getR14()).average().orElse(0.0);
@@ -1437,21 +1972,186 @@ public class EjbInformeIntegralDocente {
                             promPregunta  = resultados2.stream().mapToDouble(d -> d.getR18()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
                             break;
+                    }
+                    return ResultadoEJB.crearCorrecto(resultado,"Valor");
+
+                case DOCENTE_3:
+                    //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaDocentebyTipo 3-1 " + resultados3 +" Numero pregunta "+ numeroPregunta);
+                    switch (numeroPregunta){
+                        case "1.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR1()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaDocentebyTipo Pregunat 1 "+ promPregunta+" Resultado " + resultado);
+                            break;
+                        case "2.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR2()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "3.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR3()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "4.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR4()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "5.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR5()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "6.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR6()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "7.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR7()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "8.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR8()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "9.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR9()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "10.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR10()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "11.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR11()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
+                            break;
+                        case "12.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR12()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
+                            break;
+                        case "13.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR13()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            //System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaEvTutorbyTipo 1 "+ resultado);
+                            break;
+                        case "14.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR14()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "15.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR15()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "16.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR16()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "17.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR17()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "18.0":
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR18()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
                         case "19.0":
-                            promPregunta  = resultados2.stream().mapToDouble(d -> d.getR19()).average().orElse(0.0);
-                            resultado = basePregunta(promPregunta,5).getValor();
-                            break;
-                        case "20.0":
-                            promPregunta  = resultados2.stream().mapToDouble(d -> d.getR20()).average().orElse(0.0);
-                            resultado = basePregunta(promPregunta,5).getValor();
-                            break;
-                        case "21.0":
-                            promPregunta  = resultados2.stream().mapToDouble(d -> d.getR21()).average().orElse(0.0);
+                            promPregunta  = resultados3.stream().mapToDouble(d -> d.getR19()).average().orElse(0.0);
                             resultado = basePregunta(promPregunta,5).getValor();
                             break;
                     }
-            }
+                    return ResultadoEJB.crearCorrecto(resultado,"Valor");
 
+                case DOCENTE_4:
+                    switch (numeroPregunta){
+                        case "1.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR1()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "2.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR2()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "3.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR3()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "4.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR4()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "5.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR5()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "6.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR6()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "7.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR7()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "8.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR8()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "9.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR9()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "10.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR10()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "11.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR11()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "12.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR12()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "13.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR13()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "14.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR14()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "15.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR15()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "16.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR16()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "17.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR17()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "18.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR18()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "19.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR19()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "20.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR20()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                        case "21.0":
+                            promPregunta  = resultados4.stream().mapToDouble(d -> d.getR21()).average().orElse(0.0);
+                            resultado = basePregunta(promPregunta,5).getValor();
+                            break;
+                    }
+                    return ResultadoEJB.crearCorrecto(resultado,"Valor");
+
+            }
+           // System.out.println("EjbInformeIntegralDocente.getResultadoPreguntaDocentebyTipo Resultado "+ resultado);
             return ResultadoEJB.crearCorrecto(resultado,"Valor");
 
         }catch (Exception e){
@@ -1533,52 +2233,161 @@ public class EjbInformeIntegralDocente {
      * @param resultados2 Resultados ev4 (Docente Materia Cuestionario 4 por contingencia)
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> packResultadosMateria (@NonNull List<Apartado> apartados, @NonNull EvaluacionesTipo tipoEv, @NonNull Evaluaciones evaluacion, @NonNull Personal docente, List<String> resultados1, List<String> resultados2){
+    public ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> packResultadosMateria (@NonNull List<Apartado> apartados, @NonNull EvaluacionesTipo tipoEv, @NonNull Evaluaciones evaluacion, @NonNull Personal docente, List<String> resultados1, List<String> resultados2,List<String> resultados3,List<String> resultados4,List<String> resultados5){
         try{
             List<DtoInformeIntegralDocente.ResultadosMateria> resultadosMateriaList = new ArrayList<>();
             if(tipoEv==null){return ResultadoEJB.crearErroneo(2,resultadosMateriaList,"El tipo de evaluación no debe ser nulo");}
             if(apartados==null){return ResultadoEJB.crearErroneo(2,resultadosMateriaList,"Los apartados no debe ser nulo");}
             switch (tipoEv){
                 case DOCENTE:
-                    //System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+ tipoEv);
-                   resultados1.stream().forEach(r->{
-                       //Obtiene los resultados segun la clave de la materia
-                       //Obtiene el nombre de la materia
-                       DtoInformeIntegralDocente.ResultadosMateria resultadosMateria = new DtoInformeIntegralDocente.ResultadosMateria(new String(),new String(),new Double(0.0),new String(),new ArrayList<>());
-                       resultadosMateria.setClaveMateria(r);
-                       resultadosMateria.setNombreMateria(getNombreMateria(r).getValor());
-                       ResultadoEJB<List<EvaluacionDocentesMateriaResultados2>> resultados = getResultadosDocentebyMeteria(docente,evaluacion,r);
-                       List<DtoInformeIntegralDocente.ResultadoApartado> resultadosApartados = new ArrayList<>();
-                       apartados.stream().forEach(a->{
-                           List<DtoInformeIntegralDocente.ResultadoPregunta> resultadosPreguntas = new ArrayList<>();
-                           //Apartados
-                           DtoInformeIntegralDocente.ResultadoApartado apartado = new DtoInformeIntegralDocente.ResultadoApartado(new String(),new ArrayList<>(),new Double(0),new String());
-                           apartado.setNombreApartado(a.getContenido());
-                           a.getPreguntas().stream().forEach(p->{
-                               //Preguntas
-                               DtoInformeIntegralDocente.ResultadoPregunta pregunta = new DtoInformeIntegralDocente.ResultadoPregunta(new String(),new String(),new Double(0),new String());
-                               pregunta.setNumeroPregunta(p.getNumero().toString());
-                               pregunta.setPregunta(p.getTitulo());
-                               pregunta.setPromedio(getResultadoPreguntaDocentebyTipo(resultados.getValor(),new ArrayList<>(),p.getNumero().toString(), EvaluacionesTipo.DOCENTE).getValor());
-                               pregunta.setStyle(getStilobyPromedio(pregunta.getPromedio()).getValor());
-                               resultadosPreguntas.add(pregunta);
-                           });
-                           apartado.setResultadoPreguntas(resultadosPreguntas);
-                           apartado.setPromedioApartado(promedioApartado(resultadosPreguntas).getValor());
-                           apartado.setStyle(getStilobyPromedio(apartado.getPromedioApartado()).getValor());
-                           resultadosApartados.add(apartado);
-                       });
-                       resultadosMateria.setResultados(resultadosApartados);
-                       resultadosMateria.setPromedioMateria(promedioEvaluacion(resultadosApartados).getValor());
-                       resultadosMateria.setStyle(getStilobyPromedio(resultadosMateria.getPromedioMateria()).getValor());
-                       resultadosMateriaList.add(resultadosMateria);
-                   });
+                    //System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+ tipoEv+ " Reusltados" + resultados2);
+                    resultados1.stream().forEach(r->{
+                        // System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+r);
+                        //Obtiene los resultados segun la clave de la materia
+                        //Obtiene el nombre de la materia
+                        DtoInformeIntegralDocente.ResultadosMateria resultadosMateria = new DtoInformeIntegralDocente.ResultadosMateria(new String(),new String(),new Double(0.0),new String(),new ArrayList<>());
+                        resultadosMateria.setClaveMateria(r);
+                        resultadosMateria.setNombreMateria(getNombreMateria(r).getValor());
+                        ResultadoEJB<List<EvaluacionDocentesMateriaResultados2>> resultados = getResultadosDocentebyMeteria(docente,evaluacion,r);
+                        List<DtoInformeIntegralDocente.ResultadoApartado> resultadosApartados = new ArrayList<>();
+                        apartados.stream().forEach(a->{
+                            List<DtoInformeIntegralDocente.ResultadoPregunta> resultadosPreguntas = new ArrayList<>();
+                            //Apartados
+                            DtoInformeIntegralDocente.ResultadoApartado apartado = new DtoInformeIntegralDocente.ResultadoApartado(new String(),new ArrayList<>(),new Double(0),new String());
+                            apartado.setNombreApartado(a.getContenido());
+                            a.getPreguntas().stream().forEach(p->{
+                                //Preguntas
+                                DtoInformeIntegralDocente.ResultadoPregunta pregunta = new DtoInformeIntegralDocente.ResultadoPregunta(new String(),new String(),new Double(0),new String());
+                                pregunta.setNumeroPregunta(p.getNumero().toString());
+                                pregunta.setPregunta(p.getTitulo());
+                                pregunta.setPromedio(getResultadoPreguntaDocentebyTipo(resultados.getValor(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),p.getNumero().toString(), EvaluacionesTipo.DOCENTE).getValor());
+                                pregunta.setStyle(getStilobyPromedio(pregunta.getPromedio()).getValor());
+                                resultadosPreguntas.add(pregunta);
+                            });
+                            apartado.setResultadoPreguntas(resultadosPreguntas);
+                            apartado.setPromedioApartado(promedioApartado(resultadosPreguntas).getValor());
+                            apartado.setStyle(getStilobyPromedio(apartado.getPromedioApartado()).getValor());
+                            resultadosApartados.add(apartado);
+                        });
+                        resultadosMateria.setResultados(resultadosApartados);
+                        resultadosMateria.setPromedioMateria(promedioEvaluacion(resultadosApartados).getValor());
+                        resultadosMateria.setStyle(getStilobyPromedio(resultadosMateria.getPromedioMateria()).getValor());
+                        resultadosMateriaList.add(resultadosMateria);
+                    });
                     break;
-
-                case DOCENTE_4:
+                case DOCENTE_1:
                     //System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+ tipoEv+ " Reusltados" + resultados2);
                     resultados2.stream().forEach(r->{
+                        // System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+r);
+                        //Obtiene los resultados segun la clave de la materia
+                        //Obtiene el nombre de la materia
+                        DtoInformeIntegralDocente.ResultadosMateria resultadosMateria = new DtoInformeIntegralDocente.ResultadosMateria(new String(),new String(),new Double(0.0),new String(),new ArrayList<>());
+                        resultadosMateria.setClaveMateria(r);
+                        resultadosMateria.setNombreMateria(getNombreMateria(r).getValor());
+                        ResultadoEJB<List<EvaluacionDocentesMateriaResultados>> resultados = getResultadosDocentebyMeteria1(docente,evaluacion,r);
+                        List<DtoInformeIntegralDocente.ResultadoApartado> resultadosApartados = new ArrayList<>();
+                        apartados.stream().forEach(a->{
+                            List<DtoInformeIntegralDocente.ResultadoPregunta> resultadosPreguntas = new ArrayList<>();
+                            //Apartados
+                            DtoInformeIntegralDocente.ResultadoApartado apartado = new DtoInformeIntegralDocente.ResultadoApartado(new String(),new ArrayList<>(),new Double(0),new String());
+                            apartado.setNombreApartado(a.getContenido());
+                            a.getPreguntas().stream().forEach(p->{
+                                //Preguntas
+                                DtoInformeIntegralDocente.ResultadoPregunta pregunta = new DtoInformeIntegralDocente.ResultadoPregunta(new String(),new String(),new Double(0),new String());
+                                pregunta.setNumeroPregunta(p.getNumero().toString());
+                                pregunta.setPregunta(p.getTitulo());
+                                pregunta.setPromedio(getResultadoPreguntaDocentebyTipo(new ArrayList<>(),resultados.getValor(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),p.getNumero().toString(), EvaluacionesTipo.DOCENTE_1).getValor());
+                                pregunta.setStyle(getStilobyPromedio(pregunta.getPromedio()).getValor());
+                                resultadosPreguntas.add(pregunta);
+                            });
+                            apartado.setResultadoPreguntas(resultadosPreguntas);
+                            apartado.setPromedioApartado(promedioApartado(resultadosPreguntas).getValor());
+                            apartado.setStyle(getStilobyPromedio(apartado.getPromedioApartado()).getValor());
+                            resultadosApartados.add(apartado);
+                        });
+                        resultadosMateria.setResultados(resultadosApartados);
+                        resultadosMateria.setPromedioMateria(promedioEvaluacion(resultadosApartados).getValor());
+                        resultadosMateria.setStyle(getStilobyPromedio(resultadosMateria.getPromedioMateria()).getValor());
+                        resultadosMateriaList.add(resultadosMateria);
+                    });
+                    break;
+                case DOCENTE_2:
+                    //System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+ tipoEv+ " Reusltados" + resultados2);
+                    resultados3.stream().forEach(r->{
+                        // System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+r);
+                        //Obtiene los resultados segun la clave de la materia
+                        //Obtiene el nombre de la materia
+                        DtoInformeIntegralDocente.ResultadosMateria resultadosMateria = new DtoInformeIntegralDocente.ResultadosMateria(new String(),new String(),new Double(0.0),new String(),new ArrayList<>());
+                        resultadosMateria.setClaveMateria(r);
+                        resultadosMateria.setNombreMateria(getNombreMateria(r).getValor());
+                        ResultadoEJB<List<EvaluacionDocentesMateriaResultados3>> resultados = getResultadosDocentebyMeteria2(docente,evaluacion,r);
+                        List<DtoInformeIntegralDocente.ResultadoApartado> resultadosApartados = new ArrayList<>();
+                        apartados.stream().forEach(a->{
+                            List<DtoInformeIntegralDocente.ResultadoPregunta> resultadosPreguntas = new ArrayList<>();
+                            //Apartados
+                            DtoInformeIntegralDocente.ResultadoApartado apartado = new DtoInformeIntegralDocente.ResultadoApartado(new String(),new ArrayList<>(),new Double(0),new String());
+                            apartado.setNombreApartado(a.getContenido());
+                            a.getPreguntas().stream().forEach(p->{
+                                //Preguntas
+                                DtoInformeIntegralDocente.ResultadoPregunta pregunta = new DtoInformeIntegralDocente.ResultadoPregunta(new String(),new String(),new Double(0),new String());
+                                pregunta.setNumeroPregunta(p.getNumero().toString());
+                                pregunta.setPregunta(p.getTitulo());
+                                pregunta.setPromedio(getResultadoPreguntaDocentebyTipo(new ArrayList<>(),new ArrayList<>(),resultados.getValor(),new ArrayList<>(),new ArrayList<>(),p.getNumero().toString(), EvaluacionesTipo.DOCENTE_2).getValor());
+                                pregunta.setStyle(getStilobyPromedio(pregunta.getPromedio()).getValor());
+                                resultadosPreguntas.add(pregunta);
+                            });
+                            apartado.setResultadoPreguntas(resultadosPreguntas);
+                            apartado.setPromedioApartado(promedioApartado(resultadosPreguntas).getValor());
+                            apartado.setStyle(getStilobyPromedio(apartado.getPromedioApartado()).getValor());
+                            resultadosApartados.add(apartado);
+                        });
+                        resultadosMateria.setResultados(resultadosApartados);
+                        resultadosMateria.setPromedioMateria(promedioEvaluacion(resultadosApartados).getValor());
+                        resultadosMateria.setStyle(getStilobyPromedio(resultadosMateria.getPromedioMateria()).getValor());
+                        resultadosMateriaList.add(resultadosMateria);
+                    });
+                    break;
+                case DOCENTE_3:
+                  //  System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+ tipoEv+ " Reusltados" + resultados4);
+                    resultados4.stream().forEach(r->{
                        // System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+r);
+                        //Obtiene los resultados segun la clave de la materia
+                        //Obtiene el nombre de la materia
+                        DtoInformeIntegralDocente.ResultadosMateria resultadosMateria = new DtoInformeIntegralDocente.ResultadosMateria(new String(),new String(),new Double(0.0),new String(),new ArrayList<>());
+                        resultadosMateria.setClaveMateria(r);
+                        resultadosMateria.setNombreMateria(getNombreMateria(r).getValor());
+                        ResultadoEJB<List<EvaluacionDocentesMateriaResultados4>> resultados = getResultadosDocentebyMeteria3(docente,evaluacion,r);
+                        List<DtoInformeIntegralDocente.ResultadoApartado> resultadosApartados = new ArrayList<>();
+                        apartados.stream().forEach(a->{
+                            List<DtoInformeIntegralDocente.ResultadoPregunta> resultadosPreguntas = new ArrayList<>();
+                            //Apartados
+                            DtoInformeIntegralDocente.ResultadoApartado apartado = new DtoInformeIntegralDocente.ResultadoApartado(new String(),new ArrayList<>(),new Double(0),new String());
+                            apartado.setNombreApartado(a.getContenido());
+                            a.getPreguntas().stream().forEach(p->{
+                                //Preguntas
+                                DtoInformeIntegralDocente.ResultadoPregunta pregunta = new DtoInformeIntegralDocente.ResultadoPregunta(new String(),new String(),new Double(0),new String());
+                                pregunta.setNumeroPregunta(p.getNumero().toString());
+                                pregunta.setPregunta(p.getTitulo());
+                                pregunta.setPromedio(getResultadoPreguntaDocentebyTipo(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),resultados.getValor(),new ArrayList<>(),p.getNumero().toString(), EvaluacionesTipo.DOCENTE_3).getValor());
+                                //System.out.println("EjbInformeIntegralDocente.packResultadosMateria -- "+getResultadoPreguntaDocentebyTipo(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),resultados.getValor(),new ArrayList<>(),p.getNumero().toString(), EvaluacionesTipo.DOCENTE_3).getValor());
+                                pregunta.setStyle(getStilobyPromedio(pregunta.getPromedio()).getValor());
+                                resultadosPreguntas.add(pregunta);
+                            });
+                            apartado.setResultadoPreguntas(resultadosPreguntas);
+                            apartado.setPromedioApartado(promedioApartado(resultadosPreguntas).getValor());
+                            apartado.setStyle(getStilobyPromedio(apartado.getPromedioApartado()).getValor());
+                            resultadosApartados.add(apartado);
+                        });
+                        resultadosMateria.setResultados(resultadosApartados);
+                        resultadosMateria.setPromedioMateria(promedioEvaluacion(resultadosApartados).getValor());
+                        resultadosMateria.setStyle(getStilobyPromedio(resultadosMateria.getPromedioMateria()).getValor());
+                        resultadosMateriaList.add(resultadosMateria);
+                    });
+                    break;
+                case DOCENTE_4:
+                    //System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+ tipoEv+ " Reusltados" + resultados2);
+                    resultados5.stream().forEach(r->{
+                        // System.out.println("EjbInformeIntegralDocente.packResultadosMateria "+r);
                         //Obtiene los resultados segun la clave de la materia
                         //Obtiene el nombre de la materia
                         DtoInformeIntegralDocente.ResultadosMateria resultadosMateria = new DtoInformeIntegralDocente.ResultadosMateria(new String(),new String(),new Double(0.0),new String(),new ArrayList<>());
@@ -1596,7 +2405,7 @@ public class EjbInformeIntegralDocente {
                                 DtoInformeIntegralDocente.ResultadoPregunta pregunta = new DtoInformeIntegralDocente.ResultadoPregunta(new String(),new String(),new Double(0),new String());
                                 pregunta.setNumeroPregunta(p.getNumero().toString());
                                 pregunta.setPregunta(p.getTitulo());
-                                pregunta.setPromedio(getResultadoPreguntaDocentebyTipo(new ArrayList<>(),resultados.getValor(),p.getNumero().toString(), EvaluacionesTipo.DOCENTE_4).getValor());
+                                pregunta.setPromedio(getResultadoPreguntaDocentebyTipo(new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),resultados.getValor(),p.getNumero().toString(), EvaluacionesTipo.DOCENTE_4).getValor());
                                 pregunta.setStyle(getStilobyPromedio(pregunta.getPromedio()).getValor());
                                 resultadosPreguntas.add(pregunta);
                             });
@@ -1655,13 +2464,13 @@ public class EjbInformeIntegralDocente {
                             pregunta.setNumeroPregunta(p.getNumero().toString());
                             pregunta.setPromedio(getResultadoPreguntaEvDes(resResultados.getValor(),p.getNumero().toString()).getValor());
                             pregunta.setStyle(getStilobyPromedio(pregunta.getPromedio()).getValor());
-                           // System.out.println("EjbInformeIntegralDocente.packEvDes ID:  "+ p.getNumero() +"  ---Titulo:        " +p.getTitulo()+ "Resultado "+pregunta.getPromedio());
+                            // System.out.println("EjbInformeIntegralDocente.packEvDes ID:  "+ p.getNumero() +"  ---Titulo:        " +p.getTitulo()+ "Resultado "+pregunta.getPromedio());
                             resultadosPreguntas.add(pregunta);
                         });
                         apartado.setResultadoPreguntas(resultadosPreguntas);
                         apartado.setPromedioApartado(promedioApartado(resultadosPreguntas).getValor());
                         apartado.setStyle(getStilobyPromedio(apartado.getPromedioApartado()).getValor());
-                       resultadosApartados.add(apartado);
+                        resultadosApartados.add(apartado);
                     });
                     dto.setResultados(resultadosApartados);
                     dto.setPromedio(promedioEvaluacion(resultadosApartados).getValor());
@@ -1695,16 +2504,16 @@ public class EjbInformeIntegralDocente {
             if(resEv.getCorrecto()){
                 //Obtiene los resultados de la evalución
                 ResultadoEJB<List<EvaluacionParesAcademicos>> resResultados = getResultadosEvParesAcademicos(resEv.getValor(),docente);
-              //  System.out.println("EjbInformeIntegralDocente.packEvPares 1");
+                //  System.out.println("EjbInformeIntegralDocente.packEvPares 1");
                 if(resResultados.getCorrecto()){
                     List<Apartado> apartados= new ArrayList<>();
                     //Obtiene el apartado segun el perfil del docente (PA o PTC)
                     if(docente.getCategoriaOperativa().getCategoria()==32){apartados = ejbPares.getApartadosPTC();}
                     if(docente.getCategoriaOperativa().getCategoria()==(30)){apartados = ejbPares.getApartadosPA();}
-                   // System.out.println("EjbInformeIntegralDocente.packEvPares 4" + apartados);
+                    // System.out.println("EjbInformeIntegralDocente.packEvPares 4" + apartados);
                     List<DtoInformeIntegralDocente.ResultadoApartado> resultadosApartados = new ArrayList<>();
                     apartados.stream().forEach(a->{
-                       // System.out.println("EjbInformeIntegralDocente.packEvPares "+ a.getContenido());
+                        // System.out.println("EjbInformeIntegralDocente.packEvPares "+ a.getContenido());
                         DtoInformeIntegralDocente.ResultadoApartado apartado = new DtoInformeIntegralDocente.ResultadoApartado(new String(),new ArrayList<>(),new Double(0),new String());
                         apartado.setNombreApartado(a.getContenido());
                         List<DtoInformeIntegralDocente.ResultadoPregunta>resultadosPreguntas = new ArrayList<>();
@@ -1749,11 +2558,12 @@ public class EjbInformeIntegralDocente {
 
             //Obtiene la evaluacion por periodo
             ResultadoEJB<Evaluaciones> resEv = getEvalaucionTutorbyPeriodo(periodo);
-           // System.out.println("EjbInformeIntegralDocente.packEvTutor Evaluacion "+ resEv.getValor() +"Tipo "+ resEv.getValor().getTipo());
+            // System.out.println("EjbInformeIntegralDocente.packEvTutor Evaluacion "+ resEv.getValor() +"Tipo "+ resEv.getValor().getTipo());
             if(resEv.getCorrecto()){
                 //Obtiene los resultados de la evalución tutor
                 if(resEv.getValor().getTipo().equals(EvaluacionesTipo.TUTOR_1.getLabel())){
                     ResultadoEJB<List<EvaluacionTutoresResultados>> resResultados = getResultadosTutor1byDocente(docente,resEv.getValor());
+                    //System.out.println("EjbInformeIntegralDocente.packEvTutor "+ resResultados.getValor());
                     if(resResultados.getCorrecto()){
                         List<EvaluacionTutoresResultados> resultadosCompletos = new ArrayList<>();
                         //Debe tomar sólo los los resultados completos
@@ -1764,22 +2574,25 @@ public class EjbInformeIntegralDocente {
                                         resultadosCompletos.add(r);
                                     }
                                 }
-                                );
+                        );
+                        //ystem.out.println("EjbInformeIntegralDocente.packEvTutor Completoa"+ resultadosCompletos.size());
                         //Apartados
                         List<Apartado>apartados = getApartadosTutorbyTipo(EvaluacionesTipo.TUTOR_1).getValor();
                         //Valor 4 en pregunta 5 es No aplica, por lo tanto no debe considerarse para el promedio por pregunta
                         List<DtoInformeIntegralDocente.ResultadoApartado> resultadosApartados = new ArrayList<>();
                         apartados.stream().forEach(a->{
-                            //System.out.println("EjbInformeIntegralDocente.packEvTutor "+ a.getContenido());
+                           // System.out.println("EjbInformeIntegralDocente.packEvTutor "+ a.getContenido());
                             DtoInformeIntegralDocente.ResultadoApartado apartado = new DtoInformeIntegralDocente.ResultadoApartado(new String(),new ArrayList<>(),new Double(0),new String());
                             apartado.setNombreApartado(a.getContenido());
                             List<DtoInformeIntegralDocente.ResultadoPregunta>resultadosPreguntas = new ArrayList<>();
                             a.getPreguntas().stream().forEach(p->{
+                                Integer ponderacion=new Integer(0);
+                                if(resEv.getValor().getEvaluacion()>23){ponderacion=2;}else {ponderacion=1;}
                                 DtoInformeIntegralDocente.ResultadoPregunta pregunta = new DtoInformeIntegralDocente.ResultadoPregunta(new String(),new String(),new Double(0),new String());
                                 pregunta.setNumeroPregunta(p.getId());
                                 pregunta.setPregunta(p.getTitulo());
                                 pregunta.setNumeroPregunta(p.getNumero().toString());
-                                pregunta.setPromedio(getResultadoPreguntaEvTutorbyTipo(resultadosCompletos,new ArrayList<>(),new ArrayList<>(),p.getNumero().toString(), EvaluacionesTipo.TUTOR_1).getValor());
+                                pregunta.setPromedio(getResultadoPreguntaEvTutorbyTipo(resultadosCompletos,new ArrayList<>(),new ArrayList<>(),p.getNumero().toString(), EvaluacionesTipo.TUTOR_1,ponderacion).getValor());
                                 pregunta.setStyle(getStilobyPromedio(pregunta.getPromedio()).getValor());
                                 //System.out.println("EjbInformeIntegralDocente.packEvTutor ID:  "+ p.getNumero() +"  ---Titulo:        " +p.getTitulo()+ "Resultado "+pregunta.getPromedio());
                                 resultadosPreguntas.add(pregunta);
@@ -1819,7 +2632,7 @@ public class EjbInformeIntegralDocente {
                                 pregunta.setNumeroPregunta(p.getId());
                                 pregunta.setPregunta(p.getTitulo());
                                 pregunta.setNumeroPregunta(p.getNumero().toString());
-                                pregunta.setPromedio(getResultadoPreguntaEvTutorbyTipo(new ArrayList<>(),resResultados.getValor(),new ArrayList<>(),p.getNumero().toString(), EvaluacionesTipo.TUTOR).getValor());
+                                pregunta.setPromedio(getResultadoPreguntaEvTutorbyTipo(new ArrayList<>(),resResultados.getValor(),new ArrayList<>(),p.getNumero().toString(), EvaluacionesTipo.TUTOR,new Integer(0)).getValor());
                                 pregunta.setStyle(getStilobyPromedio(pregunta.getPromedio()).getValor());
                                 //System.out.println("EjbInformeIntegralDocente.packEvTutor ID:  "+ p.getNumero() +"  ---Titulo:        " +p.getTitulo()+ "Resultado "+pregunta.getPromedio());
                                 resultadosPreguntas.add(pregunta);
@@ -1834,7 +2647,7 @@ public class EjbInformeIntegralDocente {
                         dto.setStyle(getStilobyPromedio(dto.getPromedio()).getValor());
                         dto.setEsTutor(Boolean.TRUE);
                     }else {
-                       // System.out.println("EjbInformeIntegralDocente.packEvTutor Resultados NO-- ");
+                        // System.out.println("EjbInformeIntegralDocente.packEvTutor Resultados NO-- ");
 
                         //No fue tutor en ese periodo
                         dto.setEsTutor(Boolean.FALSE);
@@ -1851,7 +2664,7 @@ public class EjbInformeIntegralDocente {
                         //System.out.println("EjbInformeIntegralDocente.packEvTutor " +apartados.size());
                         List<DtoInformeIntegralDocente.ResultadoApartado> resultadosApartados = new ArrayList<>();
                         apartados.stream().forEach(a->{
-                           // System.out.println("EjbInformeIntegralDocente.packEvTutor "+ a.getContenido());
+                            // System.out.println("EjbInformeIntegralDocente.packEvTutor "+ a.getContenido());
                             DtoInformeIntegralDocente.ResultadoApartado apartado = new DtoInformeIntegralDocente.ResultadoApartado(new String(),new ArrayList<>(),new Double(0),new String());
                             apartado.setNombreApartado(a.getContenido());
                             List<DtoInformeIntegralDocente.ResultadoPregunta>resultadosPreguntas = new ArrayList<>();
@@ -1860,8 +2673,9 @@ public class EjbInformeIntegralDocente {
                                 pregunta.setNumeroPregunta(p.getId());
                                 pregunta.setPregunta(p.getTitulo());
                                 pregunta.setNumeroPregunta(p.getNumero().toString());
-                                pregunta.setPromedio(getResultadoPreguntaEvTutorbyTipo(new ArrayList<>(),new ArrayList<>(),resResultados.getValor(),p.getNumero().toString(), EvaluacionesTipo.TUTOR_2).getValor());
+                                pregunta.setPromedio(getResultadoPreguntaEvTutorbyTipo(new ArrayList<>(),new ArrayList<>(),resResultados.getValor(),p.getNumero().toString(), EvaluacionesTipo.TUTOR_2,new Integer(0)).getValor());
                                 pregunta.setStyle(getStilobyPromedio(pregunta.getPromedio()).getValor());
+
                                 //System.out.println("EjbInformeIntegralDocente.packEvTutor ID:  "+ p.getNumero() +"  ---Titulo:        " +p.getTitulo()+ "Resultado "+pregunta.getPromedio());
                                 resultadosPreguntas.add(pregunta);
                             });
@@ -1876,7 +2690,7 @@ public class EjbInformeIntegralDocente {
                         dto.setEsTutor(Boolean.TRUE);
 
                     }else {
-                       // System.out.println("EjbInformeIntegralDocente.packEvTutor No fue tutor");
+                        // System.out.println("EjbInformeIntegralDocente.packEvTutor No fue tutor");
                         //No fue tutor en ese periodo
                         dto.setEsTutor(Boolean.FALSE);
 
@@ -1910,27 +2724,11 @@ public class EjbInformeIntegralDocente {
                 //Revisar el tipo de evaluacion para obtener los apartados correctos
                 if(resEv.getValor().getTipo().equals(EvaluacionesTipo.DOCENTE.getLabel())){
                     //Docente Materia
-                    List<Apartado> apartados = getApartadosDocentebyTipo(EvaluacionesTipo.DOCENTE).getValor();
-                    List<String> resResultados= getMaterias1(docente,resEv.getValor()).getValor();
-                    ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> resMaterias = packResultadosMateria(apartados, EvaluacionesTipo.DOCENTE,resEv.getValor(),docente,resResultados,new ArrayList<>());
-                    if(resMaterias.getCorrecto()){
-                        dto.setFueDocente(Boolean.TRUE);
-                        dto.setResultados(resMaterias.getValor());
-                        dto.setEvaluacion(resEv.getValor());
-                        dto.setPromedio(promedioEvaluacionDocente(resMaterias.getValor()).getValor());
-                        dto.setStyle(getStilobyPromedio(dto.getPromedio()).getValor());
-                        return ResultadoEJB.crearCorrecto(dto,"Evaluación docente empaquetada");
-                    }else {
-                        //System.out.println("EjbInformeIntegralDocente.packEvDocente - No docente");
-                        dto.setFueDocente(Boolean.FALSE);
-                        return ResultadoEJB.crearErroneo(3,dto,"Error al empaquetar el resultado de la evaluación por maateria");}
-
-                }else if(resEv.getValor().getTipo().equals(EvaluacionesTipo.DOCENTE_4.getLabel())){
-                    //Docente Materia (Cuestionario 4 por contingencia)
-                    List<Apartado> apartados = getApartadosDocentebyTipo(EvaluacionesTipo.DOCENTE_4).getValor();
-                   ResultadoEJB<List<String>> resResultados= getMaterias4(docente,resEv.getValor());
-                   // System.out.println("EjbInformeIntegralDocente.packEvDocente Materias "+resResultados);
-                    ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> resMaterias = packResultadosMateria(apartados, EvaluacionesTipo.DOCENTE_4,resEv.getValor(),docente,new ArrayList<>(),resResultados.getValor());
+                    List<Apartado> apartados = new ArrayList<>();
+                    apartados = getApartadosDocentebyTipo(EvaluacionesTipo.DOCENTE).getValor();
+                    ResultadoEJB<List<String>> resResultados= getMaterias(docente,resEv.getValor());
+                    // System.out.println("EjbInformeIntegralDocente.packEvDocente Materias "+resResultados);
+                    ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> resMaterias = packResultadosMateria(apartados, EvaluacionesTipo.DOCENTE,resEv.getValor(),docente,new ArrayList<>(),resResultados.getValor(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
                     if(resResultados.getCorrecto()){
                         //System.out.println("EjbInformeIntegralDocente.packEvDocente 1111");
                         dto.setFueDocente(Boolean.TRUE);
@@ -1942,11 +2740,91 @@ public class EjbInformeIntegralDocente {
                     }else {
                         //System.out.println("EjbInformeIntegralDocente.packEvDocente no docente 2");
                         dto.setFueDocente(Boolean.FALSE);
-                        return ResultadoEJB.crearErroneo(3,dto,"Error al empaquetar el resultado de la evaluación por maateria");}
+                        return ResultadoEJB.crearErroneo(3,dto,"El docente no fue evaluado en el periodo seleccionado");}
+                }
+                else if (resEv.getValor().getTipo().equals(EvaluacionesTipo.DOCENTE_1.getLabel())) {
+                    //Docente Materia (Cuestionario 1)
+                    List<Apartado> apartados = new ArrayList<>();
+                    apartados= getApartadosDocentebyTipo(EvaluacionesTipo.DOCENTE_1).getValor();
+                    ResultadoEJB<List<String>> resResultados= getMaterias1(docente,resEv.getValor());
+                    // System.out.println("EjbInformeIntegralDocente.packEvDocente Materias "+resResultados);
+                    ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> resMaterias = packResultadosMateria(apartados, EvaluacionesTipo.DOCENTE_1,resEv.getValor(),docente,new ArrayList<>(),resResultados.getValor(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>());
+                    if(resResultados.getCorrecto()){
+                        //System.out.println("EjbInformeIntegralDocente.packEvDocente 1111");
+                        dto.setFueDocente(Boolean.TRUE);
+                        dto.setResultados(resMaterias.getValor());
+                        dto.setEvaluacion(resEv.getValor());
+                        dto.setPromedio(promedioEvaluacionDocente(resMaterias.getValor()).getValor());
+                        dto.setStyle(getStilobyPromedio(dto.getPromedio()).getValor());
+                        return ResultadoEJB.crearCorrecto(dto,"Evaluación docente empaquetada");
+                    }else {
+                        //System.out.println("EjbInformeIntegralDocente.packEvDocente no docente 2");
+                        dto.setFueDocente(Boolean.FALSE);
+                        return ResultadoEJB.crearErroneo(3,dto,"El docente no fue evaluado en el periodo seleccionado");}
+                }
+                else if (resEv.getValor().getTipo().equals(EvaluacionesTipo.DOCENTE_2.getLabel())) {
+                    //Docente Materia (Cuestionario 2 por contingencia)
+                    List<Apartado> apartados = new ArrayList<>();
+                    apartados = getApartadosDocentebyTipo(EvaluacionesTipo.DOCENTE_2).getValor();
+                    ResultadoEJB<List<String>> resResultados= getMaterias2(docente,resEv.getValor());
+                    // System.out.println("EjbInformeIntegralDocente.packEvDocente Materias "+resResultados);
+                    ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> resMaterias = packResultadosMateria(apartados, EvaluacionesTipo.DOCENTE_2,resEv.getValor(),docente,new ArrayList<>(),new ArrayList<>(),resResultados.getValor(),new ArrayList<>(),new ArrayList<>());
+                    if(resResultados.getCorrecto()){
+                        //System.out.println("EjbInformeIntegralDocente.packEvDocente 1111");
+                        dto.setFueDocente(Boolean.TRUE);
+                        dto.setResultados(resMaterias.getValor());
+                        dto.setEvaluacion(resEv.getValor());
+                        dto.setPromedio(promedioEvaluacionDocente(resMaterias.getValor()).getValor());
+                        dto.setStyle(getStilobyPromedio(dto.getPromedio()).getValor());
+                        return ResultadoEJB.crearCorrecto(dto,"Evaluación docente empaquetada");
+                    }else {
+                        //System.out.println("EjbInformeIntegralDocente.packEvDocente no docente 2");
+                        dto.setFueDocente(Boolean.FALSE);
+                        return ResultadoEJB.crearErroneo(3,dto,"El docente no fue evaluado en el periodo seleccionado");}
 
-                }else {return ResultadoEJB.crearErroneo(3,dto,"Se aplico un cuestionario que no está considerada en el informe");}
+                }
+                else if (resEv.getValor().getTipo().equals(EvaluacionesTipo.DOCENTE_3.getLabel())) {
+                    //Docente Materia (Cuestionario 3 por contingencia)
+                    List<Apartado> apartados = new ArrayList<>();
+                    apartados = getApartadosDocentebyTipo(EvaluacionesTipo.DOCENTE_3).getValor();
+                    ResultadoEJB<List<String>> resResultados= getMaterias3(docente,resEv.getValor());
+                   // System.out.println("EjbInformeIntegralDocente.packEvDocente Materias "+apartados);
+                    ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> resMaterias = packResultadosMateria(apartados, EvaluacionesTipo.DOCENTE_3,resEv.getValor(),docente,new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),resResultados.getValor(),new ArrayList<>());
+                    if(resResultados.getCorrecto()){
+                       // System.out.println("EjbInformeIntegralDocente.packEvDocente 1111");
+                        dto.setFueDocente(Boolean.TRUE);
+                        dto.setResultados(resMaterias.getValor());
+                        dto.setEvaluacion(resEv.getValor());
+                        dto.setPromedio(promedioEvaluacionDocente(resMaterias.getValor()).getValor());
+                        dto.setStyle(getStilobyPromedio(dto.getPromedio()).getValor());
+                        return ResultadoEJB.crearCorrecto(dto,"Evaluación docente empaquetada");
+                    }else {
+                       // System.out.println("EjbInformeIntegralDocente.packEvDocente no docente 2");
+                        dto.setFueDocente(Boolean.FALSE);
+                        return ResultadoEJB.crearErroneo(3,dto,"El docente no fue evaluado en el periodo seleccionado");}
+                } else if(resEv.getValor().getTipo().equals(EvaluacionesTipo.DOCENTE_4.getLabel())){
+                    //Docente Materia (Cuestionario 4 por contingencia)
+                    List<Apartado> apartados = new ArrayList<>();
+                    apartados = getApartadosDocentebyTipo(EvaluacionesTipo.DOCENTE_4).getValor();
+                    ResultadoEJB<List<String>> resResultados= getMaterias4(docente,resEv.getValor());
+                    // System.out.println("EjbInformeIntegralDocente.packEvDocente Materias "+resResultados);
+                    ResultadoEJB<List<DtoInformeIntegralDocente.ResultadosMateria>> resMaterias = packResultadosMateria(apartados, EvaluacionesTipo.DOCENTE_4,resEv.getValor(),docente,new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),new ArrayList<>(),resResultados.getValor());
+                    if(resResultados.getCorrecto()){
+                        //System.out.println("EjbInformeIntegralDocente.packEvDocente 1111");
+                        dto.setFueDocente(Boolean.TRUE);
+                        dto.setResultados(resMaterias.getValor());
+                        dto.setEvaluacion(resEv.getValor());
+                        dto.setPromedio(promedioEvaluacionDocente(resMaterias.getValor()).getValor());
+                        dto.setStyle(getStilobyPromedio(dto.getPromedio()).getValor());
+                        return ResultadoEJB.crearCorrecto(dto,"Evaluación docente empaquetada");
+                    }else {
+                        //System.out.println("EjbInformeIntegralDocente.packEvDocente no docente 2");
+                        dto.setFueDocente(Boolean.FALSE);
+                        return ResultadoEJB.crearErroneo(3,dto,"El docente no fue evaluado en el periodo seleccionado");}
+                }
+                else {return ResultadoEJB.crearErroneo(3,dto,"Se aplico un cuestionario que no está considerada en el informe");}
 
-            }else {return ResultadoEJB.crearErroneo(3,dto,"Error al obetener la evaluación de entre pares");}
+            }else {return ResultadoEJB.crearErroneo(3,dto,"No se aplico evaluación docente en el periodo seleccionado");}
         }catch (Exception e ){
             return ResultadoEJB.crearErroneo(1, "Error al empaquetar la evaluación Docente (EjbInformeIntegralDocente.packEvDes)", e, null);
         }
@@ -1988,7 +2866,7 @@ public class EjbInformeIntegralDocente {
             if (resDes.getCorrecto() & resPares.getCorrecto()){
                 //System.out.println("EjbInformeIntegralDocente.packInformeIntegral 1");
                 if(resDocente.getCorrecto()){
-                   // System.out.println("EjbInformeIntegralDocente.packInformeIntegral Fue docente");
+                    // System.out.println("EjbInformeIntegralDocente.packInformeIntegral Fue docente");
                     //Fue docente en ese periodo
                     dtoDes = resDes.getValor();
                     dtoPares= resPares.getValor();
@@ -2023,7 +2901,7 @@ public class EjbInformeIntegralDocente {
                     dto.setPorcetanjeObtenido(dtoEvIntegral.stream().mapToDouble(d->d.getValor()).sum());
                     return ResultadoEJB.crearCorrecto(dto,"Evaluación Integral Docente generada con éxito");
                 }else {
-                   // System.out.println("EjbInformeIntegralDocente.packInformeIntegral No feu docente");
+                    // System.out.println("EjbInformeIntegralDocente.packInformeIntegral No feu docente");
                     dto.setEvTutor(resTutor.getValor());
                     dto.setEvPares(resPares.getValor());
                     dto.setEvDesempeño(resDes.getValor());

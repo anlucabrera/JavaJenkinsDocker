@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:hf="http://highfaces.org"
+>
+
+    <ui:define name="head-end">
+        <script type="text/javascript">
+            function myconfig() {
+                console.log("ejemplo");
+            }
+            ;
+
+        </script>
+        <style type="text/css">
+            @media print{
+                /* indicamos el salto de pagina */
+                .saltoDePagina{
+                    display:block;
+                    page-break-inside:auto  !important;
+                }
+            }
+        </style>
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+    </ui:define>
+
+    <ui:define name="title">
+        Informe de resultados
+    </ui:define>
+
+    <ui:define name="description">
+        Evaluaciones
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{informeResultadosEvaluacionesDocente.cargado}">
+            <adm:breadcrumb title="Registro del Estudiante"/>
+            <div class="contenedor">
+                <c:if test="#{informeResultadosEvaluacionesDocente.tieneAcceso}">
+                    <!-- zona de importación de enums -->
+                    <h:form id="frm" prependId="false" class="form-inline">
+                        <div class="box box-primary">
+                            <div class="box-header with-border">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="right">
+                                            <p:commandLink class="btn btn-success" rendered="#{true}" disabled="#{false}"
+                                                           process="@this"
+                                                           title="Imprimir informe">
+                                                <i class="fa fa-print" />
+                                                <p:printer target="IN" />
+                                            </p:commandLink>
+                                            <p:spacer width="15px"/>
+                                            <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                           onclick="PF('modalAyuda').show();"
+                                                           process="@this"
+                                                           title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                                <div class="box box-solid">
+                                    <div class="box-body">
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                        <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                        <p:remoteCommand id="cmdActualizarconf" name="actualizarconf" actionListener="# {registroDeEstudianteConsulta.actualizarCargaAcademica}" update="@form" />
+                                        <div class="row margin-bottom" style="margin-top: 20px;">
+                                            <c:if test="#{informeResultadosEvaluacionesDocente.rol.esFDA or informeResultadosEvaluacionesDocente.rol.esSA}">
+                                                <div class="#{casilla}">
+                                                    <div class="ui-material">
+                                                        <p:selectOneMenu id="area" value="#{informeResultadosEvaluacionesDocente.rol.areaSeleccionada}" converter="entityConverter" styleClass="form-control" >
+                                                            <f:selectItems value="#{informeResultadosEvaluacionesDocente.rol.areasAcademicas}" var="area" itemValue="#{area}" itemLabel="#{area.nombre}" />
+                                                            <p:ajax process="@this" update="docente,periodo,IN" listener="#{informeResultadosEvaluacionesDocente.getDocentesbyArea}" />
+                                                        </p:selectOneMenu>
+                                                        <p:outputLabel value="Área Académica" for="area"/>
+                                                        <p:message for="area" />
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <c:if test="#{informeResultadosEvaluacionesDocente.rol.esSA or informeResultadosEvaluacionesDocente.rol.esFDA or informeResultadosEvaluacionesDocente.rol.esDirector}">
+                                                <div class="#{casilla}">
+                                                    <div class="ui-material">
+                                                        <p:selectOneMenu id="docente" value="#{informeResultadosEvaluacionesDocente.rol.docente}" converter="entityConverter"
+                                                                         filter="true" filterMatchMode="contains">
+                                                            <f:selectItems value="#{informeResultadosEvaluacionesDocente.rol.docentes}" var="docente"
+                                                                           itemValue="#{docente}" itemLabel="#{docente.clave} | #{docente.nombre}"/>
+                                                            <p:ajax update="periodo,IN" process="@this" listener="#{informeResultadosEvaluacionesDocente.getPeriodosEvaluacionbyDocente}"/>
+                                                        </p:selectOneMenu>
+                                                        <p:outputLabel value="Clave | Nombre" for="docente"/>
+                                                        <p:message for="docente" />
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="periodo" value="#{informeResultadosEvaluacionesDocente.rol.periodoSeleccionado}" converter="entityConverter">
+                                                        <f:selectItems value="#{informeResultadosEvaluacionesDocente.rol.periodosEscolares}" var="periodo"
+                                                                       itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}"/>
+                                                        <p:ajax update="IN" process="@this" listener="#{informeResultadosEvaluacionesDocente.getInformeEvaluaciones}"/>
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Periodo" for="periodo"/>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <c:set var="informe" value="#{informeResultadosEvaluacionesDocente.rol.informeResultadosEvaluacionesDocente}"/>
+                                        <p:panel id="IN" style="overflow: hidden">
+                                            <p:panelGrid style="width: 100%" >
+                                                <!--f:facet name="header"-->
+                                                <p:row>
+                                                    <p:column colspan="2" style="width: 50%">
+                                                        <img src="../../resources/img/utxj.png" alt="" height="100px"/>
+                                                    </p:column>
+                                                    <p:column colspan="13" style="font-weight: bold; text-align: center; font-size: x-large; width: 50%">
+                                                        <h3><strong>Universidad Tecnológica De</strong></h3>
+                                                        <h3><strong>Xicotepec de Juárez</strong></h3>
+                                                        <h5>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h5>
+                                                    </p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="1" style="text-align: right;width: 20%"><strong>NOMBRE: </strong></p:column>
+                                                    <p:column colspan="11" style="text-align: left ; width: 30%">#{informeResultadosEvaluacionesDocente.rol.docente.nombre}</p:column>
+                                                    <p:column colspan="1" style="text-align: right;width: 20%"><strong>NÚMERO DE TRABAJADOR:</strong></p:column>
+                                                    <p:column colspan="2" style="text-align: left;width: 30%">#{informeResultadosEvaluacionesDocente.rol.docente.clave}</p:column>
+                                                </p:row>
+                                                <p:row >
+                                                    <p:column colspan="1" style="text-align: right; width: 20%"><strong>ÁREA ACADÉMICA: </strong></p:column>
+                                                    <p:column colspan="11" style="text-align: left;width: 30%">#{informeResultadosEvaluacionesDocente.rol.areaDocente.nombre}</p:column>
+                                                    <p:column colspan="1" style="text-align: right;width: 20%"><strong>FECHA:</strong></p:column>
+                                                    <p:column colspan="2" style="text-align: left;width: 30%">#{caster.fechaToString(informeResultadosEvaluacionesDocente.rol.fechaImpresion)}</p:column>
+                                                </p:row>
+
+                                                <p:row style="height: 25px">
+                                                    <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
+                                                </p:row>
+                                                <!-- -->
+                                                <!--/f:facet-->
+                                                <!--Evaluacion al desempeño -->
+                                                <p:row>
+                                                    <p:column colspan="14" styleClass="ui-widget-header est" style="text-align: center;width: 100%;">
+                                                        <h4><font color="#f0f8ff"><strong> Evaluación de Desempeño</strong></font></h4>
+                                                    </p:column>
+                                                    <c:set var="evDes" value="#{informeResultadosEvaluacionesDocente.rol.evDesempeño}"/>
+                                                    <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{evDes.style}) !important">#{caster.decimalesPromedio(evDes.promedio)}%</p:column>
+                                                </p:row>
+                                                <p:row>
+                                                    <p:column colspan="15" style="font-weight: bold;width: 100%">
+                                                        <hf:chart colors="coral" type="column" value="#{evDes.resultados}" var="apartados"  xaxisLabel="Apartado" yaxisLabel="Porcentaje"
+                                                                  point="#{apartados.promedioApartado}" tickLabel="#{apartados.nombreApartado} - #{caster.decimalesPromedio(apartados.promedioApartado)}% "
+                                                        />
+                                                    </p:column>
+                                                </p:row>
+                                                <c:forEach var="apartados" items="#{informeResultadosEvaluacionesDocente.rol.evDesempeño.resultados}">
+                                                    <p:row>
+                                                        <p:column colspan="14" styleClass="actividad" style="font-weight: bold; text-align: center;width: 90%">#{apartados.nombreApartado}</p:column>
+                                                        <p:column colspan="1"  style="font-weight: bold; text-align: center;width: 10%;background:rgba(#{apartados.style}) !important">#{caster.decimalesPromedio(apartados.promedioApartado)}%</p:column>
+                                                    </p:row>
+                                                    <c:forEach var="preguntas" items="#{apartados.resultadoPreguntas}">
+                                                        <p:row>
+                                                            <p:column colspan="14" style="width: 95%">#{preguntas.pregunta}</p:column>
+                                                            <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{preguntas.style}) !important">#{caster.decimalesPromedio(preguntas.promedio)}%</p:column>
+                                                        </p:row>
+                                                    </c:forEach>
+                                                </c:forEach>
+                                                <p:row style="height: 25px">
+                                                    <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
+                                                </p:row>
+                                                <!--Evaluacion a tutor -->
+                                                <c:set var="eTutor" value="#{informeResultadosEvaluacionesDocente.rol.evTutor}"/>
+                                                <c:if test="#{informeResultadosEvaluacionesDocente.rol.tutor}" >
+                                                    <p:row>
+                                                        <p:column colspan="14" styleClass="ui-widget-header est" style="text-align: center;width: 100%;height:20px">
+                                                            <h4><font color="#f0f8ff"> <strong> Evaluación a Tutor</strong></font></h4>
+                                                        </p:column>
+                                                        <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{eTutor.style}) !important">#{caster.decimalesPromedio(eTutor.promedio)}%</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="15" style="font-weight: bold;width: 100%">
+                                                            <hf:chart colors="lightseagreen" type="column" value="#{informeResultadosEvaluacionesDocente.rol.resultadosTutor}" var="r"  xaxisLabel="Pregunta" yaxisLabel="Porcentaje"
+                                                                      point="#{r.promedio}" tickLabel="#{r.numeroPregunta} - #{caster.decimalesPromedio(r.promedio)}%"
+                                                            />
+                                                        </p:column>
+                                                    </p:row>
+                                                    <p:row >
+                                                        <p:column colspan="15" styleClass="actividad" style="font-weight: bold; text-align: center;width: 100%"> NIVELES DE DESEMPEÑO - TUTOR</p:column>
+
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(10, 181, 16, 0.8) !important">
+                                                            <strong>Muy satisfecho</strong>
+                                                        </p:column>
+                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 90% a 100%</p:column>
+                                                        <p:column colspan="11" style="text-align: justify-all;width: 20%">El Estudiante se encuentra muy satisfecho con el desempeño del Tutor. De acuerdo a los aspectos evaluados, cumple con todos los atributos y aspectos de un Tutor distinguido.</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(149, 255, 152, 0.8) !important">
+                                                            <strong>Satisfecho</strong>
+                                                        </p:column>
+                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 80% a 89%</p:column>
+                                                        <p:column colspan="11"  style="text-align: justify;width: 20%">El Estudiante se encuentra satisfecho con el desempeño del Tutor. De acuerdo a los aspectos evaluados cumple la mayoría de los atributos y aspectos de un Tutor distinguido, pero es necesario fortalecer algunas áreas de atención que se presentan en el informe detallado.</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(251, 243, 3, 0.8) !important">
+                                                            <strong>Regularmente satisfecho</strong>
+                                                        </p:column>
+                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 70% a 79%</p:column>
+                                                        <p:column colspan="11"  style="text-align: justify;width: 20%">El Estudiante se encuentra regularmente satisfecho con el desempeño del Tutor. De acuerdo a los aspectos evaluados, cumple con algunos de los atributos y aspectos de un Tutor distinguido, pero es necesario fortalecer algunas áreas de atención que se presentan en el informe detallado.</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(255, 151, 23, 0.8) !important">
+                                                            <strong>Poco satisfecho</strong>
+                                                        </p:column>
+                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 60% a 69%</p:column>
+                                                        <p:column colspan="11" style="text-align: justify;width: 20%">El Estudiante se encuentra poco satisfecho con el desempeño del Tutor. De acuerdo a los aspectos evaluados, cumple con algunos de los atributos y aspectos de un Tutor distinguido, por lo que es necesario fortalecer la mayoría de las áreas de atención que se presentan en el informe detallado.</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(255, 0, 0, 0.8) !important">
+                                                            <strong>No satisfecho</strong>
+                                                        </p:column>
+                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 0% a 59%</p:column>
+                                                        <p:column colspan="11"  style="text-align: justify;width: 20%">El Estudiante se encuentra no satisfecho con el desempeño del Tutor. De acuerdo a los aspectos evaluados, no cumple con los atributos de un Tutor distinguido, por lo que es necesario fortalecer todos los aspectos de las áreas de atención que se presentan en el informe detallado.</p:column>
+                                                    </p:row>
+                                                    <p:row style="height: 25px">
+                                                        <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
+                                                    </p:row>
+                                                    <c:forEach var="apartados" items="#{eTutor.resultados}">
+                                                        <c:forEach var="preguntas" items="#{apartados.resultadoPreguntas}">
+                                                            <p:row>
+                                                                <p:column colspan="14" style="width: 95%">#{preguntas.pregunta}</p:column>
+                                                                <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{preguntas.style}) !important">#{caster.decimalesPromedio(preguntas.promedio)}%</p:column>
+                                                            </p:row>
+                                                        </c:forEach>
+                                                    </c:forEach>
+                                                </c:if>
+                                                <p:row style="height: 25px">
+                                                    <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
+                                                </p:row>
+
+
+                                                <c:if test="#{informeResultadosEvaluacionesDocente.rol.fueDocente}">
+                                                    <!-- Evaluacion Docente-->
+                                                    <c:set var="evDocente" value="#{informeResultadosEvaluacionesDocente.rol.evDocente}"/>
+                                                    <p:row>
+                                                        <p:column colspan="14" styleClass="ui-widget-header est" style="text-align: center;width: 100%;">
+                                                            <h4><font color="#f0f8ff"> <strong> Evaluación al desempeño docente</strong></font></h4>
+                                                        </p:column>
+                                                        <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{evDocente.style}) !important">#{caster.decimalesPromedio(evDocente.promedio)}%</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="15" style="font-weight: bold;width: 100%">
+                                                            <hf:chart colors="darkcyan" type="column" value="#{evDocente.resultados}" var="materia"  xaxisLabel="Materia" yaxisLabel="Porcentaje"
+                                                                      point="#{materia.promedioMateria}" tickLabel="#{materia.claveMateria.concat(' - ').concat(materia.nombreMateria)} - #{caster.decimalesPromedio(materia.promedioMateria)}%"
+                                                            />
+                                                        </p:column>
+                                                    </p:row>
+                                                    <p:row style="height: 25px">
+                                                        <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
+                                                    </p:row>
+                                                    <p:row >
+                                                        <p:column colspan="15" styleClass="actividad" style="font-weight: bold; text-align: center;width: 100%"> NIVELES DE DESEMPEÑO - DOCENTE</p:column>
+
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(10, 181, 16, 0.8) !important">
+                                                            <strong>Muy satisfecho</strong>
+                                                        </p:column>
+                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 90% a 100%</p:column>
+                                                        <p:column colspan="11" style="text-align: justify-all;width: 20%">El docente demuestra de manera muy satisfecha los aspectos evaluados por los estudiantes. Se caracteriza por lograr todos los aspectos de un docente distinguido.</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(149, 255, 152, 0.8) !important">
+                                                            <strong>Satisfecho</strong>
+                                                        </p:column>
+                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 80% a 89%</p:column>
+                                                        <p:column colspan="11"  style="text-align: justify;width: 20%">El docente demuestra de manera satisfecha los aspectos evaluados por los estudiantes. Se caracteriza por lograr la mayoría de los aspectos de un docente distinguido pero es necesario fortalecer algunos aspectos que se presentan en el informe detallado.</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(251, 243, 3, 0.8) !important">
+                                                            <strong>Regularmente satisfecho</strong>
+                                                        </p:column>
+                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 70% a 79%</p:column>
+                                                        <p:column colspan="11"  style="text-align: justify;width: 20%">El docente demuestra de manera regularmente satisfecho los aspectos evaluados por los estudiantes. Se caracteriza por lograr algunos de los aspectos de un docente distinguido pero es necesario fortalecer algunos aspectos que se presentan en el informe detallado.</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(255, 151, 23, 0.8) !important">
+                                                            <strong>Poco satisfecho</strong>
+                                                        </p:column>
+                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 60% a 69%</p:column>
+                                                        <p:column colspan="11" style="text-align: justify;width: 20%">El docente demuestra de manera poco satisfecho los aspectos evaluados por los estudiantes. Se caracteriza por lograr algunos de los aspectos de un docente distinguido pero es necesario fortalecer la mayoría de los aspectos que se presentan en el informe detallado.</p:column>
+                                                    </p:row>
+                                                    <p:row>
+                                                        <p:column colspan="1" style="text-align: center;width: 10%;background:rgba(255, 0, 0, 0.8) !important">
+                                                            <strong>No satisfecho</strong>
+                                                        </p:column>
+                                                        <p:column colspan="3" styleClass="actividad" style="text-align: center;width: 20%">De 0% a 59%</p:column>
+                                                        <p:column colspan="11"  style="text-align: justify;width: 20%">El docente demuestra de manera no satisfecho los aspectos evaluados por los estudiantes. Se caracteriza por no lograr todos los aspectos de un docente distinguido por lo que es necesario fortalecer todos los aspectos que se presentan en el informe detallado.</p:column>
+                                                    </p:row>
+                                                    <p:row style="height: 25px">
+                                                        <p:column colspan="15" style="text-align: center;width: 50%"></p:column>
+                                                    </p:row>
+
+                                                    <c:forEach var="materias" items="#{evDocente.resultados}">
+                                                        <p:row>
+                                                            <p:column colspan="14" style="width: 95%;font-weight: bold; text-align: center;background: #cdd5e0">#{materias.claveMateria} | #{materias.nombreMateria}</p:column>
+                                                            <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{materias.style}) !important">#{caster.decimalesPromedio(materias.promedioMateria)}%</p:column>
+                                                        </p:row>
+                                                        <c:forEach var="apartados" items="#{materias.resultados}">
+                                                            <p:row>
+                                                                <p:column colspan="14" styleClass="actividad" style="font-weight: bold; text-align: center;width: 90%">#{apartados.nombreApartado}</p:column>
+                                                                <p:column colspan="1"  style="font-weight: bold; text-align: center;width: 10%;background:rgba(#{apartados.style}) !important">#{caster.decimalesPromedio(apartados.promedioApartado)}%</p:column>
+                                                            </p:row>
+                                                            <c:forEach var="preguntas" items="#{apartados.resultadoPreguntas}">
+                                                                <p:row>
+                                                                    <p:column colspan="14" style="width: 95%">#{preguntas.pregunta}</p:column>
+                                                                    <p:column colspan="1"  style="width: 5%; text-align: center;background:rgba(#{preguntas.style}) !important">#{caster.decimalesPromedio(preguntas.promedio)}%</p:column>
+                                                                </p:row>
+                                                            </c:forEach>
+                                                        </c:forEach>
+                                                    </c:forEach>
+                                                </c:if>
+                                            </p:panelGrid>
+                                        </p:panel>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>
+                </c:if>
+                <c:if test="#{!informeResultadosEvaluacionesDocente.tieneAcceso}">
+                    <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Acceso denegado"/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </div>
+            <script>
+                //collapseSidebar(); activar para colapsar barra lateral
+            </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
