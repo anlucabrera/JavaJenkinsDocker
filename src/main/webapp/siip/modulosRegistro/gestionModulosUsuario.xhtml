@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Gestión de usuarios de módulos de registro
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{gestionModulosRegistroUsuario.cargado}">
+        <adm:breadcrumb title="Gestión usuarios módulos registro"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{gestionModulosRegistroUsuario.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(gestionModulosRegistroUsuario.rol.periodoActivo)}" />
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <div class="row margin-bottom" style="margin-top: 30px;">
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="eje" value="#{gestionModulosRegistroUsuario.rol.ejeRegistro}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{gestionModulosRegistroUsuario.cambiarEje}">
+                                                    <f:selectItems value="#{gestionModulosRegistroUsuario.rol.ejesRegistro}" var="eje" itemValue="#{eje}" itemLabel="#{eje.eje}. #{eje.nombre}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Ejes registro" for="eje"/>
+                                                <p:message for="eje" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="tipo" value="#{gestionModulosRegistroUsuario.rol.tipo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{gestionModulosRegistroUsuario.cambiarTipo}">
+                                                    <f:selectItems value="#{gestionModulosRegistroUsuario.rol.tipos}" var="tipo" itemValue="#{tipo}" itemLabel="#{tipo}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Tipo módulo" for="tipo"/>
+                                                <p:message for="tipo" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="modulo" value="#{gestionModulosRegistroUsuario.rol.moduloRegistro}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{gestionModulosRegistroUsuario.cambiarModulo}">
+                                                    <f:selectItems value="#{gestionModulosRegistroUsuario.rol.modulosRegistro}" var="modulo" itemValue="#{modulo}" itemLabel="#{modulo.tituloPrincipal}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Módulo registro" for="modulo"/>
+                                                <p:message for="modulo" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:inputSwitch id="agregarUsuario" styleClass="form-control" value="#{gestionModulosRegistroUsuario.rol.agregarUsuario}" valueChangeListener="#{gestionModulosRegistroUsuario.cambiarAgregarUsuario}"> 
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="agregarUsuario" value="#{gestionModulosRegistroUsuario.rol.agregarUsuario?'Agregar usuario':'No agregar usuario'}" />
+                                                <p:message for="agregarUsuario" display="tooltip" /> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row margin-bottom" style="margin-top: 50px;">
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:autoComplete id="personal" value="#{gestionModulosRegistroUsuario.rol.personal}" completeMethod="#{gestionModulosRegistroUsuario.completePersonal}" queryDelay="800"
+                                                                valueChangeListener="#{gestionModulosRegistroUsuario.cambiarPersonal}" rendered="#{gestionModulosRegistroUsuario.rol.agregarUsuario}"
+                                                                var="personal" itemValue="#{personal}" itemLabel="#{personal.personal.nombre}" converter="entityConverter" forceSelection="true" size="35">
+                                                    <p:column>#{personal.personal.clave}</p:column>
+                                                    <p:column>#{personal.personal.nombre}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                                <p:outputLabel value="Personal" for="personal" rendered="#{gestionModulosRegistroUsuario.rol.agregarUsuario}"/>
+                                                <p:message for="personal" rendered="#{gestionModulosRegistroUsuario.rol.agregarUsuario}"/>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:inputSwitch id="agregarArea" styleClass="form-control" value="#{gestionModulosRegistroUsuario.rol.agregarAreaRegistro}" valueChangeListener="#{gestionModulosRegistroUsuario.cambiarAgregarArea}" rendered="#{gestionModulosRegistroUsuario.rol.agregarUsuario}"> 
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="agregarArea" value="#{gestionModulosRegistroUsuario.rol.agregarAreaRegistro?'Agregar área diferente':'No agregar área diferente'}" rendered="#{gestionModulosRegistroUsuario.rol.agregarUsuario}"/>
+                                                <p:message for="agregarArea" display="tooltip" /> 
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="area" value="#{gestionModulosRegistroUsuario.rol.areaRegistro}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{gestionModulosRegistroUsuario.cambiarAreaRegistro}" rendered="#{gestionModulosRegistroUsuario.rol.agregarAreaRegistro}">
+                                                    <f:selectItems value="#{gestionModulosRegistroUsuario.rol.areasRegistro}" var="area" itemValue="#{area}" itemLabel="#{area.nombre}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Área registro" for="area" rendered="#{gestionModulosRegistroUsuario.rol.agregarAreaRegistro}"/>
+                                                <p:message for="area" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-3">
+                                            <div class="ui-material">
+                                                <p:commandButton id="btnGuardar" value="Guardar" actionListener="#{gestionModulosRegistroUsuario.guardarAsignacion()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{gestionModulosRegistroUsuario.rol.agregarUsuario}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p></p>
+                                    <p></p>
+                                    <p></p>
+                                    <center>
+                                    <p:tabView>
+                                        <p:tab id="twbModuloUsuarios" title="Usuarios con acceso al módulo">   
+                                            <c:if test="#{gestionModulosRegistroUsuario.rol.listaModulosRegistroAsignados ne null}">
+                                                <div class="row margin-bottom" style="margin-top: 60px;">
+                                                    <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">
+                                                        <p:dataTable id="tbModulosRegAsig" var="moduloReg" value="#{gestionModulosRegistroUsuario.rol.listaModulosRegistroAsignados}" 
+                                                                     paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" expandableRowGroups="true" emptyMessage="No hay usuarios asignados para el módulo de registro seleccionado">
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="success">
+                                                                    <p:column headerText="Área registro" style="width: 250px;" sortBy="#{moduloReg.areaRegistro.nombre}" filterBy="#{moduloReg.areaRegistro.nombre}" filterMatchMode="contains" /> 
+                                                                    <p:column headerText="Actividad del personal" style="width: 150px;" sortBy="#{moduloReg.personal.actividad.nombre}" filterBy="#{moduloReg.personal.actividad.nombre}" filterMatchMode="contains" /> 
+                                                                    <p:column headerText="Personal asignado" style="width: 300px;" sortBy="#{moduloReg.personal.clave} - #{moduloReg.personal.nombre}" filterBy="#{moduloReg.personal.clave} - #{moduloReg.personal.nombre}" filterMatchMode="contains" /> 
+                                                                    <p:column headerText="Eliminar" style="width: 150px;"/>
+                                                                </p:row>
+                                                            </p:columnGroup>
+                                                            <p:ajax event="cellEdit" listener="#{gestionModulosRegistroUsuario.onCellEdit}"/>
+                                                            <p:column style="text-align: justify;">
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"><h:outputText value="#{moduloReg.areaRegistro.nombre}" /></f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:selectOneMenu id="areaAct" value="#{moduloReg.areaRegistro}" converter="entityConverter">
+                                                                            <f:selectItems value="#{gestionModulosRegistroUsuario.rol.areas}" var="areaAct"
+                                                                                           itemValue="#{areaAct}" itemLabel="#{areaAct.nombre}"/>
+                                                                        </p:selectOneMenu>
+                                                                    </f:facet>
+                                                                </p:cellEditor> 
+                                                            </p:column>
+                                                            <p:column style="text-align: justify;">
+                                                                <h:outputText value="#{moduloReg.personal.actividad.nombre}"/>
+                                                            </p:column>
+                                                            <p:column style="text-align: justify;">
+                                                                <h:outputText value="#{moduloReg.personal.clave} - #{moduloReg.personal.nombre}"/>
+                                                            </p:column>
+                                                            <p:column>
+                                                                <center>
+                                                                    <div class="btn-group">
+                                                                        <p:commandButton class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{gestionModulosRegistroUsuario.eliminarAsignacion(moduloReg)}" title="Eliminar registro.">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la asignación seleccionada?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </div>
+                                                                </center>
+                                                            </p:column>
+                                                            <f:facet name="footer">
+                                                                <center>#{fn:length(gestionModulosRegistroUsuario.rol.listaModulosRegistroAsignados)} usuarios asignados para el módulo de registro: "#{gestionModulosRegistroUsuario.rol.moduloRegistro.tituloPrincipal}"</center>
+                                                            </f:facet>
+                                                        </p:dataTable>
+                                                        <p></p>
+                                                        <p></p>
+                                                        <p></p>
+                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                        </p:confirmDialog> 
+                                                    </div>
+                                                </div>
+                                            </c:if>
+                                        </p:tab>
+                                        <p:tab id="twbModuloUsuario" title="Módulos asignados al personal" disabled="#{empty gestionModulosRegistroUsuario.rol.listaModulosAsignadosPersonal}">   
+                                                <div class="row margin-bottom" style="margin-top: 60px;">
+                                                    <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;">
+                                                        <p:dataTable id="tbModulosRegAsigPer" var="moduloRegPer" value="#{gestionModulosRegistroUsuario.rol.listaModulosAsignadosPersonal}" 
+                                                                     paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}"
+                                                                     tableStyleClass="table table-condensed table-bordered table-hover table-responsive" editable="true" editMode="cell" expandableRowGroups="true" emptyMessage="Notiene módulos asignados el personal seleccionado">
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="success">
+                                                                    <p:column headerText="Personal asignado" style="width: 250px;" sortBy="#{moduloRegPer.personal.clave} - #{moduloRegPer.personal.nombre}" filterBy="#{moduloRegPer.personal.clave} - #{moduloRegPer.personal.nombre}" filterMatchMode="contains" /> 
+                                                                    <p:column headerText="Actividad del personal" style="width: 150px;" sortBy="#{moduloRegPer.personal.actividad.nombre}" filterBy="#{moduloRegPer.personal.actividad.nombre}" filterMatchMode="contains" /> 
+                                                                    <p:column headerText="Eje" style="width: 150px;" sortBy="#{moduloRegPer.modulosRegistroEspecifico.modulosRegistro.eje.nombre}" filterBy="#{moduloRegPer.modulosRegistroEspecifico.modulosRegistro.eje.nombre}" filterMatchMode="contains" /> 
+                                                                    <p:column headerText="Módulo" style="width: 200px;" sortBy="#{moduloRegPer.modulosRegistroEspecifico.modulosRegistro.tituloPrincipal}" filterBy="#{moduloRegPer.modulosRegistroEspecifico.modulosRegistro.tituloPrincipal}" filterMatchMode="contains" /> 
+                                                                    <p:column headerText="Área registro" style="width: 150px;" sortBy="#{moduloRegPer.areaRegistro.nombre}" filterBy="#{moduloRegPer.areaRegistro.nombre}" filterMatchMode="contains" /> 
+                                                                    <p:column headerText="Eliminar" style="width: 150px;"/>
+                                                                </p:row>
+                                                            </p:columnGroup>
+                                                            <p:column style="text-align: justify;" groupRow="true">
+                                                                <h:outputText value="#{moduloRegPer.personal.clave} - #{moduloRegPer.personal.nombre}"/>
+                                                            </p:column>
+                                                            <p:column style="text-align: justify;" groupRow="true">
+                                                                <h:outputText value="#{moduloRegPer.personal.actividad.nombre}"/>
+                                                            </p:column>
+                                                            <p:column style="text-align: justify;" groupRow="true">
+                                                                <h:outputText value="#{moduloRegPer.modulosRegistroEspecifico.modulosRegistro.eje.nombre}"/>
+                                                            </p:column>
+                                                            <p:column style="text-align: justify;">
+                                                                <h:outputText value="#{moduloRegPer.modulosRegistroEspecifico.modulosRegistro.tituloPrincipal}"/>
+                                                            </p:column>
+                                                            <p:ajax event="cellEdit" listener="#{gestionModulosRegistroUsuario.onCellEdit}"/>
+                                                            <p:column style="text-align: justify;">
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output"><h:outputText value="#{moduloRegPer.areaRegistro.nombre}" /></f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:selectOneMenu id="areaActPer" value="#{moduloRegPer.areaRegistro}" converter="entityConverter">
+                                                                            <f:selectItems value="#{gestionModulosRegistroUsuario.rol.areas}" var="areaActPer"
+                                                                                           itemValue="#{areaActPer}" itemLabel="#{areaActPer.nombre}"/>
+                                                                        </p:selectOneMenu>
+                                                                    </f:facet>
+                                                                </p:cellEditor> 
+                                                            </p:column>
+                                                            <p:column>
+                                                                <center>
+                                                                    <div class="btn-group">
+                                                                        <p:commandButton class="btn btn-sm btn-danger" icon="fa fa-trash" actionListener="#{gestionModulosRegistroUsuario.eliminarAsignacion(moduloRegPer)}" title="Eliminar registro.">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la asignación seleccionada?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </div>
+                                                                </center>
+                                                            </p:column>
+                                                            <f:facet name="footer">
+                                                                <center>#{fn:length(gestionModulosRegistroUsuario.rol.listaModulosAsignadosPersonal)} registros asignados al personal seleccionado</center>
+                                                            </f:facet>
+                                                        </p:dataTable>
+                                                        <p></p>
+                                                        <p></p>
+                                                        <p></p>
+                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                        </p:confirmDialog> 
+                                                    </div>
+                                                </div>
+                                        </p:tab>
+                                    </p:tabView>
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty gestionModulosRegistroUsuario.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{gestionModulosRegistroUsuario.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para registrar aperturas de eventos escolares</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{gestionModulosRegistroUsuario.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!gestionModulosRegistroUsuario.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado a personal de servicios escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
