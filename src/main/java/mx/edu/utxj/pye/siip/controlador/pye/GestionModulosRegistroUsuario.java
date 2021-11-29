@@ -85,15 +85,18 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
             rol.setPeriodoActivo(ejbPermisoAperturaExtemporanea.getPeriodoActual().getPeriodo());
 //            rol.setSoloLectura(true);
             
-            rol.getInstrucciones().add("Seleccione periodo escolar.");
-            rol.getInstrucciones().add("A continuación visualizará la lista de aperturas registradas en el periodo seleccionado.");
-            rol.getInstrucciones().add("ACTUALIZACIÓN FECHAS - APERTURA REGISTRADA.");
-            rol.getInstrucciones().add("Para modificar las fechas de la apertura deberá dar clic en el campo de fecha de inicio o fin, seleccionar la fecha del calendario y dar enter para guardar cambios.");
-            rol.getInstrucciones().add("AGREGAR NUEVA APERTURA.");
-            rol.getInstrucciones().add("De clic en el componente AGREGAR APERTURA, a continuación deberá indicar si será una apertura por área o personal, indicar el área o la clave del personal, seleccionar el evento, las fechas de inicio y fin en que estará habilitado, dará clic en GUARDAR para registrar la apertura.");
-            rol.getInstrucciones().add("ELIMINAR APERTURA.");
-            rol.getInstrucciones().add("Ubique la fila que corresponda a la apertura que desea eliminar, dará clic en el icono de la columna ELIMINAR.");
-           
+            rol.getInstrucciones().add("Seleccione eje de registro.");
+            rol.getInstrucciones().add("Seleccione tipo de módulo.");
+            rol.getInstrucciones().add("Dependiendo del tipo de módulo se actualizará la lista de módulos de registro.");
+            rol.getInstrucciones().add("Seleccione el módulo de registro.");
+            rol.getInstrucciones().add("Se actualizará la tabla y podrá consultar los usuarios que están asignados al módulo de registro.");
+            rol.getInstrucciones().add("ELIMINAR ASIGNACIÓN.");
+            rol.getInstrucciones().add("Deberá dar clic en el icono ubicado en la columna ELIMINAR de la fila del registro que desea eliminar.");
+            rol.getInstrucciones().add("AGREGAR ASIGNACIÓN.");
+            rol.getInstrucciones().add("Seleccione que desea agregar usuario.");
+            rol.getInstrucciones().add("Ingrese nombre o clave del personal al que se le asignará el módulo, le aparecerá una lista de coincidencias, dará clic en el nombre que corresponda");
+            rol.getInstrucciones().add("Deberá dar clic en el botón guardar para registrar la asignación.");
+            
             rol.setAgregarUsuario(false);
             rol.setAgregarAreaRegistro(false);
             listadoEjesRegistro();
