@@ -11,7 +11,7 @@ package mx.edu.utxj.pye.javajenkisdocker;
  */
 public class Main {
     public static void main(String[] args) {
-        System.out.println(checkIfInputIsAnEvenNumber(122));//Testeo del metodo main
+        System.out.println(checkIfInputIsAnEvenNumber(22));//Testeo del metodo main
     }
     
     public static boolean checkIfInputIsAnEvenNumber(int number) {

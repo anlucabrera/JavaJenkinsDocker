@@ -16,6 +16,6 @@ import org.junit.jupiter.api.Test;
 public class TestMain {
     @Test
     public void testInputIsAnEvenNumber(){
-        Assertions.assertTrue(Main.checkIfInputIsAnEvenNumber(22)); //asertion
+        Assertions.assertTrue(Main.checkIfInputIsAnEvenNumber(33)); //asertion
     }
 }
