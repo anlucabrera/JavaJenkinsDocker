@@ -176,10 +176,10 @@ public class EjbGestionModulosRegistro {
                     .map(moduloReg -> packModuloAsignado(moduloReg).getValor())
                     .sorted(DtoModulosRegistroUsuario::compareTo)
                     .collect(Collectors.toList());
-           
-            return ResultadoEJB.crearCorrecto(listaModulosAsignados, "Lista de módulos de registro asignados.");
+            
+            return ResultadoEJB.crearCorrecto(listaModulosAsignados, "Lista de módulos de registro asignados al personal seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de módulos de registro asignados. (EjbGestionModulosRegistro.getModulosRegistroAsignados)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de módulos de registro asignados al personal seleccionado. (EjbGestionModulosRegistro.getModulosAsignadosPersonal)", e, null);
         }
     }
     
@@ -195,13 +195,13 @@ public class EjbGestionModulosRegistro {
             Personal personal = em.find(Personal.class, modulosRegistroEspecificoBD.getModulosRegistroEspecificoPK().getPersonal());
             
             AreasUniversidad areaRegistro = new AreasUniversidad();
-            
+
             if(modulosRegistroEspecificoBD.getAreaRegistro()== null){
                 areaRegistro = em.find(AreasUniversidad.class, personal.getAreaOperativa());
             }else{
                 areaRegistro = em.find(AreasUniversidad.class, modulosRegistroEspecificoBD.getAreaRegistro());
             }
-            
+
             DtoModulosRegistroUsuario dto = new DtoModulosRegistroUsuario(modulosRegistroEspecificoBD, personal, areaRegistro);
             return ResultadoEJB.crearCorrecto(dto, "Módulo registro empaquetado asignado.");
         }catch (Exception e){
@@ -262,6 +262,7 @@ public class EjbGestionModulosRegistro {
             
             ModulosRegistroEspecifico modulosRegistroEspecifico = new ModulosRegistroEspecifico();
             modulosRegistroEspecifico.setModulosRegistroEspecificoPK(modulosRegistroEspecificoPK);
+            modulosRegistroEspecifico.setModulosRegistro(moduloRegistro);
             if(areaRegistro != null){
                 modulosRegistroEspecifico.setAreaRegistro(areaRegistro.getArea()); 
             }else{
@@ -269,7 +270,7 @@ public class EjbGestionModulosRegistro {
             }
             em.persist(modulosRegistroEspecifico);
             em.flush();
-           
+            
             return ResultadoEJB.crearCorrecto(modulosRegistroEspecifico, "Se registró correctamente la asignación del usuario al módulo seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la asignación del usuario al módulo seleccionado. (EjbGestionModulosRegistro.guardarAperturaPersonal)", e, null);
@@ -317,6 +318,5 @@ public class EjbGestionModulosRegistro {
             return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la asignación del usuario al módulo seleccionado. (EjbGestionModulosRegistro.actualizarAsignacionModulo)", e, null);
         }
     }
-    
     
 }

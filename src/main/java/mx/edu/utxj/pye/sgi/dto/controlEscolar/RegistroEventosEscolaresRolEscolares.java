@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
@@ -84,6 +85,17 @@ public class RegistroEventosEscolaresRolEscolares extends AbstractRol{
      */
     @Getter @NonNull private Boolean deshabilitarEliminar;
     
+    
+    /**
+     * Lista de procesos de inscripción registrados en el periodo escolar seleccionado
+     */
+    @Getter @NonNull private List<ProcesosInscripcion> listaProcesosInscripcion;
+    
+    /**
+     * Número de pestaña activa
+     */
+    @Getter @NonNull private Integer pestaniaActiva;
+    
     public RegistroEventosEscolaresRolEscolares(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
         this.usuario = usuario;
@@ -140,5 +152,12 @@ public class RegistroEventosEscolaresRolEscolares extends AbstractRol{
     public void setDeshabilitarEliminar(Boolean deshabilitarEliminar) {
         this.deshabilitarEliminar = deshabilitarEliminar;
     }
-    
+
+    public void setListaProcesosInscripcion(List<ProcesosInscripcion> listaProcesosInscripcion) {
+        this.listaProcesosInscripcion = listaProcesosInscripcion;
+    }
+
+    public void setPestaniaActiva(Integer pestaniaActiva) {
+        this.pestaniaActiva = pestaniaActiva;
+    }
 }

@@ -7,7 +7,6 @@ package mx.edu.utxj.pye.siip.controlador.pye;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -99,6 +98,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
             
             rol.setAgregarUsuario(false);
             rol.setAgregarAreaRegistro(false);
+            rol.setPestaniaActiva(0);
             listadoEjesRegistro();
             listaAreas();
         }catch (Exception e){mostrarExcepcion(e); }
@@ -151,7 +151,6 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
             rol.setListaModulosRegistroAsignados(res.getValor());
             Ajax.update("tbModulosRegAsig");
         }else{ 
-            
             mostrarMensajeResultadoEJB(res);
         }
     
@@ -165,13 +164,12 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
         if(res.getCorrecto()){
             if(!res.getValor().isEmpty()){
                 rol.setListaModulosAsignadosPersonal(res.getValor());
-            }else{
-                rol.setListaModulosAsignadosPersonal(Collections.EMPTY_LIST);
             }
+            rol.setPestaniaActiva(0);
+            Ajax.update("tbModulosRegAsigPer");
         }else{ 
             mostrarMensajeResultadoEJB(res);
         }
-        Ajax.update("tbModulosRegAsigPer");
     }
     
     /**
@@ -313,7 +311,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
         if(rol.getAgregarAreaRegistro()){
             ResultadoEJB<ModulosRegistroEspecifico> agregar = ejb.guardarAsignacionModulo(rol.getModuloRegistro(), rol.getPersonal().getPersonal(), rol.getAreaRegistro());
             if (agregar.getCorrecto()) {
-                mostrarMensajeResultadoEJB(agregar);
+                rol.setModulosRegistroEspecifico(agregar.getValor());
                 listaModulosRegistroAsignados();
                 listaModulosAsignadosPersonal();
                 Ajax.update("frm");
@@ -321,6 +319,7 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
         }else{
             ResultadoEJB<ModulosRegistroEspecifico> agregar = ejb.guardarAsignacionModulo(rol.getModuloRegistro(), rol.getPersonal().getPersonal(), new AreasUniversidad());
             if (agregar.getCorrecto()) {
+                rol.setModulosRegistroEspecifico(agregar.getValor());
                 mostrarMensajeResultadoEJB(agregar);
                 listaModulosRegistroAsignados();
                 listaModulosAsignadosPersonal();
@@ -349,6 +348,8 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
         ResultadoEJB<Integer> res = ejb.eliminarAsignacionModulo(dtoModulosRegistroUsuario.getModulosRegistroEspecifico());
         if(res.getCorrecto()){
             mostrarMensajeResultadoEJB(res);
+            rol.setListaModulosAsignadosPersonal(Collections.EMPTY_LIST);
+            rol.setListaModulosRegistroAsignados(Collections.EMPTY_LIST);
             listaModulosRegistroAsignados();
             listaModulosAsignadosPersonal();
             Ajax.update("frm");
@@ -356,7 +357,6 @@ public class GestionModulosRegistroUsuario extends ViewScopedRol{
         
     }
  
-    
      /**
      * Permite editar el área de registro de la asignación correspondiente
      * @param event Evento de edición de la celda

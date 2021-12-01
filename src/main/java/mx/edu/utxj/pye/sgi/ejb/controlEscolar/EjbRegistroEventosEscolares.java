@@ -26,6 +26,7 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolarDetalle;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
@@ -160,6 +161,24 @@ public class EjbRegistroEventosEscolares {
             return ResultadoEJB.crearCorrecto(dto, "Evento empaquetado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el evento (EjbRegistroEventosEscolares.packEventoRegistrado).", e, DtoCalendarioEventosEscolares.class);
+        }
+    }
+    
+     /**
+     * Permite obtener la lista de procesos de inscripción registrados en el periodo escolar seleccionado
+     * @param periodo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<ProcesosInscripcion>> getProcesosInscripcion(PeriodosEscolares periodo){
+        try{
+            List<ProcesosInscripcion> listaProcesosInscripcion = em.createQuery("SELECT p FROM ProcesosInscripcion p WHERE p.idPeriodo=:periodo", ProcesosInscripcion.class)
+                    .setParameter("periodo", periodo.getPeriodo())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(listaProcesosInscripcion, "Lista de procesos de inscripción.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de procesos de inscripción. (EjbRegistroEventosEscolares.getProcesosInscripcion)", e, null);
         }
     }
     
@@ -408,6 +427,7 @@ public class EjbRegistroEventosEscolares {
      * Permite guardar la lista de eventos escolares en el periodo seleccionado
      * @param periodo
      * @param listaEventosEscolares
+     * @param personal
      * @return Resultado del proceso
      */
     public ResultadoEJB<List<DtoCalendarioEventosEscolares>> guardarEventosEscolares(PeriodosEscolares periodo, List<DtoEventosEscolares> listaEventosEscolares, Personal personal){
@@ -423,6 +443,13 @@ public class EjbRegistroEventosEscolares {
                 eventoEscolar.setCreador(personal.getClave());
                 em.persist(eventoEscolar);
                 em.flush();
+                
+                if(eventoEscolar.getTipo().equals("Registro_fichas_admision")||eventoEscolar.getTipo().equals("Reincorporaciones")){
+                    ProcesosInscripcion procesosInscripcion = buscarProcesoInscripcion(eventoEscolar).getValor();
+                    if(procesosInscripcion== null){
+                       registroProcesoInscripcion(eventoEscolar);
+                    }
+                }
             });
             
             List<DtoCalendarioEventosEscolares> lista = getCalendarioEventosEscolares(periodo).getValor();
@@ -440,6 +467,8 @@ public class EjbRegistroEventosEscolares {
      */
     public ResultadoEJB<Integer> eliminarEventosEscolares(PeriodosEscolares periodo){
         try{
+            eliminarProcesosInscripcion(periodo).getValor();
+            
             Integer delete = em.createQuery("DELETE FROM EventoEscolar e WHERE e.periodo=:periodo", EventoEscolar.class)
                 .setParameter("periodo", periodo.getPeriodo())
                 .executeUpdate();
@@ -469,6 +498,13 @@ public class EjbRegistroEventosEscolares {
             eventoEscolar.setFin(fechaFin);
             eventoEscolar.setCreador(personal.getClave());
             em.persist(eventoEscolar);
+            
+            if(eventoEscolar.getTipo().equals("Registro_fichas_admision")||eventoEscolar.getTipo().equals("Reincorporaciones")){
+                    ProcesosInscripcion procesosInscripcion = buscarProcesoInscripcion(eventoEscolar).getValor();
+                    if(procesosInscripcion== null){
+                       registroProcesoInscripcion(eventoEscolar);
+                    }
+            }
              
             return ResultadoEJB.crearCorrecto(eventoEscolar, "Evento escolar registrado en el periodo seleccionado.");
         } catch (Exception e) {
@@ -483,6 +519,13 @@ public class EjbRegistroEventosEscolares {
      */
     public ResultadoEJB<Integer> eliminarEventoEscolar(EventoEscolar eventoEscolar){
         try{
+            if(eventoEscolar.getTipo().equals("Registro_fichas_admision")||eventoEscolar.getTipo().equals("Reincorporaciones")){
+                    ProcesosInscripcion procesosInscripcion = buscarProcesoInscripcion(eventoEscolar).getValor();
+                    if(procesosInscripcion != null){
+                       eliminarProcesoInscripcion(eventoEscolar);
+                    }
+            }
+            
             Integer delete = em.createQuery("DELETE FROM EventoEscolar e WHERE e.evento=:evento", EventoEscolar.class)
                 .setParameter("evento", eventoEscolar.getEvento())
                 .executeUpdate();
@@ -490,6 +533,147 @@ public class EjbRegistroEventosEscolares {
             return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente el evento escolar del periodo seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el evento escolar del periodo seleccionado. (EjbRegistroEventosEscolares.eliminarEventoEscolar)", e, null);
+        }
+    }
+    
+   
+    /**
+     * Permite buscar si existe un proceso de inscripción del tipo de inscripción para el periodo seleccionado
+     * @param eventoEscolar
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<ProcesosInscripcion> buscarProcesoInscripcion(EventoEscolar eventoEscolar){
+        try{
+            ProcesosInscripcion procesosInscripcion = new ProcesosInscripcion();
+            
+            if(eventoEscolar.getTipo().equals("Registro_fichas_admision")){
+                procesosInscripcion = em.createQuery("SELECT p FROM ProcesosInscripcion p WHERE p.idPeriodo=:periodo AND p.activoNi=:valor", ProcesosInscripcion.class)
+                    .setParameter("periodo", eventoEscolar.getPeriodo())
+                    .setParameter("valor", true)
+                    .getResultStream().findFirst().orElse(null);
+            }else{
+                procesosInscripcion = em.createQuery("SELECT p FROM ProcesosInscripcion p WHERE p.idPeriodo=:periodo AND p.activoRe=:valor", ProcesosInscripcion.class)
+                    .setParameter("periodo", eventoEscolar.getPeriodo())
+                    .setParameter("valor", true)
+                    .getResultStream().findFirst().orElse(null);
+            }
+            
+            return ResultadoEJB.crearCorrecto(procesosInscripcion, "Se realizó la búsqueda del proceso de inscripción correctamente.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo realizar la búsqueda del proceso de inscripción correctamente. (EjbRegistroEventosEscolares.buscarProcesoInscripcion)", e, null);
+        }
+    }
+    
+    
+    /**
+     * Permite registrar un proceso de inscripción
+     * @param eventoEscolar
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<ProcesosInscripcion> registroProcesoInscripcion(EventoEscolar eventoEscolar){
+        try{
+            Date fechaFin = agregarDiaMas(eventoEscolar.getFin()).getValor();
+            
+            ProcesosInscripcion procesosInscripcion = new ProcesosInscripcion();
+            procesosInscripcion.setFechaInicio(eventoEscolar.getInicio());
+            procesosInscripcion.setFechaFin(fechaFin);
+            procesosInscripcion.setIdPeriodo(eventoEscolar.getPeriodo());
+            
+            if(eventoEscolar.getTipo().equals("Registro_fichas_admision")){
+                procesosInscripcion.setActivoNi(true);
+                procesosInscripcion.setActivoIng(true);
+            }else{
+              procesosInscripcion.setActivoRe(true);
+            }
+            
+            em.persist(procesosInscripcion);
+            em.flush();
+                
+            return ResultadoEJB.crearCorrecto(procesosInscripcion, "Se registró correctamente el proceso de inscripción que corresponde.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar el proceso de inscripción correspondiente. (EjbRegistroEventosEscolares.registroProcesoInscripcion)", e, null);
+        }
+    }
+    
+    /**
+     * Permite actualizar las fechas de inicio y fin de un proceso de inscripción
+     * @param procesosInscripcion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<ProcesosInscripcion> actualizarProcesoInscripcion(ProcesosInscripcion procesosInscripcion){
+        try{
+            
+            em.merge(procesosInscripcion);
+            em.flush();
+                
+            return ResultadoEJB.crearCorrecto(procesosInscripcion, "Se actualizó correctamente el proceso de inscripción seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar el proceso de inscripción seleccionado. (EjbRegistroEventosEscolares.actualizarProcesoInscripcion)", e, null);
+        }
+    }
+   
+    /**
+     * Permite agregar un día más a la fecha
+     * @param fecha
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Date> agregarDiaMas(Date fecha){
+        try{
+            Date fechaFin = new Date();
+            
+            Calendar c = Calendar.getInstance();
+            c.setTime(fecha);
+            c.add(Calendar.DATE, 1);
+            fechaFin = c.getTime();
+                
+            return ResultadoEJB.crearCorrecto(fechaFin, "Se agregó correctamente un día más a la fecha.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo agregar un día más a la fecha. (EjbRegistroEventosEscolares.agregarDiaMas)", e, null);
+        }
+    }
+    
+    /**
+     * Permite eliminar el proceso de inscripción del periodo seleccionado
+     * @param eventoEscolar
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarProcesoInscripcion(EventoEscolar eventoEscolar){
+        try{
+            Integer delete = 0;
+            
+            if(eventoEscolar.getTipo().equals("Registro_fichas_admision")){
+                delete = em.createQuery("DELETE FROM ProcesosInscripcion p WHERE p.idPeriodo=:periodo AND p.activoNi=:valor", ProcesosInscripcion.class)
+                    .setParameter("periodo", eventoEscolar.getPeriodo())
+                    .setParameter("valor", true)    
+                    .executeUpdate();
+            }else{
+                delete = em.createQuery("DELETE FROM ProcesosInscripcion p WHERE p.idPeriodo=:periodo AND p.activoRe=:valor", ProcesosInscripcion.class)
+                    .setParameter("periodo", eventoEscolar.getPeriodo())
+                    .setParameter("valor", true)    
+                    .executeUpdate();
+            }
+            
+            return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente el proceso de inscripción del periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el proceso de inscripción del periodo seleccionado. (EjbRegistroEventosEscolares.eliminarProcesoInscripcion)", e, null);
+        }
+    }
+    
+    /**
+     * Permite eliminar los procesos de inscripción del periodo seleccionado
+     * @param periodo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarProcesosInscripcion(PeriodosEscolares periodo){
+        try{
+            
+            Integer delete = em.createQuery("DELETE FROM ProcesosInscripcion p WHERE p.idPeriodo=:periodo", ProcesosInscripcion.class)
+                .setParameter("periodo", periodo.getPeriodo())
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(delete, "Se eliminaron correctamente los procesos de inscripción del periodo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudieron eliminar los procesos de inscripción del periodo seleccionado. (EjbRegistroEventosEscolares.eliminarProcesosInscripcion)", e, null);
         }
     }
     

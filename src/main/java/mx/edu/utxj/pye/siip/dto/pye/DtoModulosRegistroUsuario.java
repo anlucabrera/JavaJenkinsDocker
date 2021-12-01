@@ -25,6 +25,9 @@ public class DtoModulosRegistroUsuario implements Serializable, Comparable<DtoMo
     @Getter @Setter @NonNull Personal personal;
     @Getter @Setter @NonNull AreasUniversidad areaRegistro;
 
+    public DtoModulosRegistroUsuario() {
+    }
+    
     @Override
     public int compareTo(DtoModulosRegistroUsuario o) {
         return toLabel(this).compareTo(toLabel(o));
@@ -32,6 +35,8 @@ public class DtoModulosRegistroUsuario implements Serializable, Comparable<DtoMo
 
     public static String toLabel(DtoModulosRegistroUsuario dtoModulosRegistroUsuario){
          return dtoModulosRegistroUsuario.getAreaRegistro().getNombre().concat(" ")
+//                .concat(dtoModulosRegistroUsuario.getEjeRegistro()).concat(" ")
+//                .concat(dtoModulosRegistroUsuario.getNombreModulo()).concat(" ")
                 .concat(dtoModulosRegistroUsuario.getPersonal().getNombre());
     }
 }
