@@ -16,8 +16,14 @@ pipeline{
 
 		
 		}
+                stage('Test') {
+                        steps {
+                                sh 'mvn test'
+                        }
+
+                }
                 stage('QA') {
-                        steps{
+                        steps {
                                 echo 'QA'
                         }
 
