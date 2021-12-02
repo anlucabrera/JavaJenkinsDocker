@@ -16,6 +16,12 @@ pipeline{
 
 		
 		}
+                stage('QA'){
+                        steps{
+                                echo 'QA'
+                        }
+
+                }
 	
 	}
 
