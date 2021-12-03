@@ -66,7 +66,7 @@ public class SeguimientoEvaluacionCodigoEticaDirectivos extends ViewScopedRol im
             PersonalActivo directivo = filtro.getEntity();//            ejbPersonalBean.pack(logonMB.getPersonal());
             rol = new SeguimientoEvaluacionEticaRolDirectivos(filtro, directivo, directivo.getAreaOperativa());
             tieneAcceso = rol.tieneAcceso(directivo);
-            System.out.println("Tiene acceso:"+ tieneAcceso);
+//            System.out.println("Tiene acceso:"+ tieneAcceso);
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
             rol.setDirectivo(directivo);

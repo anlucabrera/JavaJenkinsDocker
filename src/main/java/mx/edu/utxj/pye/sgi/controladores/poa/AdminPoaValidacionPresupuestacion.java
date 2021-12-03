@@ -35,6 +35,7 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.primefaces.event.RowEditEvent;
 
@@ -57,6 +58,7 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     @Getter    @Setter    private Boolean ecxiste=false;
     @Getter    @Setter    private String claseP1="",claseP2="",claseP3="",claseP4="",clasePC="",clasePT="";
     @Getter    @Setter    private List<PretechoFinanciero> pretechoFinancieros = new ArrayList<>();
+    @Getter    @Setter    private List<ProductosAreas> productosAreases = new ArrayList<>();
     @Getter    @Setter    private List<RecursosActividad> recursosActividads2 = new ArrayList<>(),recursosActividads3 = new ArrayList<>(),recursosActividads4 = new ArrayList<>(),recursosActividads5 = new ArrayList<>(),recursosActividadscdh = new ArrayList<>();
     @Getter    @Setter    private Double pretecho2000=0D,pretecho3000=0D,pretecho4000=0D,pretecho5000=0D,pretechoCPDD=0D,totalPretecho=0D;
     @Getter    @Setter    private Double totalCaptitulos=0D,totalCaptitulo2000 = 0D,totalCaptitulo3000 = 0D,totalCaptitulo4000 = 0D,totalCaptitulo5000 = 0D,totalCaptituloCPDD = 0D;
@@ -150,6 +152,9 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
                 }
             });
         }
+        productosAreases= new ArrayList<>();
+        productosAreases=ejbPresupuestacion.mostrarProductosAreases(claveArea, ejercicioFiscal);
+        
         Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjeA().getEje(), y.getEjeA().getEje()));
         obtenerPretechos();
         obteneroTotalesCapitulos();
@@ -354,8 +359,13 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     
     public void onCellEditProductos(RowEditEvent event) {
         RecursosActividad modificada = (RecursosActividad) event.getObject();
+        Integer newProdAre=0;
+        newProdAre=modificada.getProductoArea().getProductoArea();
         totalRecursoActividad = modificada.getRPEnero() + modificada.getRPFebero() + modificada.getRPMarzo() + modificada.getRPAbril() + modificada.getRPMayo() + modificada.getRPJunio() + modificada.getRPJulio() + modificada.getRPAgosto() + modificada.getRPSeptiembre() + modificada.getRPOctubre() + modificada.getRPNoviembre() + modificada.getRPDiciembre();
         modificada.setTotal(totalRecursoActividad);
+        modificada.setProductoArea(new ProductosAreas());
+        modificada.setProductoArea(new ProductosAreas(newProdAre));
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AdminPoaValidacionPresupuestacion.onCellEditProductos()"+modificada.getProductoArea().getProductoArea());
         ejbPresupuestacion.actualizaRecursosActividad(modificada);
         consultarListasValidacionFinal();
     }

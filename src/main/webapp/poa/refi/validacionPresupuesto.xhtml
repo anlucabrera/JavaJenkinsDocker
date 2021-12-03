@@ -458,8 +458,15 @@
                                                                         <p:ajax event="rowEdit" listener="#{adminPoaValidacionPresupuestacion.onCellEditProductos}" update="@this" oncomplete="actualizarTabla()"/>
                                                                         <p:ajax event="rowEditCancel" listener="#{adminPoaValidacionPresupuestacion.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
 
-                                                                        <p:column> 
-                                                                            <h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" />
+                                                                        <p:column>
+                                                                            <p:cellEditor>
+                                                                                <f:facet name="output"><h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" /></f:facet>
+                                                                                <f:facet name="input">
+                                                                                    <p:selectOneMenu id="grupo" value="#{recurso.productoArea.productoArea}" style="width:100%" filter="true" filterMatchMode="contains">
+                                                                                        <f:selectItems value="#{adminPoaValidacionPresupuestacion.productosAreases}" var="grup" itemValue="#{grup.productoArea}" itemLabel="#{grup.productos.productosPK.producto}--#{grup.productos.descripcion}, #{grup.capitulo.nombre}"/>
+                                                                                    </p:selectOneMenu>
+                                                                                </f:facet>
+                                                                            </p:cellEditor>
                                                                         </p:column>
                                                                         <p:column>
                                                                             <h:outputText value="#{recurso.productoArea.productos.unidadMedida}" style="font-size: xx-small"/>

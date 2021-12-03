@@ -111,7 +111,7 @@ per=0;
             Faces.getExternalContext().getFlash().setKeepMessages(true);
             Faces.redirect("controlEscolar/aspirante/registroFichaAspirante.xhtml");
         }else if(email.equals("aspiranteing") && password.equals("aspirantei")){
-            System.out.println("LogonMB.login Aspirante Ing" + email + "  "+ password);
+//            System.out.println("LogonMB.login Aspirante Ing" + email + "  "+ password);
             currentUser = email;
             usuarioTipo = UsuarioTipo.ASPIRANTEING;
             addDetailMessage("Bienvenido y bienvenida <b>" + "Aspirante" + "</b>");
@@ -162,7 +162,7 @@ per=0;
 //                    listaUsuarioClaveNominaShiro = usuarioAutenticadoShiro;
 //                    acceso = true;
                     if (usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) {
-                        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(listaUsuarioClaveNomina)" + listaUsuarioClaveNomina);
+//                        System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(listaUsuarioClaveNomina)" + listaUsuarioClaveNomina);
                         if (listaUsuarioClaveNomina == null) {
                             addDetailMessage("El usuario ingresado no existe.");
                             Faces.getExternalContext().getFlash().setKeepMessages(true);
@@ -171,9 +171,9 @@ per=0;
                         } else {
 //                        personal = (Personal) f.find(Integer.parseInt(usuarioAutenticadoShiro.getClaveNomina()));
                             personal = ejbLogin.buscaPersona(Integer.parseInt(listaUsuarioClaveNomina.getNumeroNomina()));
-                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(personal)" + personal);
+//                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(personal)" + personal);
                             if (personal.getStatus().equals('B')) {
-                                System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(B)");
+//                                System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login(B)");
                                 acceso = Boolean.FALSE;
                                 addDetailMessage("El usuario ingresado no existe.");
                                 Faces.getExternalContext().getFlash().setKeepMessages(true);
@@ -182,7 +182,7 @@ per=0;
                                 acceso = Boolean.TRUE;
                             }
                             listaUsuarioClaveNomina.getNumeroNomina();
-                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+listaUsuarioClaveNomina.getNumeroNomina());
+//                            System.out.println("com.github.adminfaces.starter.infra.security.LogonMB.login()"+listaUsuarioClaveNomina.getNumeroNomina());
 //                    agregaBitacora();
 //                    getPermisosAcceso();
                         }

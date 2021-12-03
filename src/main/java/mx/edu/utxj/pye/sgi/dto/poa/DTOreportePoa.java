@@ -31,7 +31,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
  */
 @RequiredArgsConstructor @ToString @EqualsAndHashCode
 public class DTOreportePoa {
-    
+
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class General {
         @Getter @Setter @NonNull AreasUniversidad areasUniversidad;
@@ -47,5 +47,38 @@ public class DTOreportePoa {
         @Getter @Setter @NonNull Partidas partidas;
         @Getter @Setter @NonNull CapitulosTipos capitulosTipos;
     }
-    
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class ProgramacionActividades {
+        @Getter @Setter @NonNull EjesRegistro ejesRegistro;
+        @Getter @Setter @NonNull List<EstrategiaLineas> estrategiaLineas;
+    }
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class EstrategiaLineas {
+        @Getter @Setter @NonNull EjesRegistro ejesRegistro;
+        @Getter @Setter @NonNull List<LineasActividades> lineaActividades;
+    }
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class LineasActividades {
+        @Getter @Setter @NonNull LineasAccion lineasAccion;
+        @Getter @Setter @NonNull List<ActividadRecurso> actividadeRecurso;
+    }
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class ActividadRecurso {
+        @Getter @Setter @NonNull ActividadesPoa actividadesPoa;
+        @Getter @Setter @NonNull UnidadMedidas medidas;
+        @Getter @Setter List<RecursoActividad> recursosActividad;    
+    }
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class RecursoActividad {
+        @Getter @Setter @NonNull RecursosActividad recursosActividad;
+        @Getter @Setter @NonNull ProductosAreas productosAreas;
+        @Getter @Setter @NonNull Productos productos;
+        @Getter @Setter @NonNull Partidas partidas;
+        @Getter @Setter @NonNull CapitulosTipos capitulosTipos;
+    }
 }

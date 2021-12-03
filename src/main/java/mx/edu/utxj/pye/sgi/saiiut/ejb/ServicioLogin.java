@@ -105,7 +105,7 @@ public class ServicioLogin implements EjbLogin {
                 .getResultStream()
                 .findFirst()
                 .orElse(null);
-        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuario19PorLogin(login)"+login);
+//        System.out.println("mx.edu.utxj.pye.sgi.saiiut.ejb.ServicioLogin.getUsuario19PorLogin(login)"+login);
         return login;
     }
 
