@@ -36,6 +36,7 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.Date;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPermisoAperturaExtemporanea;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
@@ -104,6 +105,8 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
             rol.getInstrucciones().add("Ubique la fila que corresponda al evento que desea eliminar, dará clic en el icono de la columna ELIMINAR.");
             rol.getInstrucciones().add("NOTA: No se pueden eliminar eventos del periodo activo o anteriores.");
             
+            rol.setPestaniaActiva(0);
+            
             periodosEscolaresRegistrados();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -152,6 +155,7 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
             rol.setExisteRegistro(res.getValor());
             if(rol.getExisteRegistro()){
                 listaEventosEscolaresRegistrados();
+                listaProcesosInscripcion();
             }else{
                 listaEventosEscolares();
             }
@@ -180,6 +184,18 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
         if(res.getCorrecto()){
             rol.setListaEventos(res.getValor());
             Ajax.update("tbListaEventosEscolares");
+        }else mostrarMensajeResultadoEJB(res);
+    
+    }
+    
+    /**
+     * Permite obtener la lista de procesos de inscripción registrados en el periodo escolar seleccionado
+     */
+    public void listaProcesosInscripcion(){
+        ResultadoEJB<List<ProcesosInscripcion>> res = ejb.getProcesosInscripcion(rol.getPeriodoEscolar());
+        if(res.getCorrecto()){
+            rol.setListaProcesosInscripcion(res.getValor());
+            Ajax.update("tbListaProcInsRegistrados");
         }else mostrarMensajeResultadoEJB(res);
     
     }
@@ -282,6 +298,7 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
         if (agregar.getCorrecto()) {
             mostrarMensajeResultadoEJB(agregar);
             listaEventosEscolaresRegistrados();
+            listaProcesosInscripcion();
             Ajax.update("frm");
         }
     }
@@ -295,7 +312,19 @@ public class RegistroEventosEscolares extends ViewScopedRol implements Desarroll
         if(res.getCorrecto()){
             mostrarMensajeResultadoEJB(res);
             listaEventosEscolaresRegistrados();
+            listaProcesosInscripcion();
         }else mostrarMensajeResultadoEJB(res);
         
+    }
+    
+     /**
+     * Permite editar la fechas de inicio y fin de un evento escolar que ya se encuentra registrado
+     * @param event Evento de edición de la celda
+     */
+    public void onCellEditProcesoIns(CellEditEvent event) {
+        DataTable dataTable = (DataTable) event.getSource();
+        ProcesosInscripcion proceso = (ProcesosInscripcion) dataTable.getRowData();
+        ResultadoEJB<ProcesosInscripcion> resAct = ejb.actualizarProcesoInscripcion(proceso);
+        mostrarMensajeResultadoEJB(resAct);
     }
 }

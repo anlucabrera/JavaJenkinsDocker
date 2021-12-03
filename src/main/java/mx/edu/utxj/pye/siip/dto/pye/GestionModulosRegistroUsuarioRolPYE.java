@@ -14,6 +14,7 @@ import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistro;
+import mx.edu.utxj.pye.sgi.entity.pye2.ModulosRegistroEspecifico;
 
 /**
  *
@@ -99,6 +100,16 @@ public class GestionModulosRegistroUsuarioRolPYE extends AbstractRol {
      * Lista de módulos asignados al personal seleccionado
      */
     @Getter @NonNull private List<DtoModulosRegistroUsuario> listaModulosAsignadosPersonal;
+    
+    /**
+     * Lista de áreas 
+     */
+    @Getter @NonNull private ModulosRegistroEspecifico modulosRegistroEspecifico;
+    
+    /**
+     * Número de pestaña activa
+     */
+    @Getter private Integer pestaniaActiva;
    
 
     public GestionModulosRegistroUsuarioRolPYE(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
@@ -169,5 +180,12 @@ public class GestionModulosRegistroUsuarioRolPYE extends AbstractRol {
     public void setListaModulosAsignadosPersonal(List<DtoModulosRegistroUsuario> listaModulosAsignadosPersonal) {
         this.listaModulosAsignadosPersonal = listaModulosAsignadosPersonal;
     }
-    
+
+    public void setModulosRegistroEspecifico(ModulosRegistroEspecifico modulosRegistroEspecifico) {
+        this.modulosRegistroEspecifico = modulosRegistroEspecifico;
+    }
+
+    public void setPestaniaActiva(Integer pestaniaActiva) {
+        this.pestaniaActiva = pestaniaActiva;
+    }
 }
