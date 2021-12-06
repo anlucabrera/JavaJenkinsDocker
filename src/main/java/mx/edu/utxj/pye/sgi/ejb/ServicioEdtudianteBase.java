@@ -228,8 +228,9 @@ public class ServicioEdtudianteBase implements EJBAdimEstudianteBase{
            // System.out.println("Matricula que recibe " + matricula);
             //System.out.println("Periodo " + periodoEvaluacion);
             dtoEstudiantesEvalauciones estudiante = new dtoEstudiantesEvalauciones();
-            if(matricula==null){return ResultadoEJB.crearErroneo(2,estudiante,"La matricula no debe ser nula");}
-            if(periodoEvaluacion==0){return ResultadoEJB.crearErroneo(3,estudiante,"El periodo no debe ser nulo");}
+            if (matricula == null) { return ResultadoEJB.crearErroneo(2, estudiante, "La matricula no debe ser nula"); }
+            if (periodoEvaluacion == 0) { return ResultadoEJB.crearErroneo(3, estudiante, "El periodo no debe ser nulo"); }
+            if(matricula.length()<6){matricula ="0".concat(matricula);}
             //Se busca el registro del estudiante segun su matricula y periodo de la evaluacion
             ResultadoEJB<MatriculaPeriodosEscolares> resRegistro= getRegistroEstudiantebyPeriodo(matricula,periodoEvaluacion);
             //System.out.println("Registro " + resRegistro.getValor());
