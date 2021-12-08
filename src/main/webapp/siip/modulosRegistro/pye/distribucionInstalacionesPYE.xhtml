@@ -105,6 +105,7 @@
                                     
                                 </f:facet>
                                 <f:facet name="right">
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesEvidenciasSII.descargarEvidenciasDistInstalaciones(controladorDistribucionInstalacionesPYE.dto.eventoSeleccionado, controladorDistribucionInstalacionesPYE.dto.listaCapIns, controladorDistribucionInstalacionesPYE.dto.listaDisAulas, controladorDistribucionInstalacionesPYE.dto.listaDisLabTall)}" target="_blank" title="Descargar archivo zip" disabled="#{empty controladorDistribucionInstalacionesPYE.dto.listaCapIns}"><i class="fa fa-file-archive-o" /></p:commandLink>
                                     <c:if test="#{controladorDistribucionInstalacionesPYE.dto.eventoSeleccionado ne null}">
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasEB.descargarReporteCuatrimestralDistribucionInstalaciones(controladorDistribucionInstalacionesPYE.dto.eventoSeleccionado.ejercicioFiscal.anio, controladorDistribucionInstalacionesPYE.dto.areaUniversidadPOA)}" target="_blank" title="Descargar Reporte Cuatrimestral - Distribución de Instalaciones"><i class="fa fa-file-excel-o" /></p:commandLink>

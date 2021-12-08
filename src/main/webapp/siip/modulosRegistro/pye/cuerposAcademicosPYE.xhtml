@@ -143,6 +143,7 @@
                             </f:facet>
                             <f:facet name="right">
                                 <h:form id="frmReporte">
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesEvidenciasSII.descargarEvidenciasCuerposAcademicos(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta, controladorCuerposAcademicosPYE.dtoCuerposAcademicos.mesConsulta, controladorCuerposAcademicosPYE.dtoCuerposAcademicos.lstDtoCuerposAcademicosR, controladorCuerposAcademicosPYE.dtoCuerposAcademicos.lstDtoCuerpAcadIntegrantes, controladorCuerposAcademicosPYE.dtoCuerposAcademicos.lstCuerpAcadLineas)}" target="_blank" title="Descargar archivo zip" disabled="#{empty controladorCuerposAcademicosPYE.dtoCuerposAcademicos.lstDtoCuerposAcademicosR}"><i class="fa fa-file-archive-o" /></p:commandLink>
                                     <c:if test="#{controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta ne null}">
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteCuerposAcademicos(controladorCuerposAcademicosPYE.dtoCuerposAcademicos.anioConsulta)}" target="_blank" title="Descargar Reporte de Excel Cuerpos Académicos"><i class="fa fa-file-excel-o" /></p:commandLink>

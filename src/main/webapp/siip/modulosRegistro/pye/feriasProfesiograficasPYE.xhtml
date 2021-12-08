@@ -70,6 +70,7 @@
                                         </div>
                                     </f:facet>
                                     <f:facet name="right">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesEvidenciasSII.descargarEvidenciasFerias(feriasPro.dto.ejercicioFiscal, feriasPro.dto.mes, feriasPro.dto.listaFeriasPDTO, feriasPart.dto.listaFeriasParticipantesDTO)}" target="_blank" title="Descargar archivo zip" disabled="#{empty feriasPro.dto.listaFeriasPDTO}"><i class="fa fa-file-archive-o" /></p:commandLink>
                                         <c:if test="#{feriasPro.dto.ejercicioFiscal ne null}">
                                             <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                             <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteFerProf(feriasPro.dto.ejercicioFiscal)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>

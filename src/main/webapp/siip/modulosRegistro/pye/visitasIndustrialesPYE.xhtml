@@ -71,6 +71,7 @@
                                         </div>
                                     </f:facet>
                                     <f:facet name="right">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesEvidenciasSII.descargarEvidenciasVisitas(visitasIndustriales.dto.ejercicioFiscal, visitasIndustriales.dto.mes, visitasIndustriales.dto.listaVisitasdTO)}" target="_blank" title="Descargar archivo zip" disabled="#{empty visitasIndustriales.dto.listaVisitasdTO}"><i class="fa fa-file-archive-o" /></p:commandLink>
                                         <c:if test="#{visitasIndustriales.dto.ejercicioFiscal ne null}">
                                             <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                             <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteVisitas(visitasIndustriales.dto.ejercicioFiscal)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>

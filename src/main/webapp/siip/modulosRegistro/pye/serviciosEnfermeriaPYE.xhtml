@@ -142,6 +142,7 @@
                             </f:facet>
                             <f:facet name="right">
                                 <h:form id="frmReporte">
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesEvidenciasSII.descargarEvidenciasServEnfermeria(controladorServiciosEnfermeriaPYE.dto.anioConsulta, controladorServiciosEnfermeriaPYE.dto.mesConsulta, controladorServiciosEnfermeriaPYE.dto.lista)}" target="_blank" title="Descargar archivo zip" disabled="#{empty controladorServiciosEnfermeriaPYE.dto.lista}"><i class="fa fa-file-archive-o" /></p:commandLink>
                                     <c:if test="#{controladorServiciosEnfermeriaPYE.dto.anioConsulta ne null}">
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteServiciosEnfermeria(controladorServiciosEnfermeriaPYE.dto.anioConsulta)}" target="_blank" title="Descargar Reporte General de Servicios de Enfermería"><i class="fa fa-file-excel-o" /></p:commandLink>

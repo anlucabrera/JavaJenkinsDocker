@@ -64,6 +64,7 @@
                                         </p:selectOneMenu>
                                     </f:facet>
                                     <f:facet name="right">
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesEvidenciasSII.descargarEvidenciasIngPropios(ingresosPropPYE.dto.eventoSeleccionado, ingresosPropPYE.dto.lista)}" target="_blank" title="Descargar archivo zip" disabled="#{empty ingresosPropPYE.dto.lista}"><i class="fa fa-file-archive-o" /></p:commandLink>
                                         <c:if test="#{ingresosPropPYE.dto.periodo.anio ne null}">
                                             <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                             <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reporteRegistros.descargarReporteIngPropios(ingresosPropPYE.dto.periodo.anio)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>
