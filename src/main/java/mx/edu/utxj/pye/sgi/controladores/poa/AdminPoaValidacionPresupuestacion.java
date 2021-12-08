@@ -35,6 +35,10 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
+import mx.edu.utxj.pye.sgi.entity.pye2.CapitulosTipos;
 import mx.edu.utxj.pye.sgi.entity.pye2.ProductosAreas;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.primefaces.event.RowEditEvent;
@@ -49,26 +53,24 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     @Getter    @Setter    private List<AreasUniversidad> areasUniversidadsRegistros = new ArrayList<>();
     @Getter    @Setter    private AreasUniversidad areaPOASeleccionada = new AreasUniversidad();
     @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
-    @Getter    @Setter    private List<ListaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
-    @Getter    @Setter    private List<ListaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ProgramacionActividades> ejesEsLaAp=new ArrayList<>();
     @Getter    @Setter    private String mss="";
     @Getter    @Setter    private Short claveArea = 0, ejercicioFiscal = 0; 
-    @Getter    @Setter    private List<ListaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
     
     @Getter    @Setter    private Boolean ecxiste=false;
     @Getter    @Setter    private String claseP1="",claseP2="",claseP3="",claseP4="",clasePC="",clasePT="";
     @Getter    @Setter    private List<PretechoFinanciero> pretechoFinancieros = new ArrayList<>();
     @Getter    @Setter    private List<ProductosAreas> productosAreases = new ArrayList<>();
-    @Getter    @Setter    private List<RecursosActividad> recursosActividads2 = new ArrayList<>(),recursosActividads3 = new ArrayList<>(),recursosActividads4 = new ArrayList<>(),recursosActividads5 = new ArrayList<>(),recursosActividadscdh = new ArrayList<>();
+    @Getter    @Setter    private List<RecursosActividad> ras = new ArrayList<>();
     @Getter    @Setter    private Double pretecho2000=0D,pretecho3000=0D,pretecho4000=0D,pretecho5000=0D,pretechoCPDD=0D,totalPretecho=0D;
     @Getter    @Setter    private Double totalCaptitulos=0D,totalCaptitulo2000 = 0D,totalCaptitulo3000 = 0D,totalCaptitulo4000 = 0D,totalCaptitulo5000 = 0D,totalCaptituloCPDD = 0D;
     @Getter    @Setter    private Double totalRecursoActividad = 0D;
     
-    @Getter    @Setter    private List<CapitulosLista> capitulo2000 = new ArrayList<>();
-    @Getter    @Setter    private List<CapitulosLista> capitulo3000 = new ArrayList<>();
-    @Getter    @Setter    private List<CapitulosLista> capitulo4000 = new ArrayList<>();
-    @Getter    @Setter    private List<CapitulosLista> capitulo5000 = new ArrayList<>();
-    @Getter    @Setter    private List<CapitulosLista> capituloCPDD = new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.CapitulosLista> capitulo2000 = new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.CapitulosLista> capitulo3000 = new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.CapitulosLista> capitulo4000 = new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.CapitulosLista> capitulo5000 = new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.CapitulosLista> capituloCPDD = new ArrayList<>();
     
     
     
@@ -124,42 +126,21 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     }
 
     public void consultarListasValidacionFinal() {
-        listaListaEjeEstrategia=new ArrayList<>();
-        listaListaEjeEstrategia.clear();
+        try {
+            ejesEsLaAp = new ArrayList<>();
+            ejesEsLaAp.clear();
+            ejesEsLaAp = ejbCatalogosPoa.getPresentacionPOA(claveArea, ejercicioFiscal);
 
-        ejesEsLaAp = new ArrayList<>();
-        ejesEsLaAp.clear();
+            productosAreases = new ArrayList<>();
+            productosAreases = ejbPresupuestacion.mostrarProductosAreases(claveArea, ejercicioFiscal);
 
-        if (!ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal).isEmpty()) {
-            ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal).forEach((ej) -> {
-                listaListaEjeEstrategia = new ArrayList<>();
-                listaListaEjeEstrategia.clear();
-                listaListaEjeEstrategia.add(new ListaEjeEstrategia(ej, ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, claveArea)));
-                if (!listaListaEjeEstrategia.isEmpty()) {
-                    listaListaEjeEstrategia.forEach((e) -> {
-                        e.getListaEstrategiases1().forEach((t) -> {
-                            List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
-                            listaActividadesPoasFiltradas.clear();
-                            listaActividadesPoasFiltradas = ejbRegistroActividades.getActividadesPoasEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea);
-                            listaEstrategiaActividadesesEje.add(new ListaEstrategiaActividades(t, listaActividadesPoasFiltradas));
-                            Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
-
-                        });
-                        ejesEsLaAp.add(new ListaEjesEsLaAp(ej, listaEstrategiaActividadesesEje));
-                        listaEstrategiaActividadesesEje = new ArrayList<>();
-                        listaEstrategiaActividadesesEje.clear();
-                    });
-                }
-            });
+            obtenerPretechos();
+            obteneroTotalesCapitulosDesglosado();
+            obteneroTotalesFinales();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdminPoaValidacionPresupuestacion.class.getName()).log(Level.SEVERE, null, ex);
         }
-        productosAreases= new ArrayList<>();
-        productosAreases=ejbPresupuestacion.mostrarProductosAreases(claveArea, ejercicioFiscal);
-        
-        Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjeA().getEje(), y.getEjeA().getEje()));
-        obtenerPretechos();
-        obteneroTotalesCapitulos();
-        obteneroTotalesFinales();
-        obteneroTotalesCapitulosDesglosado();
     }
 
     public void enviarmensajes(String proceso) {
@@ -193,35 +174,6 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
         });
         totalPretecho = pretecho2000 + pretecho3000 + pretecho4000 + pretecho5000 + pretechoCPDD;
     }
-    
-    public void obteneroTotalesCapitulos() {
-        recursosActividads2 = new ArrayList<>();        recursosActividads3 = new ArrayList<>();
-        recursosActividads4 = new ArrayList<>();        recursosActividads5 = new ArrayList<>();
-        recursosActividadscdh = new ArrayList<>();
-
-        recursosActividads2.clear();        recursosActividads3.clear();
-        recursosActividads4.clear();        recursosActividads5.clear();
-        recursosActividadscdh.clear();
-
-        recursosActividads2=ejbPresupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("2"));
-        recursosActividads3=ejbPresupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("3"));
-        recursosActividads4=ejbPresupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("4"));
-        recursosActividads5=ejbPresupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("5"));
-        recursosActividadscdh=ejbPresupuestacion.mostrarRecursosActividad(claveArea, ejercicioFiscal, Short.parseShort("6"));
-        
-        totalCaptitulo2000 = 0D;
-        totalCaptitulo3000 = 0D;
-        totalCaptitulo4000 = 0D;
-        totalCaptitulo5000 = 0D;
-        totalCaptituloCPDD = 0D;
-
-        if (!recursosActividads2.isEmpty()) {            recursosActividads2.forEach((t) -> {                totalCaptitulo2000 = totalCaptitulo2000 + t.getTotal();            });        }
-        if (!recursosActividads3.isEmpty()) {            recursosActividads3.forEach((t) -> {                totalCaptitulo3000 = totalCaptitulo3000 + t.getTotal();            });        }
-        if (!recursosActividads4.isEmpty()) {            recursosActividads4.forEach((t) -> {                totalCaptitulo4000 = totalCaptitulo4000 + t.getTotal();            });        }
-        if (!recursosActividads5.isEmpty()) {            recursosActividads5.forEach((t) -> {                totalCaptitulo5000 = totalCaptitulo5000 + t.getTotal();            });        }
-        if (!recursosActividadscdh.isEmpty()) {          recursosActividadscdh.forEach((t) -> {               totalCaptituloCPDD = totalCaptituloCPDD + t.getTotal();            });        }
-        
-    }
 
     public void obteneroTotalesFinales() {
         totalCaptitulos = totalCaptitulo2000 + totalCaptitulo3000 + totalCaptitulo4000 + totalCaptitulo5000 + totalCaptituloCPDD;
@@ -234,6 +186,15 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     }
     
     public void obteneroTotalesCapitulosDesglosado() {
+        ras = new ArrayList<>(); 
+        ras=ejbPresupuestacion.mostrarRecursosActividades(claveArea, ejercicioFiscal);
+                       
+        totalCaptitulo2000 = 0D;
+        totalCaptitulo3000 = 0D;
+        totalCaptitulo4000 = 0D;
+        totalCaptitulo5000 = 0D;
+        totalCaptituloCPDD = 0D;
+        
         capitulo2000 = new ArrayList<>();
         capitulo2000.clear();
         capitulo3000 = new ArrayList<>();
@@ -245,178 +206,82 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
         capituloCPDD = new ArrayList<>();
         capituloCPDD.clear();
         ecxiste = false;
+        
+        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AdminPoaValidacionPresupuestacion.obteneroTotalesCapitulosDesglosado()"+ras.size());
 
-        if (!recursosActividads2.isEmpty()) {
-            recursosActividads2.forEach((t) -> {
-                if (t.getProductoArea().getCapitulo().getCapituloTipo() == 2) {
-                    if (!capitulo2000.isEmpty()) {
-                        capitulo2000.forEach((c) -> {
-                            if (c.getPartidas1().equals(t.getProductoArea().getPartida())) {
-                                c.setTotal(c.getTotal() + t.getTotal());
-                                ecxiste = true;
-                            }
-                        });
-                        if (!ecxiste) {
-                            capitulo2000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
-                        }
-                        ecxiste = false;
-                    } else {
-                        ecxiste = false;
-                        capitulo2000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
-                    }
+        if (!ras.isEmpty()) {
+            ras.forEach((t) -> {
+                CapitulosTipos ct = new CapitulosTipos();
+                ct = t.getProductoArea().getCapitulo();
+                switch (ct.getCapituloTipo()) {
+                    case 2:
+                        totalCaptitulo2000 = totalCaptitulo2000 + t.getTotal();
+                        break;
+                    case 3:
+                        totalCaptitulo3000 = totalCaptitulo3000 + t.getTotal();
+                        break;
+                    case 4:
+                        totalCaptitulo4000 = totalCaptitulo4000 + t.getTotal();
+                        break;
+                    case 5:
+                        totalCaptitulo5000 = totalCaptitulo5000 + t.getTotal();
+                        break;
+                    case 6:
+                        totalCaptituloCPDD = totalCaptituloCPDD + t.getTotal();
+                        break;
                 }
             });
         }
+        capitulo2000 = totalDesglosado(Short.parseShort("2"));
+        capitulo3000 = totalDesglosado(Short.parseShort("3"));
+        capitulo4000 = totalDesglosado(Short.parseShort("4"));
+        capitulo5000 = totalDesglosado(Short.parseShort("5"));
+        capituloCPDD = totalDesglosado(Short.parseShort("6"));
+    }
+    
+    public List<DTOreportePoa.CapitulosLista> totalDesglosado(Short numcap) {
         ecxiste = false;
-        if (!recursosActividads3.isEmpty()) {
-            recursosActividads3.forEach((t) -> {
-                if (t.getProductoArea().getCapitulo().getCapituloTipo() == 3) {
-                    if (!capitulo3000.isEmpty()) {
-                        capitulo3000.forEach((c) -> {
-                            if (c.getPartidas1().equals(t.getProductoArea().getPartida())) {
-                                c.setTotal(c.getTotal() + t.getTotal());
-                                ecxiste = true;
-                            }
-                        });
-                        if (!ecxiste) {
-                            capitulo3000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+        List<RecursosActividad> actividads = new ArrayList<>();
+        List<DTOreportePoa.CapitulosLista> cls = new ArrayList<>();
+        actividads = ras.stream().filter(t -> Objects.equals(t.getProductoArea().getCapitulo().getCapituloTipo(), numcap)).collect(Collectors.toList());
+        if (!actividads.isEmpty()) {
+            actividads.forEach((t) -> {
+                if (!cls.isEmpty()) {
+                    cls.forEach((c) -> {
+                        if (c.getPartidas1().equals(t.getProductoArea().getPartida())) {
+                            c.setTotal(c.getTotal() + t.getTotal());
+                            ecxiste = true;
                         }
-                        ecxiste = false;
-                    } else {
-                        ecxiste = false;
-                        capitulo3000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
+                    });
+                    if (!ecxiste) {
+                        cls.add(new DTOreportePoa.CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                     }
+                    ecxiste = false;
+                } else {
+                    ecxiste = false;
+                    cls.add(new DTOreportePoa.CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
                 }
             });
         }
-        ecxiste = false;
-        if (!recursosActividads4.isEmpty()) {
-            recursosActividads4.forEach((t) -> {
-                if (t.getProductoArea().getCapitulo().getCapituloTipo() == 4) {
-                    if (!capitulo4000.isEmpty()) {
-                        capitulo4000.forEach((c) -> {
-                            if (c.getPartidas1().equals(t.getProductoArea().getPartida())) {
-                                c.setTotal(c.getTotal() + t.getTotal());
-                                ecxiste = true;
-                            }
-                        });
-                        if (!ecxiste) {
-                            capitulo4000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
-                        }
-                        ecxiste = false;
-                    } else {
-                        ecxiste = false;
-                        capitulo4000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
-                    }
-                }
-            });
-        }
-        ecxiste = false;
-        if (!recursosActividads5.isEmpty()) {
-            recursosActividads5.forEach((t) -> {
-                if (t.getProductoArea().getCapitulo().getCapituloTipo() == 5) {
-                    if (!capitulo5000.isEmpty()) {
-                        capitulo5000.forEach((c) -> {
-                            if (c.getPartidas1().equals(t.getProductoArea().getPartida())) {
-                                c.setTotal(c.getTotal() + t.getTotal());
-                                ecxiste = true;
-                            }
-                        });
-                        if (!ecxiste) {
-                            capitulo5000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
-                        }
-                        ecxiste = false;
-                    } else {
-                        ecxiste = false;
-                        capitulo5000.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
-                    }
-                }
-            });
-        }
-        ecxiste = false;
-        if (!recursosActividadscdh.isEmpty()) {
-            recursosActividadscdh.forEach((t) -> {
-                if (t.getProductoArea().getCapitulo().getCapituloTipo() == 6) {
-                    if (!capituloCPDD.isEmpty()) {
-                        capituloCPDD.forEach((c) -> {
-                            if (c.getPartidas1().equals(t.getProductoArea().getPartida())) {
-                                c.setTotal(c.getTotal() + t.getTotal());
-                                ecxiste = true;
-                            }
-                        });
-                        if (!ecxiste) {
-                            capituloCPDD.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
-                        }
-                        ecxiste = false;
-                    } else {
-                        ecxiste = false;
-                        capituloCPDD.add(new CapitulosLista(t.getProductoArea().getPartida(), t.getTotal()));
-                    }
-                }
-            });
-        }
+        return cls;
     }
     
     public void onCellEditProductos(RowEditEvent event) {
-        RecursosActividad modificada = (RecursosActividad) event.getObject();
+        DTOreportePoa.RecursoActividad modificada = (DTOreportePoa.RecursoActividad) event.getObject();
+        RecursosActividad actividad= new RecursosActividad();
+        actividad=modificada.getRecursosActividad();
         Integer newProdAre=0;
-        newProdAre=modificada.getProductoArea().getProductoArea();
-        totalRecursoActividad = modificada.getRPEnero() + modificada.getRPFebero() + modificada.getRPMarzo() + modificada.getRPAbril() + modificada.getRPMayo() + modificada.getRPJunio() + modificada.getRPJulio() + modificada.getRPAgosto() + modificada.getRPSeptiembre() + modificada.getRPOctubre() + modificada.getRPNoviembre() + modificada.getRPDiciembre();
-        modificada.setTotal(totalRecursoActividad);
-        modificada.setProductoArea(new ProductosAreas());
-        modificada.setProductoArea(new ProductosAreas(newProdAre));
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AdminPoaValidacionPresupuestacion.onCellEditProductos()"+modificada.getProductoArea().getProductoArea());
-        ejbPresupuestacion.actualizaRecursosActividad(modificada);
+        newProdAre=actividad.getProductoArea().getProductoArea();
+        totalRecursoActividad = actividad.getRPEnero() + actividad.getRPFebero() + actividad.getRPMarzo() + actividad.getRPAbril() + actividad.getRPMayo() + actividad.getRPJunio() + actividad.getRPJulio() + actividad.getRPAgosto() + actividad.getRPSeptiembre() + actividad.getRPOctubre() + actividad.getRPNoviembre() + actividad.getRPDiciembre();
+        actividad.setTotal(totalRecursoActividad);
+        actividad.setProductoArea(new ProductosAreas());
+        actividad.setProductoArea(new ProductosAreas(newProdAre));
+        ejbPresupuestacion.actualizaRecursosActividad(actividad);
         consultarListasValidacionFinal();
     }
     
     public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalWarn("!!Operación cancelada!!");
-    }
-
-    public static class ListaEjesEsLaAp {
-
-        @Getter        @Setter        private EjesRegistro ejeA;
-        @Getter        @Setter        private List<ListaEstrategiaActividades> listalistaEstrategiaLaAp;
-
-        public ListaEjesEsLaAp(EjesRegistro ejeA, List<ListaEstrategiaActividades> listalistaEstrategiaLaAp) {
-            this.ejeA = ejeA;
-            this.listalistaEstrategiaLaAp = listalistaEstrategiaLaAp;
-        }
-    }
-    
-    public static class ListaEjeEstrategia {
-
-        @Getter        @Setter        private EjesRegistro ejess;
-        @Getter        @Setter        private List<Estrategias> listaEstrategiases1;
-
-        public ListaEjeEstrategia(EjesRegistro ejess, List<Estrategias> listaEstrategiases1) {
-            this.ejess = ejess;
-            this.listaEstrategiases1 = listaEstrategiases1;
-        }        
-    }
-    
-    
-    public static class ListaEstrategiaActividades {
-
-        @Getter        @Setter        private Estrategias estrategias;
-        @Getter        @Setter        private List<ActividadesPoa> actividadesPoas;
-
-        public ListaEstrategiaActividades(Estrategias estrategias, List<ActividadesPoa> actividadesPoas) {
-            this.estrategias = estrategias;
-            this.actividadesPoas = actividadesPoas;
-        }       
-    }
-
-    public static class CapitulosLista {
-
-        @Getter        @Setter        private Partidas partidas1;
-        @Getter        @Setter        private Double total;
-
-        public CapitulosLista(Partidas partidas1, Double total) {
-            this.partidas1 = partidas1;
-            this.total = total;
-        }
     }
 }
 

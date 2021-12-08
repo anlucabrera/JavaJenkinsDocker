@@ -25,6 +25,8 @@ public interface EjbPresupuestacion {
 //---------------------------------------------------------------------- Recursos Actividad --------------------------------------------------
     public List<RecursosActividad> mostrarRecursosActividad(Short area, Short ejercicioFical, Short capitulo);
 
+    public List<RecursosActividad> mostrarRecursosActividades(Short area, Short ejercicioFical);
+
     public List<RecursosActividad> mostrarRecursosActividadReporte(ActividadesPoa actividadesPoa);
 
     public RecursosActividad agregarRecursosActividad(RecursosActividad nuevoRecursosActividad);

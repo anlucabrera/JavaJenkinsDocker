@@ -72,6 +72,19 @@ public class ServiciosPresupuestacion implements EjbPresupuestacion {
             return pr;
         }
     }
+    
+    @Override
+    public List<RecursosActividad> mostrarRecursosActividades(Short area, Short ejercicioFical) {
+        TypedQuery<RecursosActividad> q = em.createQuery("SELECT r FROM RecursosActividad r INNER JOIN r.productoArea p WHERE p.area = :area AND p.productos.productosPK.ejercicioFiscal=:ejercicioFiscal", RecursosActividad.class);
+        q.setParameter("area", area);
+        q.setParameter("ejercicioFiscal", ejercicioFical);
+        List<RecursosActividad> pr = q.getResultList();
+        if (pr.isEmpty()) {
+            return new ArrayList<>();
+        } else {
+            return pr;
+        }
+    }
 
     @Override
     public List<RecursosActividad> mostrarRecursosActividadReporte(ActividadesPoa actividadesPoa) {

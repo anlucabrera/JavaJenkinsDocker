@@ -49,6 +49,12 @@ public class DTOreportePoa {
     }
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class CuadroMI {
+        @Getter @Setter @NonNull EjesRegistro ejesRegistro;
+        @Getter @Setter @NonNull List<Estrategias> estrategiases;
+    }
+    
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class ProgramacionActividades {
         @Getter @Setter @NonNull EjesRegistro ejesRegistro;
         @Getter @Setter @NonNull List<EstrategiaLineas> estrategiaLineas;
@@ -56,13 +62,7 @@ public class DTOreportePoa {
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class EstrategiaLineas {
-        @Getter @Setter @NonNull EjesRegistro ejesRegistro;
-        @Getter @Setter @NonNull List<LineasActividades> lineaActividades;
-    }
-
-    @RequiredArgsConstructor @ToString @EqualsAndHashCode
-    public static class LineasActividades {
-        @Getter @Setter @NonNull LineasAccion lineasAccion;
+        @Getter @Setter @NonNull Estrategias estrategias;
         @Getter @Setter @NonNull List<ActividadRecurso> actividadeRecurso;
     }
 
@@ -70,7 +70,7 @@ public class DTOreportePoa {
     public static class ActividadRecurso {
         @Getter @Setter @NonNull ActividadesPoa actividadesPoa;
         @Getter @Setter @NonNull UnidadMedidas medidas;
-        @Getter @Setter List<RecursoActividad> recursosActividad;    
+        @Getter @Setter @NonNull List<RecursoActividad> recursosActividad;    
     }
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
@@ -80,5 +80,11 @@ public class DTOreportePoa {
         @Getter @Setter @NonNull Productos productos;
         @Getter @Setter @NonNull Partidas partidas;
         @Getter @Setter @NonNull CapitulosTipos capitulosTipos;
+    }
+    
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class CapitulosLista {
+        @Getter @Setter @NonNull Partidas partidas1;
+        @Getter @Setter @NonNull Double total;
     }
 }

@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.ejb.poa;
 import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.controladores.cmi.DtoCmi;
+import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
@@ -70,5 +71,8 @@ public interface EjbCatalogosPoa {
     
 //  ------------------------------------------Plantilla -----------------------------------------------    
     public String getReporteCuadroMandoPOA(Short ejeFiscal,List<DtoCmi.ReporteCuatrimestralAreas> reporte) throws Throwable;
+    
+//  ------------------------------------------DTOreportePoa -----------------------------------------------    
+    public List<DTOreportePoa.ProgramacionActividades> getPresentacionPOA(Short area, Short ejerciciosFiscales) throws Throwable;
 
 }

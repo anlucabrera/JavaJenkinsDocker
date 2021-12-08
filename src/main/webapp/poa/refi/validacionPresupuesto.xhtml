@@ -27,7 +27,7 @@
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
             <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
         </c:if>        
-        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGenerales.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -298,28 +298,24 @@
                                     <div class="col-lg-12 col-md-12 text-info text-center">
                                         <p:remoteCommand name="actualizarTabla2" actionListener="#{adminPoaValidacionPresupuestacion.imprimirValores()}" update=":frm:dtbBajas" />
                                         <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="ejesRegistro" 
-                                                     sortBy="#{ejesRegistro.ejeA.eje}" expandableRowGroups="true"
+                                                     sortBy="#{ejesRegistro.ejesRegistro.eje}" expandableRowGroups="true"
                                                      value="#{adminPoaValidacionPresupuestacion.ejesEsLaAp}">
-
                                             <f:facet name="header"></f:facet>
-
                                             <p:headerRow>
                                                 <p:column colspan="1" styleClass="eje" style="text-align: left; color: #FFFFFF;">
-                                                    <h:outputText value="#{ejesRegistro.ejeA.eje}.#{ejesRegistro.ejeA.nombre}" style="text-align: left"/>
+                                                    <h:outputText value="#{ejesRegistro.ejesRegistro.eje}.#{ejesRegistro.ejesRegistro.nombre}" style="color: white!important;margin-right: 12px;margin-left: 12px; font-size: 25px"/>
                                                 </p:column>
                                             </p:headerRow>
                                             <p:column colspan="1" style="padding: 0px 0px">
-                                                <p:dataTable value="#{ejesRegistro.listalistaEstrategiaLaAp}" var="estrategiasRegistro" sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true">
-
+                                                <p:dataTable value="#{ejesRegistro.estrategiaLineas}" var="estrategiasRegistro" sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true">
                                                     <p:headerRow>
                                                         <p:column colspan="1" styleClass="est" style="text-align: left; color: #FFFFFF;">
-                                                            <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="text-align: left"/>
+                                                            <h:outputText value="#{ejesRegistro.ejesRegistro.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="color: white!important;margin-right: 12px;margin-left: 12px; font-size: 20px"/>
                                                         </p:column>
-                                                    </p:headerRow>                            
-
+                                                    </p:headerRow>
                                                     <p:column  colspan="1" style="padding: 0px 0px">
-                                                        <p:dataTable value="#{estrategiasRegistro.actividadesPoas}" var="poa" sortBy="#{poa.cuadroMandoInt.lineaAccion.lineaAccion}"                                                                  expandedRow="true"
-                                                                     expandableRowGroups="true" rowStyleClass="#{poa.numeroS eq 0?'actividad':''}" emptyMessage="No hay actividades registradas">
+                                                        <p:dataTable value="#{estrategiasRegistro.actividadeRecurso}" var="poa" sortBy="#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.lineaAccion}"                                                                  expandedRow="true"
+                                                                     expandableRowGroups="true" rowStyleClass="#{poa.actividadesPoa.numeroS eq 0?'actividad':''}" emptyMessage="No hay actividades registradas">
 
                                                             <p:columnGroup type="header">
                                                                 <p:row class="success">
@@ -346,79 +342,77 @@
                                                                     <p:column headerText="Nov" styleClass="hederTablesTitle"/>
                                                                     <p:column headerText="Dic" styleClass="hederTablesTitle"/>
                                                                 </p:row>
-                                                            </p:columnGroup>
+                                                            </p:columnGroup>            
 
                                                             <p:headerRow>
                                                                 <p:column colspan="19" styleClass="lac" style="text-align: left; color: #000000;">
-                                                                    <h:outputText value="#{poa.cuadroMandoInt.lineaAccion.nombre}"/>
+                                                                    <h:outputText value="#{poa.actividadesPoa.cuadroMandoInt.lineaAccion.nombre}"/>
                                                                 </p:column>
                                                             </p:headerRow>  
 
-                                                            <p:column rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
+                                                            <p:column rendered="#{poa.recursosActividad.size() eq 0?false:true}">
                                                                 <p:rowToggler />
                                                             </p:column>
-                                                            <p:column rendered="#{poa.recursosActividadList.size() eq 0?true:false}"/>
+                                                            <p:column rendered="#{poa.recursosActividad.size() eq 0?true:false}"/>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.numeroP}.#{poa.numeroS}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.numeroP}.#{poa.actividadesPoa.numeroS}" />
                                                             </p:column>
                                                             <p:column style="text-align: justify">
-                                                                <h:outputText value="#{poa.denominacion}"/>
+                                                                <h:outputText value="#{poa.actividadesPoa.denominacion}"/>
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.unidadMedida.nombre}" />
+                                                                <h:outputText value="#{poa.medidas.nombre}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPEnero}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPEnero}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPFebrero}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPFebrero}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPMarzo}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPMarzo}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPAbril}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPAbril}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPMayo}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPMayo}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPJunio}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPJunio}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPJulio}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPJulio}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPAgosto}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPAgosto}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPSeptiembre}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPSeptiembre}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPOctubre}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPOctubre}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPNoviembre}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPNoviembre}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.NPDiciembre}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.NPDiciembre}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <h:outputText value="#{poa.total}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.total}" />
                                                             </p:column>
                                                             <p:column style="text-align: justify" >
-                                                                <h:outputText value="#{poa.descripcion}" />
+                                                                <h:outputText value="#{poa.actividadesPoa.descripcion}" />
                                                             </p:column>
                                                             <p:column>
-                                                                <img src="../../resources/img/semaforoVerde.png" alt="Actividad Estratégica" style="visibility:#{poa.estratejica?'visible':'hidden'}"/>
-
+                                                                <img src="../../resources/img/semaforoVerde.png" alt="Actividad Estratégica" style="visibility:#{poa.actividadesPoa.estratejica?'visible':'hidden'}"/>
                                                             </p:column>
-
-                                                            <p:rowExpansion rendered="#{poa.recursosActividadList.size() eq 0?false:true}">
+                                                            <p:rowExpansion rendered="#{poa.recursosActividad.size() eq 0?false:true}">
                                                                 <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
                                                                     <p:dataTable id="dtbBajas" var="recurso" editable="true" editMode="row"
                                                                                  style="background:  #cccccc"                                                                        
-                                                                                 sortBy="#{recurso.productoArea.partida.partida}" expandableRowGroups="true" value="#{poa.recursosActividadList}">
+                                                                                 sortBy="#{recurso.partidas.partida}" expandableRowGroups="true" value="#{poa.recursosActividad}">
 
                                                                         <f:facet name="header"></f:facet>
 
@@ -426,9 +420,10 @@
                                                                             <p:row class="success">
                                                                                 <p:column rowspan="2" headerText="Producto" style="width: 200px;" styleClass="hederTablesTitle"/>
                                                                                 <p:column rowspan="2" headerText="Unidad de Medida" style="width: 80px;" styleClass="hederTablesTitle"/>
+                                                                                <p:column rowspan="2" headerText="Capitulo Descuento" style="width: 80px;" styleClass="hederTablesTitle"/>
                                                                                 <p:column colspan="12" headerText="Calendarización de Metas" style="width: 650px;" styleClass="hederTablesTitle"/>  
                                                                                 <p:column rowspan="2" headerText="Total" style="width: 70px;" styleClass="hederTablesTitle"/>
-                                                                                <p:column rowspan="2" headerText="Opciones" style="width:140px; background-color: #d9d9d9; color: #000000;"/>
+                                                                                <p:column rowspan="2" headerText="Opciones" style="width:40px; background-color: #d9d9d9; color: #000000;"/>
                                                                             </p:row>
                                                                             <p:row class="success">
                                                                                 <p:column headerText="Ene" styleClass="hederSubTablesTitle"/>
@@ -448,103 +443,108 @@
 
                                                                         <p:headerRow>
                                                                             <p:column colspan="1" style="background: #cccccc;">
-                                                                                <h:outputText value="Partida: #{recurso.productoArea.partida.partida}" />
+                                                                                <h:outputText value="Partida: #{recurso.partidas.partida}" />
                                                                             </p:column>
                                                                             <p:column colspan="13"  style="background: #cccccc;">
-                                                                                <h:outputText value="#{recurso.productoArea.partida.denominacion}" />
+                                                                                <h:outputText value="#{recurso.partidas.denominacion}" />
                                                                             </p:column>
                                                                         </p:headerRow>
 
-                                                                        <p:ajax event="rowEdit" listener="#{adminPoaValidacionPresupuestacion.onCellEditProductos}" update="@this" oncomplete="actualizarTabla()"/>
-                                                                        <p:ajax event="rowEditCancel" listener="#{adminPoaValidacionPresupuestacion.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+                                                                        <p:ajax event="rowEdit" listener="#{adminPoaValidacionPresupuestacion.onCellEditProductos}" update="@this" oncomplete="actualizarTabla2()"/>
+                                                                        <p:ajax event="rowEditCancel" listener="#{adminPoaValidacionPresupuestacion.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
 
                                                                         <p:column>
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"><h:outputText value="#{recurso.productoArea.productos.productosPK.producto} -- #{recurso.productoArea.productos.descripcion}" /></f:facet>
+                                                                                <f:facet name="output"><h:outputText value="#{recurso.productos.productosPK.producto} -- #{recurso.productos.descripcion}" /></f:facet>
                                                                                 <f:facet name="input">
-                                                                                    <p:selectOneMenu id="grupo" value="#{recurso.productoArea.productoArea}" style="width:100%" filter="true" filterMatchMode="contains">
+                                                                                    <p:selectOneMenu id="grupo" value="#{recurso.productosAreas.productoArea}" style="width:100%" filter="true" filterMatchMode="contains">
                                                                                         <f:selectItems value="#{adminPoaValidacionPresupuestacion.productosAreases}" var="grup" itemValue="#{grup.productoArea}" itemLabel="#{grup.productos.productosPK.producto}--#{grup.productos.descripcion}, #{grup.capitulo.nombre}"/>
                                                                                     </p:selectOneMenu>
                                                                                 </f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column>
-                                                                            <h:outputText value="#{recurso.productoArea.productos.unidadMedida}" style="font-size: xx-small"/>
+                                                                        <p:column style="text-align: center">
+                                                                            <h:outputText value="#{recurso.productos.unidadMedida}" />
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                         <p:column style="text-align: center">
+                                                                            <h:outputText value="#{recurso.capitulosTipos.numero}" />
+                                                                            <br/>
+                                                                            <h:outputText value="#{recurso.capitulosTipos.nombre}" />
+                                                                        </p:column>
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPEnero}" /></f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPEnero}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPEnero}" /></f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPEnero}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPFebero}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPFebero}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPFebero}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPFebero}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPMarzo}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPMarzo}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPMarzo}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPMarzo}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPAbril}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPAbril}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPAbril}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPAbril}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPMayo}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPMayo}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPMayo}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPMayo}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPJunio}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPJunio}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPJunio}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPJunio}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPJulio}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPJulio}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPJulio}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPJulio}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPAgosto}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPAgosto}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPAgosto}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPAgosto}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPSeptiembre}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPSeptiembre}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPSeptiembre}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPSeptiembre}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPOctubre}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPOctubre}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPOctubre}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPOctubre}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPNoviembre}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPNoviembre}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPNoviembre}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPNoviembre}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
+                                                                        <p:column style="text-align: center"> 
                                                                             <p:cellEditor>
-                                                                                <f:facet name="output"> <h:outputText value="#{recurso.RPDiciembre}" /> </f:facet>
-                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.RPDiciembre}" title="" /></f:facet>
+                                                                                <f:facet name="output"> <h:outputText value="#{recurso.recursosActividad.RPDiciembre}" /> </f:facet>
+                                                                                <f:facet name="input"><p:inputNumber decimalPlaces="2" minValue="0" value="#{recurso.recursosActividad.RPDiciembre}" title="" /></f:facet>
                                                                             </p:cellEditor>
                                                                         </p:column>
-                                                                        <p:column> 
-                                                                            <h:outputText value="#{recurso.total}" /> 
+                                                                        <p:column style="text-align: center"> 
+                                                                            <h:outputText value="#{recurso.recursosActividad.total}" /> 
                                                                         </p:column>
                                                                         <p:column>
                                                                             <div id="j_idt110:frmInci:tfAc:0:j_idt151" class="ui-row-editor ui-helper-clearfix" style="align-content: center">
@@ -564,7 +564,7 @@
                                                                 </p:panelGrid>
                                                             </p:rowExpansion>
                                                         </p:dataTable>
-                                                    </p:column> 
+                                                    </p:column>              
                                                 </p:dataTable>
                                             </p:column>              
                                         </p:dataTable>

@@ -1,8 +1,10 @@
 package mx.edu.utxj.pye.sgi.ejb.poa;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -10,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.controladores.cmi.DtoCmi;
+import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
@@ -29,10 +32,11 @@ public class ServiciosCatalogosPOA implements EjbCatalogosPoa {
     private EntityManager em;
 
     @EJB EjbCarga ejbCarga;
+    @EJB EjbRegistroActividades ejbRegistroActividades;
     
     public static final String REPORTE_PLANTILLA = "Concentrado.xlsx";
     public static final String REPORTE_ACTUALIZADO = "Concentrado.xlsx";
-    
+        
     @EJB
     FacadePoa facadePoa;
 
@@ -272,5 +276,68 @@ public class ServiciosCatalogosPOA implements EjbCatalogosPoa {
         transformer.transformXLS(plantilla, beans, plantillaC);
         return plantillaC;
     }
+//  ------------------------------------------DTOreportePoa -----------------------------------------------    
+    @Override
+    public List<DTOreportePoa.ProgramacionActividades> getPresentacionPOA(Short area, Short ejerciciosFiscales) throws Throwable{
+        List<DTOreportePoa.ProgramacionActividades> pas= new ArrayList<>();
+        
+        List<DTOreportePoa.CuadroMI> cmis= new ArrayList<>();
+        
+        List<EjesRegistro> ejesRegistro = new ArrayList<>();
+        ejesRegistro = mostrarEjesRegistrosAreas(area, ejerciciosFiscales);
+        if (!ejesRegistro.isEmpty()) {
+            ejesRegistro.forEach((ej) -> {
+                List<Estrategias> estrategias = new ArrayList<>();
+                estrategias = getEstarategiasPorEje(ej, ejerciciosFiscales, area);
+                if (!estrategias.isEmpty()) {
+                    cmis.add(new DTOreportePoa.CuadroMI(ej, estrategias));
+                }
+            });
+        }
+        
+       TypedQuery<ActividadesPoa> q = em.createQuery("SELECT ap FROM ActividadesPoa ap INNER JOIN ap.cuadroMandoInt cm INNER JOIN cm.ejercicioFiscal ef WHERE ap.area=:area AND ef.ejercicioFiscal=:ejercicioFiscal ORDER BY ap.cuadroMandoInt, ap.numeroP, ap.numeroS", ActividadesPoa.class);
+        q.setParameter("area", area);
+        q.setParameter("ejercicioFiscal", ejerciciosFiscales);
+        List<ActividadesPoa> pr = q.getResultList();
+        
+        cmis.forEach((ej) -> {
+            List<DTOreportePoa.EstrategiaLineas> els = new ArrayList<>();
+            if (!ej.getEstrategiases().isEmpty()) {                
+                ej.getEstrategiases().forEach((es) -> {
+                    List<ActividadesPoa> actividadesPoas = new ArrayList<>();
+                    actividadesPoas = actividadesPorCMI(ej.getEjesRegistro(), es, pr);
+                    List<DTOreportePoa.ActividadRecurso> ars = new ArrayList<>();
+                    if (!actividadesPoas.isEmpty()) {
+                        actividadesPoas.forEach((ap) -> {
+                            List<DTOreportePoa.RecursoActividad> ras = new ArrayList<>();
+                            if (!ap.getRecursosActividadList().isEmpty()) {
+                                ap.getRecursosActividadList().forEach((ra) -> {
+                                    ras.add(new DTOreportePoa.RecursoActividad(ra, ra.getProductoArea(), ra.getProductoArea().getProductos(), ra.getProductoArea().getPartida(), ra.getProductoArea().getCapitulo()));
+                                });
+                            }
+                            ars.add(new DTOreportePoa.ActividadRecurso(ap, ap.getUnidadMedida(), ras));
+                        });
+                    }
+                    els.add(new DTOreportePoa.EstrategiaLineas(es, ars));
+                });
+            }
+            pas.add(new DTOreportePoa.ProgramacionActividades(ej.getEjesRegistro(), els));
+        });
+        
+        return pas;
+    }
+    
+    public List<ActividadesPoa> actividadesPorCMI(EjesRegistro ej, Estrategias es, List<ActividadesPoa> aps){
+        List<ActividadesPoa> actividadesPoas = new ArrayList<>();
+        aps.forEach((t) -> {
+            CuadroMandoIntegral cmi= new CuadroMandoIntegral();
+            cmi=t.getCuadroMandoInt();
+            if(Objects.equals(cmi.getEje().getEje(), ej.getEje())&&Objects.equals(cmi.getEstrategia().getEstrategia(), es.getEstrategia())){
+                actividadesPoas.add(t);
+            }
+        });
+        return actividadesPoas;
+    }
+
 
 }

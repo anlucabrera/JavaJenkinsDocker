@@ -55,6 +55,7 @@ public class EjbPerfilEstudiante {
             login.setPassword(rol.getPwdNuevaEncript());
             login.setModificado(true);
             em.merge(login);
+            em.flush();
             return ResultadoEJB.crearCorrecto(login,"Se ha cambiado la contraseña");
 
         }catch (Exception e){
@@ -96,6 +97,7 @@ public class EjbPerfilEstudiante {
             else {
                 datosFamiliares = rol.getDatosFamiliares();
                 em.merge(datosFamiliares);
+                em.flush();
                 return ResultadoEJB.crearCorrecto(datosFamiliares,"Datos familiares actualizados");
             }
         }catch (Exception e){
@@ -115,6 +117,7 @@ public class EjbPerfilEstudiante {
             else {
                 medioComunicacion = rol.getMedioComunicacion();
                 em.merge(medioComunicacion);
+                em.flush();
                 return  ResultadoEJB.crearCorrecto(medioComunicacion,"Medios de comunicación del estudiante actualizados con éxito.");
             }
 
@@ -135,6 +138,7 @@ public class EjbPerfilEstudiante {
             else {
                 tutorFamiliar = rol.getTutorFamiliar();
                 em.merge(tutorFamiliar);
+                em.flush();
                 return ResultadoEJB.crearCorrecto(tutorFamiliar,"Datos del tutor familiar del estudiante actualizados con éxito");
             }
         }catch (Exception e){
