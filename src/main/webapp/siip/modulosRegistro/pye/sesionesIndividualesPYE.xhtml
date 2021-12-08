@@ -143,6 +143,7 @@
                             </f:facet>
                             <f:facet name="right">
                                 <h:form id="frmReporte">
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesEvidenciasSII.descargarEvidenciasSesionesInd(controladorSesionesPsicopedagogiaPYE.dto.anioConsulta, controladorSesionesPsicopedagogiaPYE.dto.mesConsulta, controladorSesionesPsicopedagogiaPYE.dto.lstSesionesPsicopedagogia)}" target="_blank" title="Descargar archivo zip" disabled="#{empty controladorSesionesPsicopedagogiaPYE.dto.lstSesionesPsicopedagogia}"><i class="fa fa-file-archive-o" /></p:commandLink>
                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                     <p:spacer width="3" />
                                     <p:commandLink class="btn btn-primary btn-sm" ajax="true" actionListener="#{controladorSesionesPsicopedagogiaPYE.abrirNuevoRegistroSesionPsicopedagogia()}" title="Nuevo registro"><i class="fa fa-plus-square"></i></p:commandLink>

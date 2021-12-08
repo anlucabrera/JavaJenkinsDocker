@@ -143,6 +143,7 @@
 
                             <f:facet name="right">
                                 <h:form id="frmReporte">
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesEvidenciasSII.descargarEvidenciasActVarias(controladorActividadesVariasPYE.dto.anioConsulta, controladorActividadesVariasPYE.dto.mesConsulta, controladorActividadesVariasPYE.dto.lstActividadesVarias)}" target="_blank" title="Descargar archivo zip" disabled="#{empty controladorActividadesVariasPYE.dto.lstActividadesVarias}"><i class="fa fa-file-archive-o" /></p:commandLink>
                                     <c:if test="#{controladorActividadesVariasPYE.dto.anioConsulta ne null}" >
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteActividadesVarias(controladorActividadesVariasPYE.dto.anioConsulta)}" target="_blank" title="Descargar Reporte Excel"><i class="fa fa-file-excel-o" /></p:commandLink>

@@ -143,6 +143,7 @@
                             </f:facet>
                             <f:facet name="right">
                                 <h:form id="frmReporte">
+                                    <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesEvidenciasSII.descargarEvidenciasProductosAcad(controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta, controladorProductosAcademicosPYE.dtoProductoAcademico.mesConsulta, controladorProductosAcademicosPYE.dtoProductoAcademico.lstDtoProductosAcademicos, controladorProductosAcademicosPYE.dtoProductoAcademico.lstDtoProductosAcademicosPersonal)}" target="_blank" title="Descargar archivo zip" disabled="#{empty controladorProductosAcademicosPYE.dtoProductoAcademico.lstDtoProductosAcademicos}"><i class="fa fa-file-archive-o" /></p:commandLink>
                                     <c:if test="#{controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta ne null}">
                                         <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                         <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{controladorPlantillasCA.descargarReporteProductosAcademicos(controladorProductosAcademicosPYE.dtoProductoAcademico.anioConsulta)}" target="_blank" title="Descargar Reporte de Excel Productos Académicos"><i class="fa fa-file-excel-o" /></p:commandLink>
