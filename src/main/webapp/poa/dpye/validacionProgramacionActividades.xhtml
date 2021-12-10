@@ -48,10 +48,17 @@
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
                         <p:panel header="Alineación estratégica">
                             <div class="row">
-                                <div class="col-sm-12 col-md-3 col-lg-3">            
+                                <div class="col-sm-12 col-md-3 col-lg-3 border-right">
+                                    <p:outputLabel for="anio" value="Proceso" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                    <p:selectOneMenu  id="anio" value="#{adminPoaValidacionProgramacion.ejercicioFiscal}" valueChangeListener="#{adminPoaValidacionProgramacion.numeroAnioAsiganado}">>
+                                        <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.ejercicioFiscal}" itemLabel="#{anio.anio}" />
+                                        <p:ajax update=":frm" listener="#{administracionControl.imprimirValores()}"/>
+                                    </p:selectOneMenu >
+                                    <hr/>
+                                </div>
+                                <div class="col-sm-12 col-md-9 col-lg-9">            
                                     <p:autoUpdate/>
                                     <p:outputLabel value="Área:" />
-
                                     <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{adminPoaValidacionProgramacion.areaSeleccionada}">
                                         <f:selectItems value="#{adminPoaValidacionProgramacion.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
                                         <p:ajax update=":frm" listener="#{adminPoaValidacionProgramacion.imprimirValores()}"/>
@@ -101,27 +108,27 @@
                                 <div class="row">
                                     <div class="col-lg-12 col-md-12 text-info text-center">
                                         <p:remoteCommand name="actualizarTabla2" actionListener="#{adminPoaValidacionProgramacion.imprimirValores()}" update=":frm:dtbBajas" />
-                                        <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="ejesRegistro" sortBy="#{ejesRegistro.ejeA.eje}" expandableRowGroups="true"
+                                        <p:dataTable id="dtbBajas" widgetVar="dtbBajas" var="ejesRegistro" sortBy="#{ejesRegistro.ejesRegistro.eje}" expandableRowGroups="true"
                                                      value="#{adminPoaValidacionProgramacion.ejesEsLaAp}">
 
                                             <p:headerRow>
                                                 <p:column colspan="1" styleClass="eje" style="text-align: left; color: #FFFFFF;">
-                                                    <h:outputText value="#{ejesRegistro.ejeA.eje}.#{ejesRegistro.ejeA.nombre}" style="text-align: left"/>
+                                                    <h:outputText value="#{ejesRegistro.ejesRegistro.eje}.#{ejesRegistro.ejesRegistro.nombre}" style="text-align: left"/>
                                                 </p:column>
                                             </p:headerRow>
                                             <p:column colspan="1">
                                                 <p:dataTable id="dtbEstra" var="estrategiasRegistro"  sortBy="#{estrategiasRegistro.estrategias.estrategia}" expandableRowGroups="true"
-                                                             value="#{ejesRegistro.listalistaEstrategiaLaAp}">
+                                                             value="#{ejesRegistro.estrategiaLineas}">
 
                                                     <p:headerRow>
                                                         <p:column colspan="1" styleClass="est" style="text-align: left; color: #FFFFFF;">
-                                                            <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="text-align: left"/>
+                                                            <h:outputText value="#{ejesRegistro.ejesRegistro.eje}.#{estrategiasRegistro.estrategias.numero} -- #{estrategiasRegistro.estrategias.nombre}" style="text-align: left"/>
                                                         </p:column>
                                                     </p:headerRow>
                                                     <p:column colspan="1">
-                                                        <p:dataTable id="dtbActividades" value="#{estrategiasRegistro.actividadesPoas}" 
-                                                                     var="pOa" sortBy="#{pOa.cuadroMandoInt.lineaAccion.lineaAccion}" 
-                                                                     rowStyleClass="#{pOa.numeroS eq 0?'actividad':''}" 
+                                                        <p:dataTable id="dtbActividades" value="#{estrategiasRegistro.actividadeRecurso}" 
+                                                                     var="pOa" sortBy="#{pOa.actividadesPoa.cuadroMandoInt.lineaAccion.lineaAccion}" 
+                                                                     rowStyleClass="#{pOa.actividadesPoa.numeroS eq 0?'actividad':''}" 
                                                                      editable="true" editMode="row"
                                                                      emptyMessage="No hay actividades registradas">
 
@@ -130,7 +137,7 @@
 
                                                             <p:headerRow>
                                                                 <p:column colspan="20" styleClass="lac" style="text-align: left">
-                                                                    <h:outputText value="#{ejesRegistro.ejeA.eje}.#{estrategiasRegistro.estrategias.numero}.#{pOa.cuadroMandoInt.lineaAccion.numero} --#{pOa.cuadroMandoInt.lineaAccion.nombre}"/>
+                                                                    <h:outputText value="#{ejesRegistro.ejesRegistro.eje}.#{estrategiasRegistro.estrategias.numero}.#{pOa.actividadesPoa.cuadroMandoInt.lineaAccion.numero} --#{pOa.actividadesPoa.cuadroMandoInt.lineaAccion.nombre}"/>
                                                                 </p:column>
                                                             </p:headerRow>  
 
@@ -165,19 +172,19 @@
                                                             </p:columnGroup>
 
                                                             <p:column> 
-                                                                <h:outputText value="#{pOa.numeroP}" />
+                                                                <h:outputText value="#{pOa.actividadesPoa.numeroP}" />
                                                             </p:column>
                                                             <p:column> 
-                                                                <h:outputText value="#{pOa.numeroS}" />
+                                                                <h:outputText value="#{pOa.actividadesPoa.numeroS}" />
                                                             </p:column>
                                                             <p:column style="text-align: justify"> 
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.denominacion}" /> </f:facet>
-                                                                    <f:facet name="input"><p:inputTextarea value="#{pOa.denominacion}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.denominacion}" /> </f:facet>
+                                                                    <f:facet name="input"><p:inputTextarea value="#{pOa.actividadesPoa.denominacion}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column style="text-align: justify"> 
-                                                                <h:outputText value="#{pOa.unidadMedida.nombre}" />
+                                                                <h:outputText value="#{pOa.medidas.nombre}" />
                                                             </p:column>
                                                             <!--p:column>
                                                                 <h:outputText value="Planeada" />
@@ -186,120 +193,120 @@
                                                             </p:column-->
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPEnero}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPEnero}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NAEnero}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPEnero}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NAEnero}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPEnero}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPFebrero}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPFebrero}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NAFebrero}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPFebrero}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NAFebrero}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPFebrero}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPMarzo}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPMarzo}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NAMarzo}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPMarzo}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NAMarzo}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPMarzo}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPAbril}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPAbril}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NAAbril}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPAbril}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NAAbril}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPAbril}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column> 
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPMayo}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPMayo}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NAMayo}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPMayo}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NAMayo}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPMayo}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPJunio}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPJunio}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NAJunio}" /--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPJunio}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NAJunio}" /--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPJunio}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPJulio}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPJulio}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NAJulio}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPJulio}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NAJulio}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPJulio}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPAgosto}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPAgosto}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NAAgosto}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPAgosto}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NAAgosto}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPAgosto}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPSeptiembre}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPSeptiembre}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NASeptiembre}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPSeptiembre}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NASeptiembre}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPSeptiembre}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPOctubre}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPOctubre}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NAOctubre}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPOctubre}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NAOctubre}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPOctubre}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPNoviembre}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPNoviembre}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NANoviembre}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPNoviembre}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NANoviembre}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPNoviembre}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column>
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.NPDiciembre}" />
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.NPDiciembre}" />
                                                                         <!--hr/>
-                                                                        <h:outputText value="# {pOa.NADiciembre}"/--></f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.NPDiciembre}"/></f:facet>
+                                                                        <h:outputText value="# {pOa.actividadesPoa.NADiciembre}"/--></f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.NPDiciembre}"/></f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
                                                             <p:column> 
                                                                 <p:cellEditor>
-                                                                    <f:facet name="output"><h:outputText value="#{pOa.total}"/> </f:facet>
-                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.total}"/></f:facet>
+                                                                    <f:facet name="output"><h:outputText value="#{pOa.actividadesPoa.total}"/> </f:facet>
+                                                                    <f:facet name="input"><p:inputNumber decimalPlaces="0" minValue="0" value="#{pOa.actividadesPoa.total}"/></f:facet>
                                                                 </p:cellEditor>
-                                                                <!--h:outputText value="# {pOa.NPEnero+pOa.NPFebrero+pOa.NPMarzo+pOa.NPAbril+pOa.NPMayo+pOa.NPJunio+pOa.NPJulio+pOa.NPAgosto+pOa.NPSeptiembre+pOa.NPOctubre+pOa.NPNoviembre+pOa.NPDiciembre}"/> 
+                                                                <!--h:outputText value="# {pOa.actividadesPoa.NPEnero+pOa.actividadesPoa.NPFebrero+pOa.actividadesPoa.NPMarzo+pOa.actividadesPoa.NPAbril+pOa.actividadesPoa.NPMayo+pOa.actividadesPoa.NPJunio+pOa.actividadesPoa.NPJulio+pOa.actividadesPoa.NPAgosto+pOa.actividadesPoa.NPSeptiembre+pOa.actividadesPoa.NPOctubre+pOa.actividadesPoa.NPNoviembre+pOa.actividadesPoa.NPDiciembre}"/> 
                                                                 <hr/>
-                                                                <h:outputText value="# {pOa.NAEnero+pOa.NAFebrero+pOa.NAMarzo+pOa.NAAbril+pOa.NAMayo+pOa.NAJunio+pOa.NAJulio+pOa.NAAgosto+pOa.NASeptiembre+pOa.NAOctubre+pOa.NANoviembre+pOa.NADiciembre}"/--> 
+                                                                <h:outputText value="# {pOa.actividadesPoa.NAEnero+pOa.actividadesPoa.NAFebrero+pOa.actividadesPoa.NAMarzo+pOa.actividadesPoa.NAAbril+pOa.actividadesPoa.NAMayo+pOa.actividadesPoa.NAJunio+pOa.actividadesPoa.NAJulio+pOa.actividadesPoa.NAAgosto+pOa.actividadesPoa.NASeptiembre+pOa.actividadesPoa.NAOctubre+pOa.actividadesPoa.NANoviembre+pOa.actividadesPoa.NADiciembre}"/--> 
                                                             </p:column>
                                                             <p:column class="noprint" >
                                                                 <p:rowEditor />
                                                             </p:column>
                                                             <p:column class="noprint" >
-                                                                <p:selectBooleanCheckbox id="validar" value="#{pOa.estratejica}" rendered="#{pOa.numeroS eq 0}" style="border-color: #000000 !important;"
+                                                                <p:selectBooleanCheckbox id="validar" value="#{pOa.actividadesPoa.estratejica}" rendered="#{pOa.actividadesPoa.numeroS eq 0}" style="border-color: #000000 !important;"
                                                                                          valueChangeListener="#{adminPoaValidacionProgramacion.actualizarestrategica}"
                                                                                          title="Activa la casilla para indicar al secretario académico que has validado los valores." >
                                                                     <p:ajax update="dtbBajas" />
                                                                 </p:selectBooleanCheckbox>
                                                             </p:column>
-                                                            <p:column style="#{pOa.esPIDE eq 'PIDE O' ?'background: #ff3300':pOa.esPIDE eq 'PIDE' ?'background: #008A17':pOa.actividadPasada eq true ?'background: #33ff00':'background: #cccccc'}">
+                                                            <p:column style="#{pOa.actividadesPoa.esPIDE eq 'PIDE O' ?'background: #ff3300':pOa.actividadesPoa.esPIDE eq 'PIDE' ?'background: #008A17':pOa.actividadesPoa.actividadPasada eq true ?'background: #33ff00':'background: #cccccc'}">
                                                             </p:column>
                                                         </p:dataTable>
                                                     </p:column> 

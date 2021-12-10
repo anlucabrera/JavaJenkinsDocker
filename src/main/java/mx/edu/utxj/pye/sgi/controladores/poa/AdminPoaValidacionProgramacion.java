@@ -32,7 +32,10 @@ import org.primefaces.event.RowEditEvent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.sql.Array;
+import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Ajax;
 
 @Named
 @ManagedBean
@@ -44,11 +47,11 @@ public class AdminPoaValidacionProgramacion implements Serializable {
     @Getter    @Setter    private List<AreasUniversidad> areasUniversidadsRegistros = new ArrayList<>();
     @Getter    @Setter    private AreasUniversidad areaPOASeleccionada = new AreasUniversidad();
     @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
-    @Getter    @Setter    private List<ListaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
-    @Getter    @Setter    private List<ListaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ProgramacionActividades> ejesEsLaAp=new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ListaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
     @Getter    @Setter    private String mss="";
     @Getter    @Setter    private Short claveArea = 0, ejercicioFiscal = 0; 
-    @Getter    @Setter    private List<ListaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.EstrategiaLineas> listaEstrategiaActividadesesEje = new ArrayList<>();
     
     
     @EJB    EjbCatalogosPoa ejbCatalogosPoa;
@@ -67,11 +70,16 @@ public class AdminPoaValidacionProgramacion implements Serializable {
 
 @PostConstruct
     public void init() {
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;
         ejercicioFiscal=controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         buscarAreasQueTienenPOA();
 
+    }
+    
+    public void numeroAnioAsiganado(ValueChangeEvent event) {
+        ejercicioFiscal = Short.parseShort(event.getNewValue().toString());
+        consultarListasValidacionFinal();
     }
     
     public void buscarAreasQueTienenPOA() {
@@ -108,30 +116,31 @@ public class AdminPoaValidacionProgramacion implements Serializable {
 
         ejesEsLaAp = new ArrayList<>();
         ejesEsLaAp.clear();
-
-        if (!ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal).isEmpty()) {
-            ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal).forEach((ej) -> {
-                listaListaEjeEstrategia = new ArrayList<>();
-                listaListaEjeEstrategia.clear();
-                listaListaEjeEstrategia.add(new ListaEjeEstrategia(ej, ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, claveArea)));
-                if (!listaListaEjeEstrategia.isEmpty()) {
-                    listaListaEjeEstrategia.forEach((e) -> {
-                        e.getListaEstrategiases1().forEach((t) -> {
-                            List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
-                            listaActividadesPoasFiltradas.clear();
-                            listaActividadesPoasFiltradas = ejbRegistroActividades.getActividadesPoasEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea);
-                            listaEstrategiaActividadesesEje.add(new ListaEstrategiaActividades(t, listaActividadesPoasFiltradas));
-                            Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
-
-                        });
-                        ejesEsLaAp.add(new ListaEjesEsLaAp(ej, listaEstrategiaActividadesesEje));
-                        listaEstrategiaActividadesesEje = new ArrayList<>();
-                        listaEstrategiaActividadesesEje.clear();
-                    });
-                }
+        List<EjesRegistro> ers = new ArrayList<>();
+        ers=ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal);
+        if (!ers.isEmpty()) {
+            ers.forEach((ej) -> {
+                listaListaEjeEstrategia.add(new DTOreportePoa.ListaEjeEstrategia(ej, ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, claveArea)));
             });
         }
-        Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjeA().getEje(), y.getEjeA().getEje()));
+        
+        if (!listaListaEjeEstrategia.isEmpty()) {
+            ejesEsLaAp = new ArrayList<>();
+            listaListaEjeEstrategia.forEach((ej) -> {
+                List<DTOreportePoa.EstrategiaLineas> els = new ArrayList<>();
+                ej.getEstrategiases().forEach((es) -> {
+                    List<DTOreportePoa.ActividadRecurso> ars = new ArrayList<>();
+                    List<ActividadesPoa> aps = new ArrayList<>();
+                    aps = ejbRegistroActividades.getActividadesPoasEstarategias(es, ej.getEjess(), ejercicioFiscal, claveArea);
+                    aps.forEach((ap) -> {
+                        ars.add(new DTOreportePoa.ActividadRecurso(ap, ap.getUnidadMedida(), new ArrayList<>()));
+                    });
+                    els.add(new DTOreportePoa.EstrategiaLineas(es, ars));
+                });
+                ejesEsLaAp.add(new DTOreportePoa.ProgramacionActividades(ej.getEjess(), els));
+            });
+        }
+        Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjesRegistro().getEje(), y.getEjesRegistro().getEje()));
     }
 
     public void enviarmensajes(String proceso) {
@@ -151,9 +160,10 @@ public class AdminPoaValidacionProgramacion implements Serializable {
     public void actualizarestrategica(ValueChangeEvent e) {
         try {
             String id = e.getComponent().getClientId();
-            ListaEjesEsLaAp eje=ejesEsLaAp.get(Integer.parseInt(id.split("dtbBajas:")[1].split(":dtbEstra")[0]));
-            ListaEstrategiaActividades estratea=eje.getListalistaEstrategiaLaAp().get(Integer.parseInt(id.split("dtbEstra:")[1].split(":dtbActividades")[0]));
-            ActividadesPoa ap=estratea.getActividadesPoas().get(Integer.parseInt(id.split("dtbActividades:")[1].split(":validar")[0]));
+            DTOreportePoa.ProgramacionActividades eje=ejesEsLaAp.get(Integer.parseInt(id.split("dtbBajas:")[1].split(":dtbEstra")[0]));
+            DTOreportePoa.EstrategiaLineas estratea=eje.getEstrategiaLineas().get(Integer.parseInt(id.split("dtbEstra:")[1].split(":dtbActividades")[0]));
+            DTOreportePoa.ActividadRecurso ar=estratea.getActividadeRecurso().get(Integer.parseInt(id.split("dtbActividades:")[1].split(":validar")[0]));
+            ActividadesPoa ap=ar.getActividadesPoa();
             ap.setEstratejica((Boolean) e.getNewValue());
             ejbRegistroActividades.actualizaActividadesPoa(ap);
             consultarListasValidacionFinal();
@@ -169,40 +179,6 @@ public class AdminPoaValidacionProgramacion implements Serializable {
 
     public void imprimirValores() {
     }
-
-  
-    public static class ListaEjesEsLaAp {
-
-        @Getter        @Setter        private EjesRegistro ejeA;
-        @Getter        @Setter        private List<ListaEstrategiaActividades> listalistaEstrategiaLaAp;
-
-        public ListaEjesEsLaAp(EjesRegistro ejeA, List<ListaEstrategiaActividades> listalistaEstrategiaLaAp) {
-            this.ejeA = ejeA;
-            this.listalistaEstrategiaLaAp = listalistaEstrategiaLaAp;
-        }
-    }
     
-    public static class ListaEjeEstrategia {
-
-        @Getter        @Setter        private EjesRegistro ejess;
-        @Getter        @Setter        private List<Estrategias> listaEstrategiases1;
-
-        public ListaEjeEstrategia(EjesRegistro ejess, List<Estrategias> listaEstrategiases1) {
-            this.ejess = ejess;
-            this.listaEstrategiases1 = listaEstrategiases1;
-        }        
-    }
-    
-    
-    public static class ListaEstrategiaActividades {
-
-        @Getter        @Setter        private Estrategias estrategias;
-        @Getter        @Setter        private List<ActividadesPoa> actividadesPoas;
-
-        public ListaEstrategiaActividades(Estrategias estrategias, List<ActividadesPoa> actividadesPoas) {
-            this.estrategias = estrategias;
-            this.actividadesPoas = actividadesPoas;
-        }       
-    }
 }
 

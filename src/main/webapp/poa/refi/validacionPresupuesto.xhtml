@@ -49,10 +49,17 @@
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
                         <p:panel header="Alineación estratégica">
                             <div class="row">
-                                <div class="col-sm-12 col-md-3 col-lg-3">            
+                                <div class="col-sm-12 col-md-3 col-lg-3 border-right">
+                                    <p:outputLabel for="anio" value="Proceso" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                    <p:selectOneMenu  id="anio" value="#{adminPoaValidacionPresupuestacion.ejercicioFiscal}" valueChangeListener="#{adminPoaValidacionPresupuestacion.numeroAnioAsiganado}">>
+                                        <f:selectItems value="#{utilidadesAcceso.aniosReportes}" var="anio" itemValue="#{anio.ejercicioFiscal}" itemLabel="#{anio.anio}" />
+                                        <p:ajax update=":frm" listener="#{administracionControl.imprimirValores()}"/>
+                                    </p:selectOneMenu >
+                                    <hr/>
+                                </div>
+                                <div class="col-sm-12 col-md-9 col-lg-9">      
                                     <p:autoUpdate/>
                                     <p:outputLabel value="Área:" />
-
                                     <p:selectOneMenu filter="true" filterMatchMode="contains" id="eje" valueChangeListener="#{adminPoaValidacionPresupuestacion.areaSeleccionada}">
                                         <f:selectItems value="#{adminPoaValidacionPresupuestacion.areasUniversidadsRegistros}" var="area" itemValue="#{area.area}" itemLabel="#{area.area} -- #{area.nombre}" />
                                         <p:ajax update=":frm :frm2" listener="#{adminPoaValidacionPresupuestacion.imprimirValores()}"/>
@@ -466,7 +473,7 @@
                                                                         <p:column style="text-align: center">
                                                                             <h:outputText value="#{recurso.productos.unidadMedida}" />
                                                                         </p:column>
-                                                                         <p:column style="text-align: center">
+                                                                        <p:column style="text-align: center">
                                                                             <h:outputText value="#{recurso.capitulosTipos.numero}" />
                                                                             <br/>
                                                                             <h:outputText value="#{recurso.capitulosTipos.nombre}" />

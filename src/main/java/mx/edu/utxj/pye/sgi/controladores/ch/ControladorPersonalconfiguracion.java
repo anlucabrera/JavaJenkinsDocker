@@ -110,7 +110,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
             }
 
             nuevaListaPersonalCategoriases.forEach((t) -> {
-                if (t.getTipo().equals("Específica")) {
+                if (t.getTipo().equals("Específica") && t.getActivo() ) {
                     nuevaListaPersonalCategoriases360.add(t);
                 }
             });

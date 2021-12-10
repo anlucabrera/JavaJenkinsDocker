@@ -426,9 +426,9 @@
                                                     <p:cellEditor>
                                                         <f:facet name="output"><h:outputText value="#{perosnalCategorias.categoria360.nombre}" /></f:facet>
                                                         <f:facet name="input">
-                                                            <h:selectOneMenu value="#{perosnalCategorias.categoria360.categoria}" style="width:100%">
+                                                            <p:selectOneMenu value="#{perosnalCategorias.categoria360.categoria}" style="width:100%" filter="true" filterMatchMode="contains">
                                                                 <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases360}" var="cat" itemLabel="#{cat.nombre}" itemValue="#{cat.categoria}" />
-                                                            </h:selectOneMenu>
+                                                            </p:selectOneMenu>
                                                         </f:facet>
                                                     </p:cellEditor>
                                                 </p:column>

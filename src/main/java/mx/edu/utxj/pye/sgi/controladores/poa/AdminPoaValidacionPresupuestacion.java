@@ -54,6 +54,7 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     @Getter    @Setter    private AreasUniversidad areaPOASeleccionada = new AreasUniversidad();
     @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
     @Getter    @Setter    private List<DTOreportePoa.ProgramacionActividades> ejesEsLaAp=new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ListaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
     @Getter    @Setter    private String mss="";
     @Getter    @Setter    private Short claveArea = 0, ejercicioFiscal = 0; 
     
@@ -91,8 +92,8 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
 
 @PostConstruct
     public void init() {
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
+        if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+        cargado = true;
         ejercicioFiscal=controladorEmpleado.getProcesopoa().getEjercicioFiscalEtapa1();
         buscarAreasQueTienenPOA();
     }
@@ -107,6 +108,11 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdminPoaEvaluacion.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void numeroAnioAsiganado(ValueChangeEvent event) {
+        ejercicioFiscal = Short.parseShort(event.getNewValue().toString());
+        consultarListasValidacionFinal();
     }
 
     public void areaSeleccionada(ValueChangeEvent event) {
@@ -127,12 +133,38 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
 
     public void consultarListasValidacionFinal() {
         try {
+            listaListaEjeEstrategia = new ArrayList<>();
+            listaListaEjeEstrategia.clear();
+
             ejesEsLaAp = new ArrayList<>();
             ejesEsLaAp.clear();
-            ejesEsLaAp = ejbCatalogosPoa.getPresentacionPOA(claveArea, ejercicioFiscal);
+            List<EjesRegistro> ers = new ArrayList<>();
+            ers = ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal);
+            if (!ers.isEmpty()) {
+                ers.forEach((ej) -> {
+                    listaListaEjeEstrategia.add(new DTOreportePoa.ListaEjeEstrategia(ej, ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, claveArea)));
+                });
+            }
 
-            productosAreases = new ArrayList<>();
-            productosAreases = ejbPresupuestacion.mostrarProductosAreases(claveArea, ejercicioFiscal);
+            if (!listaListaEjeEstrategia.isEmpty()) {
+                ejesEsLaAp = new ArrayList<>();
+                listaListaEjeEstrategia.forEach((ej) -> {
+                    List<DTOreportePoa.EstrategiaLineas> els = new ArrayList<>();
+                    ej.getEstrategiases().forEach((es) -> {
+                        List<DTOreportePoa.ActividadRecurso> ars = new ArrayList<>();
+                        List<ActividadesPoa> aps = new ArrayList<>();
+                        aps = ejbRegistroActividades.getActividadesPoasEstarategias(es, ej.getEjess(), ejercicioFiscal, claveArea);
+                        aps.forEach((ap) -> {
+                            List<DTOreportePoa.RecursoActividad> ras = new ArrayList<>();
+                            ras = ejbCatalogosPoa.getPresupuestacionPOA(ap);
+                            ars.add(new DTOreportePoa.ActividadRecurso(ap, ap.getUnidadMedida(), ras));
+                        });
+                        els.add(new DTOreportePoa.EstrategiaLineas(es, ars));
+                    });
+                    ejesEsLaAp.add(new DTOreportePoa.ProgramacionActividades(ej.getEjess(), els));
+                });
+            }
+            Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjesRegistro().getEje(), y.getEjesRegistro().getEje()));
 
             obtenerPretechos();
             obteneroTotalesCapitulosDesglosado();
@@ -151,6 +183,12 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
     }
 
     public void obtenerPretechos() {
+        pretecho2000 = 0D;
+        pretecho3000 = 0D;
+        pretecho4000 = 0D;
+        pretecho5000 = 0D;
+        pretechoCPDD = 0D;
+        totalPretecho = 0D;
         pretechoFinancieros.clear();
         pretechoFinancieros = ejbPresupuestacion.mostrarPretechoFinancieros(claveArea, ejercicioFiscal);
         pretechoFinancieros.forEach((t) -> {
@@ -207,7 +245,7 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
         capituloCPDD.clear();
         ecxiste = false;
         
-        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AdminPoaValidacionPresupuestacion.obteneroTotalesCapitulosDesglosado()"+ras.size());
+//        System.out.println("mx.edu.utxj.pye.sgi.controladores.poa.AdminPoaValidacionPresupuestacion.obteneroTotalesCapitulosDesglosado()"+ras.size());
 
         if (!ras.isEmpty()) {
             ras.forEach((t) -> {

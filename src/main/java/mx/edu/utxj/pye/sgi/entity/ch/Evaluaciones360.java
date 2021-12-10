@@ -62,6 +62,8 @@ public class Evaluaciones360 implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaFin;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones360", fetch = FetchType.LAZY)
+    private List<CategoriasHabilidades> categoriasHabilidadesList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "evaluaciones360", fetch = FetchType.LAZY)
     private List<Evaluaciones360Resultados> evaluaciones360ResultadosList;
 
     public Evaluaciones360() {
@@ -108,6 +110,15 @@ public class Evaluaciones360 implements Serializable {
 
     public void setFechaFin(Date fechaFin) {
         this.fechaFin = fechaFin;
+    }
+
+    @XmlTransient
+    public List<CategoriasHabilidades> getCategoriasHabilidadesList() {
+        return categoriasHabilidadesList;
+    }
+
+    public void setCategoriasHabilidadesList(List<CategoriasHabilidades> categoriasHabilidadesList) {
+        this.categoriasHabilidadesList = categoriasHabilidadesList;
     }
 
     @XmlTransient

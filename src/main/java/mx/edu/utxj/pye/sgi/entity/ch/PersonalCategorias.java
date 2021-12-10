@@ -38,7 +38,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "PersonalCategorias.findAll", query = "SELECT p FROM PersonalCategorias p")
     , @NamedQuery(name = "PersonalCategorias.findByCategoria", query = "SELECT p FROM PersonalCategorias p WHERE p.categoria = :categoria")
     , @NamedQuery(name = "PersonalCategorias.findByNombre", query = "SELECT p FROM PersonalCategorias p WHERE p.nombre = :nombre")
-    , @NamedQuery(name = "PersonalCategorias.findByTipo", query = "SELECT p FROM PersonalCategorias p WHERE p.tipo = :tipo")})
+    , @NamedQuery(name = "PersonalCategorias.findByTipo", query = "SELECT p FROM PersonalCategorias p WHERE p.tipo = :tipo")
+    , @NamedQuery(name = "PersonalCategorias.findByActivo", query = "SELECT p FROM PersonalCategorias p WHERE p.activo = :activo")})
 public class PersonalCategorias implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -57,6 +58,10 @@ public class PersonalCategorias implements Serializable {
     @Size(min = 1, max = 19)
     @Column(name = "tipo")
     private String tipo;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "activo")
+    private boolean activo;
     @JoinTable(name = "capital_humano.categorias_habilidades", joinColumns = {
         @JoinColumn(name = "categoria", referencedColumnName = "categoria")}, inverseJoinColumns = {
         @JoinColumn(name = "habilidad", referencedColumnName = "habilidad")})
@@ -93,10 +98,11 @@ public class PersonalCategorias implements Serializable {
         this.categoria = categoria;
     }
 
-    public PersonalCategorias(Short categoria, String nombre, String tipo) {
+    public PersonalCategorias(Short categoria, String nombre, String tipo, boolean activo) {
         this.categoria = categoria;
         this.nombre = nombre;
         this.tipo = tipo;
+        this.activo = activo;
     }
 
     public Short getCategoria() {
@@ -121,6 +127,14 @@ public class PersonalCategorias implements Serializable {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
     @XmlTransient
@@ -246,5 +260,5 @@ public class PersonalCategorias implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias[ categoria=" + categoria + " ]";
     }
-
-    }
+    
+}

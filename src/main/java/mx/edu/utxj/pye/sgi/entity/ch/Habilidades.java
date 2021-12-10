@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.entity.ch;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -33,7 +35,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "Habilidades.findAll", query = "SELECT h FROM Habilidades h")
     , @NamedQuery(name = "Habilidades.findByHabilidad", query = "SELECT h FROM Habilidades h WHERE h.habilidad = :habilidad")
-    , @NamedQuery(name = "Habilidades.findByNombre", query = "SELECT h FROM Habilidades h WHERE h.nombre = :nombre")})
+    , @NamedQuery(name = "Habilidades.findByNombre", query = "SELECT h FROM Habilidades h WHERE h.nombre = :nombre")
+    , @NamedQuery(name = "Habilidades.findByActivo", query = "SELECT h FROM Habilidades h WHERE h.activo = :activo")})
 public class Habilidades implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -47,9 +50,15 @@ public class Habilidades implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "nombre")
     private String nombre;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "activo")
+    private boolean activo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "habilidades", fetch = FetchType.LAZY)
+    private List<CategoriasHabilidades> categoriasHabilidadesList;
     @ManyToMany(mappedBy = "habilidadesList", fetch = FetchType.LAZY)
     private List<PersonalCategorias> personalCategoriasList;
-
+    
     public Habilidades() {
     }
 
@@ -57,9 +66,10 @@ public class Habilidades implements Serializable {
         this.habilidad = habilidad;
     }
 
-    public Habilidades(Integer habilidad, String nombre) {
+    public Habilidades(Integer habilidad, String nombre, boolean activo) {
         this.habilidad = habilidad;
         this.nombre = nombre;
+        this.activo = activo;
     }
 
     public Integer getHabilidad() {
@@ -77,12 +87,29 @@ public class Habilidades implements Serializable {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+    
+    public boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    @XmlTransient
+    public List<CategoriasHabilidades> getCategoriasHabilidadesList() {
+        return categoriasHabilidadesList;
+    }
+
+    public void setCategoriasHabilidadesList(List<CategoriasHabilidades> categoriasHabilidadesList) {
+        this.categoriasHabilidadesList = categoriasHabilidadesList;
+    }
 
     @XmlTransient
     public List<PersonalCategorias> getPersonalCategoriasList() {
         return personalCategoriasList;
     }
-
+    
     public void setPersonalCategoriasList(List<PersonalCategorias> personalCategoriasList) {
         this.personalCategoriasList = personalCategoriasList;
     }

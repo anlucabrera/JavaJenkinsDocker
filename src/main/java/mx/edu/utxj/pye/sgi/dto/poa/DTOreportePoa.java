@@ -87,4 +87,10 @@ public class DTOreportePoa {
         @Getter @Setter @NonNull Partidas partidas1;
         @Getter @Setter @NonNull Double total;
     }
+    
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class ListaEjeEstrategia {
+        @Getter @Setter @NonNull private EjesRegistro ejess;
+        @Getter @Setter @NonNull private List<Estrategias> estrategiases;
+    }
 }

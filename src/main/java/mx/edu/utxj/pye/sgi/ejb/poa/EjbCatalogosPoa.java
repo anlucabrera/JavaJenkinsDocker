@@ -72,7 +72,7 @@ public interface EjbCatalogosPoa {
 //  ------------------------------------------Plantilla -----------------------------------------------    
     public String getReporteCuadroMandoPOA(Short ejeFiscal,List<DtoCmi.ReporteCuatrimestralAreas> reporte) throws Throwable;
     
-//  ------------------------------------------DTOreportePoa -----------------------------------------------    
-    public List<DTOreportePoa.ProgramacionActividades> getPresentacionPOA(Short area, Short ejerciciosFiscales) throws Throwable;
+//  ------------------------------------------DTORecursoActividad -----------------------------------------------    
+    public List<DTOreportePoa.RecursoActividad> getPresupuestacionPOA(ActividadesPoa ap);
 
 }
