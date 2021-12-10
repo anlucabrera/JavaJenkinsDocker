@@ -62,6 +62,8 @@ public class PersonalCategorias implements Serializable {
     @NotNull
     @Column(name = "activo")
     private boolean activo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "personalCategorias")
+    private List<CategoriasHabilidades> categoriasHabilidadesList;
     @JoinTable(name = "capital_humano.categorias_habilidades", joinColumns = {
         @JoinColumn(name = "categoria", referencedColumnName = "categoria")}, inverseJoinColumns = {
         @JoinColumn(name = "habilidad", referencedColumnName = "habilidad")})
@@ -135,6 +137,15 @@ public class PersonalCategorias implements Serializable {
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    @XmlTransient
+    public List<CategoriasHabilidades> getCategoriasHabilidadesList() {
+        return categoriasHabilidadesList;
+    }
+
+    public void setCategoriasHabilidadesList(List<CategoriasHabilidades> categoriasHabilidadesList) {
+        this.categoriasHabilidadesList = categoriasHabilidadesList;
     }
 
     @XmlTransient

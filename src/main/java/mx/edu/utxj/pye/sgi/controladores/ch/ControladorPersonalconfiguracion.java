@@ -227,4 +227,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public void imprimirValores() {
+    }
 }

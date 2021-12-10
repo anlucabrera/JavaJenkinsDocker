@@ -22,436 +22,452 @@
 
     <ui:define name="body">
         <c:if test="#{controladorPersonalconfiguracion.cargado}">
-        <style>
-            .description-block{
-                text-align: justify;
-            }
-            .description-header{
-                text-align: center;
-            }
-            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
-                width: 100%;
-            }
-            button, input, optgroup, select, textarea{
-                color: black;
-            }
-            .ui-tabs .ui-tabs-navscroller-btn-right{
-                right: .1em;
-                background: white;
-                block-size: 2.6em;
-            }
-            .ui-tabs .ui-tabs-navscroller-btn-left{
-                left: .1em;
-                background: white;
-                block-size: 2.6em;
-            }
-            .aceptado{
-                background-color: white;
-            }
-            .denegado{
-                background-color: #f39c12 !important;
-            }
-        </style>
-        <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
-            <h1>
-                Esta página está disponible solo para pantallas superiores a 1024px.
-            </h1>
-        </p:panel>
-        <p:panel id="informacion" class="hidden-xs hidden-sm">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
-                <section class="content">
-                    <div class="row">
-                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
-                        <div class="col-md-10">
-                            <div class="nav-tabs-custom">
-                                <div class="row">
-                                    <div class="col-lg-10 col-xs-10"/>
-                                    <div class="col-lg-2 col-xs-2">
-                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
-                                            <i class="fa fa-reply"></i>
-                                            <span>Regresar a mi perfil</span>
-                                        </p:link>
-                                    </div>      
-                                </div>
-                                <p:tabView>
-                                    <p:tab title="Áreas">    
-                                        <h:form id="frmareas">
-                                            <p:outputPanel id="form1">
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre del Área" />
-                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre del Área"
-                                                                                                 value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.nombre}"/>
-                                                                                    <p:message for="nombre" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div> 
-                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
-                                                                                    <p:outputLabel for="arS" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Área superior" />
-                                                                                    <p:selectOneMenu id="arS" filter="true" filterMatchMode="contains" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.areaSuperior}">
-                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaAreasUniversidads}" var="area" itemValue="#{area.area}" itemLabel="#{area.nombre}" />
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="arS" display="tooltip"/>     
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
-                                                                                    <p:outputLabel for="resp" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Responsable" />
-                                                                                    <p:selectOneMenu id="resp" style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.responsable}">
-                                                                                        <f:selectItems itemValue="#{null}" itemLabel="Sin responsable" />
-                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonals}" var="res" itemValue="#{res.clave}" itemLabel="#{res.nombre} -- #{res.categoriaOperativaNombre}" />
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="resp" display="tooltip"/>     
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                    <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoría" />
-                                                                                    <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" value="#{controladorPersonalconfiguracion.claveCatagoria}">
-                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaCategoriases}" var="categoria" itemValue="#{categoria.categoria}" itemLabel="#{categoria.descripcion}" />
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="categoria" display="tooltip"/>     
-                                                                                    <hr/>
-                                                                                </div>
-                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                    <p:outputLabel for="siglas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Siglas" />
-                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="siglas" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Siglas"
-                                                                                                 value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.siglas}"/>
-                                                                                    <p:message for="siglas" display="tooltip"/>     
-                                                                                    <hr/>
-                                                                                </div>
-
-                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                    <p:outputLabel for="vigente" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Vigente?" />
-                                                                                    <p:selectOneMenu id="vigente" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.vigente}">
-                                                                                        <f:selectItem itemValue="1" itemLabel="SI"/>
-                                                                                        <f:selectItem itemValue="0" itemLabel="NO"/>
-                                                                                    </p:selectOneMenu> 
-                                                                                    <p:message for="vigente" display="tooltip"/> 
-                                                                                    <hr/>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <p:outputPanel>        
-                                                                                <div classs="form-group"> 
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
+            <style>
+                .description-block{
+                    text-align: justify;
+                }
+                .description-header{
+                    text-align: center;
+                }
+                .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                    width: 100%;
+                }
+                button, input, optgroup, select, textarea{
+                    color: black;
+                }
+                .ui-tabs .ui-tabs-navscroller-btn-right{
+                    right: .1em;
+                    background: white;
+                    block-size: 2.6em;
+                }
+                .ui-tabs .ui-tabs-navscroller-btn-left{
+                    left: .1em;
+                    background: white;
+                    block-size: 2.6em;
+                }
+                .aceptado{
+                    background-color: white;
+                }
+                .denegado{
+                    background-color: #f39c12 !important;
+                }
+            </style>
+            <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
+                <h1>
+                    Esta página está disponible solo para pantallas superiores a 1024px.
+                </h1>
+            </p:panel>
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
+                    <section class="content">
+                        <div class="row">
+                            <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                            <div class="col-md-10">
+                                <div class="nav-tabs-custom">
+                                    <div class="row">
+                                        <div class="col-lg-10 col-xs-10"/>
+                                        <div class="col-lg-2 col-xs-2">
+                                            <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                                <i class="fa fa-reply"></i>
+                                                <span>Regresar a mi perfil</span>
+                                            </p:link>
+                                        </div>      
+                                    </div>
+                                    <p:tabView>
+                                        <p:tab title="Áreas">    
+                                            <h:form id="frmareas">
+                                                <p:outputPanel id="form1">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                        <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre del Área" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre del Área"
+                                                                                                     value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.nombre}"/>
+                                                                                        <p:message for="nombre" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div> 
+                                                                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                        <p:outputLabel for="arS" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Área superior" />
+                                                                                        <p:selectOneMenu id="arS" filter="true" filterMatchMode="contains" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.areaSuperior}">
+                                                                                            <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaAreasUniversidads}" var="area" itemValue="#{area.area}" itemLabel="#{area.nombre}" />
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="arS" display="tooltip"/>     
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                        <p:outputLabel for="resp" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Responsable" />
+                                                                                        <p:selectOneMenu id="resp" style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.responsable}">
+                                                                                            <f:selectItems itemValue="#{null}" itemLabel="Sin responsable" />
+                                                                                            <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonals}" var="res" itemValue="#{res.clave}" itemLabel="#{res.nombre} -- #{res.categoriaOperativaNombre}" />
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="resp" display="tooltip"/>     
+                                                                                        <hr/>
+                                                                                    </div>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPersonalconfiguracion.crearNuevasAreaUnivercidad()}" 
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmareas1')update();"
-                                                                                                         update="@form"  process="@form" />
+                                                                                        <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoría" />
+                                                                                        <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" filter="true" filterMatchMode="contains" value="#{controladorPersonalconfiguracion.claveCatagoria}">
+                                                                                            <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaCategoriases}" var="categoria" itemValue="#{categoria.categoria}" itemLabel="#{categoria.descripcion}" />
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="categoria" display="tooltip"/>     
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                        <p:outputLabel for="siglas" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Siglas" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="siglas" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Siglas"
+                                                                                                     value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.siglas}"/>
+                                                                                        <p:message for="siglas" display="tooltip"/>     
+                                                                                        <hr/>
+                                                                                    </div>
+
+                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                        <p:outputLabel for="vigente" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Vigente?" />
+                                                                                        <p:selectOneMenu id="vigente" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJAreasUniversidad.vigente}">
+                                                                                            <f:selectItem itemValue="1" itemLabel="SI"/>
+                                                                                            <f:selectItem itemValue="0" itemLabel="NO"/>
+                                                                                        </p:selectOneMenu> 
+                                                                                        <p:message for="vigente" display="tooltip"/> 
+                                                                                        <hr/>
                                                                                     </div>
                                                                                 </div>
-                                                                            </p:outputPanel>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>                                                  
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </p:outputPanel>
-                                        </h:form>
-                                        <p:tabView >
-                                            <p:tab title="Áreas Vigentes" >
-                                                <h:form id="frmareas1">
-                                                    <p:outputPanel >
-                                                        <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaAreasUniversidads}"
-                                                                     paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
-                                                                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                                     var="area" editable="true" sortBy="#{area.categoria.categoria}" expandableRowGroups="true">
-
-                                                            <p:headerRow>
-                                                                <p:column colspan="5" styleClass="est">
-                                                                    <h:outputText value="#{area.categoria.descripcion}"/>
-                                                                </p:column>
-                                                            </p:headerRow>    
-
-                                                            <p:ajax event="rowEdit" listener="#{controladorPersonalconfiguracion.onRowEditModulos}" update="tblDistinciones" process="@this"/>
-                                                            <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblDistinciones" />
-
-
-                                                            <p:column headerText="Clave" 
-                                                                      filterBy="#{area.area}" 
-                                                                      sortBy="#{area.area}" 
-                                                                      filterMatchMode="contains"
-                                                                      style="width: 8%">
-                                                                <h:outputText value="#{area.area}"/>
-                                                            </p:column>
-
-                                                            <p:column headerText="Nombre" 
-                                                                      filterBy="#{area.nombre}" 
-                                                                      sortBy="#{area.nombre}" 
-                                                                      filterMatchMode="contains">
-                                                                <h:outputText value="#{area.nombre}" />
-                                                            </p:column>                                                             
-                                                            <p:column headerText="Responsable" 
-                                                                      filterBy="#{controladorPersonalconfiguracion.responsable(area.responsable)}" 
-                                                                      sortBy="#{controladorPersonalconfiguracion.responsable(area.responsable)}" 
-                                                                      filterMatchMode="contains">
-                                                                <p:cellEditor>
-                                                                    <f:facet name="output"> 
-                                                                        <h:outputText value="#{controladorPersonalconfiguracion.responsable(area.responsable)}" />
-                                                                    </f:facet>
-                                                                    <f:facet name="input">
-                                                                        <h:selectOneMenu value="#{area.responsable}" style="width:100%">
-                                                                            <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonals}" var="res" itemValue="#{res.clave}" itemLabel="#{res.nombre} -- #{res.categoriaOperativaNombre}" />
-                                                                        </h:selectOneMenu>
-                                                                    </f:facet>
-                                                                </p:cellEditor>
-                                                            </p:column> 
-                                                            <p:column headerText="Activa" 
-                                                                      filterBy="#{area.vigente}" 
-                                                                      sortBy="#{area.vigente}" 
-                                                                      filterMatchMode="contains"
-                                                                      style="width: 8%">
-                                                                <p:cellEditor>
-                                                                    <f:facet name="output"> 
-                                                                        <h:outputText value="#{area.vigente eq 1 ?'SI':'NO'}" />
-                                                                    </f:facet>
-                                                                    <f:facet name="input">
-                                                                        <h:selectOneMenu value="#{area.vigente}" style="width:100%">
-                                                                            <f:selectItems value="#{controladorPersonalconfiguracion.estatus}" var="estatus"  itemLabel="#{estatus eq 1 ?'SI':'NO'}" itemValue="#{estatus}" />
-                                                                        </h:selectOneMenu>
-                                                                    </f:facet>
-                                                                </p:cellEditor>
-                                                            </p:column> 
-                                                            <p:column style="width:32px;" class="noprint">
-                                                                <p:rowEditor />
-                                                            </p:column>
-                                                        </p:dataTable>     
-                                                    </p:outputPanel>
-                                                </h:form>
-                                            </p:tab>
-
-                                        </p:tabView>
-                                    </p:tab>
-                                    <p:tab title="Categorías">  
-                                        <h:form id="frmcategorias">
-                                            <p:outputPanel id="form2">
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre" />
-                                                                                    <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre de la categoría"
-                                                                                                 value="#{controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.nombre}"/>
-                                                                                    <p:message for="nombre" display="tooltip" />
-                                                                                    <hr/>
-                                                                                </div>
                                                                             </div>
-                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoria" />
-                                                                                <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.tipo}">
-                                                                                    <f:selectItem itemValue="Genérica" itemLabel="Genérica"/>
-                                                                                    <f:selectItem itemValue="Específica" itemLabel="360°"/>
-                                                                                </p:selectOneMenu> 
-                                                                                <p:message for="categoria" display="tooltip"/> 
-                                                                                <hr/>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row">
-                                                                            <p:outputPanel>       
-                                                                                <div class="form-group"> 
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                        <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPersonalconfiguracion.crearNuevasPersonalCategorias()}" 
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmcategorias1')update();"
-                                                                                                         update="@form"  process="@form" />
+                                                                            <div class="row">
+                                                                                <p:outputPanel>        
+                                                                                    <div classs="form-group"> 
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                            <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPersonalconfiguracion.crearNuevasAreaUnivercidad()}" 
+                                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmareas1')update();"
+                                                                                                             update="@form"  process="@form" />
+                                                                                        </div>
                                                                                     </div>
-                                                                                </div>
-                                                                            </p:outputPanel>
+                                                                                </p:outputPanel>
+                                                                            </div>
                                                                         </div>
-                                                                        <hr/>
-
                                                                     </div>
-                                                                </div>
+                                                                </div>                                                  
                                                             </div>
-                                                            <hr/>                                                        
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </p:outputPanel>
-                                        </h:form>
-                                        <h:form id="frmcategorias1">
-                                            <p:outputPanel>
-                                                <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases}"
-                                                             paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
-                                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                             var="distincion" sortBy="#{distincion.tipo}" expandableRowGroups="true">
+                                                </p:outputPanel>
+                                            </h:form>
+                                            <p:tabView >
+                                                <p:tab title="Áreas Vigentes" >
+                                                    <h:form id="frmareas1">
+                                                        <p:outputPanel >
+                                                            <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaAreasUniversidads}"
+                                                                         paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
+                                                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                         var="area" editable="true" sortBy="#{area.categoria.categoria}" expandableRowGroups="true">
+
+                                                                <p:headerRow>
+                                                                    <p:column colspan="5" styleClass="est">
+                                                                        <h:outputText value="#{area.categoria.descripcion}"/>
+                                                                    </p:column>
+                                                                </p:headerRow>    
+
+                                                                <p:ajax event="rowEdit" listener="#{controladorPersonalconfiguracion.onRowEditModulos}" update="tblDistinciones" process="@this"/>
+                                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblDistinciones" />
+
+
+                                                                <p:column headerText="Clave" 
+                                                                          filterBy="#{area.area}" 
+                                                                          sortBy="#{area.area}" 
+                                                                          filterMatchMode="contains"
+                                                                          style="width: 8%">
+                                                                    <h:outputText value="#{area.area}"/>
+                                                                </p:column>
+
+                                                                <p:column headerText="Nombre" 
+                                                                          filterBy="#{area.nombre}" 
+                                                                          sortBy="#{area.nombre}" 
+                                                                          filterMatchMode="contains">
+                                                                    <h:outputText value="#{area.nombre}" />
+                                                                </p:column>                                                             
+                                                                <p:column headerText="Responsable" 
+                                                                          filterBy="#{controladorPersonalconfiguracion.responsable(area.responsable)}" 
+                                                                          sortBy="#{controladorPersonalconfiguracion.responsable(area.responsable)}" 
+                                                                          filterMatchMode="contains">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output"> 
+                                                                            <h:outputText value="#{controladorPersonalconfiguracion.responsable(area.responsable)}" />
+                                                                        </f:facet>
+                                                                        <f:facet name="input">
+                                                                            <h:selectOneMenu value="#{area.responsable}" style="width:100%">
+                                                                                <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonals}" var="res" itemValue="#{res.clave}" itemLabel="#{res.nombre} -- #{res.categoriaOperativaNombre}" />
+                                                                            </h:selectOneMenu>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column> 
+                                                                <p:column headerText="Activa" 
+                                                                          filterBy="#{area.vigente}" 
+                                                                          sortBy="#{area.vigente}" 
+                                                                          filterMatchMode="contains"
+                                                                          style="width: 8%">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output"> 
+                                                                            <h:outputText value="#{area.vigente eq 1 ?'SI':'NO'}" />
+                                                                        </f:facet>
+                                                                        <f:facet name="input">
+                                                                            <h:selectOneMenu value="#{area.vigente}" style="width:100%">
+                                                                                <f:selectItems value="#{controladorPersonalconfiguracion.estatus}" var="estatus"  itemLabel="#{estatus eq 1 ?'SI':'NO'}" itemValue="#{estatus}" />
+                                                                            </h:selectOneMenu>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column> 
+                                                                <p:column style="width:32px;" class="noprint">
+                                                                    <p:rowEditor />
+                                                                </p:column>
+                                                            </p:dataTable>     
+                                                        </p:outputPanel>
+                                                    </h:form>
+                                                </p:tab>
+
+                                            </p:tabView>
+                                        </p:tab>
+                                        <p:tab title="Categorías">  
+                                            <h:form id="frmcategorias">
+                                                <p:outputPanel id="form2">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                        <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre de la categoría"
+                                                                                                     value="#{controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.nombre}"/>
+                                                                                        <p:message for="nombre" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                    <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoria" />
+                                                                                    <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.tipo}">
+                                                                                        <f:selectItem itemValue="Genérica" itemLabel="Genérica"/>
+                                                                                        <f:selectItem itemValue="Específica" itemLabel="360°"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="categoria" display="tooltip"/> 
+                                                                                    <hr/>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <p:outputPanel>       
+                                                                                    <div class="form-group"> 
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                            <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="#{controladorPersonalconfiguracion.crearNuevasPersonalCategorias()}" 
+                                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmcategorias1')update();"
+                                                                                                             update="@form"  process="@form" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </p:outputPanel>
+                                                                            </div>
+                                                                            <hr/>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>                                                        
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </p:outputPanel>
+                                            </h:form>
+                                            <h:form id="frmcategorias1">
+                                                <p:outputPanel>
+                                                    <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases}"
+                                                                 paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
+                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                 var="distincion" sortBy="#{distincion.tipo}" expandableRowGroups="true">
+
+                                                        <p:headerRow>
+                                                            <p:column colspan="2" styleClass="est">
+                                                                <h:outputText value="#{distincion.tipo eq 'Específica'?'360°':'Genérica'}"/>
+                                                            </p:column>
+                                                        </p:headerRow>       
+
+                                                        <p:column headerText="Clave" 
+                                                                  filterBy="#{distincion.categoria}" 
+                                                                  sortBy="#{distincion.categoria}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 10%">
+                                                            <h:outputText value="#{distincion.categoria}" />
+                                                        </p:column>
+                                                        <p:column headerText="Nombre" 
+                                                                  filterBy="#{distincion.nombre}" 
+                                                                  sortBy="#{distincion.nombre}" 
+                                                                  filterMatchMode="contains" >
+                                                            <h:outputText value="#{distincion.nombre}" />
+                                                        </p:column>
+                                                    </p:dataTable>     
+                                                </p:outputPanel>
+                                            </h:form>
+                                        </p:tab>
+                                        <p:tab title="Fotografias">  
+                                            <h:form id="frmPremDis" enctype="multipart/form-data"> 
+                                                <script type="text/javascript">
+                                                    function limpiarForm()
+                                                    {
+                                                        document.getElementById("frmPremDis").reset();
+                                                    }
+                                                </script>
+                                                <p:outputPanel id="form1">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+
+                                                                                    </div>
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                        <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Foto del perosnal" />
+                                                                                        <o:inputFile id="file" value="#{controladorPersonalconfiguracion.file}" accept="image/png||image/jpeg||image/pjpeg" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
+                                                                                        <br/>
+                                                                                        <h:message id="messageForFile" for="file" />
+                                                                                        <br/>
+                                                                                        <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir Foto" class="btn-primary btn-info" action="#{controladorPersonalconfiguracion.agregarEvidenciaDistincion}"/>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>                                                                        
+                                                                        </div>
+                                                                    </div>
+                                                                </div>                                               
+                                                            </div>
+                                                        </div>
+                                                    </div>                                               
+                                                </p:outputPanel>
+                                            </h:form>
+                                            <h:form id="frmListaDistinciones">
+                                                <p:dataGrid var="perosnalFoto" value="#{controladorPersonalconfiguracion.nuevaListaPersonalsFotosFaltantes}" columns="4" layout="grid"
+                                                            rows="16" paginator="true" id="cars"
+                                                            paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                            rowsPerPageTemplate="4,16,20">
+
+                                                    <f:facet name="header">
+                                                        Plantilla Perosnal
+                                                    </f:facet>
+
+                                                    <p:panel style="text-align:center">
+                                                        <h:panelGrid columns="1" style="width:100%">
+
+                                                            <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{perosnalFoto.clave}.jpg" alt="#{perosnalFoto.clave}" title="Personal #{perosnalFoto.clave}" style="width: 100px; height: 100px; align-content: center;"/>
+
+                                                            <h:outputText value="#{perosnalFoto.nombre}" />
+                                                            <h:outputText value="#{perosnalFoto.categoriaOperativaNombre}" />
+
+                                                        </h:panelGrid>
+                                                    </p:panel>
+
+                                                </p:dataGrid>
+
+                                            </h:form>
+                                        </p:tab>
+                                        <p:tab title="Personal 360">  
+                                            <h:form id="frmListaper360">
+                                                <p:remoteCommand name="actualizarTabla2" actionListener="#{adminPoaValidacionPresupuestacion.imprimirValores()}" update="tblcat360" />
+                                                <p:dataTable id="tblcat360" var="perosnalCategorias" value="#{controladorPersonalconfiguracion.listPersonal}"
+                                                             rows="10" paginator="true" editable="true" 
+                                                             paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="10,20,30" sortBy="#{perosnalCategorias.areaSuperior}" expandableRowGroups="true">
 
                                                     <p:headerRow>
-                                                        <p:column colspan="2" styleClass="est">
-                                                            <h:outputText value="#{distincion.tipo eq 'Específica'?'360°':'Genérica'}"/>
+                                                        <p:column colspan="7" styleClass="est">
+                                                            <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(perosnalCategorias.actividad.actividad eq 1?perosnalCategorias.areaOperativa:perosnalCategorias.areaSuperior)}" />
                                                         </p:column>
                                                     </p:headerRow>       
 
-                                                    <p:column headerText="Clave" 
-                                                              filterBy="#{distincion.categoria}" 
-                                                              sortBy="#{distincion.categoria}" 
-                                                              filterMatchMode="contains"
-                                                              style="width: 10%">
-                                                        <h:outputText value="#{distincion.categoria}" />
+
+                                                    <f:facet name="header">
+                                                        Plantilla Perosnal
+                                                    </f:facet>
+
+                                                    <p:ajax event="rowEdit" listener="#{controladorPersonalconfiguracion.onRowEdit}" update="@this" oncomplete="actualizarTabla2()"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
+
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" style="width:50px" styleClass="hederTablesTitle"/>
+                                                            <p:column headerText="No." style="width: 4%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.clave}" />
+                                                            <p:column headerText="Foto" style="width: 10%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.clave}" />
+                                                            <p:column headerText="Nombre." style="width: 15%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.nombre}" />
+                                                            <p:column headerText="Área" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.areaOperativa}" />
+                                                            <p:column headerText="Cat. OP" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.categoriaOperativa.categoria}" />
+                                                            <p:column headerText="Cat. 360°" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.categoria360.categoria}" />
+                                                            <p:column class="noprint" style="width: 5%; background-color: #cccccc; color: #000000;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column rendered="#{perosnalCategorias.categoria360.habilidadesList.size() eq 0?false:true}">
+                                                        <p:rowToggler />
                                                     </p:column>
-                                                    <p:column headerText="Nombre" 
-                                                              filterBy="#{distincion.nombre}" 
-                                                              sortBy="#{distincion.nombre}" 
-                                                              filterMatchMode="contains" >
-                                                        <h:outputText value="#{distincion.nombre}" />
+                                                    <p:column rendered="#{perosnalCategorias.categoria360.habilidadesList.size() eq 0?true:false}"/>
+                                                    <p:column> 
+                                                        <h:outputText value="#{perosnalCategorias.clave}" />
                                                     </p:column>
-                                                </p:dataTable>     
-                                            </p:outputPanel>
-                                        </h:form>
-                                    </p:tab>
-                                    <p:tab title="Fotografias">  
-                                        <h:form id="frmPremDis" enctype="multipart/form-data"> 
-                                            <script type="text/javascript">
-                                                function limpiarForm()
-                                                {
-                                                    document.getElementById("frmPremDis").reset();
-                                                }
-                                            </script>
-                                            <p:outputPanel id="form1">
-                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                    <div class="col-md-12">
-                                                        <div class="box box-widget widget-user-2">
-                                                            <div class="row">
-                                                                <div class="col-sm-12 border-right">
-                                                                    <div class="description-block">
-                                                                        <div class="row">
-                                                                            <div class="form-group">
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-
-                                                                                </div>
-                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputLabel   style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Foto del perosnal" />
-                                                                                    <o:inputFile id="file" value="#{controladorPersonalconfiguracion.file}" accept="image/png||image/jpeg||image/pjpeg" acceptMessage="Solo se permiten archivos PDF." maxsize="#{100*1024*1024}" maxsizeMessage="El tamaño máximo permitido son 100MB." />
-                                                                                    <br/>
-                                                                                    <h:message id="messageForFile" for="file" />
-                                                                                    <br/>
-                                                                                    <h:commandButton onclick="PF('bloqueoCargaFile').show()" id="btnuploadFile" value="Subir Foto" class="btn-primary btn-info" action="#{controladorPersonalconfiguracion.agregarEvidenciaDistincion}"/>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>                                                                        
-                                                                    </div>
-                                                                </div>
-                                                            </div>                                               
-                                                        </div>
-                                                    </div>
-                                                </div>                                               
-                                            </p:outputPanel>
-                                        </h:form>
-                                        <h:form id="frmListaDistinciones">
-                                            <p:dataGrid var="perosnalFoto" value="#{controladorPersonalconfiguracion.nuevaListaPersonalsFotosFaltantes}" columns="4" layout="grid"
-                                                        rows="16" paginator="true" id="cars"
-                                                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                        rowsPerPageTemplate="4,16,20">
-
-                                                <f:facet name="header">
-                                                    Plantilla Perosnal
-                                                </f:facet>
-
-                                                <p:panel style="text-align:center">
-                                                    <h:panelGrid columns="1" style="width:100%">
-
-                                                        <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{perosnalFoto.clave}.jpg" alt="#{perosnalFoto.clave}" title="Personal #{perosnalFoto.clave}" style="width: 100px; height: 100px; align-content: center;"/>
-
-                                                        <h:outputText value="#{perosnalFoto.nombre}" />
-                                                        <h:outputText value="#{perosnalFoto.categoriaOperativaNombre}" />
-
-                                                    </h:panelGrid>
-                                                </p:panel>
-
-                                            </p:dataGrid>
-
-                                        </h:form>
-                                    </p:tab>
-                                    <p:tab title="Personal 360">  
-                                        <h:form id="frmListaper360">
-                                            <p:dataTable id="tblcat360" var="perosnalCategorias" value="#{controladorPersonalconfiguracion.listPersonal}"
-                                                         rows="10" paginator="true" editable="true" 
-                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                         rowsPerPageTemplate="10,20,30" sortBy="#{perosnalCategorias.areaSuperior}" expandableRowGroups="true">
-
-                                                <p:headerRow>
-                                                    <p:column colspan="7" styleClass="est">
-                                                        <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(perosnalCategorias.actividad.actividad eq 1?perosnalCategorias.areaOperativa:perosnalCategorias.areaSuperior)}" />
+                                                    <p:column> 
+                                                        <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{perosnalCategorias.clave}.jpg" alt="#{perosnalCategorias.clave}" class="img-circle" title="Personal #{perosnalCategorias.clave}" style="width: 80px; height: 80px; align-content: center;"/>
                                                     </p:column>
-                                                </p:headerRow>       
+                                                    <p:column> 
+                                                        <h:outputText value="#{perosnalCategorias.nombre}" />
+                                                    </p:column>
+                                                    <p:column> 
+                                                        <h:outputText value="#{controladorPersonalconfiguracion.nombreArea(perosnalCategorias.areaOperativa)}" />
+                                                    </p:column>
+                                                    <p:column> 
+                                                        <h:outputText value="#{perosnalCategorias.categoriaOperativa.nombre}" />
+                                                    </p:column>
+                                                    <p:column> 
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"><h:outputText value="#{perosnalCategorias.categoria360.nombre}" /></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{perosnalCategorias.categoria360.categoria}" style="width:100%" filter="true" filterMatchMode="contains">
+                                                                    <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases360}" var="cat" itemLabel="#{cat.nombre}" itemValue="#{cat.categoria}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>
+                                                    <p:column class="noprint">
+                                                        <p:rowEditor />
+                                                    </p:column>
+                                                    <p:rowExpansion rendered="#{poa.recursosActividad.size() eq 0?false:true}">
+                                                        <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
+                                                            <p:dataTable id="hibilidades" var="hb" style="background:  #cccccc"                                                                        
+                                                                         sortBy="#{hb.habilidades.nombre}" expandableRowGroups="true" value="#{perosnalCategorias.categoria360.categoriasHabilidadesList}">
+                                                                <p:column headerText="Habilidad" rendered="#{hb.evaluaciones360.evaluacion eq 15}">
+                                                                    <h:outputText value="#{hb.habilidades.nombre}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                        </p:panelGrid>
+                                                    </p:rowExpansion>
+                                                </p:dataTable>
+                                            </h:form>
+                                        </p:tab>
 
-
-                                                <f:facet name="header">
-                                                    Plantilla Perosnal
-                                                </f:facet>
-
-                                                <p:ajax event="rowEdit" listener="#{controladorPersonalconfiguracion.onRowEdit}" update="tblcat360" process="@this"/>
-                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblcat360" />
-
-                                                <p:columnGroup type="header">
-                                                    <p:row class="success">
-                                                        <p:column headerText="No." style="width: 4%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.clave}" />
-                                                        <p:column headerText="Foto" style="width: 10%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.clave}" />
-                                                        <p:column headerText="Nombre." style="width: 15%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.nombre}" />
-                                                        <p:column headerText="Área" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.areaOperativa}" />
-                                                        <p:column headerText="Cat. OP" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.categoriaOperativa.categoria}" />
-                                                        <p:column headerText="Cat. 360°" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.categoria360.categoria}" />
-                                                        <p:column class="noprint" style="width: 5%; background-color: #cccccc; color: #000000;"/>
-                                                    </p:row>
-                                                </p:columnGroup>
-                                                <p:column> 
-                                                    <h:outputText value="#{perosnalCategorias.clave}" />
-                                                </p:column>
-                                                <p:column> 
-                                                    <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{perosnalCategorias.clave}.jpg" alt="#{perosnalCategorias.clave}" class="img-circle" title="Personal #{perosnalCategorias.clave}" style="width: 80px; height: 80px; align-content: center;"/>
-                                                </p:column>
-                                                <p:column> 
-                                                    <h:outputText value="#{perosnalCategorias.nombre}" />
-                                                </p:column>
-                                                <p:column> 
-                                                    <h:outputText value="#{controladorPersonalconfiguracion.nombreArea(perosnalCategorias.areaOperativa)}" />
-                                                </p:column>
-                                                <p:column> 
-                                                    <h:outputText value="#{perosnalCategorias.categoriaOperativa.nombre}" />
-                                                </p:column>
-                                                <p:column> 
-                                                    <p:cellEditor>
-                                                        <f:facet name="output"><h:outputText value="#{perosnalCategorias.categoria360.nombre}" /></f:facet>
-                                                        <f:facet name="input">
-                                                            <p:selectOneMenu value="#{perosnalCategorias.categoria360.categoria}" style="width:100%" filter="true" filterMatchMode="contains">
-                                                                <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases360}" var="cat" itemLabel="#{cat.nombre}" itemValue="#{cat.categoria}" />
-                                                            </p:selectOneMenu>
-                                                        </f:facet>
-                                                    </p:cellEditor>
-                                                </p:column>
-                                                <p:column class="noprint">
-                                                    <p:rowEditor />
-                                                </p:column>
-                                            </p:dataTable>
-                                        </h:form>
-                                    </p:tab>
-
-                                </p:tabView>
+                                    </p:tabView>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </section>
-            </c:if>
-            <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564)}">
-                <h1>
-                    Esta página está disponible solo para personal adscrito al área de personal
-                </h1>
-            </c:if>
-        </p:panel>
-            </c:if>
+                    </section>
+                </c:if>
+                <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564)}">
+                    <h1>
+                        Esta página está disponible solo para personal adscrito al área de personal
+                    </h1>
+                </c:if>
+            </p:panel>
+        </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 
