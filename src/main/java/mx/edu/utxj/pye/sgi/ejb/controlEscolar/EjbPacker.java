@@ -1208,13 +1208,24 @@ public class EjbPacker {
             if(dtoInscripciones.isEmpty()) return ResultadoEJB.crearErroneo(2, "No se pudo identificar ninguna inscripción de estudiante con la matrícula proporcionada.", DtoEstudiante.class);
             Aspirante aspirante = dtoInscripciones.get(0).getInscripcion().getAspirante();
             Persona persona = aspirante.getIdPersona();
+            
             DtoInscripcion dtoInscripcionActiva = dtoInscripciones.stream()
                     .filter(DtoInscripcion::getActivo).max(Comparator.comparingInt(value -> value.getPeriodo().getPeriodo()))
                     .orElse(null);
-            if(dtoInscripcionActiva == null) return ResultadoEJB.crearErroneo(2, "El estudiante no tiene inscripción activa.", DtoEstudiante.class);
-            DtoEstudiante dtoEstudiante = new DtoEstudiante(persona, aspirante, dtoInscripciones, dtoInscripcionActiva);
-//            System.out.println("dtoEstudiante = " + dtoEstudiante);
-            return ResultadoEJB.crearCorrecto(dtoEstudiante, "Estudiante empaquetado");
+            
+            if(dtoInscripcionActiva == null) {
+                dtoInscripcionActiva = dtoInscripciones.get(0);
+                dtoInscripcionActiva.setActivo(Boolean.FALSE);
+                DtoEstudiante dtoEstudiante = new DtoEstudiante(persona, aspirante, dtoInscripciones, dtoInscripcionActiva);
+                return ResultadoEJB.crearCorrecto(dtoEstudiante, "Estudiante empaquetado, con inscripción activa en estado dado de baja, se toma el ultimo registro de referencia");
+            }else{
+                DtoEstudiante dtoEstudiante = new DtoEstudiante(persona, aspirante, dtoInscripciones, dtoInscripcionActiva);
+                if(dtoEstudiante.getInscripcionActiva().getInscripcion().getTipoEstudiante().getIdTipoEstudiante() == 2) dtoEstudiante.getInscripcionActiva().setActivo(Boolean.FALSE);
+                if(dtoEstudiante.getInscripcionActiva().getInscripcion().getTipoEstudiante().getIdTipoEstudiante() == 3) dtoEstudiante.getInscripcionActiva().setActivo(Boolean.FALSE);
+                if(dtoEstudiante.getInscripcionActiva().getInscripcion().getTipoEstudiante().getIdTipoEstudiante() == 4) dtoEstudiante.getInscripcionActiva().setActivo(Boolean.FALSE);
+                if(dtoEstudiante.getInscripcionActiva().getInscripcion().getTipoEstudiante().getIdTipoEstudiante() == 7) dtoEstudiante.getInscripcionActiva().setActivo(Boolean.FALSE);
+                return ResultadoEJB.crearCorrecto(dtoEstudiante, "Estudiante empaquetado");
+            }
         }catch (Exception e){
             e.printStackTrace();
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el estudiante a partir de su mattricula (EjbPacker.packEstudiante).", e, DtoEstudiante.class);

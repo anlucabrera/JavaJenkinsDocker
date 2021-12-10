@@ -44,11 +44,14 @@ import java.util.List;
 import java.util.Objects;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteComplete;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguroFacultativo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoUnidadConfiguracionAlineacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbPeriodoEventoRegistro;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroAsesoriaTutoria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.converter.PlanAccionTutorialEstadoConverter;
+import mx.edu.utxj.pye.sgi.enums.converter.SeguroFacultativoValidacionConverter;
+import mx.edu.utxj.pye.sgi.enums.converter.SegurosFacultativosEstatusConverter;
 
 /**
  *
@@ -415,8 +418,15 @@ public class Caster {
     }
 
     public String parseHoraMinutos(Date hora){
+        if(hora == null ) return "Aún no se registra este dato";
         DateFormat formatoHora = new SimpleDateFormat("HH:mm a");    
         return formatoHora.format(hora);
+    }
+    
+    public String parseFechaCompleta(Date fecha){
+        if(fecha == null) return "Aún no se registra este dato";
+        DateFormat formatoFechaCompleta = new SimpleDateFormat("yyyy-MM-dd HH:mm a");    
+        return formatoFechaCompleta.format(fecha);
     }
     
     public Boolean permiteEliminarPAT(String estado){
@@ -429,6 +439,14 @@ public class Caster {
             return true;
         }else{
             return false;
+        }
+    }
+    
+    public Boolean validarEnfermeria(DtoSeguroFacultativo dtoSeguroFacultivo){
+        if(SeguroFacultativoValidacionConverter.of(dtoSeguroFacultivo.getSeguroFactultativo().getValidacionEnfermeria()).getNivel() != 1.2D || SegurosFacultativosEstatusConverter.of(dtoSeguroFacultivo.getSeguroFactultativo().getEstatusRegistro()).getNivel() == 0D || SegurosFacultativosEstatusConverter.of(dtoSeguroFacultivo.getSeguroFactultativo().getEstatusRegistro()).getNivel() == 1.3D){
+            return false;
+        }else{
+            return true;
         }
     }
     

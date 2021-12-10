@@ -143,6 +143,8 @@ public class Estudiante implements Serializable {
     private List<EstudianteHistorialTsu> estudianteHistorialTsuList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idEstudiante")
     private List<RegistroEgresadosTerminacionEstudios> registroEgresadosTerminacionEstudiosList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY) 
+    private List<SegurosFacultativosEstudiante> segurosFacultativosEstudianteList;
 
     public Estudiante() {
     }
@@ -478,6 +480,15 @@ public class Estudiante implements Serializable {
 
     public void setRegistroEgresadosTerminacionEstudiosList(List<RegistroEgresadosTerminacionEstudios> registroEgresadosTerminacionEstudiosList) {
         this.registroEgresadosTerminacionEstudiosList = registroEgresadosTerminacionEstudiosList;
+    }
+    
+    @XmlTransient
+    public List<SegurosFacultativosEstudiante> getSegurosFacultativosEstudianteList() {
+        return segurosFacultativosEstudianteList;
+    }
+
+    public void setSegurosFacultativosEstudianteList(List<SegurosFacultativosEstudiante> segurosFacultativosEstudianteList) {
+        this.segurosFacultativosEstudianteList = segurosFacultativosEstudianteList;
     }
     
     @Override

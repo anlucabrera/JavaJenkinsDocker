@@ -177,6 +177,7 @@ public class ServicioCarga implements EjbCarga {
     public static final String reportesPlaneacion = "reportesPlaneacion";
     public static final String alineacionMaterias = "alineacionMaterias";
     public static final String reportePOapre = "POA";
+    public static final String seguroFacultativoPlantillas = "seguro_facultativo_plantillas";
 
 //    Método que se encarga de crear la carpeta raíz en caso de que no exista para poder almacenar el archivo
     static {
@@ -212,6 +213,14 @@ public class ServicioCarga implements EjbCarga {
     
     public static String genCarpetaRelativaReporte(String modulosRegistro, String reportes, String eje, String completo){
         return carpetaRaiz + modulosRegistro + File.separator + reportes + File.separator + eje + File.separator + completo + File.separator;
+    }
+    
+    public static String genCarpetaRelativaReporteSF(){
+        return carpetaRaiz + seguroFacultativoPlantillas + File.separator;
+    }
+    
+    public static String genCarpetaRelativaReporteSF(String completo){
+        return carpetaRaiz + seguroFacultativoPlantillas + File.separator + completo + File.separator;
     }
     
      public static String genCarpetaRelativa(String alineacionMaterias){
@@ -312,6 +321,20 @@ public class ServicioCarga implements EjbCarga {
     @Override
     public String crearDirectorioReporteCompleto(String eje) {
         String rutaRelativa = genCarpetaRelativaReporte(modulosRegistro, reportes, eje, completo);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+
+    @Override
+    public String crearDirectorioSeguroFacultativoReporte() {
+        String rutaRelativa = genCarpetaRelativaReporteSF();
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+
+    @Override
+    public String crearDirectorioSeguroFacultativoReporteCompleto() {
+        String rutaRelativa = genCarpetaRelativaReporteSF(completo);
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
     }

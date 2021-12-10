@@ -87,7 +87,7 @@ public class EjbValidadorDocente {
             if(getPeriodosConCapturaCargaAcademicaTutor(p).getCorrecto()){
                 return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como un tutor.");
             }else{
-                return ResultadoEJB.crearErroneo(2, null,"El docente no cuenta con grupos tutorados");
+                return ResultadoEJB.crearErroneo(2, filtro,"El docente no cuenta con grupos tutorados");
             }
             
         } catch (Exception e) {
