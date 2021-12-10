@@ -1756,11 +1756,13 @@ public class EjbRegistroAsesoriaTutoria {
                 return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST, "No se han encontrado planes de acción tutorial registrados");
             }else{
                 planesAccionTutorial.stream().forEach((p) -> {
-                    DtoPlanAccionTutorial dto = new DtoPlanAccionTutorial(
-                            p
-                            ,pack.packPersonalActivo(p.getGrupo().getTutor())
-                    );
-                    listaDto.add(dto);
+                    if(p.getGrupo().getTutor() != null){
+                        DtoPlanAccionTutorial dto = new DtoPlanAccionTutorial(
+                                p
+                                ,pack.packPersonalActivo(p.getGrupo().getTutor())
+                        );
+                        listaDto.add(dto);
+                    }
                 });
                 return ResultadoEJB.crearCorrecto(listaDto, "Lista de planes de accion tutorial");
             }

@@ -1,0 +1,920 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                >
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Registro Seguro Facultativo
+    </ui:define>
+
+    <ui:define name="description">
+    </ui:define>
+
+    <ui:define name="body">
+        <style type="text/css">
+            .ui-datatable .ui-row-toggler {
+                cursor: pointer;
+                text-decoration: #3C8DBC;
+                color: #3C8DBC;
+                font-weight: 600;
+            }
+        </style>
+        <adm:breadcrumb title="Seguro Facultativo"/>
+        <adm:sidebar collapsed="true"/>
+
+        <div class="contenedorGeneral">
+            <c:if test="#{registroSeguroFacultativoEstudiante.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.TipoSeguroFacultativo" var="tsf" allSuffix="ALL" />
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.SeguroFacultativoValidacion" var="sfValidacion" allSuffix="SFVALIDACIONES" />
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.SegurosFacultativosEstatus" var="sfEstatus" allSuffix="SFESTATUS" />
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.TipoSeguroFacultativo" var="sfTipos" allSuffix="SFTIPOS" />
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(registroSeguroFacultativoEstudiante.rol.periodoEscolarActivo.periodo)} " />   
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Antes de enviar a revisión tu expediente, asegurate de haber llenado correctamente tu información" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                       onclick="PF('modalAyuda').show();"
+                                                       process="@this"
+                                                       title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </h:form>
+
+                        <div class="box box-solid">
+                            <div class="box-body">
+                                
+                                <!--Sección de mensajes para el estudiante-->
+                                <h:form id="frmMensajes" prependId="false" class="form-inline">
+                                    <div class="row">
+                                            <p:outputPanel id="contenedorMensajes" >
+                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <p:outputLabel value="1.- Información correspondiente al estatus y la validación de tu seguro facultativo, recuerda siempre verificar en que estatus se encuentra tu registro." style="padding-top: 5px;" />
+                                                            <p></p>
+                                                        </f:facet>
+                                                    </p:toolbar>
+                                                </div>
+                                                <!--Div informativo que muestra la validación por parte del área de enfermería del Registro del Seguro Facultativo-->
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label}">
+                                                        <div class="callout callout-success">
+                                                            <p align="justify">
+                                                                <code style="color:#4185A0;">
+                                                                    <strong>Validación: </strong> Su seguro facultativo se encuentra actualmente dado de: <strong>"#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria}"</strong>, no es necesario realizar ninguna acción más, o bien esperar indicaciones del área de enfermería.
+                                                                </code>
+                                                            </p>
+                                                        </div>
+                                                    </c:if>
+                                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label}">
+                                                        <div class="callout callout-warning">
+                                                            <p align="justify">
+                                                                <code style="color:#4185A0;">
+                                                                    <strong>Validación: </strong> Si ha seleccionado la opción: <strong> "#{sfEstatus.ENVIADO_PARA_VALIDACION.label}"</strong> ó únicamente ha registro sus datos, se mostrarán las observaciones recibidas en la sección de estatus del seguro facultativo por el área de enfermería para su respectiva actualización, de momento su seguro facultativo se encuentra: <strong>"#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria}"</strong>
+                                                                </code>
+                                                            </p>
+                                                        </div>
+                                                    </c:if>
+                                                    
+                                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label}">
+                                                        <div class="callout callout-warning">
+                                                            <p align="justify">
+                                                                <code style="color:#4185A0;">
+                                                                    <strong>Validación: </strong> Su seguro facultativo se encuentra de momento dado de: <strong>"#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria}"</strong>
+                                                                </code>
+                                                            </p>
+                                                        </div>
+                                                    </c:if>
+
+                                                    <c:if test="#{!registroSeguroFacultativoEstudiante.rol.estudianteActivo}">
+                                                        <div class="callout callout-warning">
+                                                            <p align="justify">
+                                                                <code style="color:#4185A0;">
+                                                                    <strong>Aviso: </strong> Se ha detectado que no es <strong>estudiante activo</strong>, por tal motivo, únicamente se mostrará en la parte inferior la información registrada durante su estancia académica
+                                                                </code>
+                                                            </p>
+                                                        </div>
+                                                    </c:if>
+                                                </div>
+                                                <!--Div informativo que muestra el estatus del registro del seguro facultativo-->
+                                                <div class="col-sm-12 col-md-6 col-lg-6">
+                                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro eq sfEstatus.VALIDADO.label and registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria ne sfValidacion.BAJA.label}">
+                                                        <div class="callout callout-success">
+                                                            <p align="justify">
+                                                                <code style="color:#4185A0;">
+                                                                    <strong>Estatus: </strong> Su seguro facultativo se encuentra: <strong>#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro}</strong>, no es necesario realizar ninguna acción más, o bien esperar indicaciones del área de enfermería.
+                                                                </code>
+                                                            </p>
+                                                        </div>
+                                                    </c:if>
+
+                                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.estudianteActivo}">
+                                                        <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro ne sfEstatus.VALIDADO.label}">
+                                                            <div class="callout callout-warning">
+                                                                <p align="justify">
+                                                                    <code style="color:#4185A0;">
+                                                                        <strong>Estatus: </strong> El estatus de su seguro facultativo se encuentra: <strong> "#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro}"</strong>, favor de llenar toda la información complementaría ó bien esperar indicaciones del área de enfermería, de igual manera si existen comentarios por parte del área de enfermería se verán reflejados en la parte inferior.
+                                                                    </code>
+                                                                </p>
+                                                                <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.comentariosEnfermeria ne '' and registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.comentariosEnfermeria ne null}">
+                                                                    <p align="justify">
+                                                                        <code style="color:#4185A0;">
+                                                                            <strong>Comentarios área de enfermería: </strong> #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.comentariosEnfermeria}
+                                                                        </code>
+                                                                    </p>
+                                                                </c:if>
+                                                            </div>
+                                                        </c:if>
+                                                    </c:if>    
+                                                </div>
+                                            </p:outputPanel>
+                                        </div>
+                                </h:form>
+
+                                <!--Sección del formulario de registro-->
+                                <h:form id="frmRegistro" prependId="false" class="form-inline" >
+                                    <div style="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.seguroFacultativoEstudiante ne null?'margin-bottom: 20px;':'display: none;'}">
+                                        <p:remoteCommand id="actualizarSeguroFacultativo" name="actualizarSeguroFacultativo" actionListener="#{registroSeguroFacultativoEstudiante.actualizar()}" process="@this" update="frmRegistro formularioArchivoTarjetonIMSS formularioArchivoComprobanteLocalizacion formularioComprobanteVigenciaDerechos frmMensajes frmListadoSegurosFacultativos formularioBotonValidacion" />
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 text-info">
+                                                <p:outputPanel id="contenedorRegistro">
+                                                    <div class="row margin-bottom">
+                                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                                            <p:toolbar>
+                                                                <f:facet name="left">
+                                                                    <p:outputLabel value="2.- Ingresa la información complementaría para el registro de tu Seguro facultativo, algunos datos se obtienen automáticamente desde el sistema únicamente deberás verificar que sean correctos, si eres estudiante activo el sistema generará un registro nuevo el cual tendrás que complementar y enviar para la validación correspondiente." style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                        </div>
+
+                                                        <!--Estudiante: Generado automaticamente por el sistema, se muestra para que el usuario pueda corroborar que es su información-->
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 30px;"><p:separator/></div>
+                                                        
+                                                        <div class="col-sm-12 col-md-6 col-lg-4" style="margin-bottom: 30px;">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="sfEstudiante"
+                                                                             label="sfEstudiante"
+                                                                             value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.inscripcionActiva.inscripcion.matricula} - #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.persona.apellidoMaterno} #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.persona.apellidoPaterno} #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.persona.nombre}"
+                                                                             style="width: 20em"
+                                                                             readonly="true"
+                                                                             class="form-control"
+                                                                             disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label}"
+                                                                             />
+                                                                <p:watermark for="sfEstudiante" value="Ejemplo de nombre del estudiante *" />
+                                                                <p:outputLabel for="sfEstudiante" value="Nombre del estudiante: "/>
+                                                            </div>
+                                                        </div>
+
+                                                        <!--Tipo de seguro: El estudiante puede elegir mediante un combo box con que tipo de seguro cuenta actualmente, considerar de manera automática el académico-->
+                                                        <div class="col-sm-12 col-md-6 col-lg-4" style="margin-bottom: 30px;">
+                                                            <div class="ui-material">
+                                                                <p:selectOneMenu id="sfTipoSeguro"
+                                                                                 label="sfTipoSeguro"
+                                                                                 value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.tipoSeguro}"
+                                                                                 converter="entityConverter"
+                                                                                 effect="fade"
+                                                                                 style="width: 20em"
+                                                                                 filter="true"
+                                                                                 filterMatchMode="startsWith"
+                                                                                 required="true"
+                                                                                 class="form-control"
+                                                                                 requiredMessage="Por favor seleccione el tipo de seguro facultativo."
+                                                                                 valueChangeListener="#{registroSeguroFacultativoEstudiante.actualizarTipoSeguroFacultativo}"
+                                                                                 readonly="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro eq sfEstatus.ENVIADO_PARA_VALIDACION.label}"
+                                                                                 disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label}"
+                                                                                 >
+                                                                    <p:ajax process="@this" global="false" oncomplete="actualizarSeguroFacultativo();"/>
+                                                                    <f:attribute name="seguroFacultativo" value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo}"/>
+                                                                    <f:selectItem itemLabel=" - Seleccione - " 
+                                                                                  itemValue="#{null}"/>
+                                                                    <f:selectItems value="#{registroSeguroFacultativoEstudiante.listaTiposSegurosFacultativos}"
+                                                                                   var="sfTipoSeguro"
+                                                                                   itemValue="#{sfTipoSeguro.label}"
+                                                                                   itemLabel="#{sfTipoSeguro.label}" />
+                                                                </p:selectOneMenu>
+                                                                <p:outputLabel for="sfTipoSeguro" value="Seleccione su tipo de seguro facultativo *: "/>
+                                                                <p:message for="sfTipoSeguro" />
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <!--Correo Electrónico Dado de alta en el IMSS, Ingresado manualmente por el estudiante: Este correo es el que dan de alta en la plataforma del IMSS, considerar las validaciónes de correo correspondientes-->
+                                                        
+                                                        <div class="col-sm-12 col-md-6 col-lg-4" style="margin-bottom: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="sfCorreoElectronico"
+                                                                             label="sfCorreoElectronico"
+                                                                             class="form-control"
+                                                                             style="width: 20em"
+                                                                             required="true" 
+                                                                             requiredMessage="Por favor ingrese el correo electrónico registrado ante la plataforma del IMSS."
+                                                                             validatorMessage="Formato de correo electrónico"
+                                                                             value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.correoElectronico}"
+                                                                             readonly="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro eq sfEstatus.ENVIADO_PARA_VALIDACION.label}"
+                                                                             disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label}"
+                                                                             maxlength="200"
+                                                                             valueChangeListener="#{registroSeguroFacultativoEstudiante.actualizarCorreoElectronico}"
+                                                                             title="Si deseas actualizar este dato, solo modifica y presionar la tecla TAB ó ENTER al finalizar, ó bien coloca el cursor en el siguiente campo "
+                                                                             onkeydown="if (event.keyCode === 13) {editarCorreoElectronico();return false;}"        
+                                                                             >
+                                                                    <p:remoteCommand name="editarCorreoElectronico"
+                                                                                     process="@this"
+                                                                                     global="false"
+                                                                                     oncomplete="actualizarSeguroFacultativo();"
+                                                                                     />
+                                                                    <p:ajax process="@this" global="false" oncomplete="actualizarSeguroFacultativo();"/>
+                                                                    <f:attribute name="seguroFacultativo" value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo}"/>
+                                                                    <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                                                                </p:inputText>
+                                                                <p:watermark for="sfCorreoElectronico" value="ejemplo@dominio.com *" />
+                                                                <p:outputLabel for="sfCorreoElectronico" value="Correo electrónico registrado ante el IMSS *: "/>
+                                                                <p:message for="sfCorreoElectronico" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px;"></div>
+
+                                                        <!-- Fecha de registro: se obtiene automaticamente cuando se crea el registro, solo se tiene que castear -->
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-4" style="margin-bottom: 30px;">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="sfFechaRegistro"
+                                                                             label="sfFechaRegistro"
+                                                                             value="#{caster.parseFechaCompleta(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.fechaRegistro)}"
+                                                                             style="width: 20em"
+                                                                             readonly="true"
+                                                                             class="form-control"
+                                                                             disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label}"
+                                                                             />
+                                                                <p:watermark for="sfFechaRegistro" value="2020-10-01 07:00am (yyyy-MM-dd hh:mm am) *" />
+                                                                <p:outputLabel for="sfFechaRegistro" value="Fecha de registro del seguro facultativo: "/>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Fecha de alta: se obtiene cuando el área de enfermería da de alta los seguros facultativos, solo se tiene que castear -->
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-4" style="margin-bottom: 30px;">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="sfFechaAlta"
+                                                                             label="sfFechaAlta"
+                                                                             value="#{caster.parseFechaCompleta(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.fechaAlta)}"
+                                                                             style="width: 20em"
+                                                                             readonly="true"
+                                                                             class="form-control"
+                                                                             disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label}"
+                                                                             />
+                                                                <p:watermark for="sfFechaAlta" value="2020-10-01 07:00am (yyyy-MM-dd hh:mm am) *" />
+                                                                <p:outputLabel for="sfFechaAlta" value="Fecha de alta del seguro facultativo: "/>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Estatus y Validación del seguro facultativo -->
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-4" style="margin-bottom: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="sfEstatusValidacion"
+                                                                             label="sfEstatusValidacion"
+                                                                             value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro} - #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria}"
+                                                                             style="width: 20em"
+                                                                             readonly="true"
+                                                                             class="form-control"
+                                                                             disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label}"
+                                                                             />
+                                                                <p:watermark for="sfEstatusValidacion" value="Ejemplo de estatus y validación del seguro facultativo *" />
+                                                                <p:outputLabel for="sfEstatusValidacion" value="Estatus y Validación del seguro facultativo: "/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px;"></div>
+
+                                                        <div class="col-sm-12 col-md-4 col-lg-4" style="margin-bottom: 10px;">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="sfNss"
+                                                                             label="sfNss"
+                                                                             value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.nss}"
+                                                                             style="width: 20em"
+                                                                             readonly="true"
+                                                                             class="form-control"
+                                                                             disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label}"
+                                                                             />
+                                                                <p:watermark for="sfNss" value="Ejemplo de NSS : 03218328460 *" />
+                                                                <p:outputLabel for="sfNss" value="Número de Seguridad Social (Número tomado del Tarjetón del IMSS): "/>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="col-sm-12 col-md-12 col-lg-12"><p:separator/></div>
+                                                        
+                                                        <div class="col-sm-12 col-md-12 col-lg-12">
+                                                            <p:toolbar>
+                                                                <f:facet name="left">
+                                                                    <p:outputLabel value="3.- En está sección se mostrarán los archivos una vez que ya los hayas cargado al sistema, recuerda que solo se aceptan documentos PDF, provenientes de la plataforma del IMSS, como se mencionó en la parte superior el NSS (Número de Seguridad Social) se obtiene automáticamente desde el documento expedido por el IMSS (Tarjetón), asegúrate de subir el/los archivo(s) correcto(s)." style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 10px;"></div>
+
+                                                        <!--Número de seguro social: se obtiene mediante el archivo que el estudiante sube, el cual contiene su datos generales y el Numero de seguro social-->
+
+                                                        <!--Archivo del Tarjetón del IMSS: -->
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-4" style="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton ne null?'margin-bottom: 20px;':'display: none;'}">
+                                                            <p:toolbar rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton ne null}">
+                                                                <f:facet name="left">
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Tarjetón IMSS" style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Nombre del archivo: #{fn:length(caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton)) > 33 ? caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton).substring(1,33)+'...':caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton)}" style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Número de Seguridad Social: #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.nss}" style="padding-top: 5px;" />
+
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:selectBooleanCheckbox value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusTarjeton eq sfEstatus.VALIDADO.label}" 
+                                                                                             itemLabel="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusTarjeton eq sfEstatus.VALIDADO.label?sfEstatus.VALIDADO.label:registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusTarjeton}"
+                                                                                             disabled="true"
+                                                                                             />
+
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:commandLink class="btn btn-info btn-sm"
+                                                                                   ajax="false"
+                                                                                   action="#{registroSeguroFacultativoEstudiante.descargarArchivoTarjetonImss()}" 
+                                                                                   target="_blank" 
+                                                                                   title="Descargar archivo de Tarjetón IMSS."
+                                                                                   value="Descargar"
+                                                                                   >
+                                                                        <i class="fa fa-download" />
+                                                                    </p:commandLink>
+                                                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria ne sfValidacion.BAJA.label}">
+                                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                        <p:commandButton class="btn btn-danger btn-sm" 
+                                                                                         icon="fa fa-trash" 
+                                                                                         actionListener="#{registroSeguroFacultativoEstudiante.eliminarArchivoTarjetonImss()}" 
+                                                                                         onsuccess="actualizarSeguroFacultativo();" 
+                                                                                         title="Eliminar archivo de Tarjetón IMSS y resetear el NSS"
+                                                                                         value="Eliminar"
+                                                                                         disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusTarjeton eq sfEstatus.ENVIADO_PARA_VALIDACION.label}"
+                                                                                         >
+                                                                            <p:confirm header="Eliminar archivo de Tarjetón IMSS" 
+                                                                                       message="¿Está seguro de eliminar el archivo del Tarjetón IMSS: #{caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton)}? Recuerda que al eliminar se borrara de igual maner su número de Seguro Social (NSS)" 
+                                                                                       icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </c:if>
+
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                        </div>
+
+                                                        <!--Archivo de comprobante de localizacion-->
+                                                        <div class="col-sm-12 col-md-6 col-lg-4" style="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion ne null?'margin-bottom: 20px;':'display: none;'}}">
+                                                            <p:toolbar rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion ne null}">
+                                                                <f:facet name="left">
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Comprobante Localización" style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Nombre del archivo: #{fn:length(caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion)) > 33 ? caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion).substring(1,33).concat('...'):caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion)}" style="padding-top: 5px;" />
+
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:selectBooleanCheckbox value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusComprobanteLocalizacion eq sfEstatus.VALIDADO.label}" 
+                                                                                             itemLabel="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusComprobanteLocalizacion eq sfEstatus.VALIDADO.label?sfEstatus.VALIDADO.label:registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusComprobanteLocalizacion}"
+                                                                                             disabled="true"
+                                                                                             />
+
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:commandLink class="btn btn-info btn-sm"
+                                                                                   ajax="false"
+                                                                                   action="#{registroSeguroFacultativoEstudiante.descargarArchivoComprobanteLocalizacion()}" 
+                                                                                   target="_blank" 
+                                                                                   title="Descargar archivo de Comprobante de Localización"
+                                                                                   value="Descargar"
+                                                                                   >
+                                                                        <i class="fa fa-download" />
+                                                                    </p:commandLink>
+                                                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria ne sfValidacion.BAJA.label}">
+                                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                        <p:commandButton class="btn btn-danger btn-sm" 
+                                                                                         icon="fa fa-trash" 
+                                                                                         actionListener="#{registroSeguroFacultativoEstudiante.eliminarArchivoComprobanteLocalizacion()}" 
+                                                                                         onsuccess="actualizarSeguroFacultativo();" 
+                                                                                         title="Eliminar archivo de Comprobante de Localización"
+                                                                                         value="Eliminar"
+                                                                                         disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusComprobanteLocalizacion eq sfEstatus.ENVIADO_PARA_VALIDACION.label}"
+                                                                                         >
+                                                                            <p:confirm header="Eliminar archivo de Comprobante de Localización" 
+                                                                                       message="¿Está seguro de eliminar el archivo del Comprobante de Localización: #{caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion)}?" 
+                                                                                       icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </c:if>
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                        </div>
+
+                                                        <!--Archivo de comprobante de vigencia de derechos-->
+                                                        <div class="col-sm-12 col-md-6 col-lg-4" style="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos ne null?'margin-bottom: 20px;':'display: none;'}}">
+                                                            <p:toolbar rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos ne null}">
+                                                                <f:facet name="left">
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Comprobante Vigencia de Derechos" style="padding-top: 5px;" />
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:outputLabel value="Nombre del archivo: #{fn:length(caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos)) > 33 ? caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos).substring(1,33).concat('...'):caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos)}" style="padding-top: 5px;" />
+                                                                    
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:selectBooleanCheckbox value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusComprobanteVigenciaDerechos eq sfEstatus.VALIDADO.label}" 
+                                                                                             itemLabel="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusComprobanteVigenciaDerechos eq sfEstatus.VALIDADO.label?sfEstatus.VALIDADO.label:registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusComprobanteVigenciaDerechos}"
+                                                                                             disabled="true"
+                                                                                             />
+
+                                                                    <p></p>
+                                                                    <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                    <p:commandLink class="btn btn-info btn-sm"
+                                                                                   ajax="false"
+                                                                                   action="#{registroSeguroFacultativoEstudiante.descargarArchivoComprobanteVigenciaDerechos()}" 
+                                                                                   target="_blank" 
+                                                                                   title="Descargar archivo de Comprobante de Vigencia de Derechos"
+                                                                                   value="Descargar"
+                                                                                   >
+                                                                        <i class="fa fa-download" />
+                                                                    </p:commandLink>
+                                                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria ne sfValidacion.BAJA.label}">
+                                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                                        <p:commandButton class="btn btn-danger btn-sm" 
+                                                                                         icon="fa fa-trash" 
+                                                                                         actionListener="#{registroSeguroFacultativoEstudiante.eliminarArchivoComprobanteVigenciaDerechos()}" 
+                                                                                         onsuccess="actualizarSeguroFacultativo();" 
+                                                                                         title="Eliminar archivo de Comprobante de Vigencia de Derechos"
+                                                                                         value="Eliminar"
+                                                                                         disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusComprobanteVigenciaDerechos eq sfEstatus.ENVIADO_PARA_VALIDACION.label}"
+                                                                                         >
+                                                                            <p:confirm header="Eliminar archivo de comprobante de vigencia de derechos" 
+                                                                                       message="¿Está seguro de eliminar el archivo del Comprobante de Vigencia de Derechos: #{caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos)}?" 
+                                                                                       icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </c:if>
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                        </div>
+
+                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                        </p:confirmDialog>
+                                                        
+                                                    </div>
+                                                </p:outputPanel>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </h:form>
+                                
+                                <o:form id="formularioArchivoTarjetonIMSS" 
+                                        enctype="multipart/form-data" 
+                                        class="form-inline">
+                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria ne sfValidacion.BAJA.label}">
+                                    <div style="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.seguroFacultativoEstudiante ne null?'':'display: none;'}">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 text-info">
+                                                <p:outputPanel id="contenedorTarjetonIMSS" rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton eq null}">
+                                                    <div class="row margin-bottom" >
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
+                                                            <p:outputLabel for="archivoTarjetonIMSS" value="Subir Tarjetón IMSS, recuerda seleccionar el archivo y posteriomente presionar el botón 'Subir archivo': "/>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
+                                                            <div class="ui-material">
+                                                                <o:inputFile id="archivoTarjetonIMSS" 
+                                                                             value="#{registroSeguroFacultativoEstudiante.rol.archivoTarjetonImss}"
+                                                                             class="form-control"
+                                                                             accept="application/pdf" 
+                                                                             acceptMessage="Sólo se permiten documentos PDF, provenientes de la plataforma del IMSS."
+                                                                             maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                                             required="true" 
+                                                                             requiredMessage="Debe elegir al menos un archivo."
+                                                                             disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton ne null}"
+                                                                             rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton eq null}"
+                                                                             >
+                                                                </o:inputFile>
+                                                                <h:commandButton id="btnArchivoTarjetonIMSS" 
+                                                                                 value="Subir archivo (Tarjetón IMSS):" 
+                                                                                 class="btn btn-sm btn-primary"
+                                                                                 actionListener="#{registroSeguroFacultativoEstudiante.subirTarjetonImss()}"
+                                                                                 disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton ne null}"
+                                                                                 rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton eq null}"
+                                                                                 />
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </p:outputPanel>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </c:if>
+                                </o:form>
+                                
+                                <!--Formulario comprobanteLocalizacion-->
+                                <o:form id="formularioArchivoComprobanteLocalizacion" 
+                                        enctype="multipart/form-data" 
+                                        class="form-inline">
+                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria ne sfValidacion.BAJA.label}">
+                                    <div style="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.seguroFacultativoEstudiante ne null?'':'display: none;'}">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 text-info">
+                                                <p:outputPanel id="contenedorComprobanteLocalizacion" rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion eq null}">
+                                                    <div class="row margin-bottom" >
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
+                                                            <p:outputLabel for="archivoComprobanteLocalizacion" value="Subir Comprobante de Localización, recuerda seleccionar el archivo y posteriomente presionar el botón 'Subir archivo': "/>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
+                                                            <div class="ui-material">
+                                                                <o:inputFile id="archivoComprobanteLocalizacion" 
+                                                                             value="#{registroSeguroFacultativoEstudiante.rol.archivoComprobanteLocalizacion}"
+                                                                             class="form-control"
+                                                                             accept="application/pdf" 
+                                                                             acceptMessage="Sólo se permiten documentos PDF, provenientes de la plataforma del IMSS."
+                                                                             maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                                             required="true" 
+                                                                             requiredMessage="Debe elegir al menos un archivo."
+                                                                             disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion ne null}"
+                                                                             rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion eq null}"
+                                                                             >
+                                                                </o:inputFile>
+                                                                <h:commandButton id="btnArchivoComprobanteLocalizacion" 
+                                                                                 value="Subir archivo (Comprobante Localización):" 
+                                                                                 class="btn btn-sm btn-primary"
+                                                                                 actionListener="#{registroSeguroFacultativoEstudiante.subirComprobanteLocalizacion()}"
+                                                                                 disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion ne null}"
+                                                                                 rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion eq null}"
+                                                                                 />
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </p:outputPanel>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </c:if>
+                                </o:form>
+                                
+                                <!--Formulario comprobanteVigenciaDeDerechos-->
+                                <o:form id="formularioComprobanteVigenciaDerechos"
+                                        enctype="multipart/form-data" 
+                                        class="form-inline">
+                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria ne sfValidacion.BAJA.label}">
+                                    <div style="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.seguroFacultativoEstudiante ne null?'':'display: none;'}">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 text-info">
+                                                <p:outputPanel id="contenedorComprobanteVigenciaDerechos" rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos eq null}">
+                                                    <div class="row margin-bottom" >
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
+                                                            <p:outputLabel for="archivoComprobanteVigenciaDerechos" value="Subir Comprobante de Vigencia de Derechos, recuerda seleccionar el archivo y posteriomente presionar el botón 'Subir archivo': "/>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-6 col-lg-6" style="margin-bottom: 10px;">
+                                                            <div class="ui-material">
+                                                                <o:inputFile id="archivoComprobanteVigenciaDerechos" 
+                                                                             value="#{registroSeguroFacultativoEstudiante.rol.archivoComprobanteVigenciaDerechos}"
+                                                                             class="form-control"
+                                                                             accept="application/pdf" 
+                                                                             acceptMessage="Sólo se permiten documentos PDF, provenientes de la plataforma del IMSS."
+                                                                             maxsize="#{caster.evidenciasTamanioLimite}" 
+                                                                             maxsizeMessage="El tamaño máximo permitido por archivo es #{caster.bytesToMegabytes(caster.evidenciasTamanioLimite)}."
+                                                                             required="true" 
+                                                                             requiredMessage="Debe elegir al menos un archivo."
+                                                                             disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos ne null}"
+                                                                             rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos eq null}"
+                                                                             >
+                                                                </o:inputFile>
+                                                                <h:commandButton id="btnArchivoComprobanteVigenciaDerechos" 
+                                                                                 value="Subir archivo (Comprobante Vigencia de Derechos):" 
+                                                                                 class="btn btn-sm btn-primary"
+                                                                                 actionListener="#{registroSeguroFacultativoEstudiante.subirComprobanteVigenciaDerechos()}"
+                                                                                 disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos ne null}"
+                                                                                 rendered="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos eq null}"
+                                                                                 />
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </p:outputPanel>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                        </c:if>
+                                </o:form>
+                                
+                                <!--Contiene unicamente el boton para enviar a validación los datos del estudiante-->
+                                <h:form id="formularioBotonValidacion" prependId="false" class="form-inline">
+
+                                    <c:if test="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria ne sfValidacion.BAJA.label}">
+
+                                        <div style="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.seguroFacultativoEstudiante ne null?'margin-bottom: 20px;':'display: none;'}">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-md-12 text-info">
+                                                    <p:outputPanel id="contenedorBotonValidar" >
+                                                        <div class="row margin-bottom" >
+                                                            <div class="col-sm-12 col-md-12 col-lg-12"><p:separator/></div>
+
+                                                            <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px;">
+                                                                <p:toolbar>
+                                                                    <f:facet name="left">
+                                                                        <p:outputLabel value="4.- El ultimo paso para tu registro, y cuando tengas toda tu información cargada en el sistema, se habilitará el botón denominado 'Enviar a revisión' en caso de que tu registro se encuentre 'En observaciones', se habilitará el botón de 'Actualizar información y enviar a revisión', en ambos casos deberás dar clic y revisar la sección No.1, ahí se te mostrarán las indicaciones correspondientes.
+                                                                                       De igual manera podrás realizar la cancelación del envío a revisión en caso de que requieras actualizar nuevemante tu infomación." style="padding-top: 5px;" />
+                                                                        <p></p>
+                                                                    </f:facet>
+                                                                </p:toolbar>
+                                                            </div>
+
+                                                            <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px;">
+                                                                <p:commandButton id="btnEnviarRevision" 
+                                                                                 value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro eq sfEstatus.REGISTRADO.label?'Enviar a revisión':'Actualizar información y enviar a revisión'}" 
+                                                                                 action="#{registroSeguroFacultativoEstudiante.enviarARevisionSeguroFacultativo(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo)}" 
+                                                                                 oncomplete="actualizarSeguroFacultativo();" 
+                                                                                 icon="fa fa-pencil-square-o" 
+                                                                                 class="btn-primary"
+                                                                                 style="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro eq sfEstatus.REGISTRADO.label?'width:20em;':'width:22em;'}"
+                                                                                 title="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro eq sfEstatus.REGISTRADO.label?'Enviar a revisión':'Actualizar información y enviar a revisión'}" 
+                                                                                 disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.tipoSeguro eq null or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.correoElectronico eq null or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.nss eq null or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton eq null or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion eq null}"
+                                                                                 />
+                                                            </div>
+                                                            <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 15px;">
+                                                                <p:commandButton id="btnCancelarEnvio" 
+                                                                                 value="Cancelar Envío a Revisión" 
+                                                                                 action="#{registroSeguroFacultativoEstudiante.cancelarEnvioARevision(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo)}" 
+                                                                                 oncomplete="actualizarSeguroFacultativo();" 
+                                                                                 icon="fa fa-trash"
+                                                                                 class="btn-danger" 
+                                                                                 style="width:20em;"
+                                                                                 title="#{registroPlanTutoriaTutor.rol.planRegistrado?'Guardar Plan de Acción Tutorial':'Actualizar información y enviar a revisión'}"
+                                                                                 disabled="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.tipoSeguro eq null or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.correoElectronico eq null or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.nss eq null or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton eq null or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion eq null or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos eq null or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro eq sfEstatus.REGISTRADO.label or registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.estatusRegistro eq sfEstatus.EN_OBSERVACIONES.label}"
+                                                                                 />
+                                                            </div>
+
+                                                            <div class="col-sm-12 col-md-12 col-lg-12"><p:separator/></div>
+                                                        </div>
+                                                    </p:outputPanel>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </c:if>
+                                </h:form>
+                                
+                                <!--Sección en donde se mostrarán los historícos del seguro facultativo, interfaz de solo consulta para el estudiante-->
+
+                                <h:form id="frmListadoSegurosFacultativos" prependId="false" class="form-inline">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info">
+                                            <p:outputPanel id="contenedorSegurosFacultativos">
+                                                <p:toolbar>
+                                                    <f:facet name="left">
+                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                        <p:outputLabel value="5.- Listado de seguros facultativos registrados con anterioridad." style="padding-top: 5px;" />
+                                                        <p></p>
+                                                    </f:facet>
+                                                </p:toolbar>
+                                                <center>
+                                                    <p:dataTable id="dtSegurosFacultativos" 
+                                                                 var="seguroFacultativo" 
+                                                                 value="#{registroSeguroFacultativoEstudiante.rol.listaDtoSeguroFacultativo}"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                 resizeMode="expand"
+                                                                 emptyMessage="Aún no se han registrado seguros facultativos"
+                                                                 >
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="sucess">
+                                                                <p:column headerText="Detalles del registro"                    width="70"/>
+                                                                <p:column headerText="Periodo Escolar"                          width="90"/>
+                                                                <p:column headerText="Validación por enfermería"                width="80"/>
+                                                                <p:column headerText="Estatus del registro"                     width="80"/>
+                                                                <p:column headerText="Fecha de registro"                        width="100"/>
+                                                                <p:column headerText="Fecha de alta"                            width="100"/>
+                                                                <p:column headerText="Fecha de baja"                            width="100"/>
+                                                                <p:column headerText="Personal de Enfermería que atendío"       width="200"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+
+                                                        <p:column style="width:16px;align-content: center;text-align: center;#{seguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label ? '' : 'background-color:#EAFFF1'}">
+                                                            <p:rowToggler expandLabel="Mostrar contenido" collapseLabel="Ocultar contenido"/>
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{seguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label ? '' : 'background-color:#EAFFF1'}">
+                                                            <h:outputText value="#{caster.periodoToString(seguroFacultativo.estudiante.inscripcionActiva.periodo)}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{seguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label ? '' : 'background-color:#EAFFF1'}">
+                                                            <h:outputText value="#{seguroFacultativo.seguroFactultativo.validacionEnfermeria}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{seguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label ? '' : 'background-color:#EAFFF1'}">
+                                                            <h:outputText value="#{seguroFacultativo.seguroFactultativo.estatusRegistro}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{seguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label ? '' : 'background-color:#EAFFF1'}">
+                                                            <h:outputText value="#{caster.parseFechaCompleta(seguroFacultativo.seguroFactultativo.fechaRegistro)}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{seguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label ? '' : 'background-color:#EAFFF1'}">
+                                                            <h:outputText value="#{caster.parseFechaCompleta(seguroFacultativo.seguroFactultativo.fechaAlta)}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{seguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label ? '' : 'background-color:#EAFFF1'}">
+                                                            <h:outputText value="#{caster.parseFechaCompleta(seguroFacultativo.seguroFactultativo.fechaBaja)}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{seguroFacultativo.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label ? '' : 'background-color:#EAFFF1'}">
+                                                            <h:outputText value="#{seguroFacultativo.personalActivo.personal.nombre eq null ? 'Aún no se da seguimiento':(seguroFacultativo.personalActivo.personal.nombre).concat(' - ').concat(caster.getNombreCarrera(seguroFacultativo.personalActivo.areaOperativa.area).nombre)}" />
+                                                        </p:column>
+
+                                                        <p:rowExpansion>
+                                                            <p:panelGrid style="width: 100%">
+
+                                                                <f:facet name="header">
+                                                                    <p:row>
+                                                                        <p:column colspan="5">
+                                                                            <h:outputText value="#{seguroFacultativo.estudiante.persona.apellidoPaterno} #{seguroFacultativo.estudiante.persona.apellidoMaterno} #{seguroFacultativo.estudiante.persona.nombre}"/>
+                                                                        </p:column>
+                                                                    </p:row>
+                                                                </f:facet>
+
+                                                                <p:row>
+                                                                    <p:column>
+                                                                        <h:outputText value="Identificador: " style="font-weight: 600;"/>
+                                                                    </p:column>
+                                                                    <p:column colspan="4" style="font-weight: 600;">
+                                                                        <h:outputText value="#{seguroFacultativo.seguroFactultativo.seguroFacultativoEstudiante}"/>
+                                                                    </p:column>
+                                                                </p:row>
+
+                                                                <p:row>
+                                                                    <p:column>
+                                                                        <h:outputText value="Correo Electrónico: " style="font-weight: 600;"/>
+                                                                    </p:column>
+                                                                    <p:column colspan="4" style="font-weight: 600;">
+                                                                        <h:outputText value="#{seguroFacultativo.seguroFactultativo.correoElectronico}"/>
+                                                                    </p:column>
+                                                                </p:row>
+
+                                                                <p:row>
+                                                                    <p:column>
+                                                                        <h:outputText value="NSS" style="font-weight: 600;"/>
+                                                                    </p:column>
+                                                                    <p:column colspan="4" style="font-weight: 600;">
+                                                                        <h:outputText value="#{seguroFacultativo.seguroFactultativo.nss}"/>
+                                                                    </p:column>
+                                                                </p:row>
+
+                                                                <p:row>
+                                                                    <p:column>
+                                                                        <h:outputText value="Tipo de seguro" style="font-weight: 600;"/>
+                                                                    </p:column>
+                                                                    <p:column colspan="4" style="font-weight: 600;">
+                                                                        <h:outputText value="#{seguroFacultativo.seguroFactultativo.tipoSeguro}"/>
+                                                                    </p:column>
+                                                                </p:row>
+
+                                                                <p:row>
+                                                                    <p:column>
+                                                                        <h:outputText value="Comentarios enfermería" style="font-weight: 600;"/>
+                                                                    </p:column>
+                                                                    <p:column colspan="4" style="font-weight: 600;">
+                                                                        <h:outputText value="#{seguroFacultativo.seguroFactultativo.comentariosEnfermeria}"/>
+                                                                    </p:column>
+                                                                </p:row>
+
+                                                                <p:row>
+                                                                    <p:column>
+                                                                        <h:outputText value="Tarjetón IMSS:" style="font-weight: 600;"/>
+                                                                    </p:column>
+                                                                    <p:column colspan="4" style="font-weight: 600;">
+                                                                        <p:commandLink class="btn btn-info btn-sm"
+                                                                                       ajax="false"
+                                                                                       action="#{registroSeguroFacultativoEstudiante.descargarArchivoTarjetonImss(seguroFacultativo.seguroFactultativo.rutaTarjeton)}" 
+                                                                                       target="_blank" 
+                                                                                       title="Descargar archivo de Tarjetón IMSS."
+                                                                                       value="Descargar"
+                                                                                       disabled="#{seguroFacultativo.seguroFactultativo.rutaTarjeton eq null}"
+                                                                                       >
+                                                                            <i class="fa fa-download" />
+                                                                        </p:commandLink>
+                                                                    </p:column>
+                                                                </p:row>
+
+                                                                <p:row>
+                                                                    <p:column>
+                                                                        <h:outputText value="Comprobante Localización:" style="font-weight: 600;"/>
+                                                                    </p:column>
+                                                                    <p:column colspan="4" style="font-weight: 600;">
+                                                                        <p:commandLink class="btn btn-info btn-sm"
+                                                                                       ajax="false"
+                                                                                       action="#{registroSeguroFacultativoEstudiante.descargarArchivoTarjetonImss(seguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion)}" 
+                                                                                       target="_blank" 
+                                                                                       title="Descargar archivo de Comprobante de Localización."
+                                                                                       value="Descargar"
+                                                                                       disabled="#{seguroFacultativo.seguroFactultativo.rutaComprobanteLocalizacion eq null}"
+                                                                                       >
+                                                                            <i class="fa fa-download" />
+                                                                        </p:commandLink>
+                                                                    </p:column>
+                                                                </p:row>
+
+                                                                <p:row>
+                                                                    <p:column>
+                                                                        <h:outputText value="Comprobante vigencia de derechos:" style="font-weight: 600;"/>
+                                                                    </p:column>
+                                                                    <p:column colspan="4" style="font-weight: 600;">
+                                                                        <p:commandLink class="btn btn-info btn-sm"
+                                                                                       ajax="false"
+                                                                                       action="#{registroSeguroFacultativoEstudiante.descargarArchivoTarjetonImss(seguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos)}" 
+                                                                                       target="_blank" 
+                                                                                       title="Descargar archivo de Comprobante de Vigencia de Derechos."
+                                                                                       value="Descargar"
+                                                                                       disabled="#{seguroFacultativo.seguroFactultativo.rutaComprobanteVigenciaDeDerechos eq null}"
+                                                                                       >
+                                                                            <i class="fa fa-download" />
+                                                                        </p:commandLink>
+                                                                    </p:column>
+                                                                </p:row>
+
+                                                            </p:panelGrid>
+                                                        </p:rowExpansion>
+
+                                                        <f:facet name="footer">
+                                                            <div style="text-align: left">
+                                                                <p:column style="text-align: left;">
+                                                                    Se han encontrado un total de: #{fn:length(registroSeguroFacultativoEstudiante.rol.listaDtoSeguroFacultativo)} seguro(s) facultativo(s).
+                                                                </p:column>
+                                                            </div>
+                                                        </f:facet>
+
+                                                    </p:dataTable>
+                                                </center>
+
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>
+                                </h:form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Zona de cuadros de diálogo -->
+            </c:if>
+            <c:if test="#{!registroSeguroFacultativoEstudiante.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para estudiantes."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+    </ui:define>
+
+</ui:composition>

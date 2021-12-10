@@ -97,6 +97,18 @@ public interface EjbCarga extends Serializable {
      */
     public String crearDirectorioReporteCompleto(String eje);
     
+    /**
+     * Método que crea o comprueba el directorio de la plantilla del reporte actualizado del Seguro Facultativo
+     * @return Regresa la ruta del directorio del reporte
+     */
+    public String crearDirectorioSeguroFacultativoReporte();
+    
+    /**
+     * Método que crea o comprueba el directorio para la copia y archivo con información del reporte del Seguro Facultativo
+     * @return Regresa la ruta del directorio de la copia y el reporte completo
+     */
+    public String crearDirectorioSeguroFacultativoReporteCompleto();
+    
      /**
      * Método de subida de archivos en el servidor para el módulo de titulación
      * el cual recibe los siguiente parámetros:

@@ -13,6 +13,8 @@ import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorAcademicoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CoordinadorAreaEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CordinadoresTutores;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
@@ -237,6 +239,7 @@ public class EjbValidacionRol {
             return ResultadoEJB.crearErroneo(1, "No se ha podido realizar correctamente la validación. (EjbValidacionRol.validarPsicopedagogia)", e, null);
         }
     }
+    
     public ResultadoEJB<Filter<PersonalActivo>> validarRegistroPlantillaPlanAccionTutorial(Integer clave){   
         try {
             String pista = ",".concat(String.valueOf(clave).trim()).concat(",").trim();
@@ -292,4 +295,150 @@ public class EjbValidacionRol {
         }
     }
     
+    /**
+     * Permite validar que solo los usuarios del área de servicios estudiantiles asignados a la categoría de enfermería puedan acceder al módulo de consulta y validación
+     * @param clave
+     * @return 
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarEnfermeria(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalEstudiantiles").orElse(11)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalEnfermeriaCategoriaOperativa").orElse(23)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal de Enfermería del área de Servicios Estudiantiles.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo comprobar como personal de Enfermería del área de Servicios Estudiantiles. (EjbValidacionRol.validarEnfermeria)", e, null);
+        }
+    }
+    
+    /**
+     * Permite que solo el jefe de departamento de servicios estudiantiles pueda acceder módulo de consulta y validación
+     * @param clave
+     * @return 
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarJefeDepartamentoEstudiantiles(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalEstudiantiles").orElse(11)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("jefeDapartamentoCategoria").orElse(24)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como Jefe de Departamento del Área de Servicios Estudiantiles.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo comprobar como Jefe de Departamento del Área de Servicios Estudiantiles. (EjbValidacionRol.validarJefeDepartamentoEstudiantiles)", e, null);
+        }
+    }
+    
+    /**
+     * Permite que solo el encargado de departamento servicios estudiantiles pueda acceder al módulo de consulta y validación
+     * @param clave
+     * @param areaOperativa
+     * @return 
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarEncargadoDepartamentoEstudiantiles(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalAreaOperativa").orElse(11)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("encargadoPersonalCategoria").orElse(20)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como Encargado del Departamente de Servicios Estudiantiles.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal no se pudo comprobar como Encargado del Departamento de Servicios Estudiantiles. (EjbValidacionRol.validarEncargadoDepartamentoEstudiantiles)", e, null);
+        }
+    }
+    
+    /**
+     * Permite la comprobación y validación de un coordinador de área académica de estadías.
+     * @param clave
+     * @param listaCae
+     * @return 
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarCoordinadorAreaAcademicaEstadia(Integer clave, List<CoordinadorAreaEstadia> listaCae){
+        try {
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            if(!listaCae.isEmpty()){
+                return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como Coordinador de Área Académica de Estadías.");
+            }else{
+                return ResultadoEJB.crearErroneo(2, null,"El docente no cuenta con registros previos de asignación de Coordinador de Área Académica de Estadías.");
+            }
+            
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "El docente no se pudo validar como Coordinador de Área Académica de Estadías. (EjbValidacionRol.validarCoordinadorAreaAcademicaEstadia)", e, null);
+        }
+    }
+    
+    /**
+     * Permite la comprobación y validación de un Asesor Académico de estadía
+     * @param clave
+     * @param listaAae
+     * @return 
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarAsesorAcademicoEstadia(Integer clave, List<AsesorAcademicoEstadia> listaAae){
+        try {
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            if(!listaAae.isEmpty()){
+                return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como Asesor Académico de Estadía.");
+            }else{
+                return ResultadoEJB.crearErroneo(2, null,"El docente no cuenta con registros previos de asignación de Asesor Académico de Estadía.");
+            }
+            
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "El docente no se pudo validar como Asesor Académico de Estadía. (EjbValidacionRol.validarAsesorAcademicoEstadia)", e, null);
+        }
+    }
+    
+    /**
+     * Método que permite obtener el acceso especial a la consulta de los regisros de Seguro Facultativo
+     * @param clave
+     * @return 
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validacionConsultaSegurosFacultativos(Integer clave){   
+        try {
+            String pista = ",".concat(String.valueOf(clave).trim()).concat(",").trim();
+            ConfiguracionPropiedades claveConfiguracionPropiedad = Objects.requireNonNull(em.createQuery("SELECT c FROM ConfiguracionPropiedades c WHERE c.tipo = :tipo AND c.clave = :clave AND c.valorCadena LIKE CONCAT('%',:pista,'%')", ConfiguracionPropiedades.class)
+                    .setParameter("tipo", "Cadena")
+                    .setParameter("pista", pista)
+                    .setParameter("clave", "consultarSegurosFacultativos")
+                    .getResultStream()
+                    .findFirst().orElse(new ConfiguracionPropiedades()));
+            if (claveConfiguracionPropiedad.getClave() == null || claveConfiguracionPropiedad.getClave().equals("") || claveConfiguracionPropiedad.getClave().isEmpty()) {
+                return ResultadoEJB.crearErroneo(2, null, "No se ha encontrado la clave del trabajador, no tiene asignado el módulo");
+            } else {
+                PersonalActivo p = ejbPersonalBean.pack(clave);
+                Filter<PersonalActivo> filtro = new Filter<>();
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+                return ResultadoEJB.crearCorrecto(filtro, "Se ha encontrado la clave de trabajador asignada a este módulo");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido realizar correctamente la validación. (EjbValidacionRol.validacionConsultaSegurosFacultativos)", e, null);
+        }
+    }
+    
+    /**
+     * Permite validar si el usuario autenticado es coordinador de estadías
+     * @param clave Número de nómina del usuario autenticado
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Filter<PersonalActivo>> validarCoordinadorInsitucionalEstadia(Integer clave){
+        try{
+            PersonalActivo p = ejbPersonalBean.pack(clave);
+            Filter<PersonalActivo> filtro = new Filter<>();    
+            filtro.setEntity(p);
+            filtro.addParam(PersonalFiltro.AREA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("personalVinculacion").orElse(5)));
+            filtro.addParam(PersonalFiltro.CATEGORIA_OPERATIVA.getLabel(), String.valueOf(ep.leerPropiedadEntera("coordinadorInstitucionalEstadia").orElse(15)));
+            return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como coordinador de estadías de extensión y vinculación.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El personal docente no se pudo validar como coordinador de estadías de extensión y vinculación. (EjbValidacionRol.validarCoordinadorEstadia)", e, null);
+        }
+    }
 }

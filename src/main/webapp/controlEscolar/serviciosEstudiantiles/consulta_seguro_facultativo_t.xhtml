@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                >
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="css" name="timepicker.css"/>
+        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js"/>
+        <h:outputScript library="primefaces62" name="inputnumber.js"  />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Consulta de Seguros Facultativos - #{consultaSfTrabajador.rol.rolConsultaSeguroFacultativo}
+    </ui:define>
+
+    <ui:define name="description">
+    </ui:define>
+
+    <ui:define name="body">
+        <style type="text/css">
+            .ui-datatable .ui-row-toggler {
+                cursor: pointer;
+                text-decoration: #3C8DBC;
+                color: #3C8DBC;
+                font-weight: 600;
+            }
+        </style>
+        <adm:breadcrumb title="Consulta de Seguros Facultativos"/>
+        <adm:sidebar collapsed="true"/>
+
+        <div class="contenedorGeneral">
+            <c:if test="#{consultaSfTrabajador.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.TipoSeguroFacultativo" var="tsf" allSuffix="ALL" />
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.SeguroFacultativoValidacion" var="sfValidacion" allSuffix="SFVALIDACIONES" />
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.SegurosFacultativosEstatus" var="sfEstatus" allSuffix="SFESTATUS" />
+                <p:importEnum type="mx.edu.utxj.pye.sgi.enums.TipoSeguroFacultativo" var="sfTipos" allSuffix="SFTIPOS" />
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Periodo activo para registro: #{caster.clavePeriodoToString(consultaSfTrabajador.rol.periodoEscolarActivo.periodo)} " />   
+                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                        <p:outputLabel value="Antes de validar un registro de seguro facultativo favor de verificar que la información esté correcta, archivo y datos" />
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                       onclick="PF('modalAyuda').show();"
+                                                       process="@this"
+                                                       title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                        </h:form>
+
+                        <div class="box box-solid">
+                            <div class="box-body">
+                                <h:form id="frmFiltros" prependId="false" class="form-inline">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px">
+                                            <p:toolbar>
+                                                <f:facet name="left">
+                                                    <p:outputLabel value="1.- Seleccione el filtrado correspondiente según la consulta requerida, en caso de buscar por estudiante solo ingrese en el cuadro de texto el nombre o matricula y seleccione al estudiante." style="padding-top: 5px;" />
+                                                    <p></p>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+
+                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px;"></div>
+
+                                        <div class="#{casilla}" style="margin-bottom: 20px">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="periodo" value="#{consultaSfTrabajador.rol.periodoEscolarSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                    <f:selectItems value="#{consultaSfTrabajador.rol.listaPeriodosEscolares}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                    <p:ajax process="@this" update="@this frmFiltros programaEducativo grupo frmValidacion" listener="#{consultaSfTrabajador.cambiarPeriodo}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Periodo" for="periodo"/>
+                                                <p:message for="periodo" />
+                                            </div>
+                                        </div>
+
+                                        <div class="#{casilla4}" style="margin-bottom: 20px">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programaEducativo" value="#{consultaSfTrabajador.rol.programaEducativo}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                    <f:selectItems value="#{consultaSfTrabajador.rol.listaProgramasEducativos}" var="programaEducativo" itemValue="#{programaEducativo}" itemLabel="#{programaEducativo.nombre}" />
+                                                    <p:ajax process="@this" update="@this frmFiltros grupo frmValidacion" listener="#{consultaSfTrabajador.cambiarProgramaEducativo}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa Educativo" for="programaEducativo"/>
+                                                <p:message for="programaEducativo" ><p:autoUpdate/></p:message>
+                                            </div>
+                                        </div>
+
+                                        <div class="#{casilla3}" style="margin-bottom: 20px">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="grupo" value="#{consultaSfTrabajador.rol.grupo}" converter="entityConverter" styleClass="form-control" >
+                                                    <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                    <f:selectItems value="#{consultaSfTrabajador.rol.listaGrupos}" var="grupo" itemValue="#{grupo}" itemLabel="#{grupo.grado} - #{grupo.literal}" />
+                                                    <p:ajax process="@this" update="@this frmFiltros frmValidacion" listener="#{consultaSfTrabajador.cambiarGrupo()}" />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Grupo" for="grupo"/>
+                                                <p:message for="grupo" ><p:autoUpdate/></p:message>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px">
+                                            <p:toolbar>
+                                                <f:facet name="left">
+                                                    <p:outputLabel value="2.- Busqueda por estudiante. (Se tomará como paramétro de búsqueda el apellido paterno, apellido materno, nombre y matricula, para mejorar la búsqueda favor de ingresar en ese órden ó bien solo indicar la matricula) " style="padding-top: 5px;" />
+                                                    <p></p>
+                                                    <div class="ui-material">
+                                                        <p:autoComplete id="sfEstudiante" 
+                                                                        value="#{consultaSfTrabajador.rol.estudianteSeguimientoSeleccionado}" 
+                                                                        completeMethod="#{consultaSfTrabajador.completeEstudiantes}" 
+                                                                        queryDelay="800"
+                                                                        valueChangeListener="#{consultaSfTrabajador.cambiarEstudianteSeleccionado}"
+                                                                        var="estudiante" 
+                                                                        itemValue="#{estudiante}" 
+                                                                        itemLabel="#{estudiante.datosComplete}" 
+                                                                        converter="entityConverter" 
+                                                                        forceSelection="true"
+                                                                        minQueryLength="4"
+                                                                        required="true"
+                                                                        requiredMessage="Favor de seleccionar un estudiante"
+                                                                        styleClass="campoAutocompleteEstudiante"
+                                                                        scrollHeight="300"
+                                                                        style="width: 25em;"
+                                                                        >
+                                                            <p:column>#{estudiante.datosComplete}</p:column>
+                                                            <p:ajax event="itemSelect" 
+                                                                    process="@this" 
+                                                                    update="frmFiltros frmValidacion"
+                                                                    />
+                                                        </p:autoComplete>
+                                                    </div>
+                                                    <p:watermark for="sfEstudiante" value="190000 ó Nayeli Martinez Lechuga" />
+                                                    <p:message for="sfEstudiante" />
+                                                    <p>Ingrese aquí la matricula o nombre del estudiante</p>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+                                        
+                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px"></div>
+
+                                    </div>
+                                </h:form>
+
+                                <!--Sección del formulario de registro-->
+                                <h:form id="frmValidacion" prependId="false" class="form-inline" >
+                                    <p:remoteCommand id="actualizarSegurosFacultativos" name="actualizarSegurosFacultativos" actionListener="#{consultaSfTrabajador.actualizar()}" process="@this" update="frmValidacion frmFiltros" />
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info">
+                                            
+                                            <p:outputPanel id="contenedorRegistro">
+                                                <p:toolbar>
+                                                    <f:facet name="left">
+                                                        <p:outputLabel value="3.- Listado de registros de seguro facultativo, capturados por el estudiante." style="padding-top: 5px;" />
+                                                        <p></p>
+                                                    </f:facet>
+                                                    <f:facet name="right">
+                                                        <c:if test="#{consultaSfTrabajador.rol.periodoEscolarSeleccionado ne null}">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:commandLink class="btn btn-success btn-sm" ajax="false" action="#{consultaSfTrabajador.descargarReportePorPeriodo()}" target="_blank" title="Descargar Reporte Cuatrimestral" value="Reporte Cuatrimestral - "><i class="fa fa-file-excel-o" />
+                                                                <p:confirm header="Descargar" message="El reporte seleccionado podría demorar dependiendo de la velocidad del internet de la Universidad, no cierre la pestaña que se abrírá en automático, ¿desea continuar?" icon="ui-icon-alert" />
+                                                            </p:commandLink>
+                                                        </c:if>
+                                                        <c:if test="#{consultaSfTrabajador.rol.programaEducativo ne null}">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:commandLink class="btn btn-success btn-sm" ajax="false" action="#{consultaSfTrabajador.descargarReportePorPeriodoProgramaEducativo()}" target="_blank" title="Descargar Reporte Por Programa Educativo" value="Reporte Programa Educativo - "><i class="fa fa-file-excel-o" />
+                                                                <p:confirm header="Descargar" message="El reporte seleccionado podría demorar dependiendo de la velocidad del internet de la Universidad, no cierre la pestaña que se abrírá en automático, ¿desea continuar?" icon="ui-icon-alert" />
+                                                            </p:commandLink>
+                                                        </c:if>    
+                                                        <c:if test="#{consultaSfTrabajador.rol.grupo ne null}">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:commandLink class="btn btn-success btn-sm" ajax="false" action="#{consultaSfTrabajador.descargarReportePorPeriodoProgramaEducativoGrupal()}" target="_blank" title="Descargar Reporte Grupal" value="Reporte Grupal - "><i class="fa fa-file-excel-o" /></p:commandLink>
+                                                        </c:if>
+                                                    </f:facet>
+                                                </p:toolbar>
+
+                                                <center>
+                                                    <p:dataTable id="dtSegurosFacultativos" 
+                                                                 var="sfEstudiante" 
+                                                                 value="#{consultaSfTrabajador.rol.listaDtoSeguroFacultativo}"
+                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                 resizeMode="expand"
+                                                                 emptyMessage="Aún no se han registrado seguros facultativos"
+                                                                 >
+                                                        <p:columnGroup type="header">
+                                                            <p:row class="sucess">
+                                                                <p:column headerText="Estatus"                                  width="250"/>
+                                                                <p:column headerText="Comentarios para el estudiante"           width="500"/>
+                                                                <p:column headerText="Situación Académica"                      width="180"/>
+                                                                <p:column headerText="PE"                                       width="50"/>
+                                                                <p:column headerText="Estudiante"                               width="300"/>
+                                                                <p:column headerText="Correo Electrónico"                       width="300"/>
+                                                                <p:column headerText="Número de seguro social"                  width="200"/>
+                                                                <p:column headerText="Tipo Seguro"                              width="100"/>
+                                                                <p:column headerText="Fecha de registro"                        width="180"/>
+                                                                <p:column headerText="Fecha de alta"                            width="180"/>
+                                                                <p:column headerText="Fecha de baja"                            width="180"/>
+                                                                <p:column headerText="Tarjetón IMSS"                            width="120"/>
+                                                                <p:column headerText="Comprobante de Localización"              width="120"/>
+                                                                <p:column headerText="Comprobante Vigencia de Derechos"         width="120"/>
+                                                                <p:column headerText="Usuario que está validando"               width="220"/>
+                                                            </p:row>
+                                                        </p:columnGroup>
+                                                        
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?';':''}">
+                                                            <h:outputText value="#{sfEstudiante.seguroFactultativo.estatusRegistro} - #{sfEstudiante.seguroFactultativo.validacionEnfermeria}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <p:inputTextarea rows="1" 
+                                                                             cols="70"
+                                                                             maxlength="3000" 
+                                                                             autoResize="true"
+                                                                             class="form-control"
+                                                                             value="#{sfEstudiante.seguroFactultativo.comentariosEnfermeria}"
+                                                                             readonly="true"
+                                                                             >
+                                                            </p:inputTextarea>
+                                                        </p:column>
+                                                        
+                                                         <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{sfEstudiante.seguroFactultativo.estudiante.tipoEstudiante.descripcion}" />
+                                                        </p:column>
+                                                        
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{sfEstudiante.programaEducativo.siglas}" />
+                                                        </p:column>
+                                                        
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{sfEstudiante.seguroFactultativo.estudiante.matricula} - #{sfEstudiante.estudiante.persona.apellidoPaterno} #{sfEstudiante.estudiante.persona.apellidoMaterno} #{sfEstudiante.estudiante.persona.nombre}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{sfEstudiante.seguroFactultativo.correoElectronico}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{sfEstudiante.seguroFactultativo.nss}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{sfEstudiante.seguroFactultativo.tipoSeguro}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{caster.parseFechaCompleta(sfEstudiante.seguroFactultativo.fechaRegistro)}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{caster.parseFechaCompleta(sfEstudiante.seguroFactultativo.fechaAlta)}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{caster.parseFechaCompleta(sfEstudiante.seguroFactultativo.fechaBaja)}" />
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <p:commandLink class="btn btn-primary btn-sm"
+                                                                           ajax="false"
+                                                                           action="#{consultaSfTrabajador.descargarArchivoEstudiante(sfEstudiante.seguroFactultativo.rutaTarjeton)}" 
+                                                                           target="_blank" 
+                                                                           title="Descargar archivo de Tarjetón IMSS."
+                                                                           value="Descargar"
+                                                                           disabled="#{sfEstudiante.seguroFactultativo.rutaTarjeton eq null}"
+                                                                           >
+                                                                <i class="fa fa-download" />
+                                                            </p:commandLink>
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <p:commandLink class="btn btn-primary btn-sm"
+                                                                           ajax="false"
+                                                                           action="#{consultaSfTrabajador.descargarArchivoEstudiante(sfEstudiante.seguroFactultativo.rutaComprobanteLocalizacion)}" 
+                                                                           target="_blank" 
+                                                                           title="Descargar archivo de Comprobante de Localizacion."
+                                                                           value="Descargar"
+                                                                           disabled="#{sfEstudiante.seguroFactultativo.rutaComprobanteLocalizacion eq null}"
+                                                                           >
+                                                                <i class="fa fa-download" />
+                                                            </p:commandLink>
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <p:commandLink class="btn btn-primary btn-sm"
+                                                                           ajax="false"
+                                                                           action="#{consultaSfTrabajador.descargarArchivoEstudiante(sfEstudiante.seguroFactultativo.rutaComprobanteVigenciaDeDerechos)}" 
+                                                                           target="_blank" 
+                                                                           title="Descargar archivo de Comprobante de Vigencia de Derechos."
+                                                                           value="Descargar"
+                                                                           disabled="#{sfEstudiante.seguroFactultativo.rutaComprobanteVigenciaDeDerechos eq null}"
+                                                                           >
+                                                                <i class="fa fa-download" />
+                                                            </p:commandLink>
+                                                        </p:column>
+
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{sfEstudiante.personalActivo.personal.nombre}" />
+                                                        </p:column>
+
+                                                    </p:dataTable>
+                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                    </p:confirmDialog>
+                                                </center>
+                                            </p:outputPanel>
+                                        </div>
+                                    </div>
+                                </h:form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Zona de cuadros de diálogo -->
+            </c:if>
+            <c:if test="#{!consultaSfTrabajador.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para el área de servicios estudiantiles, secretaría académica, directores de área académica, coordinador institucional de estadías, asesores académicos de estadía, tutores y personal específico"/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+    </ui:define>
+
+</ui:composition>
