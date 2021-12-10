@@ -24,6 +24,10 @@
             <c:if test="#{cambioPwdEstudiante.mostrarEnDesarrollo(request) and cambioPwdEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/CambioPwdEstudiante.xhtml"><i class="fa fa-key"></i><span>Cambio de contraseña</span><span class="pull-right-container"></span></p:link></li></c:if>
             <c:if test="#{cartaNoAdeudoEstudiante.mostrarEnDesarrollo(request) and cartaNoAdeudoEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/cartaNoAdeudoEstudiante.xhtml"><i class="fa fa-check-square-o"></i><span>Carta no adeudo</span></p:link></li></c:if>
 
+            <c:if test="#{registroSeguroFacultativoEstudiante.mostrarEnDesarrollo(request) and registroSeguroFacultativoEstudiante.tieneAcceso}">
+                <li><p:link href="#{request.contextPath}/controlEscolar/estudiante/registro_seguro_facultativo.xhtml"><i class="fa fa-user-md"></i><span>Seguro Facultativo</span></p:link></li>
+            </c:if>
+            
             <c:if test="#{cuestionarioPsicopedagogicoEstudiante.mostrarEnDesarrollo(request) and cuestionarioPsicopedagogicoEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/cuestionarioPsicopedagogico.xhtml"><i class="fa fa-id-badge"></i><span>Cuestionario Psicopedagógico</span><span class="pull-right-container"></span></p:link></li></c:if>
             <!--<c:if test="#{evaluacionDoncenteMateriaControler.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/docentesMateriaIndex.xhtml"><i class="fa fa-group"></i><span>Docente</span></p:link></li></c:if>-->
            <!-- <c:if test="#{evaluacionTutor2.cargada}"><li><p:link href="#{request.contextPath}/evaluaciones/evaluacion/tutores2.xhtml"><i class="fa fa-legal"></i><span>Tutor</span></p:link></li></c:if>-->

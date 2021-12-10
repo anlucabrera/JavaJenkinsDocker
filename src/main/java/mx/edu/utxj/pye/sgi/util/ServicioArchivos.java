@@ -27,6 +27,7 @@ import mx.edu.utxj.pye.sgi.exception.EvidenciaRegistroExtensionNoValidaException
 import javax.servlet.http.Part;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCasoCritico;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.NotificacionesCe;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
@@ -49,11 +50,16 @@ public class ServicioArchivos implements Serializable{
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_hhmm");
     public static List<String> extensiones = Arrays.asList("pdf","jpg","jpeg","png");
     
+    public static List<String> extensiones_seguro_facultativo = Arrays.asList("pdf");
+    
     public static final String control_escolar = "control_escolar";
     public static final String estudiante = "estudiante";
     public static final String tutoria_individual = "tutoria_individual";
     public static final String sesion_especialista = "sesion_especialista";
     public static final String caso_critico = "caso_critico";
+    
+    public static final String seguro_facultativo = "seguro_facultativo";
+    public static final String cuatrimestre_seguro_facultativo = "cuatrimestre";
     
     /**
      * Variable creada para la creación del directorio para los Módulos de Registro
@@ -400,6 +406,45 @@ public class ServicioArchivos implements Serializable{
         ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
         archivo.write(rutaArchivo);
         return rutaAbsoluta;
+    }
+    
+    public static String genRutaRelativaRegistroSeguroFacultativo(Integer id_persona, Integer cuatrimestre){
+//        control_escolar/estudiante/id_persona/seguro_facultativo/cuatrimestre/
+        return control_escolar.trim().concat(File.separator)
+                .concat(estudiante.toLowerCase().trim())
+                .concat(File.separator)
+                .concat(String.valueOf(id_persona).toLowerCase().trim())
+                .concat(File.separator)
+                .concat(seguro_facultativo.toLowerCase().trim())
+                .concat(File.separator)
+                .concat(String.valueOf(cuatrimestre).toLowerCase().trim()).concat("_").concat(cuatrimestre_seguro_facultativo.toLowerCase().trim())
+                .concat(File.separator);
+    }
+    
+    public static String almacenarArchivoSeguroFacultativo(DtoEstudiante dtoEstudiante, Part archivo)throws IOException, EvidenciaRegistroExtensionNoValidaException{
+        if (!extensiones_seguro_facultativo.contains(FilenameUtils.getExtension(archivo.getSubmittedFileName()).toLowerCase())) {
+            throw new EvidenciaRegistroExtensionNoValidaException(archivo.getSubmittedFileName());
+        }
+//        c:\archivos\control_escolar\estudiante\num_persona\seguro_facultativo\no_cuatrimestre\ tarjeton_ims - vigencia_derechos - comprobante_localizacion - comprobante_sangre
+            String ruta = ServicioArchivos.genRutaRelativaRegistroSeguroFacultativo(        
+                    dtoEstudiante.getPersona().getIdpersona(),        
+                    dtoEstudiante.getInscripcionActiva().getGrupo().getGrado()
+            );
+            
+            String nombreArchivo = sdf.format(new Date()).concat("_").concat(archivo.getSubmittedFileName());
+            String rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
+            String rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+
+            Integer cont = 1;
+            while (Files.exists(Paths.get(rutaAbsoluta))) {
+                nombreArchivo = sdf.format(new Date()).concat("_").concat(cont.toString()).concat("_").concat(archivo.getSubmittedFileName());
+                rutaArchivo = ruta.concat(StringUtils.quitarEspacios(StringUtils.quitarAcentos(StringUtils.prettyURL(nombreArchivo.toLowerCase()))));
+                rutaAbsoluta = ServicioArchivos.carpetaRaiz.concat(rutaArchivo);
+                cont++;
+            }
+            ServicioArchivos.addCarpetaRelativa(ServicioArchivos.carpetaRaiz.concat(ruta));
+            archivo.write(rutaArchivo);
+            return rutaAbsoluta;
     }
 
 }
