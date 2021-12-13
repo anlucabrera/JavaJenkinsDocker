@@ -374,8 +374,8 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
     }
 
     @Override
-    public void comprobarResultado(Evaluaciones360Resultados resultado) {
-        Apartado a = getApartadoHabilidades(resultado.getCategoria().getCategoria());
+    public void comprobarResultado(Evaluaciones360Resultados resultado, Integer evaluacion) {
+        Apartado a = getApartadoHabilidades(resultado.getCategoria().getCategoria(),evaluacion);
         boolean completo = true;
 
         Double suma = 0D;
@@ -396,10 +396,17 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
     }
 
     @Override
-    public Apartado getApartadoHabilidades(Short categoria) {
+    public Apartado getApartadoHabilidades(Short categoria, Integer evaluacion) {
+       /*
         StoredProcedureQuery q = em.createStoredProcedureQuery("obtener_lista_habilidades_por_categoria", Habilidades.class).
                 registerStoredProcedureParameter("par_categoria", Integer.class, ParameterMode.IN).setParameter("par_categoria", categoria);
         List<Habilidades> l = q.getResultList();
+        */
+       List<Habilidades> l  = em.createQuery("select h from Habilidades h INNER JOIN h.categoriasHabilidadesList cat where cat.categoriasHabilidadesPK.categoria=:cat and cat.categoriasHabilidadesPK.evaluacion=:evaluacion",Habilidades.class)
+               .setParameter("evaluacion",evaluacion)
+               .setParameter("cat",categoria)
+               .getResultList()
+               ;
 
         Apartado apartado = new Apartado(3f, "HABILIDADES", new ArrayList<>());
         Float index = 17f;

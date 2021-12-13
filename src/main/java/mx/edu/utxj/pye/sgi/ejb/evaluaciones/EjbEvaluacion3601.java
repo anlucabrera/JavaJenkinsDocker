@@ -63,14 +63,14 @@ public interface EjbEvaluacion3601 {
      */
     public List<ListaPersonalEvaluacion360> obtenerListaResultadosPorEvaluacionEvaluador(Evaluaciones360 evaluaciones360, ListaPersonal directivo);
     
-    public void comprobarResultado(Evaluaciones360Resultados resultado);
+    public void comprobarResultado(Evaluaciones360Resultados resultado, Integer evaluacion);
     
     /**
      * Obtiene el apartado de las habilidades específicas para cada evaluado
      * @param categoria Clave de la categoría del evaluado a obtener sus habilidades
      * @return Lista de habilidades;
      */
-    public Apartado getApartadoHabilidades(Short categoria);
+    public Apartado getApartadoHabilidades(Short categoria, Integer evaluacion);
     
     /**
      * Obtiene la lista de los promedios de los resultados de la evaluación para ser mostrados en los ususrios del departamento de personal.

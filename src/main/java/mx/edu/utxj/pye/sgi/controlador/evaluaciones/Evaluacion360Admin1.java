@@ -179,7 +179,7 @@ public class Evaluacion360Admin1 implements Serializable {
             //facade.setEntityClass(Evaluaciones360Resultados.class);
             Evaluaciones360ResultadosPK pk = new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave);
             Evaluaciones360Resultados resultado = em.find(Evaluaciones360Resultados.class, pk);//(Evaluaciones360Resultados) facade.find();
-            apartadosHabilidades.put(clave, ejbEvaluacion360.getApartadoHabilidades(resultado.getCategoria().getCategoria()));
+            apartadosHabilidades.put(clave, ejbEvaluacion360.getApartadoHabilidades(resultado.getCategoria().getCategoria(),evaluacion.getEvaluacion()));
             index++;
         }
 //        opciones.forEach((k,v) -> System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.initOpciones(" + k + "): " +  v ));
@@ -241,7 +241,7 @@ public class Evaluacion360Admin1 implements Serializable {
             evaluacion.getEvaluaciones360ResultadosList().add(resultado);
         }
         //facade.setEntityClass(resultado.getClass());
-        ejbEvaluacion360.comprobarResultado(resultado);
+        ejbEvaluacion360.comprobarResultado(resultado, evaluacion.getEvaluacion());
         f.edit(resultado);
         //em.merge(resultado);
 
@@ -323,7 +323,7 @@ public class Evaluacion360Admin1 implements Serializable {
         Map<Short, Apartado> mapaHabilidades = new HashMap<>();
         listaPromedios.forEach(lpe -> {
             if (!mapaHabilidades.containsKey(lpe.getCategoria())) {
-                mapaHabilidades.put(lpe.getCategoria(), ejbEvaluacion360.getApartadoHabilidades(lpe.getCategoria()));
+                mapaHabilidades.put(lpe.getCategoria(), ejbEvaluacion360.getApartadoHabilidades(lpe.getCategoria(),evaluacion.getEvaluacion()));
             }
         });
 
