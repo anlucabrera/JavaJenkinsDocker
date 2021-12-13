@@ -243,6 +243,7 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
      */
     public void cambiarCargaAcademica(ValueChangeEvent e){
        rol.setCarga((DtoCargaAcademica)e.getNewValue());
+       tiposEvaluaciones(rol.getCarga());
        actualizarUnidadesMateria();
        actualizarListaEstudiantes();
        Ajax.update("frm");

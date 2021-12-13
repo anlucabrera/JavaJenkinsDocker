@@ -65,6 +65,8 @@ public class EventosRegistros implements Serializable {
     @Size(min = 1, max = 10)
     @Column(name = "mes")
     private String mes;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventosRegistros", fetch = FetchType.LAZY)
+    private List<EventosRegistrosPeriodos> eventosRegistrosPeriodosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventoRegistro", fetch = FetchType.LAZY)
     private List<Registros> registrosList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "eventoRegistro", fetch = FetchType.LAZY)
@@ -168,6 +170,15 @@ public class EventosRegistros implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros[ eventoRegistro=" + eventoRegistro + " ]";
+    }
+
+    @XmlTransient
+    public List<EventosRegistrosPeriodos> getEventosRegistrosPeriodosList() {
+        return eventosRegistrosPeriodosList;
+    }
+
+    public void setEventosRegistrosPeriodosList(List<EventosRegistrosPeriodos> eventosRegistrosPeriodosList) {
+        this.eventosRegistrosPeriodosList = eventosRegistrosPeriodosList;
     }
     
 }
