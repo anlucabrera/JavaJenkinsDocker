@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -29,6 +30,8 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SegurosFacultativosEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
+import mx.edu.utxj.pye.sgi.entity.pye2.AsentamientoPK;
 import mx.edu.utxj.pye.sgi.enums.SeguroFacultativoValidacion;
 import mx.edu.utxj.pye.sgi.enums.SegurosFacultativosEstatus;
 import mx.edu.utxj.pye.sgi.enums.converter.SeguroFacultativoValidacionConverter;
@@ -386,13 +389,15 @@ public class EjbValidacionSeguroFacultativo {
                     ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());
                     return ResultadoEJB.crearCorrecto(true, "Se han registrado las observaciones del registro del seguro facultativo del estudiante" + dtoSeguroFacultativo.getEstudiante().getPersona().getNombre() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoPaterno() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoMaterno() + " con matricula: " + dtoSeguroFacultativo.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
                 }else{
-                    if(!Objects.equals(personal.getPersonal().getClave(), dtoSeguroFacultativo.getSeguroFactultativo().getUsuarioOperacion())){
-                        return ResultadoEJB.crearErroneo(3, null, "A este registro le está dando seguimiento el trabajador: " + dtoSeguroFacultativo.getPersonalActivo().getPersonal().getNombre());
-                    }else{
-                        ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());
-                        return ResultadoEJB.crearCorrecto(true, "Se han registrado los comentarios del seguro facultativo del estudiante" + dtoSeguroFacultativo.getEstudiante().getPersona().getNombre() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoPaterno() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoMaterno() + " con matricula: " + dtoSeguroFacultativo.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
-                    }
+//                    if(!Objects.equals(personal.getPersonal().getClave(), dtoSeguroFacultativo.getSeguroFactultativo().getUsuarioOperacion())){
+//                        return ResultadoEJB.crearErroneo(3, null, "A este registro le está dando seguimiento el trabajador: " + dtoSeguroFacultativo.getPersonalActivo().getPersonal().getNombre());
+//                    }else{
+                    dtoSeguroFacultativo.setPersonalActivo(personal);
+                    dtoSeguroFacultativo.getSeguroFactultativo().setUsuarioOperacion(personal.getPersonal().getClave());
+                    ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());
+                    return ResultadoEJB.crearCorrecto(true, "Se han registrado los comentarios del seguro facultativo del estudiante" + dtoSeguroFacultativo.getEstudiante().getPersona().getNombre() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoPaterno() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoMaterno() + " con matricula: " + dtoSeguroFacultativo.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
                 }
+//                }
             }else{
                 return ResultadoEJB.crearCorrecto(false, "No se pueden registrar observaciones en el registro de Seguros Facultativo debido a que el estudiante aún no lo ha enviado a revisión, ó aún se encuentra en observaciones  y el estudiante aún no modifica su información");
             }
@@ -417,15 +422,15 @@ public class EjbValidacionSeguroFacultativo {
                 if (dtoSeguroFacultativo.getPersonalActivo() == null) {
                     dtoSeguroFacultativo.setPersonalActivo(personal);
                     dtoSeguroFacultativo.getSeguroFactultativo().setUsuarioOperacion(personal.getPersonal().getClave());    
-                    ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());    
+                    ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());
                     return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Se ha actualizado el estatus del archivo, si ha escogido la opción de 'En observaciones' favor de colocarlos en la sección de 'Comentarios para el estudiante'.");
                 } else {
-                    if (!Objects.equals(personal.getPersonal().getClave(), dtoSeguroFacultativo.getSeguroFactultativo().getUsuarioOperacion())) {
-                        return ResultadoEJB.crearErroneo(3, null, "A este registro le está dando seguimiento el trabajador: " + dtoSeguroFacultativo.getPersonalActivo().getPersonal().getNombre());
-                    } else {
-                        ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());
-                        return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Se ha actualizado el estatus del archivo, si ha escogido la opción de 'En observaciones' favor de colocarlos en la sección de 'Comentarios para el estudiante'.");
-                    }
+//                    if (!Objects.equals(personal.getPersonal().getClave(), dtoSeguroFacultativo.getSeguroFactultativo().getUsuarioOperacion())) {
+//                        return ResultadoEJB.crearErroneo(3, null, "A este registro le está dando seguimiento el trabajador: " + dtoSeguroFacultativo.getPersonalActivo().getPersonal().getNombre());
+//                    } else {
+                    ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());
+                    return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Se ha actualizado el estatus del archivo, si ha escogido la opción de 'En observaciones' favor de colocarlos en la sección de 'Comentarios para el estudiante'.");
+//                }
                 }
             }
         } catch (Exception e) {
@@ -458,12 +463,14 @@ public class EjbValidacionSeguroFacultativo {
                     ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());
                     return ResultadoEJB.crearCorrecto(true, "Se ha validado y dado de alta el registro del seguro facultativo del estudiante" + dtoSeguroFacultativo.getEstudiante().getPersona().getNombre() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoPaterno() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoMaterno() + " con matricula: " + dtoSeguroFacultativo.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
                 }else{
-                    if(!Objects.equals(personal.getPersonal().getClave(), dtoSeguroFacultativo.getSeguroFactultativo().getUsuarioOperacion())){
-                        return ResultadoEJB.crearErroneo(3, null, "A este registro le está dando seguimiento el trabajador: " + dtoSeguroFacultativo.getPersonalActivo().getPersonal().getNombre());
-                    }else{
+//                    if(!Objects.equals(personal.getPersonal().getClave(), dtoSeguroFacultativo.getSeguroFactultativo().getUsuarioOperacion())){
+//                        return ResultadoEJB.crearErroneo(3, null, "A este registro le está dando seguimiento el trabajador: " + dtoSeguroFacultativo.getPersonalActivo().getPersonal().getNombre());
+//                    }else{
+                        dtoSeguroFacultativo.setPersonalActivo(personal);
+                        dtoSeguroFacultativo.getSeguroFactultativo().setUsuarioOperacion(personal.getPersonal().getClave());
                         ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());
                         return ResultadoEJB.crearCorrecto(true, "Se ha validado y dado de alta el registro del seguro facultativo del estudiante" + dtoSeguroFacultativo.getEstudiante().getPersona().getNombre() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoPaterno() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoMaterno() + " con matricula: " + dtoSeguroFacultativo.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
-                    }
+//                    }
                 }
             }else{
                 return ResultadoEJB.crearCorrecto(false, "No se puede validar un registro de Seguro Facultativo debido a que el estudiante aún no lo ha enviado a revisión, ó aún se encuentra en observaciones  y el estudiante aún no modifica su información");
@@ -490,12 +497,14 @@ public class EjbValidacionSeguroFacultativo {
                      ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());
                      return ResultadoEJB.crearCorrecto(true, "Se ha validado y dado de baja el registro del seguro facultativo del estudiante" + dtoSeguroFacultativo.getEstudiante().getPersona().getNombre() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoPaterno() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoMaterno() + " con matricula: " + dtoSeguroFacultativo.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
                  }else{
-                     if(!Objects.equals(personal.getPersonal().getClave(), dtoSeguroFacultativo.getSeguroFactultativo().getUsuarioOperacion())){
-                         return ResultadoEJB.crearErroneo(3, null, "A este registro le está dando seguimiento el trabajador: " + dtoSeguroFacultativo.getPersonalActivo().getPersonal().getNombre());
-                     }else{
+//                     if(!Objects.equals(personal.getPersonal().getClave(), dtoSeguroFacultativo.getSeguroFactultativo().getUsuarioOperacion())){
+//                         return ResultadoEJB.crearErroneo(3, null, "A este registro le está dando seguimiento el trabajador: " + dtoSeguroFacultativo.getPersonalActivo().getPersonal().getNombre());
+//                     }else{
+                        dtoSeguroFacultativo.setPersonalActivo(personal);
+                        dtoSeguroFacultativo.getSeguroFactultativo().setUsuarioOperacion(personal.getPersonal().getClave());
                          ejbSeguroFacultativoEstudiante.editaRegistroSeguroFacultativo(dtoSeguroFacultativo.getSeguroFactultativo());
                          return ResultadoEJB.crearCorrecto(true, "Se ha validado y dado de baja el registro del seguro facultativo del estudiante" + dtoSeguroFacultativo.getEstudiante().getPersona().getNombre() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoPaterno() + " " + dtoSeguroFacultativo.getEstudiante().getPersona().getApellidoMaterno() + " con matricula: " + dtoSeguroFacultativo.getEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
-                     }
+//                     }
                  }
              }else{
                  return ResultadoEJB.crearCorrecto(false, "No se puede dar de baja un registro de Seguro Facultativo debido a que no se dió de alta aún");
@@ -583,6 +592,28 @@ public class EjbValidacionSeguroFacultativo {
         }
     }
     
-    
+    /**
+     * Método que permite obtener el asentamiento de residencia, para que el área de enfermería pueda seleccionar la clínica que le corresponde
+     * @param estado
+     * @param municipio
+     * @param asentamiento
+     * @return 
+     */
+    public ResultadoEJB<String> obtenerNombreAsentamiento(Integer estado, Integer municipio, Integer asentamiento){
+        try {
+            List<String> asentamientoNombre = em.createQuery("SELECT a.nombreAsentamiento FROM Asentamiento a WHERE a.asentamientoPK.estado = :estado AND a.asentamientoPK.municipio = :municipio AND a.asentamientoPK.asentamiento = :asentamiento", String.class)
+                    .setParameter("estado", estado)
+                    .setParameter("municipio", municipio)
+                    .setParameter("asentamiento", asentamiento)
+                    .getResultList();
+            if(asentamientoNombre.isEmpty()){
+                return ResultadoEJB.crearErroneo(2, null, "No se encontró el nombre del asentamiento");
+            }else{
+                return ResultadoEJB.crearCorrecto(asentamientoNombre.get(0), "Nombre del asentamiento encontrado");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el nombre del asentamiento (EjbValidacionSeguroFacultativo.obtenerNombreAsentamiento)", e, null);
+        }
+    }
     
 }

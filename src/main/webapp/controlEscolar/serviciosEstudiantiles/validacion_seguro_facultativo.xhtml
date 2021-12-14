@@ -412,7 +412,7 @@
                                                                              />
                                                             </p:selectOneButton>
                                                         </p:column>
-
+                                                        
                                                         <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
                                                             <h:outputText value="#{sfEstudiante.personalActivo.personal.nombre}" />
                                                         </p:column>

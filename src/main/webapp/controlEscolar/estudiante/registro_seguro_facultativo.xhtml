@@ -100,7 +100,7 @@
                                                         <div class="callout callout-warning">
                                                             <p align="justify">
                                                                 <code style="color:#4185A0;">
-                                                                    <strong>Validación: </strong> Si ha seleccionado la opción: <strong> "#{sfEstatus.ENVIADO_PARA_VALIDACION.label}"</strong> ó únicamente ha registro sus datos, se mostrarán las observaciones recibidas en la sección de estatus del seguro facultativo por el área de enfermería para su respectiva actualización, de momento su seguro facultativo se encuentra: <strong>"#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria}"</strong>
+                                                                    <strong>Validación: </strong> Si ha seleccionado la opción: <strong> "#{sfEstatus.ENVIADO_PARA_VALIDACION.label}"</strong> ó únicamente ha registrado sus datos, se mostrarán las observaciones recibidas en la sección de estatus del seguro facultativo por el área de enfermería para su respectiva actualización, de momento su seguro facultativo se encuentra: <strong>"#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria}"</strong>
                                                                 </code>
                                                             </p>
                                                         </div>
@@ -110,7 +110,7 @@
                                                         <div class="callout callout-warning">
                                                             <p align="justify">
                                                                 <code style="color:#4185A0;">
-                                                                    <strong>Validación: </strong> Su seguro facultativo se encuentra de momento dado de: <strong>"#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria}"</strong>
+                                                                    <strong>Validación: </strong> Su seguro facultativo se encuentra dado de: <strong>"#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.validacionEnfermeria}"</strong>
                                                                 </code>
                                                             </p>
                                                         </div>
@@ -172,7 +172,7 @@
                                                         <div class="col-sm-12 col-md-12 col-lg-12">
                                                             <p:toolbar>
                                                                 <f:facet name="left">
-                                                                    <p:outputLabel value="2.- Ingresa la información complementaría para el registro de tu Seguro facultativo, algunos datos se obtienen automáticamente desde el sistema únicamente deberás verificar que sean correctos, si eres estudiante activo el sistema generará un registro nuevo el cual tendrás que complementar y enviar para la validación correspondiente." style="padding-top: 5px;" />
+                                                                    <p:outputLabel value="2.- Ingresa la información complementaría para el registro de tu Seguro facultativo, algunos datos se obtienen automáticamente desde el sistema, únicamente deberás verificar que sean correctos, si eres estudiante activo el sistema generará un registro nuevo el cual tendrás que complementar y enviar para la validación correspondiente." style="padding-top: 5px;" />
                                                                     <p></p>
                                                                 </f:facet>
                                                             </p:toolbar>
@@ -185,7 +185,7 @@
                                                             <div class="ui-material">
                                                                 <p:inputText id="sfEstudiante"
                                                                              label="sfEstudiante"
-                                                                             value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.inscripcionActiva.inscripcion.matricula} - #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.persona.apellidoMaterno} #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.persona.apellidoPaterno} #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.persona.nombre}"
+                                                                             value="#{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.inscripcionActiva.inscripcion.matricula} - #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.persona.apellidoPaterno} #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.persona.apellidoMaterno} #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.estudiante.persona.nombre}"
                                                                              style="width: 20em"
                                                                              readonly="true"
                                                                              class="form-control"
@@ -356,7 +356,7 @@
                                                                     <p:outputLabel value="Tarjetón IMSS" style="padding-top: 5px;" />
                                                                     <p></p>
                                                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                                    <p:outputLabel value="Nombre del archivo: #{fn:length(caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton)) > 33 ? caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton).substring(1,33)+'...':caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton)}" style="padding-top: 5px;" />
+                                                                    <p:outputLabel value="Nombre del archivo: #{fn:length(caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton)) > 33 ? caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton).substring(1,33).concat('...'):caster.rutaToArchivoNombre(registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.rutaTarjeton)}" style="padding-top: 5px;" />
                                                                     <p></p>
                                                                     <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                                                     <p:outputLabel value="Número de Seguridad Social: #{registroSeguroFacultativoEstudiante.rol.dtoSeguroFacultativo.seguroFactultativo.nss}" style="padding-top: 5px;" />

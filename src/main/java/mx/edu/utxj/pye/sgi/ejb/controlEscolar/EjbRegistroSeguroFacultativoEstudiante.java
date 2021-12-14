@@ -204,7 +204,9 @@ public class EjbRegistroSeguroFacultativoEstudiante {
             Integer claveComprobar = seguroFacultativoEstudiante.getSeguroFacultativoEstudiante();
             if(SeguroFacultativoValidacionConverter.of(seguroFacultativoEstudiante.getValidacionEnfermeria()).getNivel() < 1.2D){
                 return ResultadoEJB.crearErroneo(4, null, "No se pudo eliminar el registro del Seguro Facultativo seleccionado, esto debido a que ya fué dado de baja o dado de alta por el área de enfermería ó servicios estudiantiles");
-            }else if(seguroFacultativoEstudiante.getUsuarioOperacion() == null || seguroFacultativoEstudiante.getUsuarioOperacion().equals(personal.getPersonal().getClave())){
+            }else 
+//                if(seguroFacultativoEstudiante.getUsuarioOperacion() == null || seguroFacultativoEstudiante.getUsuarioOperacion().equals(personal.getPersonal().getClave()))
+                {
                 if(!seguroFacultativoEstudiante.getRutaTarjeton().equals("") || seguroFacultativoEstudiante.getRutaTarjeton() != null) ServicioArchivos.eliminarArchivo(seguroFacultativoEstudiante.getRutaTarjeton());
                 if(!seguroFacultativoEstudiante.getRutaComprobanteLocalizacion().equals("") || seguroFacultativoEstudiante.getRutaComprobanteLocalizacion() != null) ServicioArchivos.eliminarArchivo(seguroFacultativoEstudiante.getRutaComprobanteLocalizacion());
                 if(!seguroFacultativoEstudiante.getRutaComprobanteVigenciaDeDerechos().equals("") || seguroFacultativoEstudiante.getRutaComprobanteVigenciaDeDerechos() != null) ServicioArchivos.eliminarArchivo(seguroFacultativoEstudiante.getRutaComprobanteVigenciaDeDerechos());
@@ -215,9 +217,10 @@ public class EjbRegistroSeguroFacultativoEstudiante {
                 }else{
                     return ResultadoEJB.crearErroneo(5, "No se ha eliminado el registro del seguro facultativo seleccionado. Favor de verificar los datos", Boolean.TYPE);
                 }
-            } else {
-                return ResultadoEJB.crearErroneo(6, null, "A este registro le está dando seguimiento el trabajador con clave: " + seguroFacultativoEstudiante.getUsuarioOperacion());
             }
+//            else {
+//                return ResultadoEJB.crearErroneo(6, null, "A este registro le está dando seguimiento el trabajador con clave: " + seguroFacultativoEstudiante.getUsuarioOperacion());
+//            }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se ha podido eliminar el registro de seguro facultativo, error interno. (EjbRegistroSeguroFacultativoEstudiante.eliminaRegistroSeguroFacultativo)", e, null);
         }
