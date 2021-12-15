@@ -167,9 +167,10 @@ public class EjbAsignacionAcademica {
             //buscar lista de materias sin asignar que pertenecen al programa y grupo seleccionado
             if(Objects.equals(periodoSeleccionado.getPeriodo(), periodoActivo)){
                 //mostrar las materias que son candidatas  a asiganar segun el programa y el grado
-                List<DtoMateria> materias = em.createQuery("select m from Materia m inner join m.planEstudioMateriaList pem where pem.idPlan.idPe=:programaEducativo and pem.grado=:grado", Materia.class)
+                List<DtoMateria> materias = em.createQuery("select m from Materia m inner join m.planEstudioMateriaList pem where pem.idPlan.idPe=:programaEducativo and pem.grado=:grado AND pem.idPlan.idPlanEstudio=:plan", Materia.class)
                         .setParameter("programaEducativo", programa.getArea())
                         .setParameter("grado", grupo.getGrado())
+                        .setParameter("plan", grupo.getPlan().getIdPlanEstudio())
                         .getResultStream()
                         .map(materia -> packMateria(grupo, materia, programa).getValor())
                         .filter(dtoMateria -> dtoMateria != null)
@@ -178,9 +179,10 @@ public class EjbAsignacionAcademica {
                 return ResultadoEJB.crearCorrecto(materias, "Lista de materias por grupo, grado, programa y periodo activo.");
             }else{
                 //mostrar las materia que fueron asignadas en el periodo seleccionado, segun el programa y grado seleccionados
-                List<DtoMateria> materias = em.createQuery("select m from Materia m inner join m.planEstudioMateriaList pem inner join pem.idPlan p inner join pem.cargaAcademicaList ca where p.idPe=:programaEducativo and pem.grado=:grado and ca.evento.periodo=:periodo", Materia.class)
+                List<DtoMateria> materias = em.createQuery("select m from Materia m inner join m.planEstudioMateriaList pem inner join pem.idPlan p inner join pem.cargaAcademicaList ca where p.idPe=:programaEducativo and pem.grado=:grado and ca.evento.periodo=:periodo AND pem.idPlan.idPlanEstudio=:plan", Materia.class)
                         .setParameter("programaEducativo", programa.getArea())
                         .setParameter("grado", grupo.getGrado())
+                        .setParameter("plan", grupo.getPlan().getIdPlanEstudio())
                         .setParameter("periodo", periodoSeleccionado.getPeriodo())
                         .getResultStream()
                         .map(materia -> packMateria(grupo, materia, programa).getValor())
@@ -467,8 +469,15 @@ public class EjbAsignacionAcademica {
                     .findFirst()
                     .orElse(null);
             
+            List<PlanEstudioMateria> materiasOptativasPlan = em.createQuery("select pem from PlanEstudioMateria pem where pem.idPlan.idPlanEstudio=:plan AND pem.grado=:grado AND pem.idMateria.idAreaConocimiento.idAreaConocimiento=:areaCon", PlanEstudioMateria.class)
+                    .setParameter("plan", resPlanEstudioMateria.getValor().getIdPlan().getIdPlanEstudio())
+                    .setParameter("grado", grupo.getGrado())
+                    .setParameter("areaCon", (int)9)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
             Boolean activa = true;
-            if (materia.getIdAreaConocimiento().getIdAreaConocimiento() == 9 && cargaAcademica == null) {
+            if (materia.getIdAreaConocimiento().getIdAreaConocimiento() == 9 && cargaAcademica == null && materiasOptativasPlan.size()>1) {
                 activa = false;
             }
 //            System.out.println("cargaAcademica = " + cargaAcademica);
