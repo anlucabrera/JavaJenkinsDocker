@@ -20,6 +20,7 @@ import lombok.ToString;
 public class DtoTipoInformacionRegistro implements Serializable{
     @Getter @Setter @NonNull String tipoRegistro;
     @Getter @Setter @NonNull String informacionRegistro;
+    @Getter @Setter @NonNull String informacionSubregistros;
     @Getter @Setter Integer periodoEscolar;
 
     public DtoTipoInformacionRegistro() {

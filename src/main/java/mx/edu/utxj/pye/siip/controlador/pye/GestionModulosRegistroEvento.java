@@ -86,20 +86,20 @@ public class GestionModulosRegistroEvento extends ViewScopedRol{
             rol.setUsuario(usuario);
             
             rol.setNivelRol(NivelRol.OPERATIVO);
-//            rol.setPeriodoActivo(ejb.getEventoActivo()());
-//            rol.setSoloLectura(true);
+            rol.setEventoActivo(ejb.getEventoActivo().getValor());
             
+            rol.getInstrucciones().add("Seleccione evento de registro.");
+            rol.getInstrucciones().add("Seleccione área.");
             rol.getInstrucciones().add("Seleccione eje de registro.");
-            rol.getInstrucciones().add("Seleccione tipo de módulo.");
-            rol.getInstrucciones().add("Dependiendo del tipo de módulo se actualizará la lista de módulos de registro.");
-            rol.getInstrucciones().add("Seleccione el módulo de registro.");
-            rol.getInstrucciones().add("Se actualizará la tabla y podrá consultar los usuarios que están asignados al módulo de registro.");
-            rol.getInstrucciones().add("ELIMINAR ASIGNACIÓN.");
-            rol.getInstrucciones().add("Deberá dar clic en el icono ubicado en la columna ELIMINAR de la fila del registro que desea eliminar.");
-            rol.getInstrucciones().add("AGREGAR ASIGNACIÓN.");
-            rol.getInstrucciones().add("Seleccione que desea agregar usuario.");
-            rol.getInstrucciones().add("Ingrese nombre o clave del personal al que se le asignará el módulo, le aparecerá una lista de coincidencias, dará clic en el nombre que corresponda");
-            rol.getInstrucciones().add("Deberá dar clic en el botón guardar para registrar la asignación.");
+            rol.getInstrucciones().add("Seleccione tipo.");
+            rol.getInstrucciones().add("En la parte inferior podrá visualizar una tabla con el listado de información registrada de los filtros de consulta seleccionados.");
+            rol.getInstrucciones().add("CAMBIAR DE MES UNO O VARIOS REGISTROS.");
+            rol.getInstrucciones().add("Habilitar la opción de mostrar opciones para cambiar de mes.");
+            rol.getInstrucciones().add("Seleccionar de la lista el mes al que se cambiará.");
+            rol.getInstrucciones().add("Seleccionar el o los registros de la tabla que se desean cambiar de mes.");
+            rol.getInstrucciones().add("Dar clic en el botón CAMBIAR para aplicar los cambios.");
+            rol.getInstrucciones().add("Se cambiará de mes el registro y los subregistros que dependen de él.");
+            rol.getInstrucciones().add("La tabla con el listado de información registrada se actualizará automáticamente.");
             
             rol.setHabilitarCambiarMes(false);
             rol.setExisteRegSeleccionados(false);
@@ -132,6 +132,9 @@ public class GestionModulosRegistroEvento extends ViewScopedRol{
                listadoEjesRegistro();
             }else{
                rol.setAreas(Collections.EMPTY_LIST);    
+               rol.setEjesRegistro(Collections.EMPTY_LIST);
+               rol.setTiposRegistro(Collections.EMPTY_LIST);
+               rol.setListaRegistrosEvento(Collections.EMPTY_LIST);
             }
         }else mostrarMensajeResultadoEJB(res);
     }

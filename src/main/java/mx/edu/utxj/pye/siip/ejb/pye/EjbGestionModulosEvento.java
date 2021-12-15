@@ -36,6 +36,7 @@ import mx.edu.utxj.pye.sgi.entity.pye2.RegistrosTipo;
 import mx.edu.utxj.pye.sgi.entity.pye2.ServiciosTecnologicosAnioMes;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.siip.dto.pye.DtoRegistroEvento;
+import mx.edu.utxj.pye.siip.dto.pye.DtoTipoInformacionRegistro;
 
 /**
  *
@@ -54,6 +55,27 @@ public class EjbGestionModulosEvento {
     @PostConstruct
     public  void init(){
         em = f.getEntityManager();
+    }
+    
+    /**
+     * Permite obtener la lista de ejes de registro
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EventosRegistros> getEventoActivo(){
+        try{
+            EventosRegistros eventoActivo = em.createQuery("SELECT e FROM EventosRegistros e WHERE current_timestamp between e.fechaInicio and e.fechaFin", EventosRegistros.class)
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+            
+            if(eventoActivo == null){
+                return ResultadoEJB.crearErroneo(2,eventoActivo, "No existe evento de registro aperturado.");
+            }else{
+                return ResultadoEJB.crearCorrecto(eventoActivo, "Evento de registro aperturado.");
+            }
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo verificar la apertura de evento de registro (EjbGestionModulosEvento.getEventoActivo).", e, EventosRegistros.class);
+        }
     }
     
      /**
@@ -168,11 +190,9 @@ public class EjbGestionModulosEvento {
                     .collect(Collectors.toList());
             
             registros.forEach(registro -> {
-                String informacionRegistro = ejbReportesEvidencias.getObtenerInformacionRegistro(registro).getValor().getInformacionRegistro();
-                Integer periodoEscolar = ejbReportesEvidencias.getObtenerInformacionRegistro(registro).getValor().getPeriodoEscolar();
-                String informacionSubregistro = "Pendiente";
+                DtoTipoInformacionRegistro dtoTipoInformacionRegistro = ejbReportesEvidencias.getObtenerInformacionRegistro(registro).getValor();
                 Boolean seleccionado = false;
-                DtoRegistroEvento dto = new DtoRegistroEvento(registro, informacionRegistro, periodoEscolar, informacionSubregistro, seleccionado);
+                DtoRegistroEvento dto = new DtoRegistroEvento(registro, dtoTipoInformacionRegistro.getInformacionRegistro(), dtoTipoInformacionRegistro.getPeriodoEscolar(), dtoTipoInformacionRegistro.getInformacionSubregistros(), seleccionado);
                 listaRegistros.add(dto);
             });
             

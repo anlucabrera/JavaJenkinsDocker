@@ -27,9 +27,9 @@ public class GestionModulosRegistroEventoRolPYE extends AbstractRol {
     @Getter @NonNull private PersonalActivo usuario;
     
     /**
-     * Representa la clave
+     * Representa el evento de registro activo
      */
-    @Getter @NonNull private Integer eventoActivo;
+    @Getter @NonNull private EventosRegistros eventoActivo;
     
      /**
      * Lista de eventos de registro
@@ -106,7 +106,7 @@ public class GestionModulosRegistroEventoRolPYE extends AbstractRol {
         this.usuario = usuario;
     }
 
-    public void setEventoActivo(Integer eventoActivo) {
+    public void setEventoActivo(EventosRegistros eventoActivo) {
         this.eventoActivo = eventoActivo;
     }
 
