@@ -115,7 +115,7 @@ public class EjbIntegracionExpedienteTitulacion {
                     if(estudianteTSU != null){
                         ExpedienteTitulacion expedienteTitulacionTSU = buscarExpedienteRegistrado(estudianteTSU).getValor();
                         if(expedienteTitulacionTSU != null){
-                            if(!expedienteTitulacionTSU.getPasoRegistro().equals("Fin Integración") && !expedienteTitulacionTSU.getValidado()){
+                            if(!expedienteTitulacionTSU.getValidado()){
                                 e = estudianteTSU;
                             }
                         }else{

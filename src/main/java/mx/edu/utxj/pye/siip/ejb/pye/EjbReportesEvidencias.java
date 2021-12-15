@@ -233,234 +233,291 @@ public class EjbReportesEvidencias {
                 case 1: // Bolsa de trabajo
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getBolsaTrabajo().getBolsatrab().concat(" Puesto: ").concat(registro.getBolsaTrabajo().getPuestoOfertado()).concat(" en ").concat(registro.getBolsaTrabajo().getEmpresa().getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getBolsaTrabajo().getPeriodo());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getBolsaTrabajo().getBolsaTrabajoEntrevistasList().size()).concat(" entrevista(s) de la bolsa de trabajo."));
                     break;
                 case 2: // Bolsa de trabajo entrevistas
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getBolsaTrabajoEntrevistas().getBolsatrabent().getBolsatrab().concat(" - Matricula: ").concat(String.valueOf(registro.getBolsaTrabajoEntrevistas().getMatricula())));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 3: // Asesorías y tutorías mensuales
                     programaEducativo = em.find(AreasUniversidad.class, registro.getAsesoriasTutoriasMensualPeriodosEscolares().getProgramaEducativo());
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getAsesoriasTutoriasMensualPeriodosEscolares().getCuatrimestre().concat("° ").concat(registro.getAsesoriasTutoriasMensualPeriodosEscolares().getGrupo()).concat(" de ").concat(programaEducativo.getSiglas()).concat(" ").concat(registro.getAsesoriasTutoriasMensualPeriodosEscolares().getTipoActividad()).concat(" - ").concat(registro.getAsesoriasTutoriasMensualPeriodosEscolares().getTipo()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getAsesoriasTutoriasMensualPeriodosEscolares().getPeriodoEscolar());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 6: // Acervo bibliográfico
                     periodoEscolar = em.find(PeriodosEscolares.class, registro.getAcervoBibliograficoPeriodosEscolares().getPeriodoEscolar());
                     programaEducativo = em.find(AreasUniversidad.class, registro.getAcervoBibliograficoPeriodosEscolares().getProgramaEducativo());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Periodo escolar: ".concat(String.valueOf(periodoEscolar.getMesInicio().getMes())).concat(" - ").concat(String.valueOf(periodoEscolar.getMesFin().getMes())).concat(" ").concat(String.valueOf(periodoEscolar.getAnio())).concat(" de ").concat(programaEducativo.getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(periodoEscolar.getPeriodo());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 7: // Servicio enfermería
                     dtoTipoInformacionRegistro.setInformacionRegistro("Tipo de servicio: ".concat(registro.getServiciosEnfermeriaCicloPeriodos().getServicio().getDescripcion()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getServiciosEnfermeriaCicloPeriodos().getPeriodoEscolar());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 8: // Actividades varias
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getActividadesVariasRegistro().getNombre());
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 9: // Becas
                     tipoBeca = em.find(BecaTipos.class, registro.getBecasPeriodosEscolares().getBeca());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Tipo de beca: ".concat(tipoBeca.getNombre()).concat(" y tipo de solicitud: ").concat(registro.getBecasPeriodosEscolares().getSolicitud()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getBecasPeriodosEscolares().getMatriculaPeriodosEscolares().getPeriodo());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 10: // Egetsu
                     generacion = em.find(Generaciones.class, registro.getEgetsuResultadosGeneraciones().getGeneracion());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Generación: ".concat(String.valueOf(generacion.getInicio())).concat(" - ").concat(String.valueOf(generacion.getFin())));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 11: // Exani
                     cicloEscolar = em.find(CiclosEscolares.class, registro.getExaniResultadosCiclosEscolares().getCicloEscolar());
                     programaEducativo = em.find(AreasUniversidad.class, registro.getExaniResultadosCiclosEscolares().getProgramaEducativo());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Ciclo escolar: ".concat(String.valueOf(cicloEscolar.getInicio())).concat(" - ").concat(String.valueOf(cicloEscolar.getFin())).concat(" de ").concat(programaEducativo.getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 12: // Distribución de equipo de cómputo
                     periodoEscolar = em.find(PeriodosEscolares.class, registro.getEquiposComputoCicloPeriodoEscolar().getPeriodoEscolar());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Periodo escolar: ".concat(periodoEscolar.getMesInicio().getMes()).concat(" - ").concat(periodoEscolar.getMesFin().getMes()).concat(" ").concat(String.valueOf(periodoEscolar.getAnio())));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getEquiposComputoCicloPeriodoEscolar().getPeriodoEscolar());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 13: // Distribución de equipo de cómputo con internet
                     periodoEscolar = em.find(PeriodosEscolares.class, registro.getEquiposComputoInternetCicloPeriodoEscolar().getPeriodoEscolar());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Periodo escolar: ".concat(periodoEscolar.getMesInicio().getMes()).concat(" - ").concat(periodoEscolar.getMesFin().getMes()).concat(" ").concat(String.valueOf(periodoEscolar.getAnio())));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(periodoEscolar.getPeriodo());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 14: // Ingresos propios
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getIngresosPropiosCaptados().getConceptoIngresosCaptados().concat(" - ").concat(registro.getIngresosPropiosCaptados().getDescripcion()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getIngresosPropiosCaptados().getPeriodoEscolar());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 15: // Presupuestos
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getPresupuestos().getPresupuestoOperacion().concat(" ").concat(registro.getPresupuestos().getPresupuestoTipo()).concat(" ").concat(registro.getPresupuestos().getCapituloTipo().getNumero()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 16: // Actividades de formación integral
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getActividadesFormacionIntegral().getActividadFormacionIntegral().concat(" ").concat(registro.getActividadesFormacionIntegral().getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getActividadesFormacionIntegral().getPeriodo());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getActividadesFormacionIntegral().getParticipantesActividadesFormacionIntegralList().size()).concat(" participante(s)de la actividad."));
                     break;
                 case 17: // Actividades de formación integral participantes
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getParticipantesActividadesFormacionIntegral().getActividadFormacionIntegral().getActividadFormacionIntegral().concat(" Matricula: ").concat(registro.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getMatricula()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getParticipantesActividadesFormacionIntegral().getMatriculaPeriodosEscolares().getPeriodo());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 18: // Capacidad instalada
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getCapacidadInstaladaCiclosEscolares().getInstalacion().getDescripcion());
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 19: // Distribución de aulas
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getDistribucionAulasCicloPeriodosEscolares().getAula().getNombre());
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getDistribucionAulasCicloPeriodosEscolares().getPeriodoEscolar());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 20: // Distribución de laboratorios y talleres
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getDistribucionLabtallCicloPeriodosEscolares().getNombre());
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getDistribucionLabtallCicloPeriodosEscolares().getPeriodoEscolar());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 21: // Actividad del egresado y egresada
                     generacion = em.find(Generaciones.class, registro.getActividadEgresadoGeneracion().getGeneracion());
                     programaEducativo = em.find(AreasUniversidad.class, registro.getActividadEgresadoGeneracion().getProgramaEducativo());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Generación: ".concat(String.valueOf(generacion.getInicio())).concat(" - ").concat(String.valueOf(generacion.getFin())).concat(" de ").concat(programaEducativo.getSiglas()).concat(" Actividad: ").concat(registro.getActividadEgresadoGeneracion().getActividad().getDescripcion()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 22: // Actividad económica egresados y egresadas
                     generacion = em.find(Generaciones.class, registro.getActividadEconomicaEgresadoGeneracion().getGeneracion());
                     programaEducativo = em.find(AreasUniversidad.class, registro.getActividadEconomicaEgresadoGeneracion().getProgramaEducativo());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Generación: ".concat(String.valueOf(generacion.getInicio())).concat(" - ").concat(String.valueOf(generacion.getFin())).concat(" de ").concat(programaEducativo.getSiglas()).concat(" Sector: ").concat(registro.getActividadEconomicaEgresadoGeneracion().getSector().getDescripcion()).concat(" Giro: ").concat(registro.getActividadEconomicaEgresadoGeneracion().getGiro().getDescripcion()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 23: // Nivel de ocupación
                     generacion = em.find(Generaciones.class, registro.getNivelOcupacionEgresadosGeneracion().getGeneracion());
                     programaEducativo = em.find(AreasUniversidad.class, registro.getNivelOcupacionEgresadosGeneracion().getProgramaEducativo());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Generación: ".concat(String.valueOf(generacion.getInicio())).concat(" - ").concat(String.valueOf(generacion.getFin())).concat(" de ").concat(programaEducativo.getSiglas()).concat(" Ocupación: ").concat(registro.getNivelOcupacionEgresadosGeneracion().getOcupacion().getDescripcion()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 24: // Nivel de ingresos
                     generacion = em.find(Generaciones.class, registro.getNivelIngresosEgresadosGeneracion().getGeneracion());
                     programaEducativo = em.find(AreasUniversidad.class, registro.getNivelIngresosEgresadosGeneracion().getProgramaEducativo());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Generación: ".concat(String.valueOf(generacion.getInicio())).concat(" - ").concat(String.valueOf(generacion.getFin())).concat(" de ").concat(programaEducativo.getSiglas()).concat(" Nivel de ingreso: ").concat(registro.getNivelIngresosEgresadosGeneracion().getIngreso().getIngresos()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 25: // Deserción
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getDesercionPeriodosEscolares().getDpe().concat(" Matricula: ").concat(registro.getDesercionPeriodosEscolares().getMatriculaPeriodosEscolares().getMatricula()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getDesercionPeriodosEscolares().getMatriculaPeriodosEscolares().getPeriodo());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getDesercionPeriodosEscolares().getDesercionReprobacionMateriasList()).concat(" materia(s) reprobadas de la deserción."));
                     break;
                 case 26: // Deserción por reprobación
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getDesercionReprobacionMaterias().getDpe().getDpe().concat(" Materia: "));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 27: // Organismos vinculados
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getOrganismosVinculados().getNombre());
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 28: // Convenios
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getConvenios().getEmpresa().getNombre());
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 29: // Difusión
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getDifusionIems().getIems().getNombre());
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 30: // Visitas industriales
                     programaEducativo = em.find(AreasUniversidad.class, registro.getVisitasIndustriales().getProgramaEducativo());
                     dtoTipoInformacionRegistro.setInformacionRegistro(String.valueOf(registro.getVisitasIndustriales().getCuatrimestre()).concat("° ").concat(String.valueOf(registro.getVisitasIndustriales().getGrupo())).concat(" de ").concat(programaEducativo.getSiglas()).concat(" - ").concat(registro.getVisitasIndustriales().getEmpresa().getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getVisitasIndustriales().getPeriodoEscolar());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 31: // Registros movilidad
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getRegistrosMovilidad().getRegistroMovilidad().concat(" en ").concat(registro.getRegistrosMovilidad().getInstitucionOrganizacion()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getRegistrosMovilidad().getPeriodoEscolarCursado());
+                    if(registro.getRegistrosMovilidad().getRegistroMovilidadDocenteList().isEmpty() && registro.getRegistrosMovilidad().getRegistroMovilidadEstudianteList().isEmpty()){
+                        dtoTipoInformacionRegistro.setInformacionSubregistros("No hay participantes");
+                    }else if(!registro.getRegistrosMovilidad().getRegistroMovilidadDocenteList().isEmpty()){
+                        dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getRegistrosMovilidad().getRegistroMovilidadDocenteList().size()).concat(" docente(s) del registro de movilidad."));
+                    }else if(!registro.getRegistrosMovilidad().getRegistroMovilidadEstudianteList().isEmpty()){
+                        dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getRegistrosMovilidad().getRegistroMovilidadEstudianteList().size()).concat(" estudiante(s) del registro de movilidad."));
+                    }
                     break;
                 case 32: // Movilidad estudiantil
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getRegistroMovilidadEstudiante().getMatriculaPeriodosEscolares().getMatricula().concat(" ").concat(registro.getRegistroMovilidadEstudiante().getRegistroMovilidad().getRegistroMovilidad()).concat(" en ").concat(registro.getRegistroMovilidadEstudiante().getRegistroMovilidad().getInstitucionOrganizacion()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getRegistroMovilidadEstudiante().getMatriculaPeriodosEscolares().getPeriodo());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 33: // Movilidad docente
                     personal = em.find(Personal.class, registro.getRegistroMovilidadDocente().getClavePersonal());
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getRegistroMovilidadDocente().getRegistroMovilidad().getRegistroMovilidad().concat(" en ").concat(registro.getRegistroMovilidadDocente().getRegistroMovilidad().getInstitucionOrganizacion()).concat(personal.getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 34: // Ferias profesiográficas
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getFeriasProfesiograficas().getFeria().concat(" - ").concat(registro.getFeriasProfesiograficas().getEvento()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getFeriasProfesiograficas().getFeriasParticipantesList().size()).concat(" participante(s) de la feria profesiográfica."));
                     break;
                 case 35: // Ferias profesiográficas participantes
                     dtoTipoInformacionRegistro.setInformacionRegistro("IEMS: ".concat(registro.getFeriasParticipantes().getIems().getNombre()).concat(" ").concat(registro.getFeriasParticipantes().getFeria().getFeria()).concat(" - ").concat(registro.getFeriasProfesiograficas().getEvento()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 36: // Servicios tecnológicos
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getServiciosTecnologicosAnioMes().getServicio().concat(" - ").concat(registro.getServiciosTecnologicosAnioMes().getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getServiciosTecnologicosAnioMes().getServiciosTecnologicosParticipantesList().size()).concat(" participante(s) del servicio tecnológico."));
                     break;
                 case 37: // Servicios tecnológicos participantes
                     dtoTipoInformacionRegistro.setInformacionRegistro("Nombre: ".concat(registro.getServiciosTecnologicosParticipantes().getNombre()).concat(" en ").concat(registro.getServiciosTecnologicosParticipantes().getServicioTecnologico().getServicio()).concat(" - ").concat(registro.getServiciosTecnologicosParticipantes().getServicioTecnologico().getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 38: // Cuerpos académicos
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getCuerposAcademicosRegistro().getCuerpoAcademico().concat(" ").concat(registro.getCuerposAcademicosRegistro().getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getCuerposAcademicosRegistro().getCuerpacadIntegrantesList().size()).concat(" integrante(s) y ").concat(String.valueOf(registro.getCuerposAcademicosRegistro().getCuerpacadLineasList().size()).concat(" línea(s) del cuerpo académico.")));
                     break;
                 case 39: // Cuerpos académicos integrantes
                     personal = em.find(Personal.class, registro.getCuerpacadIntegrantes().getPersonal());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Integrante: ".concat(personal.getNombre()).concat(" en ").concat(registro.getCuerpacadIntegrantes().getCuerpoAcademico().getCuerpoAcademico()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 40: // Cuerpos académicos líneas de investigación
                     dtoTipoInformacionRegistro.setInformacionRegistro("Nombre: ".concat(registro.getCuerpacadLineas().getNombre()).concat(" en ").concat(registro.getCuerpacadLineas().getCuerpoAcademico().getCuerpoAcademico()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 41: // Productos académicos
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getProductosAcademicos().getProductoAcademico().concat(" ").concat(registro.getProductosAcademicos().getNombreProd()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getProductosAcademicos().getProductosAcademicosPersonalList().size()).concat(" persona(s) relacionadas al producto académico."));
                     break;
                 case 42: // Productos académicos personal
                     personal = em.find(Personal.class, registro.getProductosAcademicosPersonal().getPersonal());
                     dtoTipoInformacionRegistro.setInformacionRegistro(personal.getNombre().concat(" ").concat(registro.getProductosAcademicosPersonal().getProductoAcademico().getProductoAcademico()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 43: // Matricula inicial
                     periodoEscolar = em.find(PeriodosEscolares.class, registro.getMatriculaPeriodosEscolares().getPeriodo());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Periodo escolar: ".concat(periodoEscolar.getMesInicio().getMes()).concat(" - ").concat(periodoEscolar.getMesFin().getMes()).concat(" ").concat(String.valueOf(periodoEscolar.getAnio())));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getMatriculaPeriodosEscolares().getPeriodo());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 44: // Programas educativos pertinentes y de calidad
                     programaEducativo = em.find(AreasUniversidad.class, registro.getProgramasPertcal().getProgramaEducativo());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Programa educativo: ".concat(programaEducativo.getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 45: // Personal capacitado
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getPersonalCapacitado().getCurso().concat(" - ").concat(registro.getPersonalCapacitado().getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(registro.getPersonalCapacitado().getPeriodo());
+                    dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getPersonalCapacitado().getParticipantesPersonalCapacitadoList().size()).concat(" participante(s) del curso."));
                     break;
                 case 46: // Personal capacitado participantes
                     personal = em.find(Personal.class, registro.getParticipantesPersonalCapacitado().getPersonal());
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getParticipantesPersonalCapacitado().getPercap().getCurso().concat(" ").concat(personal.getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 47: // Programas de estímulos
                     personal = em.find(Personal.class, registro.getProgramasEstimulos().getTrabajador());
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getProgramasEstimulos().getTipoPrograma().getDescripcion().concat(" ").concat(personal.getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 48: // Comisiones académicas
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getComisionesAcademicas().getComisionAcademica().concat(" - ").concat(registro.getComisionesAcademicas().getTipoComision().getDescripcion()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros(String.valueOf(registro.getComisionesAcademicas().getComisionesAcademicasParticipantesList().size()).concat(" participante(s) de la comisión académica."));
                     break;
                 case 49: // Comisiones académicas participantes
                     personal = em.find(Personal.class, registro.getComisionesAcademicasParticipantes().getParticipante());
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getComisionesAcademicasParticipantes().getComisionAcademica().getComisionAcademica().concat(" ").concat(personal.getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 50: // Reconocimiento prodep
                     personal = em.find(Personal.class, registro.getReconocimientoProdepRegistros().getDocente());
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getReconocimientoProdepRegistros().getCuerpAcad().getCuerpoAcademico().concat(" ").concat(personal.getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 52: // Sesiones individuales
                     programaEducativo = em.find(AreasUniversidad.class, registro.getSesionIndividualMensualPsicopedogia().getProgramaEducativo());
                     dtoTipoInformacionRegistro.setInformacionRegistro("Área conflicto: ".concat(registro.getSesionIndividualMensualPsicopedogia().getAreaConflicto().getDescripcion()).concat(" Tipo de sesión: ").concat(registro.getSesionIndividualMensualPsicopedogia().getOtroTipoSesion().getDescripcion()).concat(" de ").concat(programaEducativo.getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 54: // Satisfacción de servicios tecnológicos y educación continua
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getSatisfaccionServtecEducontAnioMes().getServicio().getServicio().concat(" ").concat(registro.getSatisfaccionServtecEducontAnioMes().getServicio().getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 case 55: // Resultados instrumento de evaluación educación continua
                     dtoTipoInformacionRegistro.setInformacionRegistro(registro.getEvaluacionSatisfaccionResultados().getServicioTecnologico().getServicio().concat(" ").concat(registro.getEvaluacionSatisfaccionResultados().getServicioTecnologico().getNombre()));
                     dtoTipoInformacionRegistro.setPeriodoEscolar(0);
+                    dtoTipoInformacionRegistro.setInformacionSubregistros("No aplica");
                     break;
                 default:
                     break;

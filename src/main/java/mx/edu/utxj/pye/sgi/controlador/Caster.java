@@ -20,6 +20,7 @@ import mx.edu.utxj.pye.sgi.entity.finanzas.Tramites;
 import mx.edu.utxj.pye.sgi.entity.prontuario.CiclosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Municipio;
 import mx.edu.utxj.pye.sgi.entity.pye2.MunicipioPK;
@@ -146,6 +147,18 @@ public class Caster {
                 .append(periodo.getMesInicio().getMes())
                 .append(" ")
                 .append(periodo.getAnio())
+                .toString();
+    }
+    
+    public String eventoToStringMesAnio(EventosRegistros eventoRegistro){
+        
+        return (new StringBuilder())
+                .append(eventoRegistro.getMes())
+                .append(" - ")
+                .append(eventoRegistro.getEjercicioFiscal().getAnio())
+                .append("( ")
+                .append(fechaEventoEscolarToString(eventoRegistro.getFechaInicio(), eventoRegistro.getFechaFin()))
+                .append(" )")
                 .toString();
     }
     
