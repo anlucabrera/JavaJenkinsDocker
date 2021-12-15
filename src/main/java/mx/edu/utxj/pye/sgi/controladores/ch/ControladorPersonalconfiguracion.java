@@ -13,17 +13,21 @@ import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
+import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 import org.omnifaces.cdi.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.ch.CategoriasHabilidades;
+import mx.edu.utxj.pye.sgi.entity.ch.Habilidades;
 import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
@@ -40,18 +44,22 @@ public class ControladorPersonalconfiguracion implements Serializable {
     @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonalsFotosFaltantes = new ArrayList<>();
     @Getter    @Setter    private List<Personal> listPersonal = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> nuevaListaAreasUniversidads = new ArrayList<>();
-    @Getter    @Setter    private List<Categorias> nuevaListaCategoriases = new ArrayList<>();
     @Getter    @Setter    private List<PersonalCategorias> nuevaListaPersonalCategoriases = new ArrayList<>();
     @Getter    @Setter    private List<PersonalCategorias> nuevaListaPersonalCategoriases360 = new ArrayList<>();
+    @Getter    @Setter    private List<Habilidades> habilidadeses = new ArrayList<>();
+    @Getter    @Setter    private List<PeriodosEscolares> periodosEscolareses = new ArrayList<>();
+    @Getter    @Setter    private List<CategoriasHabilidades> categoriasHabilidadeses = new ArrayList<>();
     @Getter    @Setter    private List<String> estatus = new ArrayList<>();
 
     @Getter    @Setter    private Iterator<ListaPersonal> empleadoActual;
 
     @Getter    @Setter    private PersonalCategorias nuevoOBJPersonalCategorias;
     @Getter    @Setter    private AreasUniversidad nuevoOBJAreasUniversidad;
-    @Getter    @Setter    private Categorias nuevoOBJCategorias;
+    @Getter    @Setter    private Habilidades habilidades;
+    @Getter    @Setter    private PeriodosEscolares escolares= new PeriodosEscolares();
 
     @Getter    @Setter    private Short claveCatagoria = 0;
+    @Getter    @Setter    private Integer periodoEv = 0;
 
     @Getter    @Setter    private Part file;
     
@@ -82,22 +90,21 @@ public class ControladorPersonalconfiguracion implements Serializable {
         try {
             nuevoOBJPersonalCategorias = new PersonalCategorias();
             nuevoOBJAreasUniversidad = new AreasUniversidad();
-            nuevoOBJCategorias = new Categorias();
-
+            
             nuevaListaPersonalsFotosFaltantes.clear();
             nuevaListaPersonalCategoriases360.clear();
             nuevaListaPersonalCategoriases.clear();
             nuevaListaAreasUniversidads.clear();
-            nuevaListaCategoriases.clear();
             nuevaListaPersonals.clear();
             listPersonal.clear();
-
+            periodosEscolareses.clear();
+            habilidadeses.clear();
+            
             nuevaListaPersonalCategoriases = ejbUtilidadesCH.mostrarListaPersonalCategorias();
             nuevaListaPersonalsFotosFaltantes = ejbPersonal.mostrarListaDeEmpleados();
             nuevaListaAreasUniversidads = ejbAreasLogeo.mostrarAllAreasUniversidad();
             listPersonal = ejbPersonal.mostrarListaPersonalsPorEstatus(1);
             nuevaListaPersonals = ejbPersonal.mostrarListaDeEmpleados();
-            nuevaListaCategoriases = ejbAreasLogeo.mostrarCategorias();
 
             empleadoActual = nuevaListaPersonals.iterator();
             while (empleadoActual.hasNext()) {
@@ -115,11 +122,30 @@ public class ControladorPersonalconfiguracion implements Serializable {
                 }
             });
 
+            periodosEscolareses = ejbUtilidadesCH.mostrarPeriodosEscolaresEvaluaciones360();
+            habilidadeses= ejbUtilidadesCH.mostrarListaHabilidades();
+            escolares=periodosEscolareses.get(0);
+            periodoEv=escolares.getPeriodo();
             Collections.sort(nuevaListaAreasUniversidads, (x, y) -> x.getCategoria().getCategoria().compareTo(y.getCategoria().getCategoria()));
             Collections.sort(nuevaListaPersonalsFotosFaltantes, (x, y) -> Short.compare(x.getAreaOperativa(), y.getAreaOperativa()));
             Collections.sort(nuevaListaPersonals, (x, y) -> Short.compare(x.getCategoriaOperativa(), y.getCategoriaOperativa()));
             Collections.sort(nuevaListaPersonalCategoriases, (x, y) -> x.getTipo().compareTo(y.getTipo()));
 
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void numeroProcesoAsiganado(ValueChangeEvent event) {
+        periodoEv = Integer.parseInt(event.getNewValue().toString());
+        consultaCategoriasHabilidades();
+    }
+    
+    public void consultaCategoriasHabilidades() {
+        try {
+            categoriasHabilidadeses= new ArrayList<>();
+            categoriasHabilidadeses =  ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);

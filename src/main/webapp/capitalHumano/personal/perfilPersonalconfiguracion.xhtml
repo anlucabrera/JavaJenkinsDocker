@@ -455,6 +455,97 @@
                                             </h:form>
                                         </p:tab>
 
+                                        <p:tab title="Habilidades">  
+                                            <h:form id="frmcategorias">
+                                                <p:outputPanel id="form2">
+                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                        <div class="col-md-12">
+                                                            <div class="box box-widget widget-user-2">
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 border-right">
+                                                                        <div class="description-block">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                                    <p:outputLabel for="anio" value="Proceso" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                                    <p:selectOneMenu  id="anio" value="#{controladorPersonalconfiguracion.periodoEv}" valueChangeListener="#{controladorPersonalconfiguracion.numeroProcesoAsiganado}">
+                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.periodosEscolareses}" var="anio" itemValue="#{anio.periodo}" itemLabel="#{anio.periodo}: #{anio.mesInicio.mes}-#{anio.mesInicio.mes} -- #{anio.anio}" />
+                                                                                        <p:ajax update="@form" listener="#{controladorPersonalconfiguracion.imprimirValores()}"/>
+                                                                                    </p:selectOneMenu >
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                        <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre" />
+                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre de la categoría"
+                                                                                                     value="# {controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.nombre}"/>
+                                                                                        <p:message for="nombre" display="tooltip" />
+                                                                                        <hr/>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                    <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoria" />
+                                                                                    <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" value="# {controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.tipo}">
+                                                                                        <f:selectItem itemValue="Genérica" itemLabel="Genérica"/>
+                                                                                        <f:selectItem itemValue="Específica" itemLabel="360°"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="categoria" display="tooltip"/> 
+                                                                                    <hr/>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <p:outputPanel>       
+                                                                                    <div class="form-group"> 
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                            <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="# {controladorPersonalconfiguracion.crearNuevasPersonalCategorias()}" 
+                                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmcategorias1')update();"
+                                                                                                             update="@form"  process="@form" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </p:outputPanel>
+                                                                            </div>
+                                                                            <hr/>
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <hr/>                                                        
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </p:outputPanel>
+                                            </h:form>
+                                            <h:form id="frmcategorias1">
+                                                <p:outputPanel>
+                                                    <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.categoriasHabilidadeses}"
+                                                                 paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
+                                                                 paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                                                                 var="distincion" sortBy="#{distincion.personalCategorias.nombre}" expandableRowGroups="true">
+
+                                                        <p:headerRow>
+                                                            <p:column colspan="2" styleClass="est">
+                                                                <h:outputText value="#{distincion.tipo eq 'Específica'?'360°':'Genérica'}"/>
+                                                            </p:column>
+                                                        </p:headerRow>       
+
+                                                        <p:column headerText="Clave" 
+                                                                  filterBy="# {distincion.categoria}" 
+                                                                  sortBy="# {distincion.categoria}" 
+                                                                  filterMatchMode="contains"
+                                                                  style="width: 10%">
+                                                            <h:outputText value="# {distincion.categoria}" />
+                                                        </p:column>
+                                                        <p:column headerText="Nombre" 
+                                                                  filterBy="# {distincion.nombre}" 
+                                                                  sortBy="# {distincion.nombre}" 
+                                                                  filterMatchMode="contains" >
+                                                            <h:outputText value="# {distincion.nombre}" />
+                                                        </p:column>
+                                                    </p:dataTable>     
+                                                </p:outputPanel>
+                                            </h:form>
+                                        </p:tab>
+
                                     </p:tabView>
                                 </div>
                             </div>

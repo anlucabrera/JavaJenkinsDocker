@@ -5,9 +5,11 @@ import java.util.List;
 import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
+import mx.edu.utxj.pye.sgi.entity.ch.CategoriasHabilidades;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
+import mx.edu.utxj.pye.sgi.entity.ch.Habilidades;
 import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
@@ -15,6 +17,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
 import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Reporteerrores;
 
 @Local
@@ -58,12 +61,26 @@ public interface EjbUtilidadesCH {
 
     public EventosAreas eliminarEventosesEventosAreas(EventosAreas ea) throws Throwable;
 
-////////////////////////////////////////////////////////////////////////////////Personal Categorias
+////////////////////////////////////////////////////////////////////////////////Personal Categorias y Habilidades
     public List<PersonalCategorias> mostrarListaPersonalCategorias() throws Throwable;
 
     public List<PersonalCategorias> mostrarListaPersonalCategoriasArea(Short area) throws Throwable;
 
     public PersonalCategorias crearNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable;
+    
+    public List<PeriodosEscolares> mostrarPeriodosEscolaresEvaluaciones360() throws Throwable;
+    
+    public List<Habilidades> mostrarListaHabilidades() throws Throwable;
+
+    public Habilidades crearNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
+    
+    public Habilidades actualizarNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
+    
+    public List<CategoriasHabilidades> mostrarCategoriasHabilidades(Integer periodo) throws Throwable;
+//
+//    public Habilidades crearNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
+//    
+//    public Habilidades actualizarNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos
     public List<Bitacoraacceso> mostrarBitacoraacceso(String tabla, Date fechaI, Date fechaF) throws Throwable;

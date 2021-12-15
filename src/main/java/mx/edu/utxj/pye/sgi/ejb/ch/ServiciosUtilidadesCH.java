@@ -11,9 +11,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
+import mx.edu.utxj.pye.sgi.entity.ch.CategoriasHabilidades;
+import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
+import mx.edu.utxj.pye.sgi.entity.ch.Habilidades;
 import mx.edu.utxj.pye.sgi.entity.ch.Historicoplantillapersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.MenuDinamico;
@@ -23,6 +26,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Reporteerrores;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import org.omnifaces.util.Messages;
@@ -261,6 +265,49 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         facade.create(nuevoPersonalCategorias);
         facade.flush();
         return nuevoPersonalCategorias;
+    }
+    
+    @Override
+    public List<PeriodosEscolares> mostrarPeriodosEscolaresEvaluaciones360() throws Throwable{
+        TypedQuery<Evaluaciones360> q = em.createQuery("SELECT p FROM Evaluaciones360 p", Evaluaciones360.class);
+        List<Evaluaciones360> pr = q.getResultList();
+        List<Integer> peridoso= new ArrayList<>();
+        List<PeriodosEscolares> escolareses = new ArrayList<>();
+        if(!pr.isEmpty()){pr.forEach((t) -> {peridoso.add(t.getPeriodo());});
+        TypedQuery<PeriodosEscolares> pe = em.createQuery("SELECT p FROM PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class);
+        pe.setParameter("periodos", peridoso);
+        escolareses = pe.getResultList();
+        }
+        return escolareses;
+    }
+    
+    @Override
+    public List<Habilidades> mostrarListaHabilidades() throws Throwable {
+        TypedQuery<Habilidades> q = em.createQuery("SELECT p FROM Habilidades p", Habilidades.class);
+        List<Habilidades> pr = q.getResultList();
+        return pr;
+    }
+    
+    @Override
+    public Habilidades crearNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable {
+        em.persist(nuevoHabilidades);
+        em.flush();
+        return nuevoHabilidades;
+    }
+
+    @Override
+    public Habilidades actualizarNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable {
+        em.merge(nuevoHabilidades);
+        em.flush();
+        return nuevoHabilidades;
+    }
+    
+    @Override
+    public List<CategoriasHabilidades> mostrarCategoriasHabilidades(Integer periodo) throws Throwable{
+        TypedQuery<CategoriasHabilidades> q = em.createQuery("SELECT p FROM CategoriasHabilidades p INNER JOIN p.evaluaciones360 ev WHERE ev.periodo=:periodo", CategoriasHabilidades.class);
+        q.setParameter("periodo", periodo);
+        List<CategoriasHabilidades> pr = q.getResultList();
+        return pr;
     }
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos
