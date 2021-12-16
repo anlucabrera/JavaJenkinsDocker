@@ -18,6 +18,7 @@ import javax.ejb.EJB;
 import javax.faces.model.SelectItem;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.DtoEvaluacion360;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacion360Combinaciones;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacionDesempenio;
 import mx.edu.utxj.pye.sgi.dto.listadoEvaluacionesDTO;
@@ -75,6 +76,7 @@ public class AdminEvaluacion360 implements Serializable {
     @Getter private Map<Personal, List<Personal>> directivosOperativos;
     @Getter private SortedMap<PeriodosEscolares, Personal> evaluadoresAnteriores;
     @Getter private List<Evaluaciones360Resultados> resultados;
+    @Getter @Setter List<DtoEvaluacion360> combinacionesDto;
     
     @Getter @Setter private List<PersonalCategorias> listaCategorias;
     @Getter @Setter private List<Evaluaciones360> listaEvaluaciones360;
@@ -113,15 +115,17 @@ public class AdminEvaluacion360 implements Serializable {
     }
 
     public void generaEvaluacion360() {
-        evaluacionActiva = ejbEvaluacion3601.evaluacionActiva();
-        resultados = ejbEvaluacion360Combinaciones.generar(nuevaEvaluacion);
+        evaluacionActiva = ejbEvaluacion3601.getUltimaEvaluacion();
+        resultados = ejbEvaluacion360Combinaciones.generar(evaluacionActiva);
+        combinacionesDto = new ArrayList<>();
         resultados.forEach(res -> {
-            System.out.println("res = (periodo=" + res.getEvaluaciones360().getPeriodo() + ", evaluación=" + res.getEvaluaciones360().getEvaluacion() + ", evaluado=" + res.getEvaluaciones360ResultadosPK().getEvaluado() + ", tipo=" + res.getTipo() + ", evaluador=" + res.getEvaluaciones360ResultadosPK().getEvaluador() + ".");
+            combinacionesDto.add(ejbEvaluacion360Combinaciones.packCombinaciones(res)) ;
+            //System.out.println("res = (periodo=" + res.getEvaluaciones360().getPeriodo() + ", evaluación=" + res.getEvaluaciones360().getEvaluacion() + ", evaluado=" + res.getEvaluaciones360ResultadosPK().getEvaluado() + ", tipo=" + res.getTipo() + ", evaluador=" + res.getEvaluaciones360ResultadosPK().getEvaluador() + ".");
         });
 //        configurado = ejbEvaluacion360Combinaciones.detectarConfiguracion(nuevaEvaluacion);
 
 //        if (!configurado) {
-            //ejbEvaluacion360Combinaciones.guardarCombinaciones(resultados);
+        //ejbEvaluacion360Combinaciones.guardarCombinaciones(resultados);
 //        }
     }
 

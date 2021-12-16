@@ -542,7 +542,7 @@ public class EjbCedulaIdentificacion {
     }
 
     /**
-     * Obtiene el lugar de naciemiento
+     * Obtiene el lugar de nacimiento
      * @param estudiante
      * @return Resultado de naciemiento
      */

@@ -102,7 +102,7 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
 
     @Override
     public Evaluaciones360 evaluacionActiva() {
-        StoredProcedureQuery spq = em.createStoredProcedureQuery("buscar_evaluacion_360_activa", Evaluaciones360.class);
+        /*StoredProcedureQuery spq = em.createStoredProcedureQuery("buscar_evaluacion_360_activa", Evaluaciones360.class);
         List<Evaluaciones360> l = spq.getResultList();
 
         if (l == null || l.isEmpty()) {
@@ -110,6 +110,21 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
         } else {
             return l.get(0);
         }
+        */
+        Evaluaciones360 evaluacion = em.createQuery("select e from Evaluaciones360  e order by e.periodo desc ",Evaluaciones360.class)
+                .getResultStream().findFirst().orElse(null)
+                ;
+        return evaluacion;
+    }
+
+    @Override
+    public Evaluaciones360 getUltimaEvaluacion() {
+      Evaluaciones360 e = f.getEntityManager().createQuery("select e from Evaluaciones360  e order by e.periodo desc ",Evaluaciones360.class)
+              .getResultStream()
+              .findFirst()
+              .orElse(null)
+              ;
+      return e;
     }
 
     @Override
@@ -208,10 +223,10 @@ public class ServicioEvaluacion3601 implements EjbEvaluacion3601 {
             case "31.0":
                 resultado.setR31(Short.parseShort(respuesta));
                 break;
-            case "32.0":
+            case "40.0":
                 resultado.setR32(respuesta);
                 break;
-            case "33.0":
+            case "41.0":
                 resultado.setR33(respuesta);
                 break;
         }
