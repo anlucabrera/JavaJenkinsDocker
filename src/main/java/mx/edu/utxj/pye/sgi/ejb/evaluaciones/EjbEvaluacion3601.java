@@ -11,6 +11,7 @@ import javax.faces.model.SelectItem;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
 import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
@@ -39,6 +40,8 @@ public interface EjbEvaluacion3601 {
      * @return Devuelve la evaluación activa del periodo mas reciente, en caso de no haber evaluaciones activas devuelve null.
      */
     public Evaluaciones360 evaluacionActiva();
+
+    public Evaluaciones360 getUltimaEvaluacion();
     
     public void actualizarRespuestaPorPregunta(Evaluaciones360Resultados resultado, Float pregunta, String respuesta);
     

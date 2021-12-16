@@ -246,7 +246,7 @@
                                     </div>
                                     <c:forEach items="#{evaluacion360Admin1.listaPersonalEvaluando}" var="evaluado2">
                                         <div class="col-lg-2 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
-                                            <c:set var="id" value="#{'r'.concat('32-0').concat('_').concat(evaluado2.pk.evaluado.toString())}" />
+                                            <c:set var="id" value="#{'r'.concat('40-0').concat('_').concat(evaluado2.pk.evaluado.toString())}" />
                                             <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.evaluadoNombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                             <f:ajax execute="#{id}">
                                                 <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacion360Admin1.respuestas[caster.toInt(evaluado2.pk.evaluado)][caster.toFloat(32)]}"
@@ -271,7 +271,7 @@
                                     </div>
                                     <c:forEach items="#{evaluacion360Admin1.listaPersonalEvaluando}" var="evaluado2">
                                         <div class="col-lg-2 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
-                                            <c:set var="id" value="#{'r'.concat('33-0').concat('_').concat(evaluado2.pk.evaluado.toString())}" />
+                                            <c:set var="id" value="#{'r'.concat('41-0').concat('_').concat(evaluado2.pk.evaluado.toString())}" />
                                             <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.evaluadoNombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                             <f:ajax execute="#{id}">
                                                 <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacion360Admin1.respuestas[caster.toInt(evaluado2.pk.evaluado)][caster.toFloat(33)]}"

@@ -645,7 +645,7 @@ public class EjbCartaNoAdeudo {
                     ;
             if(eventoTitulacion!=null){
                 //Consulta Expediente
-               ExpedienteTitulacion expedienteTitulacion = em.createQuery("select t from ExpedienteTitulacion t inner join t.evento e where e.evento=:evento and t.matricula.matricula=:matricula", ExpedienteTitulacion.class)
+               ExpedienteTitulacion expedienteTitulacion = em.createQuery("select t from ExpedienteTitulacion t inner join t.evento e where e.evento=:evento and t.estudiante.matricula=:matricula", ExpedienteTitulacion.class)
                        .setParameter("matricula",estudiante.getMatricula())
                        .setParameter("evento",eventoTitulacion.getEvento())
                        .getResultStream()
@@ -1613,7 +1613,7 @@ public class EjbCartaNoAdeudo {
             //Busca el adeduo del estudiante
             ResultadoEJB<NoAdeudoEstudiante> noAdeudo = compruebaNoAdeudoBiblioteca(estudiante,areaConsulta,nivelEstudios,personal, general);
             if(noAdeudo.getCorrecto()){
-                System.out.println("EjbCartaNoAdeudo.packBiblioteca "+ noAdeudo.getValor());
+                //System.out.println("EjbCartaNoAdeudo.packBiblioteca "+ noAdeudo.getValor());
                 biblioteca.setAduedoBiblioteca(noAdeudo.getValor());
                 //Busca al personal que realizó la liberacion
                 Personal p = em.find(Personal.class,noAdeudo.getValor().getTrabajador());
@@ -1849,6 +1849,7 @@ public class EjbCartaNoAdeudo {
                 titulacion.setIntegroExpediente(Boolean.FALSE);
 
             }
+            System.out.println("EjbCartaNoAdeudo.packTitulacion Expediante" +resEx.getValor());
             //Busca el adeduo del estudiante
             ResultadoEJB<NoAdeudoEstudiante> noAdeudo = compruebaNoAdeudoTitulacion(estudiante,areaConsulta,nivelEstudios,personal, general, resEx.getValor());
             if(noAdeudo.getCorrecto()){
@@ -2503,14 +2504,15 @@ public class EjbCartaNoAdeudo {
                 resEst.getValor().stream().forEach(e->{
                     DtoNoAdeudoEstudiante.NoAdeudoEstudianteGeneral dtoGeneral = new DtoNoAdeudoEstudiante.NoAdeudoEstudianteGeneral(new Estudiante(),new AreasUniversidad(),Boolean.FALSE,Boolean.FALSE,new Generaciones(),Boolean.FALSE,direccionCarrera,biblioteca,iye,cordinacionEstadia,seguimientoEgresados,serviciosMateriales,servciosEscolares,titulacion,finanzas);
                     ResultadoEJB<DtoNoAdeudoEstudiante.NoAdeudoEstudianteGeneral> resGenerales= packGeneral(e,generacion,nivel,personal,areaConsulta);
+                    System.out.println("EjbCartaNoAdeudo.packGeneralList "+resGenerales.getValor());
                     if(resGenerales.getCorrecto()){
                         dtoGeneral =resGenerales.getValor();
-                       // System.out.println("Area estudiante "+resGenerales.getValor().getPe().getArea() + "Sup "+ resGenerales.getValor().getPe().getAreaSuperior()+ "Personal consulta "+personal.getAreaOperativa());
+                        System.out.println("Area estudiante "+resGenerales.getValor().getPe().getArea() + "Sup "+ resGenerales.getValor().getPe().getAreaSuperior()+ "Personal consulta "+personal.getAreaOperativa());
                         //Empaqueta los datos necesarios direccion
                         dtoGeneral =resGenerales.getValor();
                         dtoGeneral.setDireccionCarrera(resGenerales.getValor().getDireccionCarrera());
                     }else {
-                        //System.out.println("EjbCartaNoAdeudo.packDireecionCarreraList ERROR AL EMPAQUETAR GENERAL");
+                        System.out.println("EjbCartaNoAdeudo.packDireecionCarreraList ERROR AL EMPAQUETAR GENERAL");
                         return;
                     }
                     listaDto.add(dtoGeneral);

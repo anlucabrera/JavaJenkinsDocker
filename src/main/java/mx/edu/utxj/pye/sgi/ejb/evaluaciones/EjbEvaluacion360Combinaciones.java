@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.ejb.Local;
+
+import mx.edu.utxj.pye.sgi.dto.DtoEvaluacion360;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacion360Combinaciones;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacionDesempenio;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -111,4 +113,8 @@ public interface EjbEvaluacion360Combinaciones {
     public Evaluaciones360Resultados eliminaCombinacion360(ListaEvaluacion360Combinaciones combinacion);
     
     public DesempenioEvaluacionResultados eliminaCombinacionDes(ListaEvaluacionDesempenio combinacion);
+
+    public PersonalCategorias getCategoriabyPersonal (Personal personal);
+
+    public DtoEvaluacion360 packCombinaciones( Evaluaciones360Resultados resultados);
 }

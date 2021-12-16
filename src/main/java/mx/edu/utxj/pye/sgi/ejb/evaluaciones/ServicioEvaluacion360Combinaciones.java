@@ -1,12 +1,8 @@
 package mx.edu.utxj.pye.sgi.ejb.evaluaciones;
 
 import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
@@ -15,6 +11,7 @@ import javax.persistence.Query;
 import javax.persistence.StoredProcedureQuery;
 import javax.persistence.TypedQuery;
 import lombok.NonNull;
+import mx.edu.utxj.pye.sgi.dto.DtoEvaluacion360;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacion360Combinaciones;
 import mx.edu.utxj.pye.sgi.dto.ListaEvaluacionDesempenio;
 import mx.edu.utxj.pye.sgi.ejb.evaluaciones.EjbEvaluacion360Combinaciones;
@@ -582,6 +579,32 @@ public class ServicioEvaluacion360Combinaciones implements EjbEvaluacion360Combi
 //            f.refresh(evaluacionElimina);
             f.flush();
             return evaluacionElimina;
+        }
+    }
+
+    @Override
+    public PersonalCategorias getCategoriabyPersonal(Personal personal) {
+        if(personal==null){return new PersonalCategorias();}
+        else {
+            PersonalCategorias c = f.getEntityManager().createQuery("select c from PersonalCategorias c where c.categoria=:cat",PersonalCategorias.class)
+                    .setParameter("cat", personal.getCategoria360().getCategoria())
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            return c;
+        }
+    }
+
+    @Override
+    public DtoEvaluacion360 packCombinaciones(Evaluaciones360Resultados resultados) {
+        if( resultados ==null){return new DtoEvaluacion360();}
+        else {
+            DtoEvaluacion360 dto = new DtoEvaluacion360();
+            dto.setEvaluado(getPersonalEvaluador(resultados.getEvaluaciones360ResultadosPK().getEvaluado()));
+            dto.setEvaluador(getPersonalEvaluador(resultados.getEvaluaciones360ResultadosPK().getEvaluador()));
+            dto.setCategoria(getCategoriabyPersonal(dto.getEvaluado()));
+            dto.setTipo(resultados.getTipo());
+            return dto;
         }
     }
 }
