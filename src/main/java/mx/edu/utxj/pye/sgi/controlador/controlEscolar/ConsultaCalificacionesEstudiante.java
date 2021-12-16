@@ -77,7 +77,8 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
                                 .stream()
                                 .filter(x -> x.getInscripcion().getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("1")) || 
                                         x.getInscripcion().getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("5")) || 
-                                        x.getInscripcion().getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("4")))
+                                        x.getInscripcion().getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("4")) ||
+                                        x.getInscripcion().getTipoEstudiante().getIdTipoEstudiante().equals(Short.parseShort("6")))
                                 .collect(Collectors.toList())
                                 
                 );
