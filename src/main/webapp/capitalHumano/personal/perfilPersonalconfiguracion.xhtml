@@ -456,8 +456,8 @@
                                         </p:tab>
 
                                         <p:tab title="Habilidades">  
-                                            <h:form id="frmcategorias">
-                                                <p:outputPanel id="form2">
+                                            <h:form id="frmHabilidades">
+                                                <p:outputPanel id="frmHabiliades">
                                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                         <div class="col-md-12">
                                                             <div class="box box-widget widget-user-2">
@@ -465,14 +465,23 @@
                                                                     <div class="col-sm-12 border-right">
                                                                         <div class="description-block">
                                                                             <div class="row">
-                                                                                <div class="col-sm-12 col-md-4 col-lg-2">
+                                                                                <div class="col-sm-12 col-md-4 col-lg-4">
                                                                                     <p:outputLabel for="anio" value="Proceso" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                     <p:selectOneMenu  id="anio" value="#{controladorPersonalconfiguracion.periodoEv}" valueChangeListener="#{controladorPersonalconfiguracion.numeroProcesoAsiganado}">
-                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.periodosEscolareses}" var="anio" itemValue="#{anio.periodo}" itemLabel="#{anio.periodo}: #{anio.mesInicio.mes}-#{anio.mesInicio.mes} -- #{anio.anio}" />
+                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.periodosEscolareses}" var="anio" itemValue="#{anio.periodo}" itemLabel="#{anio.periodo}: #{anio.mesInicio.mes}-#{anio.mesFin.mes} -- #{anio.anio}" />
                                                                                         <p:ajax update="@form" listener="#{controladorPersonalconfiguracion.imprimirValores()}"/>
                                                                                     </p:selectOneMenu >
                                                                                     <hr/>
                                                                                 </div>
+                                                                                <div class="form-group">
+                                                                                    <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                        <p:commandButton id="btnAgrgaActividadesMultiples" value="Importar alineación de categorías y habilidades de la evaluación anterior" actionListener="#{controladorPersonalconfiguracion.agreggarProductos()}" 
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" rendered="#{administracionControl.nuevoPeriodo}"/> 
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
                                                                                 <div class="form-group">
                                                                                     <div class="col-sm-12 col-md-12 col-lg-12">
                                                                                         <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre" />
@@ -515,7 +524,7 @@
                                                     </div>
                                                 </p:outputPanel>
                                             </h:form>
-                                            <h:form id="frmcategorias1">
+                                            <h:form id="frmHabilidadesCategorias">
                                                 <p:outputPanel>
                                                     <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.categoriasHabilidadeses}"
                                                                  paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
@@ -524,22 +533,27 @@
 
                                                         <p:headerRow>
                                                             <p:column colspan="2" styleClass="est">
-                                                                <h:outputText value="#{distincion.tipo eq 'Específica'?'360°':'Genérica'}"/>
+                                                                <h:outputText value="#{distincion.personalCategorias.nombre}"/>
                                                             </p:column>
                                                         </p:headerRow>       
 
-                                                        <p:column headerText="Clave" 
-                                                                  filterBy="# {distincion.categoria}" 
-                                                                  sortBy="# {distincion.categoria}" 
-                                                                  filterMatchMode="contains"
-                                                                  style="width: 10%">
-                                                            <h:outputText value="# {distincion.categoria}" />
+                                                        <p:column headerText="Categoria" 
+                                                                  filterBy="#{distincion.personalCategorias.nombre}" 
+                                                                  sortBy="#{distincion.personalCategorias.nombre}" 
+                                                                  filterMatchMode="contains">
+                                                            <h:outputText value="#{distincion.personalCategorias.categoria}-#{distincion.personalCategorias.nombre}" />
                                                         </p:column>
-                                                        <p:column headerText="Nombre" 
-                                                                  filterBy="# {distincion.nombre}" 
-                                                                  sortBy="# {distincion.nombre}" 
-                                                                  filterMatchMode="contains" >
-                                                            <h:outputText value="# {distincion.nombre}" />
+                                                        <p:column headerText="Habilidad" 
+                                                                  filterBy="#{distincion.habilidades.nombre}" 
+                                                                  sortBy="#{distincion.habilidades.nombre}" 
+                                                                  filterMatchMode="contains">
+                                                            <h:outputText value="#{distincion.habilidades.nombre}" />
+                                                        </p:column>
+                                                        <p:column headerText="Estatus" 
+                                                                  filterBy="#{distincion.habilidades.activo}" 
+                                                                  sortBy="#{distincion.habilidades.activo}" 
+                                                                  filterMatchMode="contains">
+                                                            <h:outputText value="#{distincion.habilidades.activo ?'Activo':'Inactivo'}" />
                                                         </p:column>
                                                     </p:dataTable>     
                                                 </p:outputPanel>

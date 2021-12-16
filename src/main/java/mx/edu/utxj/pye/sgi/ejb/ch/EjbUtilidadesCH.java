@@ -6,6 +6,7 @@ import javax.ejb.Local;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.CategoriasHabilidades;
+import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreasPK;
@@ -70,6 +71,8 @@ public interface EjbUtilidadesCH {
     
     public List<PeriodosEscolares> mostrarPeriodosEscolaresEvaluaciones360() throws Throwable;
     
+    public Evaluaciones360 muestraEvaluaciones360() throws Throwable;
+    
     public List<Habilidades> mostrarListaHabilidades() throws Throwable;
 
     public Habilidades crearNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
@@ -77,8 +80,10 @@ public interface EjbUtilidadesCH {
     public Habilidades actualizarNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
     
     public List<CategoriasHabilidades> mostrarCategoriasHabilidades(Integer periodo) throws Throwable;
-//
-//    public Habilidades crearNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
+
+    public CategoriasHabilidades crearCategoriasHabilidades(CategoriasHabilidades categoriasHabilidades) throws Throwable;
+    
+    public CategoriasHabilidades eliminarCategoriasHabilidades(CategoriasHabilidades categoriasHabilidades) throws Throwable;
 //    
 //    public Habilidades actualizarNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
 

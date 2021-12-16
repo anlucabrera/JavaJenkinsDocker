@@ -21,6 +21,8 @@ import org.omnifaces.cdi.ViewScoped;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.entity.ch.CategoriasHabilidades;
+import mx.edu.utxj.pye.sgi.entity.ch.CategoriasHabilidadesPK;
+import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Habilidades;
 import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
@@ -44,6 +46,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
     @Getter    @Setter    private List<ListaPersonal> nuevaListaPersonalsFotosFaltantes = new ArrayList<>();
     @Getter    @Setter    private List<Personal> listPersonal = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> nuevaListaAreasUniversidads = new ArrayList<>();
+    @Getter    @Setter    private List<Categorias> nuevaListaCategoriases = new ArrayList<>();
     @Getter    @Setter    private List<PersonalCategorias> nuevaListaPersonalCategoriases = new ArrayList<>();
     @Getter    @Setter    private List<PersonalCategorias> nuevaListaPersonalCategoriases360 = new ArrayList<>();
     @Getter    @Setter    private List<Habilidades> habilidadeses = new ArrayList<>();
@@ -55,6 +58,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
 
     @Getter    @Setter    private PersonalCategorias nuevoOBJPersonalCategorias;
     @Getter    @Setter    private AreasUniversidad nuevoOBJAreasUniversidad;
+    @Getter    @Setter    private Categorias nuevoOBJCategorias;
     @Getter    @Setter    private Habilidades habilidades;
     @Getter    @Setter    private PeriodosEscolares escolares= new PeriodosEscolares();
 
@@ -90,11 +94,13 @@ public class ControladorPersonalconfiguracion implements Serializable {
         try {
             nuevoOBJPersonalCategorias = new PersonalCategorias();
             nuevoOBJAreasUniversidad = new AreasUniversidad();
+            nuevoOBJCategorias = new Categorias();
             
             nuevaListaPersonalsFotosFaltantes.clear();
             nuevaListaPersonalCategoriases360.clear();
             nuevaListaPersonalCategoriases.clear();
             nuevaListaAreasUniversidads.clear();
+            nuevaListaCategoriases.clear();
             nuevaListaPersonals.clear();
             listPersonal.clear();
             periodosEscolareses.clear();
@@ -105,6 +111,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
             nuevaListaAreasUniversidads = ejbAreasLogeo.mostrarAllAreasUniversidad();
             listPersonal = ejbPersonal.mostrarListaPersonalsPorEstatus(1);
             nuevaListaPersonals = ejbPersonal.mostrarListaDeEmpleados();
+            nuevaListaCategoriases = ejbAreasLogeo.mostrarCategorias();
 
             empleadoActual = nuevaListaPersonals.iterator();
             while (empleadoActual.hasNext()) {
@@ -131,6 +138,7 @@ public class ControladorPersonalconfiguracion implements Serializable {
             Collections.sort(nuevaListaPersonals, (x, y) -> Short.compare(x.getCategoriaOperativa(), y.getCategoriaOperativa()));
             Collections.sort(nuevaListaPersonalCategoriases, (x, y) -> x.getTipo().compareTo(y.getTipo()));
 
+            consultaCategoriasHabilidades();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
@@ -146,6 +154,48 @@ public class ControladorPersonalconfiguracion implements Serializable {
         try {
             categoriasHabilidadeses= new ArrayList<>();
             categoriasHabilidadeses =  ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void agregaCategoriasHabilidadesEvAnterior() {
+        try {
+            categoriasHabilidadeses = new ArrayList<>();
+            categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
+            Evaluaciones360 e = ejbUtilidadesCH.muestraEvaluaciones360();
+            if (categoriasHabilidadeses.isEmpty()) {
+                categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades((periodoEv - 1));
+                categoriasHabilidadeses = new ArrayList<>();
+                if (!categoriasHabilidadeses.isEmpty()) {
+                    categoriasHabilidadeses.forEach((t) -> {
+                        CategoriasHabilidades ch = new CategoriasHabilidades();
+                        CategoriasHabilidadesPK chpk = new CategoriasHabilidadesPK();
+
+                        chpk.setCategoria(t.getPersonalCategorias().getCategoria());
+                        chpk.setHabilidad(t.getHabilidades().getHabilidad());
+                        chpk.setEvaluacion(e.getEvaluacion());
+
+                        ch.setCategoriasHabilidadesPK(new CategoriasHabilidadesPK());
+                        ch.setCategoriasHabilidadesPK(chpk);
+                        ch.setEvaluaciones360(new Evaluaciones360());
+                        ch.setHabilidades(new Habilidades());
+                        ch.setPersonalCategorias(new PersonalCategorias());
+
+                        ch.setEvaluaciones360(e);
+                        ch.setHabilidades(t.getHabilidades());
+                        ch.setPersonalCategorias(t.getPersonalCategorias());
+
+                        try {
+                            ejbUtilidadesCH.crearCategoriasHabilidades(ch);
+                        } catch (Throwable ex) {
+                            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+                            Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+                }
+            }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);

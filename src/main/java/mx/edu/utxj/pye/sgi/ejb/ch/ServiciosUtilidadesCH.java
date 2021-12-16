@@ -282,6 +282,13 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
     }
     
     @Override
+    public Evaluaciones360 muestraEvaluaciones360() throws Throwable{
+        TypedQuery<Evaluaciones360> q = em.createQuery("SELECT p FROM Evaluaciones360 p", Evaluaciones360.class);
+        List<Evaluaciones360> pr = q.getResultList();
+        return pr.get(pr.size()-1);
+    }
+    
+    @Override
     public List<Habilidades> mostrarListaHabilidades() throws Throwable {
         TypedQuery<Habilidades> q = em.createQuery("SELECT p FROM Habilidades p", Habilidades.class);
         List<Habilidades> pr = q.getResultList();
@@ -308,6 +315,20 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         q.setParameter("periodo", periodo);
         List<CategoriasHabilidades> pr = q.getResultList();
         return pr;
+    }
+    
+    @Override
+    public CategoriasHabilidades crearCategoriasHabilidades(CategoriasHabilidades categoriasHabilidades) throws Throwable {
+        em.persist(categoriasHabilidades);
+        em.flush();
+        return categoriasHabilidades;
+    }
+    
+    @Override
+    public CategoriasHabilidades eliminarCategoriasHabilidades(CategoriasHabilidades categoriasHabilidades) throws Throwable {
+        em.persist(categoriasHabilidades);
+        em.flush();
+        return categoriasHabilidades;
     }
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos

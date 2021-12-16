@@ -193,7 +193,7 @@
                                                                                 </p:dataTable>  
                                                                             </p:column>
                                                                         </p:row>
-                                                                         <p:row rendered="#{planeacionCuatrimestralImpresion.rol.render?(planeacionCuatrimestralImpresion.rol.estudioMateria.objetivoEducacionalPlanMateriaList.size() eq 0?false:true):false}">
+                                                                        <p:row rendered="#{planeacionCuatrimestralImpresion.rol.render?(planeacionCuatrimestralImpresion.rol.estudioMateria.objetivoEducacionalPlanMateriaList.size() eq 0?false:true):false}">
                                                                             <p:column colspan="6" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Objetivos Educacionales</p:column>     
                                                                         </p:row>
                                                                         <p:row rendered="#{planeacionCuatrimestralImpresion.rol.render?(planeacionCuatrimestralImpresion.rol.estudioMateria.objetivoEducacionalPlanMateriaList.size() eq 0?false:true):false}">
@@ -398,7 +398,7 @@
                                                                                 <br/>
                                                                                 <br/>
                                                                                 <c:if test="#{planeacionCuatrimestralImpresion.rol.carga.programa.areaSuperior eq 27}">
-                                                                                    <h:outputLabel value="#{planeacionCuatrimestralImpresion.buscarDirector(28)}" style="font-weight: bold;"/>
+                                                                                    <h:outputLabel value="Bonilla Jiménez Luis Antonio" style="font-weight: bold;"/>
                                                                                 </c:if>
                                                                                 <c:if test="#{planeacionCuatrimestralImpresion.rol.carga.programa.areaSuperior ne 27}">
                                                                                     <h:outputLabel value="#{planeacionCuatrimestralImpresion.buscarDirector(planeacionCuatrimestralImpresion.rol.carga.programa.areaSuperior)}" style="font-weight: bold;"/>
@@ -412,7 +412,6 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-
                                                         </div>
                                                     </p:panel>
                                                 </center>

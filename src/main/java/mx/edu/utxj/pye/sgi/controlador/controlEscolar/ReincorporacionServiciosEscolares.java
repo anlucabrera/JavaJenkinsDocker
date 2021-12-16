@@ -682,13 +682,14 @@ public class ReincorporacionServiciosEscolares extends ViewScopedRol implements 
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.ReincorporacionServiciosEscolares.guardaEstudiante()"+rol.getRein().getGrupos().size());
         rol.getRein().setTrabajadorInscribe(rol.getPersonalActivoSe().getPersonal().getClave());            
 //        prepararCoreo(null);
-        ejb.operacionesEstudiantesA(rol.getRein(),rol.getAspirante().getAspirante(),rol.getNivelRi());
-        ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> rejb =ejb.operacionesEstudianteR(rol.getRein(),rol.getAspirante().getAspirante(),rol.getEventoActivo(),rol.getNivelRi());
-        if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
-        rol.setRein(rejb.getValor());
-
-        buscarRegistro();
-        rol.setPaso(6);
+        if(rol.getRein().getMatricula()!=0){
+            ejb.operacionesEstudiantesA(rol.getRein(),rol.getAspirante().getAspirante(),rol.getNivelRi());
+            ResultadoEJB<DtoReincorporacion.ProcesoInscripcionRein> rejb =ejb.operacionesEstudianteR(rol.getRein(),rol.getAspirante().getAspirante(),rol.getEventoActivo(),rol.getNivelRi());
+            if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
+            rol.setRein(rejb.getValor());
+            buscarRegistro();
+            rol.setPaso(6);
+        }
     }
 
     public void actualizarUltimoGrupo(RowEditEvent event) {
