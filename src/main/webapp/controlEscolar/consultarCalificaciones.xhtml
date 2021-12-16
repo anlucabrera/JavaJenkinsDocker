@@ -225,10 +225,10 @@
                                                                                     <h:outputText value="#{consultaCalificaciones.obtenerPromedioAcumulado()}" style="font-size: medium">
                                                                                         <f:convertNumber type="number" pattern="#.##"/>
                                                                                     </h:outputText>
-                                                                                    <p:commandButton icon="fa fa-download" value="Descargar kardex" styleClass="btn btn-primary" ajax="false"
+                                                                                    <!--p:commandButton icon="fa fa-download" value="Descargar kardex" styleClass="btn btn-primary" ajax="false"
                                                                                                      actionListener="#{generacionKardex.controlPDF(consultaCalificaciones.rol.estudiante)}">
                                                                                         <p:fileDownload value="#{generacionKardex.download}" />
-                                                                                    </p:commandButton>
+                                                                                    </p:commandButton-->
                                                                                 </p:panelGrid>
                                                                             </c:if>
                                                                         </td>
