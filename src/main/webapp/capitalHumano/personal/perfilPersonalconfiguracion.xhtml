@@ -73,7 +73,7 @@
                                             </p:link>
                                         </div>      
                                     </div>
-                                    <p:tabView>
+                                        <p:tabView activeIndex="#{controladorPersonalconfiguracion.pestaniaActica}">
                                         <p:tab title="Áreas">    
                                             <h:form id="frmareas">
                                                 <p:outputPanel id="form1">
@@ -457,7 +457,8 @@
 
                                         <p:tab title="Habilidades">  
                                             <h:form id="frmHabilidades">
-                                                <p:outputPanel id="frmHabiliades">
+                                                <p:outputPanel id="frmHabiliades">                                                          
+                                                    <p:autoUpdate/>
                                                     <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                                         <div class="col-md-12">
                                                             <div class="box box-widget widget-user-2">
@@ -469,7 +470,7 @@
                                                                                     <p:outputLabel for="anio" value="Proceso" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                     <p:selectOneMenu  id="anio" value="#{controladorPersonalconfiguracion.periodoEv}" valueChangeListener="#{controladorPersonalconfiguracion.numeroProcesoAsiganado}">
                                                                                         <f:selectItems value="#{controladorPersonalconfiguracion.periodosEscolareses}" var="anio" itemValue="#{anio.periodo}" itemLabel="#{anio.periodo}: #{anio.mesInicio.mes}-#{anio.mesFin.mes} -- #{anio.anio}" />
-                                                                                        <p:ajax update="@form" listener="#{controladorPersonalconfiguracion.imprimirValores()}"/>
+                                                                                        <p:ajax update="@form tblDistinciones" listener="#{controladorPersonalconfiguracion.imprimirValores()}"/>
                                                                                     </p:selectOneMenu >
                                                                                     <hr/>
                                                                                 </div>
@@ -477,38 +478,51 @@
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                                                                         <p:commandButton id="btnAgrgaActividadesMultiples" value="Importar alineación de categorías y habilidades de la evaluación anterior" actionListener="#{controladorPersonalconfiguracion.agreggarProductos()}" 
-                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" rendered="#{administracionControl.nuevoPeriodo}"/> 
+                                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" rendered="#{controladorPersonalconfiguracion.categoriasHabilidadeses.size() eq 0?true:false}"/> 
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                             <div class="row">
-                                                                                <div class="form-group">
-                                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                        <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre" />
-                                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre de la categoría"
-                                                                                                     value="# {controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.nombre}"/>
-                                                                                        <p:message for="nombre" display="tooltip" />
-                                                                                        <hr/>
-                                                                                    </div>
-                                                                                </div>
                                                                                 <div class="col-sm-12 col-md-12 col-lg-12">
-                                                                                    <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Categoria" />
-                                                                                    <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" value="# {controladorPersonalconfiguracion.nuevoOBJPersonalCategorias.tipo}">
-                                                                                        <f:selectItem itemValue="Genérica" itemLabel="Genérica"/>
-                                                                                        <f:selectItem itemValue="Específica" itemLabel="360°"/>
+                                                                                    <p:outputLabel for="categoria" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="categoria 360" />
+                                                                                    <p:selectOneMenu id="categoria" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.cvlCat360}" valueChangeListener="#{controladorPersonalconfiguracion.numeroCategoria}">
+                                                                                        <f:selectItem itemValue="0" itemLabel="Todas"/>
+                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases360}" var="anio" itemValue="#{anio.categoria}" itemLabel="#{anio.categoria}-#{anio.nombre}" />
+                                                                                        <p:ajax update="@form tblDistinciones" listener="#{controladorPersonalconfiguracion.imprimirValores()}"/>
                                                                                     </p:selectOneMenu> 
                                                                                     <p:message for="categoria" display="tooltip"/> 
                                                                                     <hr/>
                                                                                 </div>
+                                                                                <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                    <p:outputLabel for="habi" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Habilidad" />
+                                                                                    <p:selectOneMenu id="habi" style="height: 100%; width: 100%; object-fit: contain" value="#{controladorPersonalconfiguracion.cvlHab}" valueChangeListener="#{controladorPersonalconfiguracion.numeroHanilidad}">
+                                                                                        <f:selectItem itemValue="0" itemLabel="Nueva Habilidad"/>
+                                                                                        <f:selectItems value="#{controladorPersonalconfiguracion.habilidadeses}" var="hab" itemValue="#{hab.habilidad}" itemLabel="#{hab.nombre}" />
+                                                                                        <p:ajax update="@form tblDistinciones" listener="#{controladorPersonalconfiguracion.imprimirValores()}"/>
+                                                                                    </p:selectOneMenu> 
+                                                                                    <p:message for="habi" display="tooltip"/> 
+                                                                                    <hr/>
+                                                                                </div>
+                                                                                <c:if test="#{controladorPersonalconfiguracion.nuevaHabiliad}">
+                                                                                    <div class="row">
+                                                                                        <div class="form-group">
+                                                                                            <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                                                <p:outputLabel for="cvProducto" value="Nombre Habilidad" style="height:100%; width: 100%;font-size: large"/>
+                                                                                                <p:inputText id="cvProducto"  style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{controladorPersonalconfiguracion.habilidades.nombre}"/>
+                                                                                                <hr/>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </c:if>
                                                                             </div>
                                                                             <div class="row">
                                                                                 <p:outputPanel>       
                                                                                     <div class="form-group"> 
                                                                                         <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                                         <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                                            <p:commandButton id="btnGuardarDistinciones" value="Guardar información" actionListener="# {controladorPersonalconfiguracion.crearNuevasPersonalCategorias()}" 
-                                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('frmcategorias1')update();"
-                                                                                                             update="@form"  process="@form" />
+                                                                                            <p:commandButton id="btnGuardarDistinciones" value="Guardar Alineación" actionListener="#{controladorPersonalconfiguracion.crearNuevaAsignacionHabilidad()}" 
+                                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('tblDistinciones')update();"
+                                                                                                             update="@form tblDistinciones"  process="@form" />
                                                                                         </div>
                                                                                     </div>
                                                                                 </p:outputPanel>
@@ -523,8 +537,6 @@
                                                         </div>
                                                     </div>
                                                 </p:outputPanel>
-                                            </h:form>
-                                            <h:form id="frmHabilidadesCategorias">
                                                 <p:outputPanel>
                                                     <p:dataTable id="tblDistinciones" value="#{controladorPersonalconfiguracion.categoriasHabilidadeses}"
                                                                  paginator="true" rows="15" rowsPerPageTemplate="15,20,25,30" emptyMessage="No se encontraron registros" rendered="true"
