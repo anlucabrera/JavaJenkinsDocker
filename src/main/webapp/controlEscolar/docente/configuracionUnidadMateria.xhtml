@@ -179,7 +179,7 @@
                                             <br />
                                             <br />
                                             <center>
-                                                <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{configuracionUnidadMateriaDocente.eliminarConfigUnidadMat}" icon="fa fa-trash" class="btn-primary" disabled="#{!configuracionUnidadMateriaDocente.rol.autorizoEliminar}">
+                                                <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{configuracionUnidadMateriaDocente.eliminarConfigUnidadMat}" icon="fa fa-trash" class="btn-primary" disabled="#{!configuracionUnidadMateriaDocente.rol.autorizoEliminar or configuracionUnidadMateriaDocente.rol.periodo.periodo lt configuracionUnidadMateriaDocente.rol.periodoActivo}">
                                                     <p:confirm header="Eliminar configuración" message="¿Está seguro de eliminar la configuración de la materia?" icon="ui-icon-alert" />
                                                 </p:commandButton>
                                                 <p:autoUpdate />

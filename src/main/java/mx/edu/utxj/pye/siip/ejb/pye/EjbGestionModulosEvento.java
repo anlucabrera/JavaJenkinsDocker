@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.siip.ejb.pye;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -63,7 +64,8 @@ public class EjbGestionModulosEvento {
      */
     public ResultadoEJB<EventosRegistros> getEventoActivo(){
         try{
-            EventosRegistros eventoActivo = em.createQuery("SELECT e FROM EventosRegistros e WHERE current_timestamp between e.fechaInicio and e.fechaFin", EventosRegistros.class)
+             EventosRegistros eventoActivo = em.createQuery("select e from EventosRegistros e where :fecha BETWEEN e.fechaInicio and e.fechaFin", EventosRegistros.class)
+                        .setParameter("fecha", new Date())
                         .getResultStream()
                         .findFirst()
                         .orElse(null);
