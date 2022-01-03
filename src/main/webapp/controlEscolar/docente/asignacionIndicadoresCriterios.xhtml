@@ -120,7 +120,7 @@
                                                     <p></p>
                                                     <p></p>
                                                     <p></p>
-                                                    <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{asignacionIndicadoresCriteriosDocente.eliminarAsignacionIndicadores}" class="btn-primary" process="@this" update="@form" icon="fa fa-trash" >
+                                                    <p:commandButton id="btnEliminar" value="Eliminar" actionListener="#{asignacionIndicadoresCriteriosDocente.eliminarAsignacionIndicadores}" class="btn-primary" process="@this" update="@form" icon="fa fa-trash" disabled="#{asignacionIndicadoresCriteriosDocente.rol.periodo.periodo lt asignacionIndicadoresCriteriosDocente.rol.periodoActivo}">
                                                         <p:confirm header="Confirmación" message="¿Confirma la eliminación de la asignación de indicadores por criterio?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
@@ -176,7 +176,7 @@
                                                     <p></p>
                                                     <p></p>
                                                     <p></p>
-                                                    <p:commandButton id="btnEliminarEvidIns" value="Eliminar" actionListener="#{asignacionIndicadoresCriteriosDocente.eliminarEvidenciasInstrumentos}" class="btn-primary" process="@this" update="@form" icon="fa fa-trash" >
+                                                    <p:commandButton id="btnEliminarEvidIns" value="Eliminar" actionListener="#{asignacionIndicadoresCriteriosDocente.eliminarEvidenciasInstrumentos}" class="btn-primary" process="@this" update="@form" icon="fa fa-trash" disabled="#{asignacionIndicadoresCriteriosDocente.rol.periodo.periodo lt asignacionIndicadoresCriteriosDocente.rol.periodoActivo}">
                                                         <p:confirm header="Confirmación" message="¿Confirma la eliminación de las evidencias e instrumentos registrados?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
