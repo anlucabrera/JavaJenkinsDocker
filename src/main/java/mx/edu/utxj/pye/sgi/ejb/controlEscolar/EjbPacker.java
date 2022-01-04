@@ -540,7 +540,22 @@ public class EjbPacker {
             
             Boolean permisoExtInd = permiso != null;
             
-            DtoCapturaCalificacionAlineacion dtoCapturaCalificacion = new DtoCapturaCalificacionAlineacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, permisoExtInd, capturas);
+            //Se agregaron estas líneas para verificar que la configuración de las unidades estén validadas por dirección de carrera
+            Boolean unidadesValidadas = false;
+            
+            List<UnidadMateriaConfiguracion> listaUnidadesConfiguradas = em.createQuery("select umc from UnidadMateriaConfiguracion umc where umc.carga.carga=:carga", UnidadMateriaConfiguracion.class)
+                    .setParameter("carga", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+           
+            List<UnidadMateriaConfiguracion> listaUnidadesValidadas = listaUnidadesConfiguradas.stream().filter(p->p.getDirector()!= null).collect(Collectors.toList());
+            
+            if(!listaUnidadesConfiguradas.isEmpty() && listaUnidadesConfiguradas.size() == listaUnidadesValidadas.size()){
+                unidadesValidadas = true;
+            }
+            //
+            
+            DtoCapturaCalificacionAlineacion dtoCapturaCalificacion = new DtoCapturaCalificacionAlineacion(dtoEstudiante, dtoCargaAcademica, dtoUnidadConfiguracion, permisoExtInd, unidadesValidadas, capturas);
             ResultadoEJB<BigDecimal> resPromedio = ejbCapturaCalificaciones.promediarUnidadAlineacion(dtoCapturaCalificacion);
             if(resPromedio.getCorrecto()) {
                 dtoCapturaCalificacion.setPromedio(resPromedio.getValor());
