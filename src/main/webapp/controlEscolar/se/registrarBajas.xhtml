@@ -169,6 +169,9 @@
                                                     <p:column>
                                                     <center>
                                                         <div class="btn-group">
+                                                            <p:commandButton actionListener="#{registrarBajaServiciosEscolares.validarBaja(registro)}"
+                                                                                  class="btn btn-sm #{registroBaja.registroBaja.validada eq 1?'btn-info':'btn-danger'}" icon="#{registroBaja.registroBaja.validada eq 1?'fa fa-close':'fa fa-check'}"
+                                                                                  title="#{registroBaja.registroBaja.validada eq 1?'Invalidar baja.':'Validar baja.'}" />
                                                             <p:commandButton actionListener="#{registrarBajaServiciosEscolares.buscarMateriasReprobadas(registro)}"
                                                             class="btn btn-sm btn-warning" 
                                                             icon="fa fa-search"

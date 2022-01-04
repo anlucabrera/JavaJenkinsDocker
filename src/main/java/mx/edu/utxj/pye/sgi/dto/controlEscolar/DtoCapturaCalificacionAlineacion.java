@@ -22,6 +22,7 @@ public class DtoCapturaCalificacionAlineacion implements Serializable {
     @Getter @Setter @NonNull private DtoUnidadConfiguracionAlineacion dtoUnidadConfiguracion;
     @Getter private DtoCasoCriticoAlineacion dtoCasoCritico;
     @Getter private @NonNull Boolean permisoExtInd;
+    @Getter private @NonNull Boolean unidadesValidadas;
     @Getter @Setter private Map<CasoCriticoTipo, DtoCasoCriticoAlineacion> casosCriticosSistema = new HashMap<>();
     @Getter @Setter @NonNull private List<Captura> capturas;
     @Getter @Setter private UnidadMateriaComentario comentarioReprobatorio;

@@ -205,6 +205,13 @@ public class CapturaCalificacionesDocente extends ViewScopedRol implements Desar
             } else {
                 rol.setEstudiantesPorGrupoAlineacion(resGrupo.getValor());
                 setExisteAperturaInd(existeAperturaIndividualAlineacion(rol.getEstudiantesPorGrupoAlineacion().getEstudiantes()));
+                
+                //Se agregaron estas líneas para verificar que la configuración de las unidades estén validadas por dirección de carrera
+                Integer unidadesValidadas = (int) rol.getEstudiantesPorGrupoAlineacion().getEstudiantes().stream().filter(p->p.getUnidadesValidadas()).count();
+                
+                if(unidadesValidadas==0){
+                  mostrarMensaje("No puede capturar calificaciones porque la planeación de la carga académica seleccionada no ha sido validada por dirección de carrera.");  
+                }
 //            System.out.println("resGrupo = " + resGrupo.getValor().getEstudiantes().size());
             }
         }

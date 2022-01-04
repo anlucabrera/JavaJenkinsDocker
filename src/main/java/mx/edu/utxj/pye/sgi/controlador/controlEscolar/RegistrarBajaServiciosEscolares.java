@@ -259,6 +259,7 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
        if(res.getCorrecto()){
             rol.setRegistroBajaEstudiante(res.getValor());
             mostrarMensajeResultadoEJB(res);
+            rol.setDeshabilitarRegistro(true);
             rol.setDeshabilitarEliminar(false);
             if(!Objects.equals(rol.getRegistroBajaEstudiante().getPeriodoEscolar().getPeriodo(), rol.getPeriodoActivo())){
                 rol.setDeshabilitarEliminar(true);
@@ -330,5 +331,16 @@ public class RegistrarBajaServiciosEscolares extends ViewScopedRol implements De
         rol.setDatosEstudiante(ejb.buscarDatosEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
         rol.setRegistroBajaEstudiante(ejb.buscarRegistroBajaEstudiante(registroNew.getRegistroBaja().getEstudiante().getIdEstudiante()).getValor());
 
+    }
+    
+     /**
+     * Permite modificar la situación de la baja
+     * @param baja Registro de la baja
+     */
+    public void validarBaja(Baja baja){
+        ResultadoEJB<Integer> resValidar = ejb.validarBaja(baja);
+        mostrarMensajeResultadoEJB(resValidar);
+        Ajax.update("frm");
+        Ajax.update("tbRegBaja");
     }
 }
