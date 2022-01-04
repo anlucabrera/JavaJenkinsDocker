@@ -46,10 +46,13 @@ public class EjbEliminarInscripcion {
         try{
             PeriodosEscolares periodoActual = ejbRegistroBajas.getPeriodoActual();
             
-             //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
-            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') AND e.periodo=:periodo ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo DESC", Estudiante.class)
+            List<String> tiposRegistroOmitir = new ArrayList<>(); tiposRegistroOmitir.add("Equivalencia"); tiposRegistroOmitir.add("Reincorporación otra UT"); tiposRegistroOmitir.add("Regularización de calificaciones por reincoporación"); tiposRegistroOmitir.add("Reincorporación otra generación"); tiposRegistroOmitir.add("Reincorporación misma UT");
+            
+            //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
+            List<Estudiante> estudiantes = em.createQuery("select e from Estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') AND e.periodo=:periodo AND e.tipoRegistro NOT IN :tiposRegistro ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo DESC", Estudiante.class)
                     .setParameter("pista", pista)
                     .setParameter("periodo", periodoActual.getPeriodo())
+                    .setParameter("tiposRegistro", tiposRegistroOmitir)
                     .getResultList();
             
             List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
@@ -327,7 +330,7 @@ public class EjbEliminarInscripcion {
             List<CalificacionEvidenciaInstrumento> califEvidencias = em.createQuery("SELECT c FROM CalificacionEvidenciaInstrumento c WHERE c.idEstudiante.idEstudiante=:clave", CalificacionEvidenciaInstrumento.class)
                     .setParameter("clave", estudiante.getIdEstudiante())
                     .getResultStream().collect(Collectors.toList());
-
+            
             return ResultadoEJB.crearCorrecto(califEvidencias, "Registros de calificaciones por evidencias del estudiante seleccionado.");
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo buscar registros de calificaciones por evidencias del estudiante seleccionado. (EjbEliminarInscripcion.buscarCalificacionesEvidenciasRegistradas)", e, null);
