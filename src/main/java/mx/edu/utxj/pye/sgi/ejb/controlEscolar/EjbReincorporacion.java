@@ -37,6 +37,7 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estado;
 import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
@@ -2307,21 +2308,69 @@ public class EjbReincorporacion {
                         .getResultList();
             
             estudiantes.forEach((t) -> {
-               List<CalificacionPromedio> calificacionPromedios = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionPromedio.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+                List<CalificacionPromedio> calificacionPromedios = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionPromedio.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+                List<CalificacionNivelacion> calificacionNivelacions = em.createQuery("select t from CalificacionNivelacion t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionNivelacion.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
                 List<Estudiante> es = em.createQuery("select t from Estudiante t INNER JOIN t.aspirante a WHERE a.idAspirante=:idAspirante ORDER BY t.periodo", Estudiante.class)
                         .setParameter("idAspirante", t.getAspirante().getIdAspirante())
                         .getResultList();
-                Estudiante estudiante=es.get(es.size()-1);
-               DtoReincorporacion.ReporteReincorporaciones rr= new DtoReincorporacion.ReporteReincorporaciones(t.getAspirante().getIdPersona(), t.getAspirante(), t, t.getGrupo().getPlan(), calificacionPromedios.size(), t.getGrupo().getCargaAcademicaList().size(), estudiante.getTipoEstudiante().getDescripcion(), Boolean.FALSE);
-               if(t.getGrupo().getCargaAcademicaList().size()==calificacionPromedios.size()){
-                   rr.setCompleto(Boolean.TRUE);
-               }
-               reincorporacioneses.add(rr);
+                Estudiante estudiante = es.get(es.size() - 1);
+                DtoReincorporacion.ReporteReincorporaciones rr = new DtoReincorporacion.ReporteReincorporaciones(t.getAspirante().getIdPersona(), t.getAspirante(), t, t.getGrupo().getPlan(), (calificacionPromedios.size() + calificacionNivelacions.size()), t.getGrupo().getCargaAcademicaList().size(), estudiante.getTipoEstudiante().getDescripcion(), Boolean.FALSE);
+                if (t.getGrupo().getCargaAcademicaList().size() == (calificacionPromedios.size()+calificacionNivelacions.size())) {
+                    rr.setCompleto(Boolean.TRUE);
+                }
+                reincorporacioneses.add(rr);
             });
             
             return ResultadoEJB.crearCorrecto(reincorporacioneses, "AgetReporteReincorporaciones Encontrados");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar el getReporteReincorporaciones (EjbReincorporacion.getReporteReincorporaciones).", e, null);
         }
+    }
+    
+    public ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> getReporteReincorporacionesPorEstudiante() {
+        try {
+            List<String> reincorporaciones=new ArrayList<>();
+            reincorporaciones.add("Cambio de grupo");
+            reincorporaciones.add("Cambio de plan de estudio");
+            reincorporaciones.add("Cambio de programa educativo");
+            reincorporaciones.add("Equivalencia");
+            reincorporaciones.add("Reincorporación otra UT");
+            reincorporaciones.add("Reincorporación otra generación");
+            reincorporaciones.add("Reincorporación misma UT");
+            List<DtoReincorporacion.ReporteReincorporaciones> reincorporacioneses= new ArrayList<>();
+            List<Estudiante> matr = em.createQuery("select t from Estudiante t INNER JOIN t.aspirante a INNER JOIN a.idPersona p WHERE t.tipoRegistro in :reincorporaciones GROUP BY t.aspirante ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, t.periodo", Estudiante.class)
+                    .setParameter("reincorporaciones", reincorporaciones)
+                    .getResultList();
+            List<Integer> aspi = new ArrayList<>();
+            matr.forEach((t) -> {
+                aspi.add(t.getAspirante().getIdAspirante());
+            });
+            List<Estudiante> estudiantes = em.createQuery("select t from Estudiante t INNER JOIN t.aspirante a INNER JOIN a.idPersona p WHERE a.idAspirante in :matriculas ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, t.periodo", Estudiante.class)
+                        .setParameter("matriculas", aspi)
+                        .getResultList();
+            
+            
+            estudiantes.forEach((t) -> {
+                List<CalificacionPromedio> calificacionPromedios = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionPromedio.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+                List<CalificacionNivelacion> calificacionNivelacions = em.createQuery("select t from CalificacionNivelacion t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionNivelacion.class).setParameter("idEstudiante", t.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+                List<Estudiante> es = em.createQuery("select t from Estudiante t INNER JOIN t.aspirante a WHERE a.idAspirante=:idAspirante ORDER BY t.periodo", Estudiante.class)
+                        .setParameter("idAspirante", t.getAspirante().getIdAspirante())
+                        .getResultList();
+                Estudiante estudiante = es.get(es.size() - 1);
+                DtoReincorporacion.ReporteReincorporaciones rr = new DtoReincorporacion.ReporteReincorporaciones(t.getAspirante().getIdPersona(), t.getAspirante(), t, t.getGrupo().getPlan(), (calificacionPromedios.size() + calificacionNivelacions.size()), t.getGrupo().getCargaAcademicaList().size(), estudiante.getTipoEstudiante().getDescripcion(), Boolean.FALSE);
+                if (t.getGrupo().getCargaAcademicaList().size() == (calificacionPromedios.size() + calificacionNivelacions.size())) {
+                    rr.setCompleto(Boolean.TRUE);
+                }
+                reincorporacioneses.add(rr);
+            });
+            
+            return ResultadoEJB.crearCorrecto(reincorporacioneses, "AgetReporteReincorporaciones Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar el getReporteReincorporaciones (EjbReincorporacion.getReporteReincorporaciones).", e, null);
+        }
+    }
+    
+    public PeriodosEscolares buscaPeriodo(Integer idP) {
+         return em.find(PeriodosEscolares.class, idP);
     }
 }

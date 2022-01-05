@@ -38,6 +38,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroFichaIngenieria;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.UniversidadesUT;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Ajax;
@@ -111,6 +112,7 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
             rol.setFiltaBaja(Boolean.TRUE);
             llenaCatalogos();
             getreporte();
+            getreporteEstudiante();
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -310,4 +312,31 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
             rol.setReincorporacioneses(rrs);
         }
     }   
+    
+    public void getreporteEstudiante (){
+        ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> resUniversidades = ejb.getReporteReincorporacionesPorEstudiante();
+        if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
+        rol.setReincorporacionesEstudiantes(resUniversidades.getValor());
+    }   
+    
+    public String buscaPeriodoEscolar (Integer idP){
+        PeriodosEscolares escolares =ejb.buscaPeriodo(idP);
+        String per=escolares.getMesInicio().getMes()+" - "+escolares.getMesFin().getMes()+" - "+escolares.getAnio();
+        return per;
+    }  
+    public String colocaEstilo (Short tipoE){
+        if(null == tipoE){
+            return "color: #000000;";
+        }else switch (tipoE) {
+            case 2:
+            case 3:
+                return "color: #ff2733;";
+            case 5:
+            case 6:
+                return "color: #00FF00;";
+            default:
+                return "color: #000000;";
+        }
+    }  
 }
+
