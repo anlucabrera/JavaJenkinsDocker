@@ -32,6 +32,8 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguroFacultativo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SegurosFacultativosEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.Asentamiento;
+import mx.edu.utxj.pye.sgi.entity.pye2.AsentamientoPK;
 import mx.edu.utxj.pye.sgi.enums.SeguroFacultativoValidacion;
 import mx.edu.utxj.pye.sgi.enums.SegurosFacultativosEstatus;
 import mx.edu.utxj.pye.sgi.enums.converter.SeguroFacultativoValidacionConverter;
@@ -113,12 +115,15 @@ public class EjbRegistroSeguroFacultativoEstudiante {
             
             DtoEstudiante estudiante = pack.packEstudianteGeneral(seguroFacultativo.getEstudiante()).getValor();
             AreasUniversidad areasUniversidad = em.find(AreasUniversidad.class, seguroFacultativo.getEstudiante().getCarrera());
+            AsentamientoPK asentamientoPK = new AsentamientoPK(seguroFacultativo.getEstudiante().getAspirante().getDomicilio().getIdEstado(), seguroFacultativo.getEstudiante().getAspirante().getDomicilio().getIdMunicipio(), seguroFacultativo.getEstudiante().getAspirante().getDomicilio().getIdAsentamiento());
+            Asentamiento asentamiento = em.find(Asentamiento.class, asentamientoPK);
+            String asentamientoCompleto = asentamiento.getMunicipio1().getEstado().getNombre().concat(" ").concat(asentamiento.getMunicipio1().getNombre()).concat(" ").concat(asentamiento.getNombreAsentamiento());
             if(seguroFacultativo.getUsuarioOperacion() != null){
                 PersonalActivo personalActivo = ejbPersonalBean.pack(seguroFacultativo.getUsuarioOperacion());
-                DtoSeguroFacultativo dtoConUsuarioOperacion = new DtoSeguroFacultativo(seguroFacultativo, estudiante, personalActivo, areasUniversidad);
+                DtoSeguroFacultativo dtoConUsuarioOperacion = new DtoSeguroFacultativo(seguroFacultativo, estudiante, personalActivo, areasUniversidad, asentamientoCompleto);
                 return ResultadoEJB.crearCorrecto(dtoConUsuarioOperacion, "Seguro facultativo empaquetado");
             }else{
-                DtoSeguroFacultativo dtoSinUsuarioOperacion = new DtoSeguroFacultativo(seguroFacultativo, estudiante, areasUniversidad);
+                DtoSeguroFacultativo dtoSinUsuarioOperacion = new DtoSeguroFacultativo(seguroFacultativo, estudiante, areasUniversidad, asentamientoCompleto);
                 return ResultadoEJB.crearCorrecto(dtoSinUsuarioOperacion, "Seguro facultativo empaquetado");
             }
         } catch (Exception e) {

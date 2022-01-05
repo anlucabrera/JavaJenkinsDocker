@@ -231,6 +231,7 @@
                                                                 <p:column headerText="Validar"                                  width="250"/>
                                                                 <p:column headerText="Comprobante Vigencia de Derechos"         width="120"/>
                                                                 <p:column headerText="Validar"                                  width="250"/>
+                                                                <p:column headerText="Docimilio de Residencia"                  width="350"/>
                                                                 <p:column headerText="Usuario que está validando"               width="220"/>
                                                             </p:row>
                                                         </p:columnGroup>
@@ -411,6 +412,10 @@
                                                                              value="#{sfEstudiante}" 
                                                                              />
                                                             </p:selectOneButton>
+                                                        </p:column>
+                                                        
+                                                        <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">
+                                                            <h:outputText value="#{sfEstudiante.asentamiento}" />
                                                         </p:column>
                                                         
                                                         <p:column style="align-content: center;text-align: center;#{sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.ALTA.label?'background-color:#F1FFF6;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.BAJA.label?'background-color:#FFEFEC;':'' or sfEstudiante.seguroFactultativo.validacionEnfermeria eq sfValidacion.EN_ESPERA_DE_VALIDACION.label?'':''}">

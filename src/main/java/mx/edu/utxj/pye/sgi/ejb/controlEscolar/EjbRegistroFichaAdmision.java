@@ -704,7 +704,7 @@ public class EjbRegistroFichaAdmision {
                     "ATENTAMENTE \n" +
                     "Departamento de Servicios Escolares";
 
-            String identificador = "Registro de Ficha de Admisión 2021 UTXJ";
+            String identificador = "Registro de Ficha de Admisión 2022 UTXJ";
             String asunto = "Registro Exitoso";
             // System.out.println(medioComunicacion.getEmail());
             if(medioComunicacion.getEmail() != null){
@@ -1807,7 +1807,7 @@ public class EjbRegistroFichaAdmision {
     public ResultadoEJB<List<Sistema>> getSistemas() {
         try {
             List<Sistema> sistemas = new ArrayList<>();
-            sistemas = em.createQuery("select s from Sistema s order by s.nombre desc", Sistema.class)
+            sistemas = em.createQuery("select s from Sistema s where s.idSistema = 1 order by s.nombre desc", Sistema.class)
                     .getResultList()
             ;
             if (sistemas == null) {

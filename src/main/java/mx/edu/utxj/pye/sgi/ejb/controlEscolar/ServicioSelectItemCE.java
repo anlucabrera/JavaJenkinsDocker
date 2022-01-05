@@ -166,7 +166,7 @@ public class ServicioSelectItemCE implements EjbSelectItemCE {
 
     @Override
     public List<Sistema> itemSistema() {
-        return em.createNamedQuery("Sistema.findAll", Sistema.class)
+        return em.createQuery("SELECT s FROM Sistema s WHERE s.idSistema = 1",Sistema.class)
                 .getResultList();
     }
 
