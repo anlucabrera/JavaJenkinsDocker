@@ -30,24 +30,28 @@ public class DtoSeguroFacultativo implements Serializable, Comparable<DtoSeguroF
     @Getter             @Setter             private                 PersonalActivo      personalActivo;
     @Getter             @Setter             private                 Boolean             validacionSeguro;
     @Getter             @Setter             private                 AreasUniversidad    programaEducativo;
+    @Getter             @Setter             private                 String              asentamiento;
 
-    public DtoSeguroFacultativo(SegurosFacultativosEstudiante seguroFactultativo, DtoEstudiante estudiante, PersonalActivo personalActivo) {
+    public DtoSeguroFacultativo(SegurosFacultativosEstudiante seguroFactultativo, DtoEstudiante estudiante, PersonalActivo personalActivo, String asentamiento) {
         this.seguroFactultativo = seguroFactultativo;
         this.estudiante = estudiante;
         this.personalActivo = personalActivo;
+        this.asentamiento = asentamiento;
     }
 
-    public DtoSeguroFacultativo(SegurosFacultativosEstudiante seguroFactultativo, DtoEstudiante estudiante, AreasUniversidad programaEducativo) {
+    public DtoSeguroFacultativo(SegurosFacultativosEstudiante seguroFactultativo, DtoEstudiante estudiante, AreasUniversidad programaEducativo, String asentamiento) {
         this.seguroFactultativo = seguroFactultativo;
         this.estudiante = estudiante;
         this.programaEducativo = programaEducativo;
+        this.asentamiento = asentamiento;
     }
 
-    public DtoSeguroFacultativo(SegurosFacultativosEstudiante seguroFactultativo, DtoEstudiante estudiante, PersonalActivo personalActivo, AreasUniversidad programaEducativo) {
+    public DtoSeguroFacultativo(SegurosFacultativosEstudiante seguroFactultativo, DtoEstudiante estudiante, PersonalActivo personalActivo, AreasUniversidad programaEducativo, String asentamiento) {
         this.seguroFactultativo = seguroFactultativo;
         this.estudiante = estudiante;
         this.personalActivo = personalActivo;
         this.programaEducativo = programaEducativo;
+        this.asentamiento = asentamiento;
     }
     
     @Override

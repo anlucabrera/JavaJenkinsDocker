@@ -1538,7 +1538,7 @@
                                                                                              converter="entityConverter"
                                                                             >
                                                                                 <f:selectItem itemValue="#{null}"/>
-                                                                                <f:selectItems value="#{registroFichaAdmisionAspirante.rol.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.nombre}" itemDisabled="#{(sistema.idSistema == 2 and registroFichaAdmisionAspirante.rol.dacademicos.universidad1.area == 25)or(sistema.idSistema==2 and registroFichaAdmisionAspirante.rol.dacademicos.universidad1.area==28)or(sistema.idSistema==2 and registroFichaAdmisionAspirante.rol.dacademicos.academicos.primeraOpcion==40)}"/>
+                                                                                <f:selectItems value="#{registroFichaAdmisionAspirante.rol.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.nombre}" itemDisabled="true"/>
                                                                             <p:ajax/>
                                                                             </p:selectOneMenu>
                                                                             <p:outputLabel for="sistemaPo" value="Sistema*"/>
@@ -1608,7 +1608,7 @@
                                                                                              converter="entityConverter"
                                                                             >
                                                                                 <f:selectItem itemValue="#{null}"/>
-                                                                                <f:selectItems value="#{registroFichaAdmisionAspirante.rol.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.nombre}" itemDisabled="#{(sistema.idSistema == 2 and registroFichaAdmisionAspirante.rol.dacademicos.universidad2.area == 25)or(sistema.idSistema==2 and registroFichaAdmisionAspirante.rol.dacademicos.universidad2.area==28)or(sistema.idSistema==2 and registroFichaAdmisionAspirante.rol.dacademicos.academicos.segundaOpcion==40)}"/>
+                                                                                <f:selectItems value="#{registroFichaAdmisionAspirante.rol.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.nombre}" itemDisabled="true"/>
                                                                             </p:selectOneMenu>
                                                                             <p:outputLabel for="sistemaSo" value="Sistema*"/>
                                                                             <p:message for="sistemaSo"><p:autoUpdate/></p:message>

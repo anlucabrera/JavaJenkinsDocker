@@ -528,7 +528,10 @@ public class EjbValidacionSeguroFacultativo {
             
             DtoEstudiante estudiante = pack.packEstudianteGeneral(seguroFacultativo.getEstudiante()).getValor();
             AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, seguroFacultativo.getEstudiante().getCarrera());
-            DtoSeguroFacultativo dtoSinUsuarioOperacion = new DtoSeguroFacultativo(seguroFacultativo, estudiante, programaEducativo);
+            AsentamientoPK asentamientoPK = new AsentamientoPK(seguroFacultativo.getEstudiante().getAspirante().getDomicilio().getIdEstado(), seguroFacultativo.getEstudiante().getAspirante().getDomicilio().getIdMunicipio(), seguroFacultativo.getEstudiante().getAspirante().getDomicilio().getIdAsentamiento());
+            Asentamiento asentamiento = em.find(Asentamiento.class, asentamientoPK);
+            String asentamientoCompleto = asentamiento.getMunicipio1().getEstado().getNombre().concat(" - ").concat(asentamiento.getMunicipio1().getNombre()).concat(" - ").concat(asentamiento.getNombreAsentamiento());
+            DtoSeguroFacultativo dtoSinUsuarioOperacion = new DtoSeguroFacultativo(seguroFacultativo, estudiante, programaEducativo, asentamientoCompleto);
             return ResultadoEJB.crearCorrecto(dtoSinUsuarioOperacion, "Seguro facultativo empaquetado");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el registro de seguro facultativo (EjbValidacionSeguroFacultativo.packSeguroFacultativoReporte)", e, DtoSeguroFacultativo.class);

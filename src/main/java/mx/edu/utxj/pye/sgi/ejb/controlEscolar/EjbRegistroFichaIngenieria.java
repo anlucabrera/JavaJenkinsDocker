@@ -1024,7 +1024,7 @@ public class EjbRegistroFichaIngenieria {
                     "ATENTAMENTE \n" +
                     "Departamento de Servicios Escolares";
 
-            String identificador = "Pre registro Ingenierías y Licenciaturas 2021 UTXJ";
+            String identificador = "Pre registro Ingenierías y Licenciaturas 2022 UTXJ";
             String asunto = "Pre registo Exitoso";
             // System.out.println(medioComunicacion.getEmail());
             if(medioComunicacion.getEmail() != null){
