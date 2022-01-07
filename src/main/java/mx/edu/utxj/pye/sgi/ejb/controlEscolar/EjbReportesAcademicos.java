@@ -1002,8 +1002,8 @@ public class EjbReportesAcademicos {
                 String discapacidad = getTipoDiscapacidad(estudiante).getValor();
                 String lenguaIndigena = getLenguaIndigena(estudiante).getValor();
                 
-                String promedio = String.format("%.3f",getObtenerPromedioEstudiante(estudiante).getValor());
-                String promedioAcumulado = String.format("%.3f",getObtenerPromedioAcumuladoEstudiante(estudiante).getValor());
+                String promedio = String.format("%.2f",getObtenerPromedioEstudiante(estudiante).getValor());
+                String promedioAcumulado = String.format("%.2f",getObtenerPromedioAcumuladoEstudiante(estudiante).getValor());
                 
                 DtoAprovechamientoEscolarEstudiante dtoAprovechamientoEscolar = new DtoAprovechamientoEscolarEstudiante(estudiante,programa,periodo,genero,discapacidad,lenguaIndigena, promedio, promedioAcumulado);
                 listaAprovechamiento.add(dtoAprovechamientoEscolar);
@@ -1047,8 +1047,8 @@ public class EjbReportesAcademicos {
                 String discapacidad = getTipoDiscapacidad(estudiante).getValor();
                 String lenguaIndigena = getLenguaIndigena(estudiante).getValor();
                 
-                String promedio = String.format("%.3f",getObtenerPromedioEstudiante(estudiante).getValor());
-                String promedioAcumulado = String.format("%.3f",getObtenerPromedioAcumuladoEstudiante(estudiante).getValor());
+                String promedio = String.format("%.2f",getObtenerPromedioEstudiante(estudiante).getValor());
+                String promedioAcumulado = String.format("%.2f",getObtenerPromedioAcumuladoEstudiante(estudiante).getValor());
                 
                 DtoAprovechamientoEscolarEstudiante dtoAprovechamientoEscolar = new DtoAprovechamientoEscolarEstudiante(estudiante,programa,periodo,genero,discapacidad,lenguaIndigena, promedio,promedioAcumulado);
                 listaAprovechamiento.add(dtoAprovechamientoEscolar);
@@ -1276,7 +1276,7 @@ public class EjbReportesAcademicos {
                         PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
                         Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
                         Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
-                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.3f", calificacion), tutor);
+                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.2f", calificacion), tutor);
                         listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
                     }
                 }else if (calificacionNivelacion == null){
@@ -1286,7 +1286,7 @@ public class EjbReportesAcademicos {
                         PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
                         Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
                         Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
-                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.3f", calificacion), tutor);
+                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.2f", calificacion), tutor);
                         listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
                     }
                 }
@@ -1355,7 +1355,7 @@ public class EjbReportesAcademicos {
                         PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
                         Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
                         Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
-                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.3f", calificacion), tutor);
+                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.2f", calificacion), tutor);
                         listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
                     }
                 }else if (calificacionNivelacion == null){
@@ -1365,7 +1365,7 @@ public class EjbReportesAcademicos {
                         PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
                         Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
                         Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
-                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.3f", calificacion), tutor);
+                        DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.2f", calificacion), tutor);
                         listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
                     }
                 }
@@ -1726,7 +1726,7 @@ public class EjbReportesAcademicos {
                     .orElse(null);
 
             if (calificacionPromedio != null) {
-                promedioOrdinario = String.format("%.3f", calificacionPromedio.getValor());
+                promedioOrdinario = String.format("%.2f", calificacionPromedio.getValor());
             }
 
             CalificacionNivelacion calificacionNivelacion = em.createQuery("SELECT c FROM CalificacionNivelacion c WHERE c.cargaAcademica.carga=:carga AND c.estudiante.idEstudiante=:estudiante", CalificacionNivelacion.class)
@@ -1737,7 +1737,7 @@ public class EjbReportesAcademicos {
                     .orElse(null);
 
             if (calificacionNivelacion != null) {
-                promedioNivelacion = String.format("%.3f", calificacionNivelacion.getValor());
+                promedioNivelacion = String.format("%.2f", calificacionNivelacion.getValor());
             }
             
             DtoPromedioMateriaEstudiante dtoPromedioMateriaEstudiante = new DtoPromedioMateriaEstudiante(estudiante, programa, periodo, genero, discapacidad, lenguaIndigena, planEstudioMateria, docente, promedioOrdinario, promedioNivelacion);
