@@ -119,7 +119,7 @@
                                                         </div>
                                                     </div>
                                                     <br/>
-                                                    <p:tabView id="porpe">
+                                                    <!--p:tabView id="porpe">
                                                         <p:tab title="Consulta por PE">
                                                             <div class="box-header with-border">
                                                                 <div id="main-buttons" class="hidden-sm hidden-xs" >
@@ -190,6 +190,21 @@
                                                             </div>    
                                                         </p:tab>
                                                         <p:tab title="Consulta por Estudiante">
+                                                            <div class="box-header with-border">
+                                                                <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                                                    <p:toolbar id="tb">
+                                                                        <f:facet name="right">
+                                                                            <p:outputPanel>
+                                                                                <p:outputLabel value="Excluir Estudiantes de Baja"/>
+                                                                                <p:inputSwitch value="#{reincorporacionCalificacionesServiciosEscolares.rol.filtaBaja}" offLabel="NO" onLabel="SI">
+                                                                                    <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.getreporteEstudiante}" update=":frm" />
+                                                                                </p:inputSwitch>  
+                                                                            </p:outputPanel>
+                                                                        </f:facet>
+                                                                    </p:toolbar>
+                                                                </div>
+                                                            </div>
+                                                            <br/>
                                                             <div class="row">
                                                                 <div class="col-sm-12">
                                                                     <div class="description-block">
@@ -218,16 +233,16 @@
                                                                                 <p:column styleClass="#{rein.completo eq false?'actividad':''}">
                                                                                     <h:outputText value="#{rein.estudiante.grupo.grado}° #{rein.estudiante.grupo.literal}, #{rein.estudiante.grupo.idSistema.nombre}" />
                                                                                 </p:column>
-                                                                                <p:column>
+                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
                                                                                     <h:outputText value="#{rein.planEstudio.idPlanEstudio}-  #{rein.planEstudio.descripcion}, #{rein.planEstudio.anio}"/>
                                                                                 </p:column>
-                                                                                <p:column >
+                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
                                                                                     <h:outputText value="#{rein.estudiante.tipoEstudiante.descripcion}" style="#{reincorporacionCalificacionesServiciosEscolares.colocaEstilo(rein.estudiante.tipoEstudiante.idTipoEstudiante)}" />  
                                                                                 </p:column> 
-                                                                                <p:column >
+                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
                                                                                     <h:outputText value="#{reincorporacionCalificacionesServiciosEscolares.buscaPeriodoEscolar(rein.estudiante.periodo)}"/>  
                                                                                 </p:column> 
-                                                                                <p:column >
+                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
                                                                                     <h:outputText value="#{rein.estudiante.tipoRegistro}"/>  
                                                                                 </p:column>
                                                                                 <p:column styleClass="#{rein.completo eq false?'actividad':''}">
@@ -242,7 +257,7 @@
                                                                 </div>
                                                             </div>    
                                                         </p:tab>
-                                                    </p:tabView>
+                                                    </p:tabView-->
 
                                                 </p:panel>
                                             </center>

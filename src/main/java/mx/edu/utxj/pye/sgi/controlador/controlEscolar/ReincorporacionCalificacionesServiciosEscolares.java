@@ -298,19 +298,19 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
     }
     
     public void getreporte (){
-        ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> resUniversidades = ejb.getReporteReincorporaciones();
+        ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> resUniversidades = ejb.getReporteReincorporacionesPorEstudiante();
         if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
         List<DtoReincorporacion.ReporteReincorporaciones> rrs= new ArrayList<>();
-        if (rol.getTipoRep()) {
-            rrs.addAll(resUniversidades.getValor().stream().filter(t -> t.getCompleto().equals(Boolean.FALSE)).collect(Collectors.toList()));
-        } else {
+//        if (rol.getTipoRep()) {
+//            rrs.addAll(resUniversidades.getValor().stream().filter(t -> t.getCompleto().equals(Boolean.FALSE)).collect(Collectors.toList()));
+//        } else {
             rrs.addAll(resUniversidades.getValor());
-        }
-        if (rol.getFiltaBaja()) {
-            rol.setReincorporacioneses(rrs.stream().filter(t->t.getEstatusUltimoregistro().equals("Regular")).collect(Collectors.toList()));
-        } else {
+//        }
+//        if (rol.getFiltaBaja()) {
+//            rol.setReincorporacioneses(rrs.stream().filter(t->t.getEstatusUltimoregistro().equals("Regular")).collect(Collectors.toList()));
+//        } else {
             rol.setReincorporacioneses(rrs);
-        }
+//        }
     }   
     
     public void getreporteEstudiante (){

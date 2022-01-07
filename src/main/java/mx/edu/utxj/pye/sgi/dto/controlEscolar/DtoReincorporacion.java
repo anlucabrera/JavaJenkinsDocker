@@ -256,10 +256,19 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull        Persona persona;
         @Getter        @Setter        @NonNull        Aspirante aspirante;
         @Getter        @Setter        @NonNull        Estudiante estudiante;
+        @Getter        @Setter        @NonNull        TipoEstudiante tipoEstudiante;
+        @Getter        @Setter        @NonNull        PlanEstudio planEstudio;
+        @Getter        @Setter        @NonNull        List<HistoricoReincorporaciones> historicoReincorporacioneses;
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode
+    public static class HistoricoReincorporaciones {        
+        @Getter        @Setter        @NonNull        Estudiante estudiante;
+        @Getter        @Setter        @NonNull        TipoEstudiante tipoEstudiante;
+        @Getter        @Setter        @NonNull        Grupo grupo;
         @Getter        @Setter        @NonNull        PlanEstudio planEstudio;
         @Getter        @Setter        @NonNull        Integer calificacionesRegistradas;
         @Getter        @Setter        @NonNull        Integer calificacionesEsperadas;
-        @Getter        @Setter        @NonNull        String estatusUltimoregistro;
         @Getter        @Setter        @NonNull        Boolean completo;
     }
 }
