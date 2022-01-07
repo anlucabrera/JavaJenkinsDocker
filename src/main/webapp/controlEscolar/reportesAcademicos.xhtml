@@ -245,6 +245,7 @@
                                                             <p:column headerText="Programa educativo" style="width: 200px;" sortBy="#{aprovEscEst.programa.nombre}" filterBy="#{aprovEscEst.programa.nombre}" filterMatchMode="contains"/> 
                                                             <p:column headerText="Matricula" style="width: 100px;" sortBy="#{aprovEscEst.estudiante.matricula}" filterBy="#{aprovEscEst.estudiante.matricula}" filterMatchMode="contains"/> 
                                                             <p:column headerText="Nombre" style="width: 350px;" sortBy="#{aprovEscEst.estudiante.aspirante.idPersona.apellidoPaterno} #{aprovEscEst.estudiante.aspirante.idPersona.apellidoMaterno} #{aprovEscEst.estudiante.aspirante.idPersona.nombre}" filterBy="#{matricula.estudiante.aspirante.idPersona.apellidoPaterno} #{matricula.estudiante.aspirante.idPersona.apellidoMaterno} #{matricula.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="CURP" style="width: 180px;" sortBy="#{aprovEscEst.estudiante.aspirante.idPersona.curp}" filterBy="#{aprovEscEst.estudiante.aspirante.idPersona.curp}" filterMatchMode="contains"/>
                                                             <p:column headerText="Género" style="width: 100px;" sortBy="#{aprovEscEst.genero.nombre}" filterBy="#{aprovEscEst.genero.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Grupo" style="width: 150px;" sortBy="#{aprovEscEst.estudiante.grupo.grado}° #{aprovEscEst.estudiante.grupo.literal} #{aprovEscEst.estudiante.grupo.idSistema.nombre}" filterBy="#{aprovEscEst.estudiante.grupo.grado}° #{aprovEscEst.estudiante.grupo.literal} #{aprovEscEst.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Situación académica" style="width: 200px;" sortBy="#{aprovEscEst.estudiante.tipoEstudiante.descripcion}" filterBy="#{aprovEscEst.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
@@ -263,6 +264,9 @@
                                                     </p:column>
                                                     <p:column>
                                                         <h:outputText value="#{aprovEscEst.estudiante.aspirante.idPersona.apellidoPaterno} #{aprovEscEst.estudiante.aspirante.idPersona.apellidoMaterno} #{aprovEscEst.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;"> 
+                                                        <h:outputText value="#{aprovEscEst.estudiante.aspirante.idPersona.curp}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
                                                         <h:outputText value="#{aprovEscEst.genero.nombre}" />
