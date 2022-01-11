@@ -1538,7 +1538,8 @@
                                                                                              converter="entityConverter"
                                                                             >
                                                                                 <f:selectItem itemValue="#{null}"/>
-                                                                                <f:selectItems value="#{registroFichaAdmisionAspirante.rol.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.nombre}" itemDisabled="true"/>
+                                                                                <f:selectItems value="#{registroFichaAdmisionAspirante.rol.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.nombre}"
+                                                                                               />
                                                                             <p:ajax/>
                                                                             </p:selectOneMenu>
                                                                             <p:outputLabel for="sistemaPo" value="Sistema*"/>
@@ -1608,7 +1609,7 @@
                                                                                              converter="entityConverter"
                                                                             >
                                                                                 <f:selectItem itemValue="#{null}"/>
-                                                                                <f:selectItems value="#{registroFichaAdmisionAspirante.rol.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.nombre}" itemDisabled="true"/>
+                                                                                <f:selectItems value="#{registroFichaAdmisionAspirante.rol.sistemas}" var="sistema" itemValue="#{sistema}" itemLabel="#{sistema.nombre}"/>
                                                                             </p:selectOneMenu>
                                                                             <p:outputLabel for="sistemaSo" value="Sistema*"/>
                                                                             <p:message for="sistemaSo"><p:autoUpdate/></p:message>
