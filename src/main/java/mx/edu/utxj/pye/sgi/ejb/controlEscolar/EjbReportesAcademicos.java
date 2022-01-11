@@ -1020,11 +1020,11 @@ public class EjbReportesAcademicos {
      * @param personal
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> getListaAprovechamientoEscolar(PeriodosEscolares periodo, Personal personal){
+    public ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> getListaAprovechamientoEscolar(PeriodosEscolares periodo, ProgramasEducativosNiveles nivel, Personal personal){
         try{
             List<DtoAprovechamientoEscolarEstudiante> listaAprovechamiento = new ArrayList<>();
             
-            List<Short> programasEducativos = getProgramasEducativos(periodo, personal).getValor().stream().map(p->p.getArea()).collect(Collectors.toList());
+            List<Short> programasEducativos = getProgramasEducativos(periodo, personal).getValor().stream().filter(p->p.getNivelEducativo().equals(nivel)).map(p->p.getArea()).collect(Collectors.toList());
             
             List<String> tiposRegistro = new ArrayList<>(); tiposRegistro.add("Regularización de calificaciones por reincoporación");
             
@@ -1252,7 +1252,7 @@ public class EjbReportesAcademicos {
                     .setParameter("valor", (double)8)
                     .getResultStream()
                     .collect(Collectors.toList());
-
+            
             calificacionesPromedio.forEach(promedio -> {
                 if(promedio.getCargaAcademica().getCveGrupo().getIdGrupo().equals(promedio.getEstudiante().getGrupo().getIdGrupo())){
                 Double calificacion = 0.0;
@@ -1263,7 +1263,7 @@ public class EjbReportesAcademicos {
                         .getResultStream()
                         .findFirst()
                         .orElse(null);
-                
+               
                 if (calificacionNivelacion != null && calificacionNivelacion.getValor()<8.0) {
                     if(calificacionNivelacion.getValor()>=calificacion){
                         calificacion = calificacionNivelacion.getValor();
@@ -1271,21 +1271,27 @@ public class EjbReportesAcademicos {
                         calificacion = promedio.getValor();
                     }
                     
-                    if (promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante() == 1 || promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==5) {
-
+                    if (promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante() == 1 || promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==5 || promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==6) {
                         PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
                         Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
-                        Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                        String tutor = "Sin tutor";
+                        if(promedio.getEstudiante().getGrupo().getTutor()!= null){
+                          Personal personalTutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                          tutor = personalTutor.getNombre();
+                        }
                         DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.2f", calificacion), tutor);
                         listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
                     }
                 }else if (calificacionNivelacion == null){
                     calificacion = promedio.getValor();
-                    if (promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante() == 1 || promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==5) {
-
+                    if (promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante() == 1 || promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==5 || promedio.getEstudiante().getTipoEstudiante().getIdTipoEstudiante()==6) {
                         PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
                         Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
-                        Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                        String tutor = "Sin tutor";
+                        if(promedio.getEstudiante().getGrupo().getTutor()!= null){
+                          Personal personalTutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                          tutor = personalTutor.getNombre();
+                        }
                         DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.2f", calificacion), tutor);
                         listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
                     }
@@ -1354,7 +1360,11 @@ public class EjbReportesAcademicos {
 
                         PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
                         Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
-                        Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                        String tutor = "Sin tutor";
+                        if(promedio.getEstudiante().getGrupo().getTutor()!= null){
+                          Personal personalTutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                          tutor = personalTutor.getNombre();
+                        }
                         DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.2f", calificacion), tutor);
                         listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
                     }
@@ -1364,7 +1374,11 @@ public class EjbReportesAcademicos {
 
                         PlanEstudioMateria planEstudioMateria = em.find(PlanEstudioMateria.class, promedio.getCargaAcademica().getIdPlanMateria().getIdPlanMateria());
                         Personal docente = em.find(Personal.class, promedio.getCargaAcademica().getDocente());
-                        Personal tutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                        String tutor = "Sin tutor";
+                        if(promedio.getEstudiante().getGrupo().getTutor()!= null){
+                          Personal personalTutor = em.find(Personal.class, promedio.getEstudiante().getGrupo().getTutor());
+                          tutor = personalTutor.getNombre();
+                        }
                         DtoEstudianteIrregular dtoEstudianteIrregular = new DtoEstudianteIrregular(promedio.getEstudiante(), programa, periodo, planEstudioMateria, docente, String.format("%.2f", calificacion), tutor);
                         listaEstudiantesIrregulares.add(dtoEstudianteIrregular);
                     }
@@ -1469,12 +1483,13 @@ public class EjbReportesAcademicos {
       /**
      * Permite generar reporte de aprovechamiento escolar por estudiante para servicios escolares del periodo escolar seleccionado
      * @param periodo Periodo Escolar
+     * @param nivel Nivel educativo
      * @param personal Personal
      * @return Resultado del proceso
      * @throws java.lang.Throwable
      */
     
-    public String getReporteAprovEstudiantes(PeriodosEscolares periodo, Personal personal) throws Throwable {
+    public String getReporteAprovEstudiantes(PeriodosEscolares periodo, ProgramasEducativosNiveles nivel, Personal personal) throws Throwable {
         String periodoEscolar = periodo.getMesInicio().getMes()+ "-" + periodo.getMesFin().getMes()+" "+ periodo.getAnio();
         String areaGeneraReporte = "ServEsc";
         
@@ -1490,7 +1505,7 @@ public class EjbReportesAcademicos {
         String plantillaC = rutaPlantillaC.concat("reporteAprovEscolarEstudiantes.xlsx");
         
         Map beans = new HashMap();
-        beans.put("aprovEscEst", getListaAprovechamientoEscolar(periodo, personal).getValor());
+        beans.put("aprovEscEst", getListaAprovechamientoEscolar(periodo, nivel, personal).getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 

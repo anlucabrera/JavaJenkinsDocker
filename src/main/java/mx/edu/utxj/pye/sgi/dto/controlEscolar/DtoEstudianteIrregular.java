@@ -29,7 +29,7 @@ public class DtoEstudianteIrregular implements Serializable, Comparable<DtoEstud
     @Getter @Setter @NonNull PlanEstudioMateria planEstudioMateria;
     @Getter @Setter @NonNull Personal docente;
     @Getter @Setter @NonNull String calificacion;
-    @Getter @Setter @NonNull Personal tutor;
+    @Getter @Setter @NonNull String tutor;
     
     @Override
     public int compareTo(DtoEstudianteIrregular o) {

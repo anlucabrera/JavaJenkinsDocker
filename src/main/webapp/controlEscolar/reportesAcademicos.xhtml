@@ -100,7 +100,7 @@
                                         <div class="col-sm-12 col-md-12 col-lg-12"><p style="color: #ffffff;">Prueba de texto</p></div>
                                         <div class="col-sm-12 col-md-12 col-lg-4">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="nivel" value="#{reportesAcademicos.rol.nivel}" converter="entityConverter" valueChangeListener="#{reportesAcademicos.cambiarNivelEducativo}" disabled="#{reportesAcademicos.rol.tipoBusqueda eq 'busquedaGeneral'}">
+                                                <p:selectOneMenu id="nivel" value="#{reportesAcademicos.rol.nivel}" converter="entityConverter" valueChangeListener="#{reportesAcademicos.cambiarNivelEducativo}" disabled="#{reportesAcademicos.rol.deshabilitarSeleccionNivel}">
                                                     <f:selectItems value="#{reportesAcademicos.rol.niveles}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
                                                     <p:ajax update="@this" process="@this" />
                                                     <p:autoUpdate />
@@ -145,7 +145,7 @@
                                                             <p:column headerText="Materia" style="width: 200px;" sortBy="#{estIrreg.planEstudioMateria.idMateria.nombre}" filterBy="#{estIrreg.planEstudioMateria.idMateria.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Personal docente" style="width: 200px;" sortBy="#{estIrreg.docente.nombre}" filterBy="#{estIrreg.docente.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Calificación" style="width: 100px;" sortBy="#{estIrreg.calificacion}" filterBy="#{estIrreg.calificacion}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Tutor" style="width: 200px;" sortBy="#{estIrreg.tutor.nombre}" filterBy="#{estIrreg.tutor.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Tutor" style="width: 200px;" sortBy="#{estIrreg.tutor}" filterBy="#{estIrreg.tutor}" filterMatchMode="contains"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column>
@@ -179,7 +179,7 @@
                                                         <h:outputText value="#{estIrreg.calificacion}"/>
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{estIrreg.tutor.nombre}"/>
+                                                        <h:outputText value="#{estIrreg.tutor}"/>
                                                     </p:column>
                                                 </p:dataTable>
                                             </center>

@@ -48,7 +48,6 @@ import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
-import org.omnifaces.util.Messages;
 
 /**
  *
@@ -113,6 +112,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
            
             rol.setPeriodoActivo(ejbEventoEscolar.getPeriodoActual().getPeriodo());
             rol.setTipoBusqueda("busquedaPrograma");
+            rol.setDeshabilitarSeleccionNivel(false);
             listaPeriodosEscolares();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -272,6 +272,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(e.getNewValue() instanceof  String){
             String reporte = (String)e.getNewValue();
             rol.setReporte(reporte);
+            verificarSeleccionNivelEducativo();
             generarReportes();
             Ajax.update("frm");
         }else mostrarMensaje("");
@@ -283,7 +284,22 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
      */
     public void cambiarTipoBusqueda(ValueChangeEvent e){
         rol.setTipoBusqueda((String)e.getNewValue());
+        verificarSeleccionNivelEducativo();
         generarReportes();
+        Ajax.update("frm");
+    }
+    
+    /**
+     * Permite verificar si se habilita o no la selección de nivel educativo
+     */
+    public void verificarSeleccionNivelEducativo(){
+        if(rol.getTipoBusqueda().equals("busquedaGeneral") && !rol.getReporte().equals("Aprovechamiento escolar por estudiante")){
+            rol.setDeshabilitarSeleccionNivel(true);
+        }else if(rol.getTipoBusqueda().equals("busquedaGeneral") && rol.getReporte().equals("Aprovechamiento escolar por estudiante")){
+            rol.setDeshabilitarSeleccionNivel(false);
+        }else{
+            rol.setDeshabilitarSeleccionNivel(false);
+        }
         Ajax.update("frm");
     }
     
@@ -302,7 +318,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
              File f = new File(ejb.getReporteAprovEscolar(rol.getPeriodo(), rol.getUsuario().getPersonal()));
              Faces.sendFile(f, true);
          } else if ("Aprovechamiento escolar por estudiante".equals(rol.getReporte())) {
-             File f = new File(ejb.getReporteAprovEstudiantes(rol.getPeriodo(), rol.getUsuario().getPersonal()));
+             File f = new File(ejb.getReporteAprovEstudiantes(rol.getPeriodo(), rol.getNivel(), rol.getUsuario().getPersonal()));
              Faces.sendFile(f, true);
          } else if ("Reprobación por asignatura".equals(rol.getReporte())) {
              File f = new File(ejb.getReporteRepAsignatura(rol.getPeriodo(), rol.getUsuario().getPersonal()));
@@ -454,7 +470,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
                 Ajax.update("tbListaAprovechamientoEscolar");
             }else mostrarMensajeResultadoEJB(res);
         }else{
-            ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> res = ejb.getListaAprovechamientoEscolar(rol.getPeriodo(), rol.getUsuario().getPersonal());
+            ResultadoEJB<List<DtoAprovechamientoEscolarEstudiante>> res = ejb.getListaAprovechamientoEscolar(rol.getPeriodo(), rol.getNivel(), rol.getUsuario().getPersonal());
             if(res.getCorrecto()){
                 rol.setListaAprovechamientoEscolar(res.getValor());
                 Ajax.update("tbListaAprovechamientoEscolar");
