@@ -117,10 +117,17 @@ public class EjbReincorporacion {
     
     public ResultadoEJB<List<Estudiante>> getEstudiantesReincorporaciones() {
         try {
-            List<Estudiante> estudiantes = em.createQuery("select t from Estudiante t WHERE t.tipoEstudiante.idTipoEstudiante=:idTipoEstudianteTSU OR t.tipoEstudiante.idTipoEstudiante=:idTipoEstudianteLIN  GROUP BY t.matricula", Estudiante.class)
-                        .setParameter("idTipoEstudianteTSU", Short.parseShort("5"))
-                        .setParameter("idTipoEstudianteLIN", Short.parseShort("6"))
-                        .getResultList();
+            List<String> reincorporaciones=new ArrayList<>();
+            reincorporaciones.add("Cambio de grupo");
+            reincorporaciones.add("Cambio de plan de estudio");
+            reincorporaciones.add("Cambio de programa educativo");
+            reincorporaciones.add("Equivalencia");
+            reincorporaciones.add("Reincorporación otra UT");
+            reincorporaciones.add("Reincorporación otra generación");
+            reincorporaciones.add("Reincorporación misma UT");
+            List<Estudiante> estudiantes = em.createQuery("SELECT t FROM Estudiante t INNER JOIN t.aspirante a INNER JOIN a.idPersona p WHERE t.tipoRegistro in :reincorporaciones GROUP BY t.aspirante ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, t.periodo", Estudiante.class)
+                    .setParameter("reincorporaciones", reincorporaciones)
+                    .getResultList();
             return ResultadoEJB.crearCorrecto(estudiantes, "estudiantes Encontrados");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar los estudiantes(EjbReincorporacion.getEstudiantes).", e, null);
@@ -326,6 +333,15 @@ public class EjbReincorporacion {
     public ResultadoEJB<List<AreasUniversidad>> getProgramasEducativos() {
         try {
             List<AreasUniversidad> areasUniversidads = em.createQuery("select t from AreasUniversidad t INNER JOIN t.categoria c WHERE c.categoria=:categoria AND t.vigente=:vigente", AreasUniversidad.class).setParameter("categoria", Short.parseShort("9")).setParameter("vigente", "1").getResultList();
+            return ResultadoEJB.crearCorrecto(areasUniversidads, "Areas Universidads Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar las areas Universidads (EjbReincorporacion.getProgramasEducativos).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<PlanEstudio>> getPlanesEstudio() {
+        try {
+            List<PlanEstudio> areasUniversidads = em.createQuery("SELECT t FROM PlanEstudio t WHERE t.estatus=:estatus", PlanEstudio.class).setParameter("estatus", true).getResultList();
             return ResultadoEJB.crearCorrecto(areasUniversidads, "Areas Universidads Encontrados");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo recuperar las areas Universidads (EjbReincorporacion.getProgramasEducativos).", e, null);
@@ -2299,7 +2315,7 @@ public class EjbReincorporacion {
         }
     }
     
-    public ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> getReporteReincorporacionesPorEstudiante() {
+    public ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> getReporteReincorporacionesPorEstudiante(Integer planc) {
         try {
             List<String> reincorporaciones=new ArrayList<>();
             reincorporaciones.add("Cambio de grupo");
@@ -2310,8 +2326,9 @@ public class EjbReincorporacion {
             reincorporaciones.add("Reincorporación otra generación");
             reincorporaciones.add("Reincorporación misma UT");
             List<DtoReincorporacion.ReporteReincorporaciones> reincorporacioneses= new ArrayList<>();
-            List<Estudiante> matr = em.createQuery("select t from Estudiante t INNER JOIN t.aspirante a INNER JOIN a.idPersona p WHERE t.tipoRegistro in :reincorporaciones GROUP BY t.aspirante ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, t.periodo", Estudiante.class)
+            List<Estudiante> matr = em.createQuery("select t from Estudiante t INNER JOIN t.aspirante a INNER JOIN a.idPersona p INNER JOIN t.grupo g INNER JOIN g.plan pe WHERE pe.idPlanEstudio=:idPlanEstudio AND t.tipoRegistro in :reincorporaciones GROUP BY t.aspirante ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, t.periodo", Estudiante.class)
                     .setParameter("reincorporaciones", reincorporaciones)
+                    .setParameter("idPlanEstudio", planc)
                     .getResultList();
             List<Integer> aspi = new ArrayList<>();
             matr.forEach((t) -> {
@@ -2332,15 +2349,15 @@ public class EjbReincorporacion {
                 List<DtoReincorporacion.HistoricoReincorporaciones> historicoReincorporacioneses = new ArrayList<>();
                 estudiantes.forEach((e) -> {
                     DtoReincorporacion.HistoricoReincorporaciones rr = new DtoReincorporacion.HistoricoReincorporaciones(e, e.getTipoEstudiante(), e.getGrupo(), e.getGrupo().getPlan(), 0, e.getGrupo().getCargaAcademicaList().size(), Boolean.FALSE);
-                    List<CalificacionPromedio> calificacionPromedios = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionPromedio.class).setParameter("idEstudiante", t.getEstudiante().getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
-                    List<CalificacionNivelacion> calificacionNivelacions = em.createQuery("select t from CalificacionNivelacion t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionNivelacion.class).setParameter("idEstudiante", t.getEstudiante().getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+                    List<CalificacionPromedio> calificacionPromedios = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionPromedio.class).setParameter("idEstudiante", e.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+                    List<CalificacionNivelacion> calificacionNivelacions = em.createQuery("select t from CalificacionNivelacion t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionNivelacion.class).setParameter("idEstudiante", e.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
                     if (e.getGrupo().getCargaAcademicaList().size() == calificacionPromedios.size()) {
                         rr.setCompleto(Boolean.TRUE);
                         rr.setCalificacionesRegistradas(calificacionPromedios.size());
                     } else if (e.getGrupo().getCargaAcademicaList().size() == (calificacionPromedios.size() + calificacionNivelacions.size())) {
                         rr.setCompleto(Boolean.TRUE);
                         rr.setCalificacionesRegistradas((calificacionPromedios.size() + calificacionNivelacions.size()));
-                    } else if (t.getTipoEstudiante().getDescripcion().contains("Baja")) {
+                    } else if (e.getTipoEstudiante().getDescripcion().contains("Baja")) {
                         rr.setCompleto(Boolean.TRUE);
                         rr.setCalificacionesRegistradas(e.getGrupo().getCargaAcademicaList().size());
                     }

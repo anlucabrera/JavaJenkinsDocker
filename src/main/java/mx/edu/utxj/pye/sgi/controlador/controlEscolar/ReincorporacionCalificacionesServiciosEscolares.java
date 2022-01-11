@@ -24,11 +24,7 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReincorporacion;
@@ -37,12 +33,10 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmision;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroFichaIngenieria;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.UniversidadesUT;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import org.omnifaces.util.Ajax;
-import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.RowEditEvent;
 
@@ -102,6 +96,14 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
             if (!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}   
             rol.setEstudiantesReincorporaciones(resAcceso.getValor());
             rol.setPlanesDeEstudioConsultas(new ArrayList<>());
+            ResultadoEJB<List<DtoReincorporacion.PlanesDeEstudioConsulta>> resUniversidades = ejb.getProgramasEducativosConsulta();
+            if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
+            rol.setPlanesDeEstudioConsultas(resUniversidades.getValor());
+            rol.setPlanEstudios(new ArrayList<>());
+            ResultadoEJB<List<PlanEstudio>> eJBres = ejb.getPlanesEstudio();
+            if(!eJBres.getCorrecto()){ mostrarMensajeResultadoEJB(eJBres);return;}
+            rol.setPlanEstudios(eJBres.getValor());
+            rol.getPlanEstudios().add(new PlanEstudio(0, "Selecciona un plan para consulta", Short.parseShort("0"), true, Short.parseShort("0")));
             rol.setHistorialCalificacionesSaiiuts(new ArrayList<>());
             rol.setHistorialCalificacionesTsus(new ArrayList<>());
             rol.setUniversidadActiva(0);
@@ -110,9 +112,9 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
             rol.setHistorialTsu(new CalificacionesHistorialTsuOtrosPe());
             rol.setTipoRep(Boolean.TRUE);
             rol.setFiltaBaja(Boolean.TRUE);
+            rol.setPlanConsulta(0);
             llenaCatalogos();
-            getreporte();
-            getreporteEstudiante();
+//            getreporteEstudiante();
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -163,12 +165,6 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
         rol.setUniversidades(resUniversidades.getValor());
     }
     
-    public void getPlanesEstudio (){
-        ResultadoEJB<List<DtoReincorporacion.PlanesDeEstudioConsulta>> resUniversidades = ejb.getProgramasEducativosConsulta();
-        if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
-        rol.setPlanesDeEstudioConsultas(resUniversidades.getValor());
-    }
-    
     public void buscarAlineacionCalificaciones(){          
         ResultadoEJB<List<DtoReincorporacion.CalificacionesR>> resAccesoTSU = ejb.getCalificaciones(rol.getEstudiante().getAspirante(),rol.getEstudiante().getMatricula(),"TSU"); 
         if(!resAccesoTSU.getCorrecto()){ mostrarMensajeResultadoEJB(resAccesoTSU);return;}
@@ -184,7 +180,6 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
             if(rol.getTsu().getUniversidadEncontrada()){
                 rol.setUniversidadActiva(rol.getTsu().getEgresoAspirante().getUniversidadEgresoAspirantePK().getUniversidadEgreso());
             }
-            getPlanesEstudio();
             
             ResultadoEJB<List<CalificacionesHistorialTsuOtrosPe>> calTSU = ejb.getCalificacionesHistorialTsu(rol.getTsu()); 
             if(!calTSU.getCorrecto()){ mostrarMensajeResultadoEJB(calTSU);return;}
@@ -297,27 +292,36 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
 
     }
     
+    public void cambiarPlan(ValueChangeEvent event) {
+        rol.setPlanConsulta(Integer.parseUnsignedInt(event.getNewValue().toString()));
+        getreporte();
+    }
+    
     public void getreporte (){
-        ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> resUniversidades = ejb.getReporteReincorporacionesPorEstudiante();
-        if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
-        List<DtoReincorporacion.ReporteReincorporaciones> rrs= new ArrayList<>();
-//        if (rol.getTipoRep()) {
-//            rrs.addAll(resUniversidades.getValor().stream().filter(t -> t.getCompleto().equals(Boolean.FALSE)).collect(Collectors.toList()));
-//        } else {
-            rrs.addAll(resUniversidades.getValor());
-//        }
-//        if (rol.getFiltaBaja()) {
-//            rol.setReincorporacioneses(rrs.stream().filter(t->t.getEstatusUltimoregistro().equals("Regular")).collect(Collectors.toList()));
-//        } else {
-            rol.setReincorporacioneses(rrs);
-//        }
+        if(rol.getPlanConsulta()==0){
+            rol.setReincorporacioneses(new ArrayList<>());
+        }else{
+            ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> resUniversidades = ejb.getReporteReincorporacionesPorEstudiante(rol.getPlanConsulta());
+            if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
+            List<DtoReincorporacion.ReporteReincorporaciones> rrs= new ArrayList<>();
+    //        if (rol.getTipoRep()) {
+    //            rrs.addAll(resUniversidades.getValor().stream().filter(t -> t.getCompleto().equals(Boolean.FALSE)).collect(Collectors.toList()));
+    //        } else {
+                rrs.addAll(resUniversidades.getValor());
+    //        }
+            if (rol.getFiltaBaja()) {
+                rol.setReincorporacioneses(rrs.stream().filter(t-> !t.getTipoEstudiante().getDescripcion().contains("Baja")).collect(Collectors.toList()));
+            } else {
+                rol.setReincorporacioneses(rrs);
+            }
+        }
     }   
     
-    public void getreporteEstudiante (){
-        ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> resUniversidades = ejb.getReporteReincorporacionesPorEstudiante();
-        if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
-        rol.setReincorporacionesEstudiantes(resUniversidades.getValor());
-    }   
+//    public void getreporteEstudiante (){
+//        ResultadoEJB<List<DtoReincorporacion.ReporteReincorporaciones>> resUniversidades = ejb.getReporteReincorporacionesPorEstudiante();
+//        if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
+//        rol.setReincorporacionesEstudiantes(resUniversidades.getValor());
+//    }   
     
     public String buscaPeriodoEscolar (Integer idP){
         PeriodosEscolares escolares =ejb.buscaPeriodo(idP);
@@ -333,7 +337,7 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
                 return "color: #ff2733;";
             case 5:
             case 6:
-                return "color: #00FF00;";
+                return "color: #00cc00;";
             default:
                 return "color: #000000;";
         }

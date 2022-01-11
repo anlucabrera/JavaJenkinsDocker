@@ -118,147 +118,116 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <br/>
-                                                    <!--p:tabView id="porpe">
-                                                        <p:tab title="Consulta por PE">
-                                                            <div class="box-header with-border">
-                                                                <div id="main-buttons" class="hidden-sm hidden-xs" >
-                                                                    <p:toolbar id="tb">
-                                                                        <f:facet name="right">
-                                                                            <p:outputPanel>            
-                                                                                <p:autoUpdate/>      
-                                                                                <p:outputLabel value="Mostrar solo registros pendientes"/>
-                                                                                <p:inputSwitch value="#{reincorporacionCalificacionesServiciosEscolares.rol.tipoRep}" offLabel="NO" onLabel="SI">
-                                                                                    <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.getreporte}" update=":frm" />
-                                                                                </p:inputSwitch>  
-                                                                                <p:separator/>
-                                                                                <p:outputLabel value="Excluir Estudiantes de Baja"/>
-                                                                                <p:inputSwitch value="#{reincorporacionCalificacionesServiciosEscolares.rol.filtaBaja}" offLabel="NO" onLabel="SI">
-                                                                                    <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.getreporte}" update=":frm" />
-                                                                                </p:inputSwitch>  
-                                                                            </p:outputPanel>
-                                                                        </f:facet>
-                                                                    </p:toolbar>
-                                                                </div>
-                                                            </div>
-                                                            <br/>
-                                                            <div class="row">
-                                                                <div class="col-sm-12">
-                                                                    <div class="description-block">
-                                                                        <p:outputPanel>     
-                                                                            <p:autoUpdate/>
-                                                                            <p:dataTable id="peConsulta" var="rein" expandableRowGroups="true" 
-                                                                                         value="#{reincorporacionCalificacionesServiciosEscolares.rol.reincorporacioneses}" sortBy="#{rein.planEstudio.idPlanEstudio}">
-                                                                                <p:headerRow>
-                                                                                    <p:column colspan="5" styleClass="eje" style="text-align: left">
-                                                                                        <h:outputText value="#{rein.planEstudio.idPlanEstudio}-  #{rein.planEstudio.descripcion}, #{rein.planEstudio.anio}"/>
-                                                                                    </p:column>
-                                                                                </p:headerRow>  
+                                                    <br/>          
+                                                    <div class="box-header with-border">
+                                                        <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                                            <p:toolbar id="tb">
+                                                                <f:facet name="left">
+                                                                    <p:outputPanel>            
+                                                                        <p:autoUpdate/>   
+                                                                        <p:outputLabel value="Programa Educativo" for="planEstudio"/>   
+                                                                        <p:selectOneMenu id="planEstudio" value="#{reincorporacionCalificacionesServiciosEscolares.rol.planConsulta}" valueChangeListener="#{reincorporacionCalificacionesServiciosEscolares.cambiarPlan}">
+                                                                            <f:selectItems value="#{reincorporacionCalificacionesServiciosEscolares.rol.planEstudios}" var="planEstudio" itemValue="#{planEstudio.idPlanEstudio}" itemLabel="#{planEstudio.descripcion}" />
+                                                                            <p:ajax update=":frm" process="@this"/>
+                                                                        </p:selectOneMenu>
+                                                                        <p:message for="planEstudio" />
+                                                                    </p:outputPanel>
+                                                                </f:facet>
+                                                                <f:facet name="right">
+                                                                    <p:outputPanel>            
+                                                                        <p:autoUpdate/>   
+                                                                        <p:outputLabel value="Excluir Estudiantes de Baja"/>
+                                                                        <p:inputSwitch value="#{reincorporacionCalificacionesServiciosEscolares.rol.filtaBaja}" offLabel="NO" onLabel="SI">
+                                                                            <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.getreporte}" update=":frm" />
+                                                                        </p:inputSwitch>  
+                                                                    </p:outputPanel>
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                        </div>
+                                                    </div>   
+                                                    <div class="box box-primary">
+                                                        <div class="box-header with-border">
+                                                            <div class="box box-solid">
+                                                                <div class="box-body">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-12 col-md-12 text-info text-center">
+                                                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{adminPoaValidacionPresupuestacion.imprimirValores()}" update="dtbBajas" />
+
+                                                                            <p:dataTable id="dtbBajas" value="#{reincorporacionCalificacionesServiciosEscolares.rol.reincorporacioneses}" 
+                                                                                         sortBy="#{rein.estudiante.matricula}" var="rein" expandedRow="true"
+                                                                                         expandableRowGroups="true" emptyMessage="No hay actividades registradas">
 
                                                                                 <p:columnGroup type="header">
                                                                                     <p:row class="success">
-                                                                                        <p:column headerText="Estudiante" style="width: 20%;"/> 
-                                                                                        <p:column headerText="Matricula" style="width: 20%;"/>
-                                                                                        <p:column headerText="Grupo reincorporado" style="width: 20%;"/> 
-                                                                                        <p:column headerText="Total de Materias" style="width: 20%;"/>
-                                                                                        <p:column headerText="Calificaciones Registradas" style="width: 20%;"/>
+                                                                                        <p:column rowspan="2" style="width:100%" styleClass="hederTablesTitle"/>
                                                                                     </p:row>
                                                                                 </p:columnGroup>
 
-                                                                                <p:column groupRow="true">
-                                                                                    <h:outputText value="#{rein.estudiante.aspirante.idPersona.apellidoPaterno} #{rein.estudiante.aspirante.idPersona.apellidoMaterno} #{rein.estudiante.aspirante.idPersona.nombre}" />  
-                                                                                    <br/>
-                                                                                    <br/>
-                                                                                    <h:outputText value="Estatus: " /> <h:outputText value="#{rein.estatusUltimoregistro}" style="#{rein.estatusUltimoregistro eq 'Regular' ?'color: #000000;':'color: #ff2733;'}" />  
-                                                                                </p:column>
-                                                                                <p:column groupRow="true">
-                                                                                    <h:outputText value="#{rein.estudiante.matricula}" />
-                                                                                </p:column> 
-                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
-                                                                                    <h:outputText value="#{rein.estudiante.grupo.grado}° #{rein.estudiante.grupo.literal}, #{rein.estudiante.grupo.idSistema.nombre}" />
-                                                                                </p:column>
-                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
-                                                                                    <h:outputText value="#{rein.calificacionesEsperadas}" />  
-                                                                                </p:column>
-                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
-                                                                                    <h:outputText value="#{rein.calificacionesRegistradas}" />
-                                                                                </p:column>
-                                                                            </p:dataTable>
-                                                                        </p:outputPanel>     
-                                                                    </div>
-                                                                </div>
-                                                            </div>    
-                                                        </p:tab>
-                                                        <p:tab title="Consulta por Estudiante">
-                                                            <div class="box-header with-border">
-                                                                <div id="main-buttons" class="hidden-sm hidden-xs" >
-                                                                    <p:toolbar id="tb">
-                                                                        <f:facet name="right">
-                                                                            <p:outputPanel>
-                                                                                <p:outputLabel value="Excluir Estudiantes de Baja"/>
-                                                                                <p:inputSwitch value="#{reincorporacionCalificacionesServiciosEscolares.rol.filtaBaja}" offLabel="NO" onLabel="SI">
-                                                                                    <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.getreporteEstudiante}" update=":frm" />
-                                                                                </p:inputSwitch>  
-                                                                            </p:outputPanel>
-                                                                        </f:facet>
-                                                                    </p:toolbar>
-                                                                </div>
-                                                            </div>
-                                                            <br/>
-                                                            <div class="row">
-                                                                <div class="col-sm-12">
-                                                                    <div class="description-block">
-                                                                        <p:outputPanel>     
-                                                                            <p:autoUpdate/>
-                                                                            <p:dataTable id="esConsulta" var="rein" expandableRowGroups="true" 
-                                                                                         value="#{reincorporacionCalificacionesServiciosEscolares.rol.reincorporacionesEstudiantes}" sortBy="#{rein.aspirante.idAspirante}">
                                                                                 <p:headerRow>
-                                                                                    <p:column colspan="7" styleClass="eje" style="text-align: left">
-                                                                                        <h:outputText value="#{rein.estudiante.matricula} -- #{rein.estudiante.aspirante.idPersona.apellidoPaterno} #{rein.estudiante.aspirante.idPersona.apellidoMaterno} #{rein.estudiante.aspirante.idPersona.nombre}" />  
+                                                                                    <p:column colspan="4" styleClass="lac" style="text-align: left; color: #000000;">
+                                                                                        <h:outputText value="#{rein.estudiante.matricula} -- #{rein.persona.apellidoPaterno} #{rein.persona.apellidoMaterno} #{rein.persona.nombre} - #{rein.tipoEstudiante.descripcion}"/>
                                                                                     </p:column>
                                                                                 </p:headerRow>  
 
-                                                                                <p:columnGroup type="header">
-                                                                                    <p:row class="success">
-                                                                                        <p:column headerText="Grupo reincorporado" style="width: 10%;"/> 
-                                                                                        <p:column headerText="Programa Educativo" style="width: 30%;"/> 
-                                                                                        <p:column headerText="Estatus" style="width: 10%;"/>
-                                                                                        <p:column headerText="Periodo" style="width: 15%;"/>
-                                                                                        <p:column headerText="Movimiento" style="width: 20%;"/>
-                                                                                        <p:column headerText="Total de Materias" style="width: 10%;"/>
-                                                                                        <p:column headerText="Calificaciones Registradas" style="width: 10%;"/>
-                                                                                    </p:row>
-                                                                                </p:columnGroup>
+                                                                                <p:column>
+                                                                                    <p:rowToggler />
+                                                                                </p:column>
+                                                                                <p:rowExpansion rendered="#{rein.historicoReincorporacioneses.size() eq 0?false:true}">
+                                                                                    <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
+                                                                                        <p:dataTable id="dtbBajas" var="recurso" editable="true" editMode="row"
+                                                                                                     style="background:  #cccccc"                                                                        
+                                                                                                     expandableRowGroups="true" value="#{rein.historicoReincorporacioneses}">
 
-                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
-                                                                                    <h:outputText value="#{rein.estudiante.grupo.grado}° #{rein.estudiante.grupo.literal}, #{rein.estudiante.grupo.idSistema.nombre}" />
-                                                                                </p:column>
-                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
-                                                                                    <h:outputText value="#{rein.planEstudio.idPlanEstudio}-  #{rein.planEstudio.descripcion}, #{rein.planEstudio.anio}"/>
-                                                                                </p:column>
-                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
-                                                                                    <h:outputText value="#{rein.estudiante.tipoEstudiante.descripcion}" style="#{reincorporacionCalificacionesServiciosEscolares.colocaEstilo(rein.estudiante.tipoEstudiante.idTipoEstudiante)}" />  
-                                                                                </p:column> 
-                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
-                                                                                    <h:outputText value="#{reincorporacionCalificacionesServiciosEscolares.buscaPeriodoEscolar(rein.estudiante.periodo)}"/>  
-                                                                                </p:column> 
-                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
-                                                                                    <h:outputText value="#{rein.estudiante.tipoRegistro}"/>  
-                                                                                </p:column>
-                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
-                                                                                    <h:outputText value="#{rein.calificacionesEsperadas}" />  
-                                                                                </p:column>
-                                                                                <p:column styleClass="#{rein.completo eq false?'actividad':''}">
-                                                                                    <h:outputText value="#{rein.calificacionesRegistradas}" />
-                                                                                </p:column>
+                                                                                            <f:facet name="header"></f:facet>
+
+                                                                                            <p:columnGroup type="header">
+                                                                                                <p:row class="success">
+                                                                                                    <p:column headerText="Grupo reincorporado" style="width: 10%;"/> 
+                                                                                                    <p:column headerText="Programa Educativo" style="width: 30%;"/> 
+                                                                                                    <p:column headerText="Estatus" style="width: 10%;"/>
+                                                                                                    <p:column headerText="Periodo" style="width: 15%;"/>
+                                                                                                    <p:column headerText="Movimiento" style="width: 20%;"/>
+                                                                                                    <p:column headerText="Total de Materias" style="width: 10%;"/>
+                                                                                                    <p:column headerText="Calificaciones Registradas" style="width: 10%;"/>
+                                                                                                </p:row>
+                                                                                            </p:columnGroup>
+
+
+                                                                                            <p:ajax event="rowEdit" listener="#{adminPoaValidacionPresupuestacion.onCellEditProductos}" update="@this" oncomplete="actualizarTabla2()"/>
+                                                                                            <p:ajax event="rowEditCancel" listener="#{adminPoaValidacionPresupuestacion.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
+
+                                                                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                                                                <h:outputText value="#{recurso.estudiante.grupo.grado}° #{recurso.estudiante.grupo.literal}, #{recurso.estudiante.grupo.idSistema.nombre}" />
+                                                                                            </p:column>
+                                                                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                                                                <h:outputText value="#{recurso.planEstudio.idPlanEstudio}-  #{recurso.planEstudio.descripcion}, #{recurso.planEstudio.anio}"/>
+                                                                                            </p:column>
+                                                                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                                                                <h:outputText value="#{recurso.estudiante.tipoEstudiante.descripcion}" style="#{reincorporacionCalificacionesServiciosEscolares.colocaEstilo(recurso.estudiante.tipoEstudiante.idTipoEstudiante)}" />  
+                                                                                            </p:column> 
+                                                                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                                                                <h:outputText value="#{reincorporacionCalificacionesServiciosEscolares.buscaPeriodoEscolar(recurso.estudiante.periodo)}"/>  
+                                                                                            </p:column> 
+                                                                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                                                                <h:outputText value="#{recurso.estudiante.tipoRegistro}"/>  
+                                                                                            </p:column>
+                                                                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                                                                <h:outputText value="#{recurso.calificacionesEsperadas}" />  
+                                                                                            </p:column>
+                                                                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                                                                <h:outputText value="#{recurso.calificacionesRegistradas}" />
+                                                                                            </p:column>
+                                                                                        </p:dataTable>
+                                                                                    </p:panelGrid>
+                                                                                </p:rowExpansion>
                                                                             </p:dataTable>
-                                                                        </p:outputPanel>     
+
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>    
-                                                        </p:tab>
-                                                    </p:tabView-->
-
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </p:panel>
                                             </center>
                                         </div>

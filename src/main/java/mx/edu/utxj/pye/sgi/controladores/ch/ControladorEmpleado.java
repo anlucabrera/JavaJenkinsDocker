@@ -132,6 +132,7 @@ public class ControladorEmpleado implements Serializable {
             administradores.add(148);
             administradores.add(284);
             administradores.add(613);
+            administradores.add(714);
             mostrarPerfilLogeado();
             informacionComplementariaAEmpleadoLogeado();
             areaPoa();

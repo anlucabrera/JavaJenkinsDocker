@@ -188,6 +188,36 @@
                         </p:panel>
                     </h:form>
 
+                    <h:form id="frm3" prependId="false" class="form-inline" >
+                        <p:panel header="Historial Academico" class="box box-primary">
+                            <div class="box-header with-border">
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        
+                                    </div> 
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                            <br/>
+                                            <p:commandButton value="Actualizar" id="btnactualizaHistorico" 
+                                                             actionListener="#{reincorporacionCalificacionesServiciosEscolares.historialTSUEstudiante()}"  
+                                                             process="@this" icon="fa fa-plus" 
+                                                             styleClass="btn-primary" update=":frm3 :frmHistorialCalificaciones"/>
+                                        </div>
+                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </p:panel>
+                    </h:form>
+                    
                     <h:form id="frmHistorialCalificaciones" prependId="false" class="form-inline">
                         <div class="box box-primary">
                             <div id="main-buttons" class="hidden-sm hidden-xs" >
