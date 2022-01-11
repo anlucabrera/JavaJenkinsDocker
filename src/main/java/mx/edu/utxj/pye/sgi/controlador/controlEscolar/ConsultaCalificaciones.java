@@ -39,7 +39,6 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradora;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TareaIntegradoraPromedio;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 
 
@@ -203,8 +202,8 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
                         .sorted()
                         .reduce(BigDecimal.ZERO, BigDecimal::add)
                         .plus()
-                        .divide(totalCalificaciones, RoundingMode.HALF_UP)
-                        .setScale(2, RoundingMode.HALF_UP);
+                        .divide(totalCalificaciones, RoundingMode.HALF_DOWN)
+                        .setScale(2, RoundingMode.HALF_DOWN);
                 //if(promedioFinal.compareTo(BigDecimal.valueOf(9)) < 0)return;
                 map.put(dtoInscripcion, promedioFinal);
             });
@@ -218,7 +217,7 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
                     .filter(predicate -> predicate.getKey().getInscripcion().getMatricula() == dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula())
                     .map(Map.Entry::getValue).reduce(BigDecimal.ZERO, BigDecimal::add)
                     .plus()
-                    .divide(new BigDecimal(inscripciones), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
+                    .divide(new BigDecimal(inscripciones), RoundingMode.HALF_DOWN).setScale(2, RoundingMode.HALF_DOWN);
             maper.put(dtoEstudiante.getInscripcionActiva(), promedio);
             if(dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula() == dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula())return;
         });
@@ -277,8 +276,8 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
                                 .sorted()
                                 .reduce(BigDecimal.ZERO, BigDecimal::add)
                                 .plus()
-                                .divide(totalCalificaciones, RoundingMode.HALF_UP)
-                                .setScale(2, RoundingMode.HALF_UP);
+                                .divide(totalCalificaciones, RoundingMode.HALF_DOWN)
+                                .setScale(2, RoundingMode.HALF_DOWN);
                         //if(promedioFinal.compareTo(BigDecimal.valueOf(9)) < 0)return;
                         map.put(dtoInscripcion, promedioFinal);
                     });
@@ -293,7 +292,7 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
                     .filter(predicate -> predicate.getKey().getInscripcion().getMatricula() == dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula())
                     .map(Map.Entry::getValue).reduce(BigDecimal.ZERO, BigDecimal::add)
                     .plus()
-                    .divide(new BigDecimal(inscripciones), RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
+                    .divide(new BigDecimal(inscripciones), RoundingMode.HALF_DOWN).setScale(2, RoundingMode.HALF_DOWN);
             maper.put(dtoEstudiante.getInscripcionActiva(), promedio);
             if(dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula() == dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula())return;
         });
@@ -344,8 +343,8 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
                         .sorted()
                         .reduce(BigDecimal.ZERO, BigDecimal::add)
                         .plus()
-                        .divide(totalCalificaciones, RoundingMode.HALF_UP)
-                        .setScale(2, RoundingMode.HALF_UP);
+                        .divide(totalCalificaciones, RoundingMode.HALF_DOWN)
+                        .setScale(2, RoundingMode.HALF_DOWN);
                 map.put(dtoInscripcion, promedioFinal);
             });
         });
@@ -537,7 +536,7 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
     public BigDecimal getPromedioAsignaturaEstudiante(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica, estudiante), dtoCargaAcademica, estudiante);
         if(res.getCorrecto()){
-            return res.getValor().setScale(2, RoundingMode.HALF_UP);
+            return res.getValor().setScale(2, RoundingMode.HALF_DOWN);
         }else{
             return BigDecimal.ZERO;
         }
@@ -546,7 +545,7 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
     public BigDecimal getPromedioAsignaturaAlineacionEstudiante(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor2(dtoCargaAcademica, estudiante), dtoCargaAcademica, estudiante);
         if(res.getCorrecto()){
-            return res.getValor().setScale(2, RoundingMode.HALF_UP);
+            return res.getValor().setScale(2, RoundingMode.HALF_DOWN);
         }else{
             return BigDecimal.ZERO;
         }
@@ -554,7 +553,7 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
 
     public BigDecimal getPromedioFinal(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         BigDecimal promedioOrdinario = getPromedioAsignaturaEstudiante(dtoCargaAcademica, estudiante);
-        BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
         BigDecimal promedioFinal = BigDecimal.ZERO;
         if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
             promedioFinal = promedioFinal.add(promedioOrdinario);
@@ -566,7 +565,7 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
     
     public BigDecimal getPromedioFinalAlineacion(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         BigDecimal promedioOrdinario = getPromedioAsignaturaAlineacionEstudiante(dtoCargaAcademica, estudiante);
-        BigDecimal nivelacion = new BigDecimal(getNivelacion2(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal nivelacion = new BigDecimal(getNivelacion2(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
         BigDecimal promedioFinal = BigDecimal.ZERO;
         if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
             promedioFinal = promedioFinal.add(promedioOrdinario);
@@ -596,8 +595,8 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
         
         BigDecimal suma = lista.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         //System.out.println("Estudiante:"+estudiante.getMatricula()+"- Materias:"+ totalMaterias+" Suma calificaciones:"+ suma);
-        promedioCuatrimestral = suma.divide(totalMaterias, RoundingMode.HALF_UP);
-        return promedioCuatrimestral.setScale(2, RoundingMode.HALF_UP);
+        promedioCuatrimestral = suma.divide(totalMaterias, RoundingMode.HALF_DOWN);
+        return promedioCuatrimestral.setScale(2, RoundingMode.HALF_DOWN);
     }
 
     public BigDecimal obtenerPromedioAcumulado(){
@@ -616,7 +615,7 @@ public class ConsultaCalificaciones extends ViewScopedRol implements Desarrollab
             promedios.add(getPromedioCuatrimestral(estudiante.getInscripcion()));
         });
         suma = promedios.stream().map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add);
-        promedio = suma.divide(totalRegistro,8 ,RoundingMode.HALF_UP);
+        promedio = suma.divide(totalRegistro,8 ,RoundingMode.HALF_DOWN);
         return promedio;
         }catch(Exception e){
            return BigDecimal.ZERO;

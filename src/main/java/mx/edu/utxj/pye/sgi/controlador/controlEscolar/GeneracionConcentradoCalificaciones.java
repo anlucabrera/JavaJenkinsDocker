@@ -175,9 +175,9 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
             x.getMaterias().forEach(y -> {
                 PdfPCell cal;
                 if(y.getNivelacion().compareTo(BigDecimal.ZERO) == 0){
-                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalO().setScale(2, RoundingMode.HALF_UP).toString(), fontMateria));
+                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalO().setScale(2, RoundingMode.HALF_DOWN).toString(), fontMateria));
                 }else{
-                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalN().setScale(2, RoundingMode.HALF_UP).toString().concat(" *"), fontMateria));
+                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalN().setScale(2, RoundingMode.HALF_DOWN).toString().concat(" *"), fontMateria));
                 }                
                 cal.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.addCell(cal);
@@ -464,9 +464,9 @@ public class GeneracionConcentradoCalificaciones implements Serializable{
             x.getMaterias().forEach(y -> {
                 PdfPCell cal;
                 if(y.getNivelacion().compareTo(BigDecimal.ZERO) == 0){
-                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalO().setScale(2, RoundingMode.HALF_UP).toString(), fontMateria));
+                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalO().setScale(2, RoundingMode.HALF_DOWN).toString(), fontMateria));
                 }else{
-                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalN().setScale(2, RoundingMode.HALF_UP).toString().concat(" *"), fontMateria));
+                    cal = new PdfPCell(new Paragraph(y.getPromedioFinalN().setScale(2, RoundingMode.HALF_DOWN).toString().concat(" *"), fontMateria));
                 }                
                 cal.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table.addCell(cal);

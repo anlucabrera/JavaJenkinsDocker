@@ -114,42 +114,6 @@
 
                                         </f:facet>
                                     </p:toolbar>
-                                    <!--c:if test="# {consultaCalificaciones.rol.coordinador.personal.areaOperativa eq 10}">
-                                        <p:toolbar id="tb">
-                                            <f:facet name="left">
-                                            </f:facet>
-                                            <f:facet name="right">
-                                                <p:commandLink
-                                                        class="btn btn-default"
-                                                        rendered="#{true}"
-                                                        disabled="#{false}"
-                                                        onclick="PF('modalAyuda2').show();"
-                                                        title="Consultar mejores promedios (Periodo Cuatrimestral).">
-                                                    <i class="fa fa-folder-open"/>
-                                                </p:commandLink>
-                                                <p:commandLink
-                                                        class="btn btn-primary"
-                                                        rendered="#{true}"
-                                                        disabled="#{false}"
-                                                        actionListener="# {consultaCalificaciones.obtenerTop30MejoresEstudiantes()}"
-                                                        update="contenedorTopMejores"
-                                                        onclick="PF('modalAyuda').show();" oncomplete="actualizarModal();"
-                                                        title="Consultar mejores promedios (Nivel Institucional).">
-                                                    <i class="fa fa-folder-open-o"/>
-                                                </p:commandLink>
-                                                <p:remoteCommand name="actualizarModal" update=":# {p:component('contenedorTopMejores')}" />
-                                                <p:commandLink
-                                                        class="btn btn-success"
-                                                        rendered="#{true}"
-                                                        disabled="#{false}"
-                                                        onclick="PF('modalAyuda1').show();"
-                                                        title="Consultar mejores promedios (Programa Educativo).">
-                                                    <i class="fa fa-folder-open"/>
-                                                </p:commandLink>
-
-                                            </f:facet>
-                                        </p:toolbar>
-                                    </c:if-->
                                 </h:form>
                             </div>
                             <div class="box box-solid">
@@ -225,10 +189,10 @@
                                                                                     <h:outputText value="#{consultaCalificaciones.obtenerPromedioAcumulado()}" style="font-size: medium">
                                                                                         <f:convertNumber type="number" pattern="#.##"/>
                                                                                     </h:outputText>
-                                                                                    <!--p:commandButton icon="fa fa-download" value="Descargar kardex" styleClass="btn btn-primary" ajax="false"
+                                                                                    <p:commandButton icon="fa fa-download" value="Descargar kardex" styleClass="btn btn-primary" ajax="false"
                                                                                                      actionListener="#{generacionKardex.controlPDF(consultaCalificaciones.rol.estudiante)}">
                                                                                         <p:fileDownload value="#{generacionKardex.download}" />
-                                                                                    </p:commandButton-->
+                                                                                    </p:commandButton>
                                                                                 </p:panelGrid>
                                                                             </c:if>
                                                                         </td>

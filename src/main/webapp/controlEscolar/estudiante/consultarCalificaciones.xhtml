@@ -75,10 +75,10 @@
                                                                         <h:outputText value="#{consultaCalificacionesEstudiante.obtenerPromedioAcumulado()}" style="font-size: medium">
                                                                             <f:convertNumber type="number" pattern="#.##"/>
                                                                         </h:outputText>
-                                                                        <!--p:commandButton icon="fa fa-download" value="Descargar kardex" styleClass="btn btn-primary" ajax="false"
-                                                                                         actionListener="# {generacionKardex.controlPDF(consultaCalificacionesEstudiante.rol.estudiante)}">
-                                                                            <p:fileDownload value="# {generacionKardex.download}" />
-                                                                        </p:commandButton-->
+                                                                        <p:commandButton icon="fa fa-download" value="Descargar kardex" styleClass="btn btn-primary" ajax="false"
+                                                                                         actionListener="#{generacionKardex.controlPDF(consultaCalificacionesEstudiante.rol.estudiante)}">
+                                                                            <p:fileDownload value="#{generacionKardex.download}" />
+                                                                        </p:commandButton>
                                                                     </p:panelGrid>
                                                                 </td>
                                                                 <td rowspan="6" style="font-size: x-small; font-weight: bold; width: 70px; text-align: center">

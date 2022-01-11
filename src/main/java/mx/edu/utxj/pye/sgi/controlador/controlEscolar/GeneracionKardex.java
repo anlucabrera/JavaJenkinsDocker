@@ -152,8 +152,8 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 1).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                     if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -164,7 +164,7 @@ public class GeneracionKardex implements Serializable{
                     table3.addCell(materias2);
                     table3.addCell(promedios2);
                 });
-                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_UP).toString(), fontBold));
+                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_DOWN).toString(), fontBold));
                 tablaPromedio2.addCell(texto);     tablaPromedio2.addCell(avg);
                 celda.addElement(table3);          celda2.addElement(tablaPromedio2);
             }
@@ -282,7 +282,7 @@ public class GeneracionKardex implements Serializable{
                         .filter(e -> e.getInscripcion().getGrupo().getGrado() == 2)
                         .map(dtoInscripcion -> controlador.getPromedioCuatrimestral(dtoInscripcion.getInscripcion()))
                         .map(BigDecimal::plus)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
+                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_DOWN);
                 if(p.compareTo(new BigDecimal(8)) == -1){
                     contador = 1;
                     //System.out.println("Es "+ contador);
@@ -297,14 +297,14 @@ public class GeneracionKardex implements Serializable{
                         .stream()
                         .filter(pr -> pr.compareTo(new BigDecimal(7.9999)) == 1)
                         .map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_UP);
+                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_DOWN);
                 cuatrimestre = new PdfPCell(new Paragraph("PRIMER", fontBold));      cuatrimestre.setColspan(3);       cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table3.addCell(cuatrimestre);
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 1).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                     if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -315,7 +315,7 @@ public class GeneracionKardex implements Serializable{
                     table3.addCell(materias2);
                     table3.addCell(promedios2);
                 });
-                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_UP).toString(), fontBold));
+                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_DOWN).toString(), fontBold));
                 tablaPromedio.addCell(texto);     tablaPromedio.addCell(avg);
                 celda.addElement(table3);          celda2.addElement(tablaPromedio);
             }
@@ -329,9 +329,9 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas2 = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 2).collect(Collectors.toList());
                 cargas2.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas2.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     if(promedio.compareTo(BigDecimal.ZERO) == 0) return;
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -468,7 +468,7 @@ public class GeneracionKardex implements Serializable{
                         .filter(e -> e.getInscripcion().getGrupo().getGrado() == 3)
                         .map(dtoInscripcion -> controlador.getPromedioCuatrimestral(dtoInscripcion.getInscripcion()))
                         .map(BigDecimal::plus)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
+                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_DOWN);
                 if(p.compareTo(new BigDecimal(8)) == -1){
                     contador = 2;
                     //System.out.println("Es "+ contador);
@@ -483,14 +483,14 @@ public class GeneracionKardex implements Serializable{
                         .stream()
                         .filter(pr -> pr.compareTo(new BigDecimal(7.9999)) == 1)
                         .map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_UP);
+                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_DOWN);
                 cuatrimestre = new PdfPCell(new Paragraph("PRIMER", fontBold));      cuatrimestre.setColspan(3);       cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table3.addCell(cuatrimestre);
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 1).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                     if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -501,7 +501,7 @@ public class GeneracionKardex implements Serializable{
                     table3.addCell(materias2);
                     table3.addCell(promedios2);
                 });
-                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_UP).toString(), fontBold));
+                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_DOWN).toString(), fontBold));
                 tablaPromedio.addCell(texto);     tablaPromedio.addCell(avg);
                 celda.addElement(table3);          celda2.addElement(tablaPromedio);
             }
@@ -515,9 +515,9 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas2 = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 2).collect(Collectors.toList());
                 cargas2.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas2.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     if(promedio.compareTo(BigDecimal.ZERO) == 0) return;
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -549,8 +549,8 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas3 = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 3).collect(Collectors.toList());
                 cargas3.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas3.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -691,7 +691,7 @@ public class GeneracionKardex implements Serializable{
                         .filter(e -> e.getInscripcion().getGrupo().getGrado() == 4)
                         .map(dtoInscripcion -> controlador.getPromedioCuatrimestral(dtoInscripcion.getInscripcion()))
                         .map(BigDecimal::plus)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
+                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_DOWN);
                 if(p.compareTo(new BigDecimal(8)) == -1){
                     contador = 3;
                     //System.out.println("Es "+ contador);
@@ -707,14 +707,14 @@ public class GeneracionKardex implements Serializable{
                         .stream()
                         .filter(pr -> pr.compareTo(new BigDecimal(7.9999)) == 1)
                         .map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .divide(registro, 8, RoundingMode.HALF_UP);
+                        .divide(registro, 8, RoundingMode.HALF_DOWN);
                 cuatrimestre = new PdfPCell(new Paragraph("PRIMER", fontBold));      cuatrimestre.setColspan(3);       cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table3.addCell(cuatrimestre);
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 1).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                     if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -725,7 +725,7 @@ public class GeneracionKardex implements Serializable{
                     table3.addCell(materias2);
                     table3.addCell(promedios2);
                 });
-                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_UP).toString(), fontBold));
+                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_DOWN).toString(), fontBold));
                 tablaPromedio.addCell(texto);     tablaPromedio.addCell(avg);
                 celda.addElement(table3);          celda2.addElement(tablaPromedio);
             }
@@ -736,9 +736,9 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 2).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     if(promedio.compareTo(BigDecimal.ZERO) == 0) return;
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -766,8 +766,8 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 3).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -799,8 +799,8 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas4 = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 4).collect(Collectors.toList());
                 cargas4.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas4.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -937,7 +937,7 @@ public class GeneracionKardex implements Serializable{
                         .filter(e -> e.getInscripcion().getGrupo().getGrado() == 5)
                         .map(dtoInscripcion -> controlador.getPromedioCuatrimestral(dtoInscripcion.getInscripcion()))
                         .map(BigDecimal::plus)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
+                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_DOWN);
                 if(p.compareTo(new BigDecimal(8)) == -1){
                     contador = 4;
                     //System.out.println("Es "+ contador);
@@ -952,14 +952,14 @@ public class GeneracionKardex implements Serializable{
                         .stream()
                         .filter(pr -> pr.compareTo(new BigDecimal(7.9999)) == 1)
                         .map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_UP);
+                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_DOWN);
                 cuatrimestre = new PdfPCell(new Paragraph("PRIMER", fontBold1));      cuatrimestre.setColspan(3);       cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table3.addCell(cuatrimestre);
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 1).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                     if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -970,7 +970,7 @@ public class GeneracionKardex implements Serializable{
                     table3.addCell(materias2);
                     table3.addCell(promedios2);
                 });
-                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_UP).toString(), fontBold));
+                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_DOWN).toString(), fontBold));
                 tablaPromedio.addCell(texto);     tablaPromedio.addCell(avg);
                 celda.addElement(table3);          celda2.addElement(tablaPromedio);
             }
@@ -981,9 +981,9 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas2 = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 2).collect(Collectors.toList());
                 cargas2.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas2.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     if(promedio.compareTo(BigDecimal.ZERO) == 0) return;
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1007,8 +1007,8 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas3 = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 3).collect(Collectors.toList());
                 cargas3.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas3.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1032,8 +1032,8 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas4 = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 4).collect(Collectors.toList());
                 cargas4.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas4.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1059,8 +1059,8 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas6 = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 5).collect(Collectors.toList());
                 cargas6.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas6.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1189,14 +1189,14 @@ public class GeneracionKardex implements Serializable{
                         .stream()
                         .filter(pr -> pr.compareTo(new BigDecimal(7.9999)) == 1)
                         .map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .divide(new BigDecimal(5), 8, RoundingMode.HALF_UP);
+                        .divide(new BigDecimal(5), 8, RoundingMode.HALF_DOWN);
                 cuatrimestre = new PdfPCell(new Paragraph("PRIMER", fontBold1));      cuatrimestre.setColspan(3);       cuatrimestre.setHorizontalAlignment(Element.ALIGN_CENTER);
                 table3.addCell(cuatrimestre);
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 1).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                     if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1207,7 +1207,7 @@ public class GeneracionKardex implements Serializable{
                     table3.addCell(materias2);
                     table3.addCell(promedios2);
                 });
-                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_UP).toString(), fontBold));
+                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_DOWN).toString(), fontBold));
                 tablaPromedio.addCell(texto);     tablaPromedio.addCell(avg);
                 celda.addElement(table3);          celda2.addElement(tablaPromedio);
             }
@@ -1218,9 +1218,9 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 2).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     if(promedio.compareTo(BigDecimal.ZERO) == 0) return;
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1244,8 +1244,8 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 3).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1269,8 +1269,8 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 4).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1292,8 +1292,8 @@ public class GeneracionKardex implements Serializable{
                 List<DtoCargaAcademica> cargas = controlador.getCargasAcademicas(estudiante1.getInscripcion()).stream().filter(grado -> grado.getGrupo().getGrado() == 5).collect(Collectors.toList());
                 cargas.sort((DtoCargaAcademica o1, DtoCargaAcademica o2) -> o1.getPlanEstudioMateria().getClaveMateria().compareTo(o2.getPlanEstudioMateria().getClaveMateria()));
                 cargas.forEach(dtoCargaAcademica -> {
-                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                    BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1.getInscripcion()).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                    BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1.getInscripcion()).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                     BigDecimal promedioFinal = BigDecimal.ZERO;
                     PdfPCell materias = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                     materias.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1461,8 +1461,8 @@ public class GeneracionKardex implements Serializable{
         cuatri1 = new PdfPCell(new Paragraph("PRIMER", fontBold1));      cuatri1.setColspan(3);       cuatri1.setHorizontalAlignment(Element.ALIGN_CENTER);
         table1.addCell(cuatri1);
         lista1.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                 if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1482,7 +1482,7 @@ public class GeneracionKardex implements Serializable{
             Integer contador;
                 BigDecimal p = estudiante.getInscripciones().stream().filter(e -> e.getInscripcion().getGrupo().getGrado() == 7)
                         .map(dtoInscripcion -> controlador.getPromedioCuatrimestral(dtoInscripcion.getInscripcion())).map(BigDecimal::plus)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
+                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_DOWN);
                 if(p.compareTo(new BigDecimal(8)) == -1){
                     contador = 5;
                     //System.out.println("Es "+ contador);
@@ -1493,16 +1493,16 @@ public class GeneracionKardex implements Serializable{
                 BigDecimal promedioA = estudiante.getInscripciones().stream().filter(x -> x.getGrupo().getGrado() != 6)
                         .map(dtoInscripcion -> controlador.getPromedioCuatrimestral(dtoInscripcion.getInscripcion())).collect(Collectors.toList())
                         .stream().filter(pr -> pr.compareTo(new BigDecimal(7.9999)) == 1).map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_UP);
-                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_UP).toString(), fontBold));
+                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_DOWN);
+                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_DOWN).toString(), fontBold));
                 tablaPromedio.addCell(texto);     tablaPromedio.addCell(avg);
                 c2.addElement(tablaPromedio);
         }else{
             cuatri7 = new PdfPCell(new Paragraph("SEPTIMO", fontBold1));      cuatri7.setColspan(3);       cuatri7.setHorizontalAlignment(Element.ALIGN_CENTER);
             table7.addCell(cuatri7);
             lista7.forEach(dtoCargaAcademica -> {
-                BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante7).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante7).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante7).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante7).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                 PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                 materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                     if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1519,8 +1519,8 @@ public class GeneracionKardex implements Serializable{
         cuatri2 = new PdfPCell(new Paragraph("SEGUNDO", fontBold1));      cuatri2.setColspan(3);       cuatri2.setHorizontalAlignment(Element.ALIGN_CENTER);
         table2.addCell(cuatri2);
         lista2.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante2).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante2).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante2).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante2).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                 if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1538,7 +1538,7 @@ public class GeneracionKardex implements Serializable{
             Integer contador;
                 BigDecimal p = estudiante.getInscripciones().stream().filter(e -> e.getInscripcion().getGrupo().getGrado() == 7)
                         .map(dtoInscripcion -> controlador.getPromedioCuatrimestral(dtoInscripcion.getInscripcion())).map(BigDecimal::plus)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
+                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_DOWN);
                 if(p.compareTo(new BigDecimal(8)) == -1){
                     contador = 5;
                     //System.out.println("Es "+ contador);
@@ -1549,8 +1549,8 @@ public class GeneracionKardex implements Serializable{
                 BigDecimal promedioA = estudiante.getInscripciones().stream().filter(x -> x.getGrupo().getGrado() != 6)
                         .map(dtoInscripcion -> controlador.getPromedioCuatrimestral(dtoInscripcion.getInscripcion())).collect(Collectors.toList())
                         .stream().filter(pr -> pr.compareTo(new BigDecimal(7.9999)) == 1).map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_UP);
-                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_UP).toString(), fontBold));
+                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_DOWN);
+                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_DOWN).toString(), fontBold));
                 tablaPromedio.addCell(texto);     tablaPromedio.addCell(avg);
                 c4.addElement(tablaPromedio);
         }
@@ -1558,8 +1558,8 @@ public class GeneracionKardex implements Serializable{
         cuatri3 = new PdfPCell(new Paragraph("TERCERO", fontBold1));      cuatri3.setColspan(3);       cuatri3.setHorizontalAlignment(Element.ALIGN_CENTER);
         table3.addCell(cuatri3);
         lista3.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante3).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante3).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante3).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante3).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                 if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1576,8 +1576,8 @@ public class GeneracionKardex implements Serializable{
         cuatri4 = new PdfPCell(new Paragraph("CUARTO", fontBold1));      cuatri4.setColspan(3);       cuatri4.setHorizontalAlignment(Element.ALIGN_CENTER);
         table4.addCell(cuatri4);
         lista4.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante4).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante4).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante4).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante4).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                 if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1594,8 +1594,8 @@ public class GeneracionKardex implements Serializable{
         cuatri5 = new PdfPCell(new Paragraph("QUINTO", fontBold1));      cuatri5.setColspan(3);       cuatri5.setHorizontalAlignment(Element.ALIGN_CENTER);
         table5.addCell(cuatri5);
         lista5.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante5).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante5).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante5).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante5).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                 if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1769,8 +1769,8 @@ public class GeneracionKardex implements Serializable{
         cuatri1 = new PdfPCell(new Paragraph("PRIMER", fontBold1));      cuatri1.setColspan(3);       cuatri1.setHorizontalAlignment(Element.ALIGN_CENTER);
         table1.addCell(cuatri1);
         lista1.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante1).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante1).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                 if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1785,8 +1785,8 @@ public class GeneracionKardex implements Serializable{
         cuatri7 = new PdfPCell(new Paragraph("SEPTIMO", fontBold1));      cuatri7.setColspan(3);       cuatri7.setHorizontalAlignment(Element.ALIGN_CENTER);
         table7.addCell(cuatri7);
         lista7.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante7).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante7).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante7).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante7).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             System.out.println("Cargas academicas" + dtoCargaAcademica.getMateria().getNombre());
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -1808,8 +1808,8 @@ public class GeneracionKardex implements Serializable{
         cuatri2 = new PdfPCell(new Paragraph("SEGUNDO", fontBold1));      cuatri2.setColspan(3);       cuatri2.setHorizontalAlignment(Element.ALIGN_CENTER);
         table2.addCell(cuatri2);
         lista2.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante2).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante2).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante2).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante2).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                 if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1826,7 +1826,7 @@ public class GeneracionKardex implements Serializable{
             Integer contador;
                 BigDecimal p = estudiante.getInscripciones().stream().filter(e -> e.getInscripcion().getGrupo().getGrado() == 8)
                         .map(dtoInscripcion -> controlador.getPromedioCuatrimestral(dtoInscripcion.getInscripcion())).map(BigDecimal::plus)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_UP);
+                        .reduce(BigDecimal.ZERO, BigDecimal::add).setScale(2, RoundingMode.HALF_DOWN);
                 if(p.compareTo(new BigDecimal(8)) == -1){
                     contador = 6;
                     //System.out.println("Es "+ contador);
@@ -1837,16 +1837,16 @@ public class GeneracionKardex implements Serializable{
                 BigDecimal promedioA = estudiante.getInscripciones().stream().filter(x -> x.getGrupo().getGrado() != 6)
                         .map(dtoInscripcion -> controlador.getPromedioCuatrimestral(dtoInscripcion.getInscripcion())).collect(Collectors.toList())
                         .stream().filter(pr -> pr.compareTo(new BigDecimal(7.9999)) == 1).map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add)
-                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_UP);
-                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_UP).toString(), fontBold));
+                        .divide(new BigDecimal(contador), 8, RoundingMode.HALF_DOWN);
+                texto = new PdfPCell(new Paragraph("Promedio", fontBold));   avg = new PdfPCell(new Paragraph(promedioA.setScale(2, RoundingMode.HALF_DOWN).toString(), fontBold));
                 tablaPromedio.addCell(texto);     tablaPromedio.addCell(avg);
                 c4.addElement(tablaPromedio);
         }else{
             cuatri8 = new PdfPCell(new Paragraph("OCTAVO", fontBold1));      cuatri8.setColspan(3);       cuatri8.setHorizontalAlignment(Element.ALIGN_CENTER);
             table8.addCell(cuatri8);
             lista8.forEach(dtoCargaAcademica -> {
-                BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante8).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-                BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante8).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+                BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante8).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+                BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante8).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
                 PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
                 materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                     if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1863,8 +1863,8 @@ public class GeneracionKardex implements Serializable{
         cuatri3 = new PdfPCell(new Paragraph("TERCERO", fontBold1));      cuatri3.setColspan(3);       cuatri3.setHorizontalAlignment(Element.ALIGN_CENTER);
         table3.addCell(cuatri3);
         lista3.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante3).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante3).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante3).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante3).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                 if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1881,8 +1881,8 @@ public class GeneracionKardex implements Serializable{
         cuatri4 = new PdfPCell(new Paragraph("CUARTO", fontBold1));      cuatri4.setColspan(3);       cuatri4.setHorizontalAlignment(Element.ALIGN_CENTER);
         table4.addCell(cuatri4);
         lista4.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante4).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante4).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante4).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante4).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                 if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
@@ -1899,8 +1899,8 @@ public class GeneracionKardex implements Serializable{
         cuatri5 = new PdfPCell(new Paragraph("QUINTO", fontBold1));      cuatri5.setColspan(3);       cuatri5.setHorizontalAlignment(Element.ALIGN_CENTER);
         table5.addCell(cuatri5);
         lista5.forEach(dtoCargaAcademica -> {
-            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante5).getValor().getValor()).setScale(2, RoundingMode.HALF_UP);
-            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante5).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal promedio = new BigDecimal(ejb.obtenerPromedioEstudiante(dtoCargaAcademica.getCargaAcademica(), estudiante5).getValor().getValor()).setScale(2, RoundingMode.HALF_DOWN);
+            BigDecimal nivelacion = new BigDecimal(controlador.getNivelacion(dtoCargaAcademica, estudiante5).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
             PdfPCell materias2 = new PdfPCell(new Paragraph(dtoCargaAcademica.getMateria().getNombre(), fontMateria2));
             materias2.setHorizontalAlignment(Element.ALIGN_LEFT);   PdfPCell promedios2;
                 if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
