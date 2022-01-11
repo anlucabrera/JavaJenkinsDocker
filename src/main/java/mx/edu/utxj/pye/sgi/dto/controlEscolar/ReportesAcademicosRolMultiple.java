@@ -125,6 +125,11 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private Boolean habilitarListadoPromedios;
     
+     /**
+     * Representa valor para saber si se habilita la opción de seleccionar nivel educativo
+     */
+    @Getter @NonNull private Boolean deshabilitarSeleccionNivel;
+    
     
     public ReportesAcademicosRolMultiple(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
@@ -214,5 +219,8 @@ public class ReportesAcademicosRolMultiple extends AbstractRol{
     public void setHabilitarListadoPromedios(Boolean habilitarListadoPromedios) {
         this.habilitarListadoPromedios = habilitarListadoPromedios;
     }
-    
+
+    public void setDeshabilitarSeleccionNivel(Boolean deshabilitarSeleccionNivel) {
+        this.deshabilitarSeleccionNivel = deshabilitarSeleccionNivel;
+    }
 }

@@ -278,10 +278,6 @@
                     <c:if test="#{registroDocumentosOficialesEscolares.mostrarEnDesarrollo(request) and registroDocumentosOficialesEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroDocumentosOficiales.xhtml"><i class="fa fa-folder"></i><span>Registro documentos<br/>oficiales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{reinscripcionExtemporaneaSE.mostrarEnDesarrollo(request) and reinscripcionExtemporaneaSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reinscripcionSeguimientoSE.xhtml"><i class="fa fa-history"></i><span>Reinscripciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{registroFichaAdmisionSE.mostrarEnDesarrollo(request) and registroFichaAdmisionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroFichaSE.xhtml"><i class="fa fa-graduation-cap"></i><span>Registro de ficha de admisión</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                    <c:if test="#{cartaNoAdeudoSE.mostrarEnDesarrollo(request) and cartaNoAdeudoSE.tieneAcceso}">
-                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Carta de no adeudo</li>
-                        <c:if test="#{cartaNoAdeudoSE.mostrarEnDesarrollo(request) and cartaNoAdeudoSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cartaNoAdeudoServiciosEscolares.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
-                    </c:if>
                     <c:if test="#{registroEgresadoTerminacionEstudioServiciosEscolares.mostrarEnDesarrollo(request) and registroEgresadoTerminacionEstudioServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroEgresados.xhtml"><i class="fa fa-print"></i><span>Impresión de Documentos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                     <!-- Titulación -->
@@ -374,28 +370,6 @@
                         </li>
                     </c:if>
 
-                    <!-- Estadía - Director de carrera -->
-                    <c:if test="#{asignacionRolesEstadiaDirector.mostrarEnDesarrollo(request) and asignacionRolesEstadiaDirector.tieneAcceso}">
-                        <li class="treeview">
-                            <a href="#">
-                                <i class="fa fa-graduation-cap"></i><span style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Estadía - Director</span>
-                                <span class="pull-right-container">
-                                    <i class="fa fa-angle-left pull-right"></i>
-                                </span>
-                            </a>
-                            <ul class="treeview-menu" style="display: none;">
-                                <c:if test="#{asignacionRolesEstadiaDirector.mostrarEnDesarrollo(request) and asignacionRolesEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacionesRolesEstadia.xhtml"><i class="fa fa-user-plus"></i><span>Asignación roles de estadía</span></p:link></li></c:if>
-                                <c:if test="#{seguimientoEstadiaDirector.mostrarEnDesarrollo(request) and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/seguimientoEstadiaDirector.xhtml"><i class="fa fa-folder"></i><span>Seguimiento de estadía</span></p:link></li></c:if>
-                                <c:if test="#{aperturaExtemporaneaEstadia.mostrarEnDesarrollo(request) and aperturaExtemporaneaEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aperturaExtemporaneaEstadia.xhtml"><i class="fa fa-clock-o"></i><span>Aperturas extemporáneas</span></p:link></li></c:if>
-                                <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
-                            </ul>
-                        </li>
-                    </c:if>
-                    <c:if test="#{cartaNoAdeudoDireccionCarrera.mostrarEnDesarrollo(request) and cartaNoAdeudoDireccionCarrera.tieneAcceso}">
-                        <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Carta de no adeudo</li>
-                        <c:if test="#{cartaNoAdeudoDireccionCarrera.mostrarEnDesarrollo(request) and cartaNoAdeudoDireccionCarrera.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cartaNoAdeudoDirector.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
-                    </c:if>
-
                     <!-- Docente -->
                     <c:if test="#{capturaCalificacionesDocente.mostrarEnDesarrollo(request) and capturaCalificacionesDocente.tieneAcceso}">
                         <li style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Docente</li>
@@ -475,6 +449,27 @@
                     <c:if test="#{consultaPlanesAccionTutoralCoordinadorTutores.mostrarEnDesarrollo(request) and consultaPlanesAccionTutoralCoordinadorTutores.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/consulta_plan_accion_tutorial_tutores.xhtml"><i class="fa fa-slideshare"></i><span>Planes de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{(seguimientoTestAprendizajeTutor.mostrarEnDesarrollo(request) and seguimientoTestAprendizajeTutor.tieneAcceso) or (seguimientoTestAprendizajeTutorSaiiut.mostrarEnDesarrollo(request) and seguimientoTestAprendizajeTutorSaiiut.tieneAcceso)}"><li><p:link href="#{request.contextPath}/controlEscolar/seguimientoTestAprendizaje.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento de Test</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{seguimientoEvaluacionEstadiaTutor.mostrarEnDesarrollo(request) and seguimientoEvaluacionEstadiaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/seguimientoEvaluacionEstadiaTutor.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento de Evaluación Estadía</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    
+                    <!-- Estadía - Director de carrera -->
+                    <c:if test="#{asignacionRolesEstadiaDirector.mostrarEnDesarrollo(request) and asignacionRolesEstadiaDirector.tieneAcceso}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-graduation-cap"></i><span style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Estadía - Director</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <c:if test="#{asignacionRolesEstadiaDirector.mostrarEnDesarrollo(request) and asignacionRolesEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/asignacionesRolesEstadia.xhtml"><i class="fa fa-user-plus"></i><span>Asignación roles de estadía</span></p:link></li></c:if>
+                                <c:if test="#{seguimientoEstadiaDirector.mostrarEnDesarrollo(request) and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/seguimientoEstadiaDirector.xhtml"><i class="fa fa-folder"></i><span>Seguimiento de estadía</span></p:link></li></c:if>
+                                <c:if test="#{aperturaExtemporaneaEstadia.mostrarEnDesarrollo(request) and aperturaExtemporaneaEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/aperturaExtemporaneaEstadia.xhtml"><i class="fa fa-clock-o"></i><span>Aperturas extemporáneas</span></p:link></li></c:if>
+                                <c:if test="#{reportesEstadia.mostrarEnDesarrollo(request) and reportesEstadia.tieneAcceso and seguimientoEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesEstadia.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
+                            </ul>
+                        </li>
+                    </c:if>
+                    <!-- Carta de no adeudo - Director de carrera -->
+                    <c:if test="#{cartaNoAdeudoDireccionCarrera.mostrarEnDesarrollo(request) and cartaNoAdeudoDireccionCarrera.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cartaNoAdeudoDirector.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
+                    
                     <!-- Asesor de estadía -->
                     <c:if test="#{seguimientoEstadiaAsesor.mostrarEnDesarrollo(request) and seguimientoEstadiaAsesor.tieneAcceso}">
                         <li class="treeview">
@@ -542,6 +537,9 @@
                             </ul>
                         </li>
                     </c:if>
+                    <!-- Apartado de carta de no adedudo para Servicios Escolares-->
+                    <c:if test="#{cartaNoAdeudoSE.mostrarEnDesarrollo(request) and cartaNoAdeudoSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cartaNoAdeudoServiciosEscolares.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
+                    
                     <c:if test="#{(calendarioEventosEscolares.mostrarEnDesarrollo(request) and calendarioEventosEscolares.tieneAcceso) or (calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso)}">
                         <li class="treeview">
                             <a href="#">
