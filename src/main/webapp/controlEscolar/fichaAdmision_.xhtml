@@ -835,7 +835,7 @@
                                                                                 <p:outputLabel for="sistema1" style="font-size: large" value="Sistema*"/>
                                                                                 <p:selectOneMenu id="sistema1" required="true" value="#{FichaAdmision.datosAcademicos.sistemaPrimeraOpcion}" converter="entidadCEConverter" requiredMessage="Debe de indicar el turno del programa educativo">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{FichaAdmision.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}" itemDisabled="true"/>
+                                                                                    <f:selectItems value="#{FichaAdmision.listaSistema}" var="sistemaPO" itemValue="#{sistemaPO}" itemLabel="#{sistemaPO.nombre}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="sistema1"><p:autoUpdate/></p:message>
                                                                             </div>
@@ -871,7 +871,7 @@
                                                                                 <p:outputLabel for="sistema2" style="font-size: large" value="Sistema*"/>
                                                                                 <p:selectOneMenu id="sistema2" required="true" value="#{FichaAdmision.datosAcademicos.sistemaSegundaOpcion}" converter="entidadCEConverter" requiredMessage="Debe de indicar el turno del programa educativo">
                                                                                     <f:selectItem itemValue="#{null}"/>
-                                                                                    <f:selectItems value="#{FichaAdmision.listaSistema}" var="sistemaSO" itemValue="#{sistemaSO}" itemLabel="#{sistemaSO.nombre}" itemDisabled="true"/>
+                                                                                    <f:selectItems value="#{FichaAdmision.listaSistema}" var="sistemaSO" itemValue="#{sistemaSO}" itemLabel="#{sistemaSO.nombre}"/>
                                                                                 </p:selectOneMenu>
                                                                                 <p:message for="sistema2"><p:autoUpdate/></p:message>
                                                                             </div>
