@@ -32,6 +32,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Asistenciasacademicas;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Calificacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionEvidenciaInstrumento;
 
 /**
  *
@@ -191,8 +194,8 @@ public class EjbFusionGrupo {
     public ResultadoEJB<List<Estudiante>> getEstudiantesGrupoSeleccionado(Grupo grupo, AreasUniversidad areasUniversidad){
         try{
             List<Estudiante> estudiantes =
-                    em.createQuery("select e from Estudiante as e " +
-                            "where e.grupo.idGrupo = :grupo and e.grupo.idPe = :programa", Estudiante.class)
+                    em.createQuery("select e from Estudiante as e where e.tipoEstudiante.idTipoEstudiante = :tipo and e.grupo.idGrupo = :grupo and e.grupo.idPe = :programa", Estudiante.class)
+                            .setParameter("tipo", 1)
                             .setParameter("grupo", grupo.getIdGrupo())
                             .setParameter("programa", Short.parseShort(areasUniversidad.getArea().toString()))
                             .getResultStream()
@@ -208,6 +211,7 @@ public class EjbFusionGrupo {
      * Permite realizar el cambio de grupo de los estudiantes seleccionados
      * @param estudiantesCambio Lista de los estudiantes a cambiar
      * @param grupoDestino Grupo al cual se asignaran los estudiantes
+     * @param o 
      * @return Resultado del proceso
      */
     public ResultadoEJB<Estudiante> reasignacionGrupo(Estudiante estudiantesCambio, Grupo grupoDestino, Operacion o){
@@ -218,15 +222,34 @@ public class EjbFusionGrupo {
             switch (o){
                 case ACTUALIZAR:
                     e.setGrupo(grupoDestino);
-                    em.merge(estudiantesCambio);
+                    em.merge(e);
                     return ResultadoEJB.crearCorrecto(e, "Los estudiantes fueron cambiados satisfactoriamente de grupo");
                 case ELIMINAR:
-                    if(!e.getAsistenciasacademicasList().isEmpty()){
-                        e.getAsistenciasacademicasList().stream().filter(a -> a.getEstudiante().getIdEstudiante().equals(e.getIdEstudiante())).forEach(x -> {
-                            em.remove(x);
-
-                        });
-                        return ResultadoEJB.crearCorrecto(e, "Los estudiantes fueron cambiados satisfactoriamente de grupo");
+                    List<Asistenciasacademicas> listaAsistencias = em.createQuery("select a from Asistenciasacademicas as a where a.estudiante.idEstudiante = :id", Asistenciasacademicas.class)
+                            .setParameter("id", e.getIdEstudiante())
+                            .getResultStream().collect(Collectors.toList());
+                    if(!listaAsistencias.isEmpty()){
+                        //listaAsistencias.forEach(x -> {System.out.println("Asistencia: " + x.getAsistencia().getAsistencia() +"- "+ x.getEstudiante().getIdEstudiante());});
+                        listaAsistencias.forEach(em::remove);
+                        return ResultadoEJB.crearCorrecto(e, "La lista de asistencia ha sido eliminada");
+                    }
+                    List<Calificacion> listaCalificaciones = em.createQuery("select c from Calificacion as c where c.idEstudiante.idEstudiante = :idEstudiante and c.valor = :valor", Calificacion.class)
+                            .setParameter("idEstudiante", e.getIdEstudiante())
+                            .setParameter("valor", 0D)
+                            .getResultStream().collect(Collectors.toList());
+                    List<CalificacionEvidenciaInstrumento> listaCal = em.createQuery("select c from CalificacionEvidenciaInstrumento as c where c.idEstudiante.idEstudiante = :idEstudiante and c.valor = :valor", CalificacionEvidenciaInstrumento.class)
+                            .setParameter("idEstudiante", e.getIdEstudiante())
+                            .setParameter("valor", 0D)
+                            .getResultStream().collect(Collectors.toList());
+                    if(!listaCalificaciones.isEmpty()){
+                        //listaCalificaciones.forEach(x -> {System.out.println("Calificacion: " + x.getCalificacion() +"- "+ x.getIdEstudiante().getIdEstudiante());});
+                        listaCalificaciones.forEach(em::remove);
+                        return ResultadoEJB.crearCorrecto(e, "La lista de calificaciones ha sido eliminada");
+                    }
+                    if(!listaCal.isEmpty()){
+                        //listaCal.forEach(x -> {System.out.println("Calificacion: " + x.getCalificacionEvidenciaInstrumento()+"- "+ x.getIdEstudiante().getIdEstudiante());});
+                        listaCal.forEach(em::remove);
+                        return ResultadoEJB.crearCorrecto(e, "La lista de calificaciones ha sido eliminada");
                     }
                 default:
                     return ResultadoEJB.crearErroneo(4, "Operación no autorizada.", Estudiante.class);

@@ -265,7 +265,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
     public BigDecimal getPromedioAsignaturaEstudiante(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica, estudiante), dtoCargaAcademica, estudiante);
         if(res.getCorrecto()){
-            return res.getValor().setScale(2, RoundingMode.HALF_UP);
+            return res.getValor().setScale(2, RoundingMode.HALF_DOWN);
         }else{
             return BigDecimal.ZERO;
         }
@@ -274,7 +274,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
     public BigDecimal getPromedioAsignaturaAlineacionEstudiante(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor2(dtoCargaAcademica, estudiante), dtoCargaAcademica, estudiante);
         if(res.getCorrecto()){
-            return res.getValor().setScale(2, RoundingMode.HALF_UP);
+            return res.getValor().setScale(2, RoundingMode.HALF_DOWN);
         }else{
             return BigDecimal.ZERO;
         }
@@ -282,7 +282,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
 
     public BigDecimal getPromedioFinal(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         BigDecimal promedioOrdinario = getPromedioAsignaturaEstudiante(dtoCargaAcademica, estudiante);
-        BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal nivelacion = new BigDecimal(getNivelacion(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
         BigDecimal promedioFinal = BigDecimal.ZERO;
         if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
             promedioFinal = promedioFinal.add(promedioOrdinario);
@@ -294,7 +294,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
     
     public BigDecimal getPromedioFinalAlineacion(DtoCargaAcademica dtoCargaAcademica, Estudiante estudiante){
         BigDecimal promedioOrdinario = getPromedioAsignaturaAlineacionEstudiante(dtoCargaAcademica, estudiante);
-        BigDecimal nivelacion = new BigDecimal(getNivelacion2(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal nivelacion = new BigDecimal(getNivelacion2(dtoCargaAcademica, estudiante).getCalificacionNivelacion().getValor()).setScale(2, RoundingMode.HALF_DOWN);
         BigDecimal promedioFinal = BigDecimal.ZERO;
         if(nivelacion.compareTo(BigDecimal.ZERO) == 0){
             promedioFinal = promedioFinal.add(promedioOrdinario);
@@ -324,8 +324,8 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
         
         BigDecimal suma = lista.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         //System.out.println("Estudiante:"+estudiante.getMatricula()+"- Materias:"+ totalMaterias+" Suma calificaciones:"+ suma);
-        promedioCuatrimestral = suma.divide(totalMaterias, RoundingMode.HALF_UP);
-        return promedioCuatrimestral.setScale(2, RoundingMode.HALF_UP);
+        promedioCuatrimestral = suma.divide(totalMaterias, RoundingMode.HALF_DOWN);
+        return promedioCuatrimestral.setScale(2, RoundingMode.HALF_DOWN);
     }
 
     public BigDecimal obtenerPromedioAcumulado(){
@@ -344,7 +344,7 @@ public class ConsultaCalificacionesEstudiante extends ViewScopedRol implements D
             promedios.add(getPromedioCuatrimestral(estudiante.getInscripcion()));
         });
         suma = promedios.stream().map(BigDecimal::plus).reduce(BigDecimal.ZERO, BigDecimal::add);
-        promedio = suma.divide(totalRegistro,8 ,RoundingMode.HALF_UP);
+        promedio = suma.divide(totalRegistro,8 ,RoundingMode.HALF_DOWN);
         return promedio;
         }catch(Exception e){
            return BigDecimal.ZERO;
