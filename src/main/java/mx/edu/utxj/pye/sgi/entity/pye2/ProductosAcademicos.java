@@ -102,14 +102,10 @@ public class ProductosAcademicos implements Serializable {
     @Size(min = 1, max = 5000)
     @Column(name = "descripcion")
     private String descripcion;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1000)
+    @Size(max = 1000)
     @Column(name = "issn")
     private String issn;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 10)
+    @Size(max = 10)
     @Column(name = "arbitradoIndexado")
     private String arbitradoIndexado;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)
