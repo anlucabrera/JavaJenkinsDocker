@@ -248,6 +248,7 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
                                     municipioPK.setClaveMunicipio((int) fila.getCell(25).getNumericCellValue());
                                     municipio.setMunicipioPK(municipioPK);
                                     municipio.setEstado(estado);
+                                    municipio.setNombre(fila.getCell(26).getStringCellValue());
                                     productoAcademico.setMunicipio(municipio);
                                     break;
                                 default:
@@ -287,31 +288,31 @@ public class ServicioProductosAcademicos implements EjbProductosAcademicos {
                         }
 
 //                    ISSSN
-                        if (fila.getCell(29).getCellTypeEnum() == CellType.STRING) {
-                            switch (fila.getCell(29).getCellTypeEnum()) {
-                                case STRING:
-                                    productoAcademico.setIssn(fila.getCell(29).getStringCellValue());
+                        if (fila.getCell(30).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(30).getCellTypeEnum()) {
+                                case FORMULA:
+                                        productoAcademico.setIssn(fila.getCell(30).getStringCellValue());
                                     break;
                                 default:
                                     break;
                             }
                         } else {
                             validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: ISSSN en la columna: " + (29 + 1) + " y fila: " + (i + 1));
+                            datosInvalidos.add("Dato incorrecto: ISSSN en la columna: " + (30 + 1) + " y fila: " + (i + 1));
                         }
 
 //                    Arbitrado/Indexado
-                        if (fila.getCell(31).getCellTypeEnum() == CellType.FORMULA) {
-                            switch (fila.getCell(31).getCellTypeEnum()) {
+                        if (fila.getCell(32).getCellTypeEnum() == CellType.FORMULA) {
+                            switch (fila.getCell(32).getCellTypeEnum()) {
                                 case FORMULA:
-                                    productoAcademico.setArbitradoIndexado(fila.getCell(31).getStringCellValue());
+                                    productoAcademico.setArbitradoIndexado(fila.getCell(32).getStringCellValue());
                                     break;
                                 default:
                                     break;
                             }
                         } else {
                             validarCelda.add(false);
-                            datosInvalidos.add("Dato incorrecto: Arbitrado/Indexado en la columna: " + (31 + 1) + " y fila: " + (i + 1));
+                            datosInvalidos.add("Dato incorrecto: Arbitrado/Indexado en la columna: " + (32 + 1) + " y fila: " + (i + 1));
                         }
 
                         dtoProductoAcademico.setProductosAcademicos(productoAcademico);
