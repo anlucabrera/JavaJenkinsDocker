@@ -58,7 +58,7 @@
                                                 <f:selectItems value="#{reincorporacionCalificacionesServiciosEscolares.rol.estudiantesReincorporaciones}" var="estur" 
                                                                itemValue="#{estur}"
                                                                itemLabel="#{estur.matricula}--#{estur.aspirante.idPersona.nombre}--#{estur.aspirante.idPersona.apellidoPaterno}--#{estur.aspirante.idPersona.apellidoMaterno}---#{estur.tipoRegistro} " />
-                                                <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.estudianteConsultado()}" update=":frmHistorialCalificaciones, :frm2" process="@this"/>
+                                                <p:ajax listener="#{reincorporacionCalificacionesServiciosEscolares.estudianteConsultado()}" update=":frmHistorialCalificaciones, :frm2, :frm3" process="@this"/>
                                             </p:selectOneMenu>
                                         </div>
                                     </div>
@@ -193,31 +193,60 @@
                             <div class="box-header with-border">
                                 <div class="row">
                                     <div class="col-sm-12 col-md-12 col-lg-12">
-                                        
+                                        <p:dataTable id="dtbBajas" var="recurso" editable="true" editMode="row"
+                                                     style="background:  #cccccc"                                                                        
+                                                     expandableRowGroups="true" value="#{reincorporacionCalificacionesServiciosEscolares.rol.historicoReincorporacioneses}">
+
+                                            <f:facet name="header"></f:facet>
+
+                                            <p:columnGroup type="header">
+                                                <p:row class="success">
+                                                    <p:column headerText="Grupo reincorporado" style="width: 10%;"/> 
+                                                    <p:column headerText="Programa Educativo" style="width: 30%;"/> 
+                                                    <p:column headerText="Estatus" style="width: 10%;"/>
+                                                    <p:column headerText="Periodo" style="width: 15%;"/>
+                                                    <p:column headerText="Movimiento" style="width: 20%;"/>
+                                                    <p:column headerText="Total de Materias" style="width: 10%;"/>
+                                                    <p:column headerText="Calificaciones Registradas" style="width: 10%;"/>
+                                                    <p:column headerText="Tipo calificaciones" style="width: 10%;"/>
+                                                </p:row>
+                                            </p:columnGroup>
+
+
+                                            <p:ajax event="rowEdit" listener="#{reincorporacionCalificacionesServiciosEscolares.onCellEditProductos}" update="@this" oncomplete="actualizarTabla2()"/>
+                                            <p:ajax event="rowEditCancel" listener="#{reincorporacionCalificacionesServiciosEscolares.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
+
+                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                <h:outputText value="#{recurso.estudiante.grupo.grado}° #{recurso.estudiante.grupo.literal}, #{recurso.estudiante.grupo.idSistema.nombre}" />
+                                            </p:column>
+                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                <h:outputText value="#{recurso.planEstudio.idPlanEstudio}-  #{recurso.planEstudio.descripcion}, #{recurso.planEstudio.anio}"/>
+                                            </p:column>
+                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                <h:outputText value="#{recurso.estudiante.tipoEstudiante.descripcion}" style="#{reincorporacionCalificacionesServiciosEscolares.colocaEstilo(recurso.estudiante.tipoEstudiante.idTipoEstudiante)}" />  
+                                            </p:column> 
+                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                <h:outputText value="#{reincorporacionCalificacionesServiciosEscolares.buscaPeriodoEscolar(recurso.estudiante.periodo)}"/>  
+                                            </p:column> 
+                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                <h:outputText value="#{recurso.estudiante.tipoRegistro}"/>  
+                                            </p:column>
+                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                <h:outputText value="#{recurso.calificacionesEsperadas}" />  
+                                            </p:column>
+                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                <h:outputText value="#{recurso.calificacionesRegistradas}" />
+                                            </p:column>
+                                            <p:column styleClass="#{recurso.completo eq false?'actividad':''}">
+                                                <h:outputText value="#{recurso.tipoCalificacion}" />
+                                            </p:column>
+                                        </p:dataTable>
                                     </div> 
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                        
-                                    </div> 
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12 col-md-12 col-lg-12">
-                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                        <div class="col-sm-4 col-md-4 col-lg-4">
-                                            <br/>
-                                            <p:commandButton value="Actualizar" id="btnactualizaHistorico" 
-                                                             actionListener="#{reincorporacionCalificacionesServiciosEscolares.historialTSUEstudiante()}"  
-                                                             process="@this" icon="fa fa-plus" 
-                                                             styleClass="btn-primary" update=":frm3 :frmHistorialCalificaciones"/>
-                                        </div>
-                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
-                                    </div>
                                 </div>
                             </div>
                         </p:panel>
                     </h:form>
-                    
+
                     <h:form id="frmHistorialCalificaciones" prependId="false" class="form-inline">
                         <div class="box box-primary">
                             <div id="main-buttons" class="hidden-sm hidden-xs" >
@@ -310,10 +339,10 @@
                                         </p:tab>
                                         <p:tab title="TSU Interno" rendered="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesTSU.size() eq 0?false:true}">
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{controladorIncidenciasPersonal.metodoBase()}" update="calificacionTSU" />
-                                            <p:dataTable id="calificacionTSU" var="promedios" value="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesTSU}" editable="true" sortBy="#{promedios.academica.cveGrupo.grado}">
+                                            <p:dataTable id="calificacionTSU" var="promedios" value="#{reincorporacionCalificacionesServiciosEscolares.rol.calificacionesTSU}" editable="true" sortBy="#{promedios.academica.cveGrupo.idGrupo}">
                                                 <p:headerRow>
                                                     <p:column colspan="4" styleClass="lac" style="text-align: left">
-                                                        <h:outputText value="#{promedios.academica.cveGrupo.grado}° #{promedios.academica.cveGrupo.literal}, #{promedios.academica.cveGrupo.idSistema.nombre}, Estatus #{promedios.calificacionPromedio.estudiante.tipoEstudiante.descripcion}"/>
+                                                        <h:outputText value="#{promedios.academica.cveGrupo.grado}° #{promedios.academica.cveGrupo.literal}, #{promedios.academica.cveGrupo.idSistema.nombre}, Estatus: #{promedios.calificacionPromedio.estudiante.tipoEstudiante.descripcion}, Periodo: #{reincorporacionCalificacionesServiciosEscolares.buscaPeriodoEscolar(promedios.academica.cveGrupo.periodo)}"/>
                                                     </p:column>
                                                 </p:headerRow>  
 

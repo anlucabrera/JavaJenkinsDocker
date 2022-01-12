@@ -267,6 +267,7 @@ public class DtoReincorporacion {
         @Getter        @Setter        @NonNull        TipoEstudiante tipoEstudiante;
         @Getter        @Setter        @NonNull        Grupo grupo;
         @Getter        @Setter        @NonNull        PlanEstudio planEstudio;
+        @Getter        @Setter        @NonNull        String tipoCalificacion;
         @Getter        @Setter        @NonNull        Integer calificacionesRegistradas;
         @Getter        @Setter        @NonNull        Integer calificacionesEsperadas;
         @Getter        @Setter        @NonNull        Boolean completo;

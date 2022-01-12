@@ -106,6 +106,7 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
             rol.getPlanEstudios().add(new PlanEstudio(0, "Selecciona un plan para consulta", Short.parseShort("0"), true, Short.parseShort("0")));
             rol.setHistorialCalificacionesSaiiuts(new ArrayList<>());
             rol.setHistorialCalificacionesTsus(new ArrayList<>());
+            rol.setHistoricoReincorporacioneses(new ArrayList<>());
             rol.setUniversidadActiva(0);
             rol.setPestaniaActiva(0);
             rol.setIdPlanEstudio("");
@@ -157,12 +158,19 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
     
     public void estudianteConsultado() {
         buscarAlineacionCalificaciones();
+        getHistorialRegistro();
     }
     
     public void getUniversidades (){
         ResultadoEJB<List<UniversidadesUT>> resUniversidades = ejbRegistroIng.getUniversidades();
         if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
         rol.setUniversidades(resUniversidades.getValor());
+    }
+    
+    public void getHistorialRegistro (){
+        ResultadoEJB<List<DtoReincorporacion.HistoricoReincorporaciones>> resUniversidades = ejb.getHistorialInscripciones(rol.getEstudiante().getAspirante());
+        if(!resUniversidades.getCorrecto()){ mostrarMensajeResultadoEJB(resUniversidades);return;}
+        rol.setHistoricoReincorporacioneses(resUniversidades.getValor());
     }
     
     public void buscarAlineacionCalificaciones(){          

@@ -61,6 +61,7 @@ public class ReincorporacionCalificacionesRolServiciosEscolares extends Abstract
     @Getter @Setter @NonNull private List<DtoReincorporacion.PlanesDeEstudioConsulta> planesDeEstudioConsultas;  
     @Getter @Setter @NonNull private List<DtoReincorporacion.ReporteReincorporaciones> reincorporacioneses;  
     @Getter @Setter @NonNull private List<DtoReincorporacion.ReporteReincorporaciones> reincorporacionesEstudiantes;  
+    @Getter @Setter @NonNull private List<DtoReincorporacion.HistoricoReincorporaciones> historicoReincorporacioneses;
     @Getter @Setter @NonNull private List<PlanEstudio> planEstudios;  
 
     public ReincorporacionCalificacionesRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad area) {

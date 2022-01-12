@@ -2348,9 +2348,13 @@ public class EjbReincorporacion {
                         .getResultList();
                 List<DtoReincorporacion.HistoricoReincorporaciones> historicoReincorporacioneses = new ArrayList<>();
                 estudiantes.forEach((e) -> {
-                    DtoReincorporacion.HistoricoReincorporaciones rr = new DtoReincorporacion.HistoricoReincorporaciones(e, e.getTipoEstudiante(), e.getGrupo(), e.getGrupo().getPlan(), 0, e.getGrupo().getCargaAcademicaList().size(), Boolean.FALSE);
+                    DtoReincorporacion.HistoricoReincorporaciones rr = new DtoReincorporacion.HistoricoReincorporaciones(e, e.getTipoEstudiante(), e.getGrupo(), e.getGrupo().getPlan(), "", 0, e.getGrupo().getCargaAcademicaList().size(), Boolean.FALSE);
                     List<CalificacionPromedio> calificacionPromedios = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionPromedio.class).setParameter("idEstudiante", e.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
                     List<CalificacionNivelacion> calificacionNivelacions = em.createQuery("select t from CalificacionNivelacion t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionNivelacion.class).setParameter("idEstudiante", e.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+                    List<CalificacionPromedio> tipoCalificacion = em.createQuery("SELECT t FROM CalificacionPromedio t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante GROUP BY t.tipo", CalificacionPromedio.class).setParameter("idEstudiante", e.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+                    if (!tipoCalificacion.isEmpty()) {
+                        rr.setTipoCalificacion(tipoCalificacion.get(0).getTipo());
+                    }
                     if (e.getGrupo().getCargaAcademicaList().size() == calificacionPromedios.size()) {
                         rr.setCompleto(Boolean.TRUE);
                         rr.setCalificacionesRegistradas(calificacionPromedios.size());
@@ -2366,9 +2370,42 @@ public class EjbReincorporacion {
                 t.setHistoricoReincorporacioneses(historicoReincorporacioneses);
             });
              
-            return ResultadoEJB.crearCorrecto(reincorporacioneses, "AgetReporteReincorporaciones Encontrados");
+            return ResultadoEJB.crearCorrecto(reincorporacioneses, "getReporteReincorporacionesPorEstudiante Encontrados");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar el getReporteReincorporaciones (EjbReincorporacion.getReporteReincorporaciones).", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar el getReporteReincorporacionesPorEstudiante (EjbReincorporacion.getReporteReincorporacionesPorEstudiante).", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<DtoReincorporacion.HistoricoReincorporaciones>> getHistorialInscripciones(Aspirante a) {
+        try {
+            List<Estudiante> estudiantes = em.createQuery("select t from Estudiante t INNER JOIN t.aspirante a INNER JOIN a.idPersona p WHERE a.idAspirante=:idAspirante ORDER BY t.periodo DESC", Estudiante.class)
+                    .setParameter("idAspirante", a.getIdAspirante())
+                    .getResultList();
+            List<DtoReincorporacion.HistoricoReincorporaciones> historicoReincorporacioneses = new ArrayList<>();
+            estudiantes.forEach((e) -> {
+                DtoReincorporacion.HistoricoReincorporaciones rr = new DtoReincorporacion.HistoricoReincorporaciones(e, e.getTipoEstudiante(), e.getGrupo(), e.getGrupo().getPlan(), "", 0, e.getGrupo().getCargaAcademicaList().size(), Boolean.FALSE);
+                List<CalificacionPromedio> calificacionPromedios = em.createQuery("select t from CalificacionPromedio t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionPromedio.class).setParameter("idEstudiante", e.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+                List<CalificacionNivelacion> calificacionNivelacions = em.createQuery("select t from CalificacionNivelacion t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante AND t.valor >= :calificacion", CalificacionNivelacion.class).setParameter("idEstudiante", e.getIdEstudiante()).setParameter("calificacion", 8.0).getResultList();
+                List<CalificacionPromedio> tipoCalificacion = em.createQuery("SELECT t FROM CalificacionPromedio t INNER JOIN t.estudiante c WHERE c.idEstudiante=:idEstudiante GROUP BY t.tipo", CalificacionPromedio.class).setParameter("idEstudiante", e.getIdEstudiante()).getResultList();
+                if(!tipoCalificacion.isEmpty()){
+                    rr.setTipoCalificacion(tipoCalificacion.get(0).getTipo());
+                }
+                if (e.getGrupo().getCargaAcademicaList().size() == calificacionPromedios.size()) {
+                    rr.setCompleto(Boolean.TRUE);
+                    rr.setCalificacionesRegistradas(calificacionPromedios.size());
+                } else if (e.getGrupo().getCargaAcademicaList().size() == (calificacionPromedios.size() + calificacionNivelacions.size())) {
+                    rr.setCompleto(Boolean.TRUE);
+                    rr.setCalificacionesRegistradas((calificacionPromedios.size() + calificacionNivelacions.size()));
+                } else if (e.getTipoEstudiante().getDescripcion().contains("Baja")) {
+                    rr.setCompleto(Boolean.TRUE);
+                    rr.setCalificacionesRegistradas(e.getGrupo().getCargaAcademicaList().size());
+                }
+                historicoReincorporacioneses.add(rr);
+            });
+             
+            return ResultadoEJB.crearCorrecto(historicoReincorporacioneses, "getHistorialInscripciones Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar el getHistorialInscripciones (EjbReincorporacion.getHistorialInscripciones).", e, null);
         }
     }
     
