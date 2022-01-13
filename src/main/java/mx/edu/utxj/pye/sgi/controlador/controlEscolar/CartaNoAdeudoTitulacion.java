@@ -32,6 +32,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import org.primefaces.component.datatable.DataTable;
 
 @Named
 @ViewScoped
@@ -81,7 +82,7 @@ public class CartaNoAdeudoTitulacion extends ViewScopedRol implements Desarrolla
             rol.getInstrucciones().add("Una vez revisados, de click en Guardar Cambios");
             getGeneraciones();
             getCatalogoArea();
-            getListaDtoNoAdeudo();
+//            getListaDtoNoAdeudo();
             rol.setEstatus(ejb.getEsatus());
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -106,6 +107,12 @@ public class CartaNoAdeudoTitulacion extends ViewScopedRol implements Desarrolla
                 rol.setCatalogoSelect(resCatalogo.getValor().get(0));
             }else {mostrarMensajeResultadoEJB(resCatalogo);}
         }catch (Exception e){mostrarExcepcion(e);}
+    }
+    
+    public void cargarLista() {
+       try {
+            getListaDtoNoAdeudo();
+        } catch (Exception e){mostrarExcepcion(e);}
     }
 
     public void getListaDtoNoAdeudo(){
