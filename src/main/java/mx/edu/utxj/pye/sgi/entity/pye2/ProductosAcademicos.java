@@ -105,7 +105,7 @@ public class ProductosAcademicos implements Serializable {
     @Size(max = 1000)
     @Column(name = "issn")
     private String issn;
-    @Size(max = 10)
+    @Size(max = 17)
     @Column(name = "arbitradoIndexado")
     private String arbitradoIndexado;
     @JoinColumn(name = "registro", referencedColumnName = "registro", insertable = false, updatable = false)

@@ -1120,7 +1120,6 @@
                                     <p:inputText id="iptISSN"
                                                  label="iptISSN"
                                                  maxlength="25"
-                                                 required="true"
                                                  class="form-control"
                                                  requiredMessage="Ingrese ISSN ó ISBN"
                                                  value="#{controladorProductosAcademicos.dtoProductoAcademico.registroProductoAcademico.productosAcademicos.issn}"/>
@@ -1141,6 +1140,8 @@
                                                        >
                                         <f:selectItem itemLabel="Arbitrado" itemValue="Arbitrado" />
                                         <f:selectItem itemLabel="Indexado" itemValue="Indexado" />
+                                        <f:selectItem itemLabel="ArbitradoIndexado" itemValue="ArbitradoIndexado" />
+                                        <f:selectItem itemLabel="No aplica" itemValue="No aplica" />
                                     </p:selectOneButton>
                                     <p:message for="sobArbitradoIndexado" />
                                 </div>

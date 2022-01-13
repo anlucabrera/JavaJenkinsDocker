@@ -2504,15 +2504,15 @@ public class EjbCartaNoAdeudo {
                 resEst.getValor().stream().forEach(e->{
                     DtoNoAdeudoEstudiante.NoAdeudoEstudianteGeneral dtoGeneral = new DtoNoAdeudoEstudiante.NoAdeudoEstudianteGeneral(new Estudiante(),new AreasUniversidad(),Boolean.FALSE,Boolean.FALSE,new Generaciones(),Boolean.FALSE,direccionCarrera,biblioteca,iye,cordinacionEstadia,seguimientoEgresados,serviciosMateriales,servciosEscolares,titulacion,finanzas);
                     ResultadoEJB<DtoNoAdeudoEstudiante.NoAdeudoEstudianteGeneral> resGenerales= packGeneral(e,generacion,nivel,personal,areaConsulta);
-                    System.out.println("EjbCartaNoAdeudo.packGeneralList "+resGenerales.getValor());
+//                    System.out.println("EjbCartaNoAdeudo.packGeneralList "+resGenerales.getValor());
                     if(resGenerales.getCorrecto()){
                         dtoGeneral =resGenerales.getValor();
-                        System.out.println("Area estudiante "+resGenerales.getValor().getPe().getArea() + "Sup "+ resGenerales.getValor().getPe().getAreaSuperior()+ "Personal consulta "+personal.getAreaOperativa());
+//                        System.out.println("Area estudiante "+resGenerales.getValor().getPe().getArea() + "Sup "+ resGenerales.getValor().getPe().getAreaSuperior()+ "Personal consulta "+personal.getAreaOperativa());
                         //Empaqueta los datos necesarios direccion
                         dtoGeneral =resGenerales.getValor();
                         dtoGeneral.setDireccionCarrera(resGenerales.getValor().getDireccionCarrera());
                     }else {
-                        System.out.println("EjbCartaNoAdeudo.packDireecionCarreraList ERROR AL EMPAQUETAR GENERAL");
+//                        System.out.println("EjbCartaNoAdeudo.packDireecionCarreraList ERROR AL EMPAQUETAR GENERAL");
                         return;
                     }
                     listaDto.add(dtoGeneral);
