@@ -31,6 +31,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import org.primefaces.component.datatable.DataTable;
 
 @Named
 @ViewScoped
@@ -147,8 +148,12 @@ public class CartaNoAdeudoSeguimientoEgresados extends ViewScopedRol implements 
     }
 
     public void onCellEdit(CellEditEvent event) {
-        Object oldValue = event.getOldValue();
-        Object newValue = event.getNewValue();
+//        Object oldValue = event.getOldValue();
+//        Object newValue = event.getNewValue();
+        DataTable dataTable = (DataTable) event.getSource();
+        DtoNoAdeudoEstudiante.NoAdeudoEstudianteGeneral registroNew = (DtoNoAdeudoEstudiante.NoAdeudoEstudianteGeneral) dataTable.getRowData();
+        ResultadoEJB<DtoNoAdeudoEstudiante.SeguimientoEgresados> resUpdate= ejb.updateNoAdeudoEstudioEgresados(registroNew.getSeguimientoEgresados(),rol.getServiciosE().getPersonal());
+        mostrarMensajeResultadoEJB(resUpdate);
     }
 
     

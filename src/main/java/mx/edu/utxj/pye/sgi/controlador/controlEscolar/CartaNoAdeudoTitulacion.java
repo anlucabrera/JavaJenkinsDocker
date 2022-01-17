@@ -155,8 +155,12 @@ public class CartaNoAdeudoTitulacion extends ViewScopedRol implements Desarrolla
     }
 
     public void onCellEdit(CellEditEvent event) {
-        Object oldValue = event.getOldValue();
-        Object newValue = event.getNewValue();
+//        Object oldValue = event.getOldValue();
+//        Object newValue = event.getNewValue();
+        DataTable dataTable = (DataTable) event.getSource();
+        DtoNoAdeudoEstudiante.NoAdeudoEstudianteGeneral registroNew = (DtoNoAdeudoEstudiante.NoAdeudoEstudianteGeneral) dataTable.getRowData();
+        ResultadoEJB<DtoNoAdeudoEstudiante.Titulacion> resUpdate= ejb.updateNoAdeudoTitulacion(registroNew.getTitulacion(),rol.getPersonalActivo().getPersonal());
+        mostrarMensajeResultadoEJB(resUpdate);
     }
 
     
