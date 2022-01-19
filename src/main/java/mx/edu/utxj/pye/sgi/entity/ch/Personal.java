@@ -143,6 +143,8 @@ public class Personal implements Serializable {
     @Size(max = 200)
     @Column(name = "correo_electronico2")
     private String correoElectronico2;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "clavePersonal")
+    private List<Actividadesremotas> actividadesremotasList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal")
     private List<EvaluacionDocentesMateriaResultados5> evaluacionDocentesMateriaResultados5List;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "personal1")
@@ -1008,4 +1010,12 @@ public class Personal implements Serializable {
         this.evaluacionConocimientoCodigoEticaResultados2List = evaluacionConocimientoCodigoEticaResultados2List;
     }
 
+    @XmlTransient
+    public List<Actividadesremotas> getActividadesremotasList() {
+        return actividadesremotasList;
+    }
+
+    public void setActividadesremotasList(List<Actividadesremotas> actividadesremotasList) {
+        this.actividadesremotasList = actividadesremotasList;
+    }
 }

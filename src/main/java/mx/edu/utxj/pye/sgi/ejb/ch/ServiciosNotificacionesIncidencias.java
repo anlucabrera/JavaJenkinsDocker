@@ -7,6 +7,7 @@ import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import mx.edu.utxj.pye.sgi.entity.ch.Actividadesremotas;
 import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
@@ -262,5 +263,63 @@ public class ServiciosNotificacionesIncidencias implements EjbNotificacionesInci
         facade.remove(nuevaCuidados);
         facade.flush();
         return nuevaCuidados;
+    }
+    
+// ------------------------------------------------------------- Cuidados -------------------------------------------------------------
+
+    @Override
+    public List<Actividadesremotas> mostrarActividadesremotasTotales() throws Throwable {
+        facade.setEntityClass(Actividadesremotas.class);
+        return facade.findAll();
+    }
+
+    @Override
+    public List<Actividadesremotas> mostrarActividadesremotasArea(Short area) throws Throwable {
+        TypedQuery<Actividadesremotas> q = em.createQuery("SELECT c FROM Actividadesremotas c JOIN c.clavePersonal cp WHERE cp.areaOperativa=:areaOperativa OR cp.areaSuperior=:areaSuperior", Actividadesremotas.class);
+        q.setParameter("areaOperativa", area);
+        q.setParameter("areaSuperior", area);
+        List<Actividadesremotas> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<Actividadesremotas> mostrarActividadesremotasReporte(Date fechaI, Date fechaF) throws Throwable {
+        TypedQuery<Actividadesremotas> q = em.createQuery("SELECT c FROM Actividadesremotas c JOIN c.clavePersonal cp WHERE c.fecha BETWEEN :fechaI AND :frchaF ORDER BY cp.areaOperativa , cp.clave", Actividadesremotas.class);
+        q.setParameter("fechaI", fechaI);
+        q.setParameter("frchaF", fechaF);
+        List<Actividadesremotas> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public List<Actividadesremotas> mostrarActividadesremotas(Integer clave) throws Throwable {
+        TypedQuery<Actividadesremotas> q = em.createQuery("SELECT c FROM Actividadesremotas c JOIN c.clavePersonal cp WHERE cp.clave =:clave ORDER BY c.actividades DESC", Actividadesremotas.class);
+        q.setParameter("clave", clave);
+        List<Actividadesremotas> pr = q.getResultList();
+        return pr;
+    }
+
+    @Override
+    public Actividadesremotas agregarActividadesremotas(Actividadesremotas nuevaActividadesremotas) throws Throwable {
+        facade.setEntityClass(Actividadesremotas.class);
+        facade.create(nuevaActividadesremotas);
+        facade.flush();
+        return nuevaActividadesremotas;
+    }
+
+    @Override
+    public Actividadesremotas actualizarActividadesremotas(Actividadesremotas nuevaActividadesremotas) throws Throwable {
+        facade.setEntityClass(Actividadesremotas.class);
+        facade.edit(nuevaActividadesremotas);
+        facade.flush();
+        return nuevaActividadesremotas;
+    }
+
+    @Override
+    public Actividadesremotas eliminarActividadesremotas(Actividadesremotas nuevaActividadesremotas) throws Throwable {
+        facade.setEntityClass(Actividadesremotas.class);
+        facade.remove(nuevaActividadesremotas);
+        facade.flush();
+        return nuevaActividadesremotas;
     }
 }

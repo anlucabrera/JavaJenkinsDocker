@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.entity.ch.Actividadesremotas;
 import mx.edu.utxj.pye.sgi.entity.ch.Articulosp;
 import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
 import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
@@ -77,6 +79,7 @@ public class ControladorSubordinados implements Serializable {
     @Getter    @Setter    private List<Funciones> listaFuncioneSubordinado = new ArrayList<>();
 
 ////////////////////////////////////////////////////////////////////////////////Justificacion de Asistemcias
+    @Getter    @Setter    private List<Actividadesremotas> actividadesremotas = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidenciasReporteImpresion = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidenciasIndividuales = new ArrayList<>();
@@ -156,6 +159,8 @@ public class ControladorSubordinados implements Serializable {
             incidenciases.clear();
             List<Incapacidad> incapacidads = new ArrayList<>();
             incapacidads.clear();
+            List<Actividadesremotas> remotas = new ArrayList<>();
+            remotas.clear();
             listaIncidenciasReporteImpresion = new ArrayList<>();
             modulosRegistro = ejbDatosUsuarioLogeado.mostrarModuloregistro("Incidencia");
             if (modulosRegistro == null) {
@@ -216,6 +221,16 @@ public class ControladorSubordinados implements Serializable {
                         }
                     });
                 }
+                
+                remotas = new ArrayList<>();
+                remotas= ejbNotificacionesIncidencias.mostrarActividadesremotasReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
+                if (!remotas.isEmpty()) {
+                    remotas.forEach((t) -> {
+                        if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                            actividadesremotas.add(t);
+                        }
+                    });
+                }
             }
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -233,6 +248,8 @@ public class ControladorSubordinados implements Serializable {
             incapacidads.clear();
             List<Cuidados> cuidadoses = new ArrayList<>();
             cuidadoses.clear();
+            List<Actividadesremotas> remotas = new ArrayList<>();
+            remotas.clear();
             fechaI = LocalDate.of(anioNumero, Integer.parseInt(mActual), 01);
             fechaF = LocalDate.of(anioNumero, Integer.parseInt(mActual), LocalDate.of(anioNumero, Integer.parseInt(mActual), 01).lengthOfMonth());
             incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
@@ -271,6 +288,18 @@ public class ControladorSubordinados implements Serializable {
                     }
                 });
             }
+            
+            actividadesremotas = new ArrayList<>();
+            actividadesremotas.clear();
+            remotas = ejbNotificacionesIncidencias.mostrarActividadesremotasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
+            if (!remotas.isEmpty()) {
+                remotas.forEach((t) -> {
+                    if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        actividadesremotas.add(t);
+                    }
+                });
+            }
+            
             Ajax.update("@(form)");
             Ajax.update("@(form)");
         } catch (Throwable ex) {
@@ -389,5 +418,40 @@ public class ControladorSubordinados implements Serializable {
     }
 
     public void imprimirValores() {
+    }
+    
+    public void actualizarAP(ValueChangeEvent e) {
+        try {
+            String id = e.getComponent().getClientId();
+            Actividadesremotas ag = actividadesremotas.get(Integer.parseInt(id.split("tblActividades:")[1].split(":validar")[0]));
+            ag.setValidado((Boolean) e.getNewValue());
+            ejbNotificacionesIncidencias.actualizarActividadesremotas(ag);
+            mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void validarTrabajador(Actividadesremotas actividadesr) {
+        try {
+            List<Actividadesremotas> as = new ArrayList<>();
+            as = actividadesremotas.stream().filter(t -> Objects.equals(t.getClavePersonal().getClave(), actividadesr.getClavePersonal().getClave())).collect(Collectors.toList());
+
+            if (!as.isEmpty()) {
+                as.forEach((t) -> {
+                    try {
+                        t.setValidado(Boolean.TRUE);
+                        ejbNotificacionesIncidencias.actualizarActividadesremotas(t);
+                    } catch (Throwable ex) {
+                        Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+            }
+            mostrarIncidencias(String.valueOf(fechaNow.getMonthValue()));
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

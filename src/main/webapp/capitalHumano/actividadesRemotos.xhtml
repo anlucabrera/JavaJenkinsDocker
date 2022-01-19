@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGeneralesPrint.css" media="screen" />
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <!--c:if test="# {regisroActividadesRemotas.cargado}"-->
+        <h:outputScript>
+            PrimeFaces.locales['es'] = {
+            closeText: 'Cerrar',
+            prevText: 'Anterior',
+            nextText: 'Siguiente',
+            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+            dayNamesMin: ['D','L','M','M','J','V','S'],
+            weekHeader: 'Semana',
+            firstDay: 1,
+            isRTL: false,
+            showMonthAfterYear: false,
+            yearSuffix: '',
+            timeOnlyTitle: 'Sólo hora',
+            timeText: 'Tiempo',
+            hourText: 'Hora',
+            minuteText: 'Minuto',
+            secondText: 'Segundo',
+            currentText: 'Fecha actual',
+            ampm: false,
+            month: 'Mes',
+            week: 'Semana',
+            day: 'Día',
+            allDayText : 'Todo el día'
+            };
+        </h:outputScript>
+        <p:panel id="informacion">
+            <section class="content">
+                <div class="row">
+                    <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                    <div class="col-md-10">
+                        <div class="nav-tabs-custom">
+                            <div class="row">
+                                <div class="col-lg-10 col-xs-10"/>
+                                <div class="col-lg-2 col-xs-2">
+                                    <p:link outcome="perfilEmpleado">
+                                        <i class="fa fa-reply"></i>
+                                        <span>Regresar a mi perfil</span>
+                                    </p:link>
+                                </div>      
+                            </div>                            
+                            <p:tabView >
+                                <p:tab title="Actividades">
+                                    <h:form id="frmInci"> 
+                                        <p:outputPanel >            
+                                            <p:autoUpdate/>
+                                            <p:panel header="Registro de Actividades" class="box box-primary">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 border-right">
+                                                                    <div class="description-block">
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-3 col-md-3 col-lg-3">                                                                              
+                                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de trabajo remoto" />
+                                                                                    <p:calendar locale="es" id="fechaIn" value="#{regisroActividadesRemotas.actividadesremota.fecha}" pattern="dd-MM-yyyy" mask="true" required="true" requiredMessage="El trabajo remoto debe contar con una fecha"/>
+                                                                                    <p:message for="fechaIn"><p:autoUpdate/></p:message>     
+                                                                                </div>
+                                                                                <div class="col-sm-8 col-md-8 col-lg-8">                                                                                  
+                                                                                    <p:outputLabel for="just" style="font-size: large" value="Actividades"/>                                
+                                                                                    <p:inputTextarea id="just" class="form-control" placeholder="Justificación"  value="#{regisroActividadesRemotas.actividadesremota.actividades}" required="true" requiredMessage="Las actividades realizadas son obligatorias"/>
+                                                                                    <p:message for="just"><p:autoUpdate/></p:message>     
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                        <div class="row">
+                                                                            <div class="form-group">
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                    <p:commandButton id="btnBuscarActiuvidades" value="Guardar información" actionListener="#{regisroActividadesRemotas.crearIncidencia()}" 
+                                                                                                     icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" oncomplete="PF('frmListaIncidencias')update();"/> 
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <hr/>                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:panel>
+                                        </p:outputPanel>
+                                    </h:form>
+                                    <h:form id="frmListaIncidencias">
+                                        <p:outputPanel>
+                                            <p:remoteCommand name="actualizarTabla" actionListener="#{regisroActividadesRemotas.metodoBase()}" update="tblActividades" />
+                                            <p:dataTable id="tblActividades"  value="#{regisroActividadesRemotas.actividadesremotas}"  var="incidencia"
+                                                         paginator="true" rows="10" editable="true" style="margin-bottom:20px"
+                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{incidencia.validado?'actividad':'subactiviades'}"
+                                                         emptyMessage="No se encontraron Registros." rendered="true">
+                                                <f:facet name="header">
+                                                   
+                                                </f:facet>
+
+                                                <p:ajax event="rowEdit" listener="#{regisroActividadesRemotas.onRowEdit}" update="tblActividades" />
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblActividades" />
+
+                                                <p:column style="width: 5%;">
+                                                    <p:commandButton actionListener="#{regisroActividadesRemotas.eliminarIncidencia(incidencia)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
+                                                                     onsuccess="PF('frmInci').update();" styleClass="btn-primary" title="Eliminar Incidencias" disabled="#{incidencia.validado}">
+                                                        <p:confirm header="Confirmación" message="¿Confirma la eliminación de su trabajo remoto del día #{incidencia.fecha}?" icon="ui-icon-alert" />
+                                                    </p:commandButton>
+                                                </p:column>
+                                                
+                                                <p:column headerText="Fecha" 
+                                                          sortBy="#{incidencia.fecha}" 
+                                                          filterBy="#{incidencia.fecha}" 
+                                                          filterMatchMode="contains" 
+                                                          style="width: 10%;text-align: center">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"> <h:outputLabel value="#{incidencia.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                        <f:facet name="input">
+                                                            <p:calendar locale="es" value="#{incidencia.fecha}" pattern="dd-MM-yyyy" mask="true" />
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>    
+                                                <p:column headerText="Actividades" 
+                                                          sortBy="#{incidencia.actividades}" 
+                                                          filterBy="#{incidencia.actividades}" 
+                                                          filterMatchMode="contains" 
+                                                          style="width: 40%">
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{incidencia.actividades}" /></f:facet>
+                                                        <f:facet name="input">
+                                                            <f:facet name="input"><p:inputTextarea value="#{incidencia.actividades}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>                                                
+                                                
+                                                <p:column style="width:6%" class="noprint" >
+                                                    <p:rowEditor style="visibility: #{!incidencia.validado?'visible':'hidden'}"/>
+                                                </p:column>
+                                            </p:dataTable>  
+                                        </p:outputPanel>    
+
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>   
+                                    </h:form>
+                                </p:tab>
+                            </p:tabView>
+
+                                   
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </p:panel>
+        <!--/c:if-->
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+</ui:composition>

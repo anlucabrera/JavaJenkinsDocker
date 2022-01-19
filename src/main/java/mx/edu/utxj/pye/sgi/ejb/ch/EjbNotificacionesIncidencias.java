@@ -3,6 +3,7 @@ package mx.edu.utxj.pye.sgi.ejb.ch;
 import java.util.Date;
 import java.util.List;
 import javax.ejb.Local;
+import mx.edu.utxj.pye.sgi.entity.ch.Actividadesremotas;
 import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
@@ -71,4 +72,20 @@ public interface EjbNotificacionesIncidencias {
     public Cuidados actualizarCuidados(Cuidados nuevaCuidados) throws Throwable;
 
     public Cuidados eliminarCuidados(Cuidados nuevaCuidados) throws Throwable;
+    
+// ------------------------------------------------------------- Actividadesremotas -------------------------------------------------------------
+
+    public List<Actividadesremotas> mostrarActividadesremotasTotales() throws Throwable;
+
+    public List<Actividadesremotas> mostrarActividadesremotasArea(Short area) throws Throwable;
+
+    public List<Actividadesremotas> mostrarActividadesremotasReporte(Date fechaI, Date fechaF) throws Throwable;
+
+    public List<Actividadesremotas> mostrarActividadesremotas(Integer clave) throws Throwable;
+
+    public Actividadesremotas agregarActividadesremotas(Actividadesremotas nuevaActividadesremotas) throws Throwable;
+
+    public Actividadesremotas actualizarActividadesremotas(Actividadesremotas nuevaActividadesremotas) throws Throwable;
+
+    public Actividadesremotas eliminarActividadesremotas(Actividadesremotas nuevaActividadesremotas) throws Throwable;
 }

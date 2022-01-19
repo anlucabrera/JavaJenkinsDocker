@@ -143,6 +143,13 @@
                                 <span>Cuidados</span>
                             </p:link>
                         </li>
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9}">
+                            <li>
+                                <p:link href="#{request.contextPath}/capitalHumano/actividadesRemotos.xhtml"><i class="fa fa-laptop"></i>
+                                    <span>Actividades Remotas</span>
+                                </p:link>
+                            </li>                            
+                        </c:if>
                     </ul>
                 </li>
 
@@ -349,7 +356,7 @@
                     <c:if test="#{consultaSfCoordinadorAreaAcademicaEstadias.mostrarEnDesarrollo(request) and consultaSfCoordinadorAreaAcademicaEstadias.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/serviciosEstudiantiles/consulta_seguro_facultativo_caae.xhtml"><i class="fa fa-user-md"></i><span>Consulta Seguro Facultativo</span></p:link></li></c:if>
                     <c:if test="#{consultaSfAsesorAcademicoEstadias.mostrarEnDesarrollo(request) and consultaSfAsesorAcademicoEstadias.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/serviciosEstudiantiles/consulta_seguro_facultativo_aae.xhtml"><i class="fa fa-user-md"></i><span>Consulta Seguro Facultativo</span></p:link></li></c:if>
                     <c:if test="#{consultaSfTrabajador.mostrarEnDesarrollo(request) and consultaSfTrabajador.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/serviciosEstudiantiles/consulta_seguro_facultativo_t.xhtml"><i class="fa fa-user-md"></i><span>Consulta Seguro Facultativo</span></p:link></li></c:if>
-                    
+
                     <!--Recursos Materiales -->
                     <c:if test="#{cartaNoAdeudoRecursosMateriales.mostrarEnDesarrollo(request) and cartaNoAdeudoRecursosMateriales.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/recursosMateriales/cartaNoAdeudoRecursosMateriales.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
 
@@ -449,7 +456,7 @@
                     <c:if test="#{consultaPlanesAccionTutoralCoordinadorTutores.mostrarEnDesarrollo(request) and consultaPlanesAccionTutoralCoordinadorTutores.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/consulta_plan_accion_tutorial_tutores.xhtml"><i class="fa fa-slideshare"></i><span>Planes de Acción Tutorial</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{(seguimientoTestAprendizajeTutor.mostrarEnDesarrollo(request) and seguimientoTestAprendizajeTutor.tieneAcceso) or (seguimientoTestAprendizajeTutorSaiiut.mostrarEnDesarrollo(request) and seguimientoTestAprendizajeTutorSaiiut.tieneAcceso)}"><li><p:link href="#{request.contextPath}/controlEscolar/seguimientoTestAprendizaje.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento de Test</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{seguimientoEvaluacionEstadiaTutor.mostrarEnDesarrollo(request) and seguimientoEvaluacionEstadiaTutor.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/tutor/seguimientoEvaluacionEstadiaTutor.xhtml"><i class="fa fa-slideshare"></i><span>Seguimiento de Evaluación Estadía</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                    
+
                     <!-- Estadía - Director de carrera -->
                     <c:if test="#{asignacionRolesEstadiaDirector.mostrarEnDesarrollo(request) and asignacionRolesEstadiaDirector.tieneAcceso}">
                         <li class="treeview">
@@ -469,7 +476,7 @@
                     </c:if>
                     <!-- Carta de no adeudo - Director de carrera -->
                     <c:if test="#{cartaNoAdeudoDireccionCarrera.mostrarEnDesarrollo(request) and cartaNoAdeudoDireccionCarrera.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/cartaNoAdeudoDirector.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
-                    
+
                     <!-- Asesor de estadía -->
                     <c:if test="#{seguimientoEstadiaAsesor.mostrarEnDesarrollo(request) and seguimientoEstadiaAsesor.tieneAcceso}">
                         <li class="treeview">
@@ -539,7 +546,7 @@
                     </c:if>
                     <!-- Apartado de carta de no adedudo para Servicios Escolares-->
                     <c:if test="#{cartaNoAdeudoSE.mostrarEnDesarrollo(request) and cartaNoAdeudoSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cartaNoAdeudoServiciosEscolares.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
-                    
+
                     <c:if test="#{(calendarioEventosEscolares.mostrarEnDesarrollo(request) and calendarioEventosEscolares.tieneAcceso) or (calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso)}">
                         <li class="treeview">
                             <a href="#">
