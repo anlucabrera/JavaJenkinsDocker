@@ -702,6 +702,52 @@
                     </div>
                 </div>
             </c:if>
+            <!--Gadget de Avisos-->
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h2 class="box-title">Avisos</h2>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            <!--Tarjeta Mostrar Actividad-->
+                            <div class="col-lg-6 col-md-12 col-xs-12">
+                                <div id="avisos" class="small-box bg-green">
+                                    <div class="inner">
+                                        <h3>Concurso Institucional</h3>
+                                        <p>Torneo de Ajedrez Mixto. <br/>Enero. </p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fa fa fa-newspaper-o"/>
+                                    </div>
+                                    <p:link class="small-box-footer">Consultar <i class="fa fa-eye" aria-hidden="true"/> </p:link>
+                                </div>
+                            </div>
+                            <!--Tarjeta Registrar Acgtividad-->
+<!--                            <div class="col-lg-4 col-md-6 col-xs-12">
+                                <div id="avisos" class="small-box bg-green">
+                                    <div class="inner">
+                                        <h3>Registro A.</h3>
+                                        <p>Aqui se deben registrar las actividades</p>
+                                    </div>
+                                    <div class="icon">
+                                        <i class="fa fa-newspaper-o"/>
+                                    </div>
+                                    <p:link outcome="registroActividades"  class="small-box-footer">
+                                        Registrar <i class="fa fa-file-text-o"></i>
+                                    </p:link>
+                                    <h:form><p:remoteCommand name="registroActividades" action="registroActividades" /></h:form>
+                                </div>
+                            </div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Fin gadget de avisos-->
             <!--c:if test="#{premios.aplica}">
                 <div class="box box-primary">
                     <div class="box box-solid">
