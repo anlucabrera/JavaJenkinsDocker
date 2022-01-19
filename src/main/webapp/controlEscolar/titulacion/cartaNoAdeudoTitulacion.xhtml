@@ -51,12 +51,12 @@
                                                 title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
                                                 class="fa fa-question"/>
                                         </p:commandLink>
-                                        <p:spacer width="10px"/>
-                                        <p:commandButton value="Guardar cambios" id="btnSave" disabled="#{cartaNoAdeudoTitulacion.rol.estudiantes.size() eq null}"
-                                                         actionListener="#{cartaNoAdeudoTitulacion.updateCarta}"
+<!--                                        <p:spacer width="10px"/>
+                                        <p:commandButton value="Guardar cambios" id="btnSave" disabled="# {cartaNoAdeudoTitulacion.rol.estudiantes.size() eq null}"
+                                                         actionListener="# {cartaNoAdeudoTitulacion.updateCarta}"
                                                          process="@this" icon="fa fa-check"
                                                          styleClass="btn-success" update="dtbExpTitGenPE"
-                                        />
+                                        />-->
 
                                     </f:facet>
                                 </p:toolbar>
@@ -117,7 +117,7 @@
                                                                  </p:commandLink>
                                                              </f:facet>
 
-                                                             <p:ajax event="cellEdit" listener="#{cartaNoAdeudoTitulacion.onCellEdit}" update="@this" />
+                                                             <p:ajax event="cellEdit" listener="#{cartaNoAdeudoTitulacion.onCellEdit}" process="@this" update="@this @(.estatus) @(.tabla)" oncomplete="actualizar();" />
                                                              <p:column headerText="Matricula" style="width: 130px; text-align: center;" sortBy="#{est.estudiante.matricula}" filterBy="#{est.estudiante.matricula}" filterMatchMode="contains">
                                                                  <h:outputText value="#{est.estudiante.matricula}"/>
                                                              </p:column>
@@ -170,7 +170,7 @@
                                                                  <p:selectBooleanButton id="v" disabled="true" onLabel="Si" class="form-control" offLabel="No" onIcon="fa fa-thumbs-up" offIcon="fa fa-thumbs-down" style="width:60px" value="#{est.titulacion.expedienteValidado}"/>
                                                              </p:column>
                                                              <p:column headerText="Estatus" style="width: 100px; text-align: center;" >
-                                                                 <h:outputText value="#{est.titulacion.aduedoTitulacion.status}"/>
+                                                                 <h:outputText id="estatus" value="#{est.titulacion.aduedoTitulacion.status}"/>
                                                              </p:column>
                                                              <p:column headerText="Adeudo" style="width: 200px; text-align: center;">
                                                                  <p:cellEditor>

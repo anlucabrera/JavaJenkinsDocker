@@ -1849,7 +1849,7 @@ public class EjbCartaNoAdeudo {
                 titulacion.setIntegroExpediente(Boolean.FALSE);
 
             }
-            System.out.println("EjbCartaNoAdeudo.packTitulacion Expediante" +resEx.getValor());
+//            System.out.println("EjbCartaNoAdeudo.packTitulacion Expediante" +resEx.getValor());
             //Busca el adeduo del estudiante
             ResultadoEJB<NoAdeudoEstudiante> noAdeudo = compruebaNoAdeudoTitulacion(estudiante,areaConsulta,nivelEstudios,personal, general, resEx.getValor());
             if(noAdeudo.getCorrecto()){

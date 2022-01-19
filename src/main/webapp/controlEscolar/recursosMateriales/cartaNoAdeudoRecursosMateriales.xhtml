@@ -43,12 +43,12 @@
                             <div id="main-buttons" class="hidden-sm hidden-xs">
                                 <p:toolbar id="tb">
                                     <f:facet name="right">
-                                        <p:commandButton value="Guardar cambios" id="btnSave"
-                                                         actionListener="#{cartaNoAdeudoRecursosMateriales.updateCarta}"
+<!--                                        <p:commandButton value="Guardar cambios" id="btnSave"
+                                                         actionListener="# {cartaNoAdeudoRecursosMateriales.updateCarta}"
                                                          process="@this" icon="fa fa-check"
                                                          styleClass="btn-success" update="dtbExpTitGenPE"
                                         />
-                                        <p:spacer width="10px"/>
+                                        <p:spacer width="10px"/>-->
                                         <p:commandLink
                                                 class="btn btn-info"
                                                 rendered="#{true}"
@@ -104,7 +104,7 @@
                                                                       filteredValue="#{cartaNoAdeudoRecursosMateriales.rol.vacia}"
                                                          >
 
-                                                             <p:ajax event="cellEdit" listener="#{cartaNoAdeudoRecursosMateriales.onCellEdit}" update="@this" />
+                                                             <p:ajax event="cellEdit" listener="#{cartaNoAdeudoRecursosMateriales.onCellEdit}" process="@this" update="@this @(.estatus) @(.tabla)" oncomplete="actualizar();" />
                                                              <p:column headerText="Matricula" style="width: 130px; text-align: center;" sortBy="#{est.estudiante.matricula}" filterBy="#{est.estudiante.matricula}" filterMatchMode="contains">
                                                                  <h:outputText value="#{est.estudiante.matricula}"/>
                                                              </p:column>
@@ -122,7 +122,7 @@
                                                                  <h:outputText value="#{est.pe.siglas}"/>
                                                              </p:column>
                                                              <p:column headerText="Estatus" style="width: 100px; text-align: center;" >
-                                                                 <h:outputText value="#{est.serviciosMateriales.aduedoServiciosMateriales.status}"/>
+                                                                 <h:outputText id="estatus" value="#{est.serviciosMateriales.aduedoServiciosMateriales.status}"/>
                                                              </p:column>
 
                                                              <p:column headerText="Adeudo" style="width: 200px; text-align: center;">
