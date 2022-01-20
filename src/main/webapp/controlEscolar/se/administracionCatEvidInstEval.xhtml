@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de categorías, evidencias e instrumentos de evaluación
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionCatEvidInstEvalEscolares.cargado}">
+        <adm:breadcrumb title="Administración de categorías, evidencias e instrumentos de evaluación"/>
+        <div class="contenedor">
+            <c:if test="#{administracionCatEvidInstEvalEscolares.tieneAcceso}">
+                <c:if test="#{administracionCatEvidInstEvalEscolares.rol.nivelesEducativos ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(administracionCatEvidInstEvalEscolares.rol.periodoActivo.periodo)}" />
+                                        
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{administracionCatEvidInstEvalEscolares.rol.nivelEducativo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionCatEvidInstEvalEscolares.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{administracionCatEvidInstEvalEscolares.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel educativo" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:inputSwitch id="agregarEvidenciaCategoria" styleClass="form-control" value="#{administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}" valueChangeListener="#{administracionCatEvidInstEvalEscolares.cambiarAgregarEvidencia}" rendered="#{!administracionCatEvidInstEvalEscolares.rol.agregarInstrumentoEvaluacion}"> 
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="agregarEvidenciaCategoria" value="#{administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria?'Agregar evidencia':'No agregar evidencia'}" rendered="#{!administracionCatEvidInstEvalEscolares.rol.agregarInstrumentoEvaluacion}"/>
+                                                <p:message for="agregarEvidenciaCategoria" display="tooltip" rendered="#{!administracionCatEvidInstEvalEscolares.rol.agregarInstrumentoEvaluacion}"/> 
+                                               
+                                                <p:inputSwitch id="agregarInstrumentoEvaluacion" styleClass="form-control" value="#{administracionCatEvidInstEvalEscolares.rol.agregarInstrumentoEvaluacion}" valueChangeListener="#{administracionCatEvidInstEvalEscolares.cambiarAgregarInstrumento}" rendered="#{!administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}"> 
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="agregarInstrumentoEvaluacion" value="#{administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria?'Agregar instrumento':'No agregar instrumento'}" rendered="#{!administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}"/>
+                                                <p:message for="agregarInstrumentoEvaluacion" display="tooltip" rendered="#{!administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}"/> 
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="categoria" value="#{administracionCatEvidInstEvalEscolares.rol.categoria}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionCatEvidInstEvalEscolares.cambiarCategoria}" rendered="#{administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}">
+                                                    <f:selectItems value="#{administracionCatEvidInstEvalEscolares.rol.categorias}" var="categoria" itemValue="#{categoria}" itemLabel="#{categoria.tipo}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Categoría" for="categoria" rendered="#{administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}"/>
+                                                <p:message for="categoria" />
+                                                
+                                                <p:inputText id="nuevoInstrumento" value="#{administracionCatEvidInstEvalEscolares.rol.nuevoInstrumento}" size="15" maxlength="150" rendered="#{administracionCatEvidInstEvalEscolares.rol.agregarInstrumentoEvaluacion}"/>
+                                                <p:outputLabel value="Nuevo instrumento" for="nuevoInstrumento" rendered="#{administracionCatEvidInstEvalEscolares.rol.agregarInstrumentoEvaluacion}"/>
+                                                <p:message for="nuevoInstrumento" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="evidencia" value="#{administracionCatEvidInstEvalEscolares.rol.evidenciaSeleccionada}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionCatEvidInstEvalEscolares.cambiarEvidencia}" rendered="#{administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}">
+                                                    <f:selectItems value="#{administracionCatEvidInstEvalEscolares.rol.evidencias}" var="evidencia" itemValue="#{evidencias}" itemLabel="#{evidencias}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Evidencia" for="evidencia" rendered="#{administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}"/>
+                                                <p:message for="evidencia" />
+                                                
+                                                <p:commandButton id="btnGuardarInst" value="Guardar" actionListener="#{administracionCatEvidInstEvalEscolares.guardarInstrumentoEvaluacion()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionCatEvidInstEvalEscolares.rol.agregarInstrumentoEvaluacion}"/>
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:inputText id="nuevaEvidencia" value="#{administracionCatEvidInstEvalEscolares.rol.nuevaEvidencia}" size="15" maxlength="150" rendered="#{administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}"/>
+                                                <p:outputLabel value="Nueva evidencia" for="nuevaEvidencia" rendered="#{administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}"/>
+                                                <p:message for="nuevaEvidencia" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla}">
+                                            <div class="ui-material">
+                                                <p:commandButton id="btnGuardarEvid" value="Guardar" actionListener="#{administracionCatEvidInstEvalEscolares.guardarEvidenciaCategoria()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionCatEvidInstEvalEscolares.rol.agregarEvidenciaCategoria}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h:outputText value="&#160;" />
+                                    <h:outputText value="&#160;" />
+                                    <div class="row">
+                                            <center>
+                                                <p:tabView activeIndex="#{administracionCatEvidInstEvalEscolares.rol.pestaniaActiva}">
+                                                    <p:tab id="twbEvidenciasCategorias" title="Evidencias por Categoría"> 
+                                                        <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaCategoriasEvidencias" var="categoriaEvidencia" value="#{administracionCatEvidInstEvalEscolares.rol.listaCategoriasEvidencias}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información del nivel educativo seleccionado"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Categoría de evaluación" style="width: 250px;"/>
+                                                                        <p:column headerText="Porcentaje" style="width: 150px;"/>
+                                                                        <p:column headerText="Evidencia de evaluación" style="width: 300px;"/>
+                                                                        <p:column headerText="Situación" style="width: 100px;"/>
+                                                                        <p:column headerText="Opciones" style="width: 200px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+
+                                                                <p:column style="text-align: justify;" groupRow="true">
+                                                                    <h:outputText value="#{categoriaEvidencia.criterio.tipo}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;" groupRow="true">
+                                                                    <h:outputText value="#{categoriaEvidencia.criterio.porcentajeRecomendado}%"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{categoriaEvidencia.descripcion}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{categoriaEvidencia.activo?'Activa':'Inactiva'}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:commandButton actionListener="#{administracionCatEvidInstEvalEscolares.activarDesactivarEvidenciaCategoria(categoriaEvidencia)}"
+                                                                                     class="btn btn-sm #{categoriaEvidencia.activo?'btn-danger':'btn-success'}" icon="#{categoriaEvidencia.activo?'fa fa-close':'fa fa-check'}"
+                                                                                     title="#{categoriaEvidencia.activo?'Desactivar evidencia.':'Activar evidencia.'}" update="@this @(.tabla)"/>
+                                                                    <p:commandButton actionListener="#{administracionCatEvidInstEvalEscolares.eliminarEvidenciaCategoria(categoriaEvidencia)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar evidencia." >
+                                                                        <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la evidencia seleccionada?" icon="ui-icon-alert" />
+                                                                    </p:commandButton>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab id="twbInstrumentosEvaluacion" title="Instrumentos de Evaluación"> 
+                                                        <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaInstrumentos" var="instrumento" value="#{administracionCatEvidInstEvalEscolares.rol.instrumentosEvaluacion}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información del nivel educativo seleccionado"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Instrumento de evaluación" style="width: 250px;"/>
+                                                                        <p:column headerText="Situación" style="width: 100px;"/>
+                                                                        <p:column headerText="Opciones" style="width: 200px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{instrumento.descripcion}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{instrumento.activo?'Activo':'Inactivo'}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:commandButton actionListener="#{administracionCatEvidInstEvalEscolares.activarDesactivarInstrumento(instrumento)}"
+                                                                                     class="btn btn-sm #{instrumento.activo?'btn-danger':'btn-success'}" icon="#{instrumento.activo?'fa fa-close':'fa fa-check'}"
+                                                                                     title="#{instrumento.activo?'Desactivar evidencia.':'Activar evidencia.'}" update="@this @(.tabla)"/>
+                                                                    <p:commandButton actionListener="#{administracionCatEvidInstEvalEscolares.eliminarInstrumento(instrumento)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar evidencia." >
+                                                                        <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el instrumento seleccionado?" icon="ui-icon-alert" />
+                                                                    </p:commandButton>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty administracionCatEvidInstEvalEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{administracionCatEvidInstEvalEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para admininistrar categorías y evidencias de evaluación</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{administracionCatEvidInstEvalEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{administracionCatEvidInstEvalEscolares.rol.nivelesEducativos eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay información registrada."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!administracionCatEvidInstEvalEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal de Servicios Escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
