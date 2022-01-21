@@ -860,7 +860,24 @@
                                         </f:facet>
 
                                     </p:dataTable>
-
+                                    <c:forEach var="index" begin="0" end="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.size()-1}">
+                                        <c:set var="notificacionCe" value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.get(index)}"/>
+                                        <div class="col-lg-6 col-md-12 col-xs-12">
+                                            <div id="avisos" class="small-box bg-green">
+                                                <div class="inner">
+                                                    <h3>#{notificacionCe.tipo}</h3>
+                                                    <p>#{notificacionCe.tituloPrincipal}. <br/>
+                                                        <h:outputLabel value="#{notificacionCe.fechaFinDuracion}"><f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/></h:outputLabel>
+                                                        .
+                                                    </p>
+                                                </div>
+                                                <div class="icon">
+                                                    <i class="fa fa fa-newspaper-o"/>
+                                                </div>
+                                                <p:link class="small-box-footer">Consultar <i class="fa fa-eye" aria-hidden="true"/> </p:link>
+                                            </div>
+                                        </div>
+                                    </c:forEach> 
 
                                 </div>
                                 <!--Fin Tarjeta Avisos-->
