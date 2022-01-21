@@ -78,8 +78,8 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             if(!resAcceso.getCorrecto()) {mostrarMensajeResultadoEJB(resAcceso);return;}
             rol = new RegistroNotificacionRolGeneral(resAcceso.getValor());
             tieneAcceso = rol.tieneAcceso(rol.getPersonal());
-            if(verificarInvocacionMenu()) return;
-            if(!validarIdentificacion()) return;
+//            if(verificarInvocacionMenu()) return;
+//            if(!validarIdentificacion()) return;
             if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
             rol.setNivelRol(NivelRol.OPERATIVO);
             cargaAreasParaAsignarNotificacion();

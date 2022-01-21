@@ -5,6 +5,7 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:p="http://primefaces.org/ui" 
                 xmlns:hf="http://highfaces.org"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
                 xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
@@ -140,25 +141,25 @@
                         </div>
                         <div class="box-body">  
                             <div class="row">     
-                                <c:if test="#{controladorEmpleado.tienePOA}">
-                                    <c:if test="#{controladorEmpleado.mensajeGeneral}">                                                             
-                                        <div class="col-lg-6 col-md-6 col-xs-12">
-                                            <div class="small-box #{controladorEmpleado.estiloInfo?'bg-blue':'bg-yellow'}">
-                                                <div class="inner">
-                                                    <h3>¡Atento Aviso!</h3>
-                                                    <p>#{controladorEmpleado.mensajeIndex1}</p>
-                                                    <p style="font-weight: bolder;text-align: center;font-size: 25px;">#{controladorEmpleado.mensajeIndex2}</p>
-                                                </div>
-                                                <div class="icon">
-                                                    <i class="fa fa-calendar"/>
-                                                </div>
-                                                <a href="poa/areas/evaluacion.xhtml" class="small-box-footer">Evaluar <i class="fa fa-chevron-circle-right"/></a>
-                                                <a href="siip/modulosRegistro/menu_general.xhtml" class="small-box-footer">Registrar <i class="fa fa-chevron-circle-right"/></a>
-                                                <a href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Calendario de Evaluacion SIIP 2021.pdf#toolbar=0" target="_blank" class="small-box-footer">Consultar calendario <i class="fa fa-chevron-circle-right"/></a>
-                                            </div>
-                                        </div> 
-                                    </c:if>
-                                </c:if>    
+                                <!--<c:if test="#{controladorEmpleado.tienePOA}">-->
+                                    <!--<c:if test="#{controladorEmpleado.mensajeGeneral}">-->                                                             
+                                <div class="col-lg-6 col-md-6 col-xs-12">
+                                    <div class="small-box #{controladorEmpleado.estiloInfo?'bg-blue':'bg-yellow'}">
+                                        <div class="inner">
+                                            <h3>¡Atento Aviso!</h3>
+                                            <p>#{controladorEmpleado.mensajeIndex1}</p>
+                                            <p style="font-weight: bolder;text-align: center;font-size: 25px;">#{controladorEmpleado.mensajeIndex2}</p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-calendar"/>
+                                        </div>
+                                        <a href="poa/areas/evaluacion.xhtml" class="small-box-footer">Evaluar <i class="fa fa-chevron-circle-right"/></a>
+                                        <a href="siip/modulosRegistro/menu_general.xhtml" class="small-box-footer">Registrar <i class="fa fa-chevron-circle-right"/></a>
+                                        <a href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/manuales/Calendario de Evaluacion SIIP 2021.pdf#toolbar=0" target="_blank" class="small-box-footer">Consultar calendario <i class="fa fa-chevron-circle-right"/></a>
+                                    </div>
+                                </div> 
+                                <!--</c:if>-->
+                                <!--</c:if>-->    
                                 <c:if test="#{controladorEmpleado.tienePOA}">
                                     <c:if test="#{controladorEmpleado.mensajeGeneral}">                                                             
                                         <div class="col-lg-6 col-md-6 col-xs-12">
@@ -703,50 +704,171 @@
                 </div>
             </c:if>
             <!--Gadget de Avisos-->
-            <div class="box box-primary">
-                <div class="box box-solid">
-                    <div class="box-header with-border">
-                        <h2 class="box-title">Avisos</h2>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <div class="row">
-                            <!--Tarjeta Mostrar Actividad-->
-                            <div class="col-lg-6 col-md-12 col-xs-12">
-                                <div id="avisos" class="small-box bg-green">
-                                    <div class="inner">
-                                        <h3>Concurso Institucional</h3>
-                                        <p>Torneo de Ajedrez Mixto. <br/>Enero. </p>
+            <c:if test="true">
+                <c:if test="true">
+                    <h:form>
+                        <div class="box box-primary">
+                            <div class="box box-solid">
+                                <div class="box-header with-border">
+                                    <h2 class="box-title">Avisos</h2>
+                                    <div class="box-tools pull-right">
+                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                        </button>
                                     </div>
-                                    <div class="icon">
-                                        <i class="fa fa fa-newspaper-o"/>
-                                    </div>
-                                    <p:link class="small-box-footer">Consultar <i class="fa fa-eye" aria-hidden="true"/> </p:link>
                                 </div>
+                                <!--Mostrar Tarjeta Avisos-->
+                                <div class="box-body">
+                                    #{registroNotificacionesGeneral.rol.listaNotificacionesCe.size()-1}
+
+                                    <p:dataTable id="dtNotificaciones"
+                                                 value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe}"
+                                                 var="notificacionCe"
+                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                 resizeMode="expand"
+                                                 emptyMessage="Aún no se han registrado notificaciones"
+                                                 >
+                                        <p:columnGroup type="header">
+                                            <p:row class="sucess">
+                                                <p:column headerText="Opciones" width="570"/>
+                                                <p:column headerText="Notificación" width="100"/>
+                                                <p:column headerText="Fecha de inicio (Duración)" width="150"/>
+                                                <p:column headerText="Fecha de fin (Duración)" width="150"/>
+                                                <p:column headerText="Título Principal" width="200"/>
+                                                <p:column headerText="Subtítulo" width="400"/>
+                                                <p:column headerText="Tipo de notificación" width="100"/>
+                                                <p:column headerText="Contenido de la notificación" width="500"/>
+                                                <p:column headerText="Lugar" width="500"/>
+                                                <p:column headerText="Hora del evento" width="500"/>
+                                                <p:column headerText="Duracion del Evento" width="500"/>
+                                                <p:column headerText="Persona Responsable" width="500"/>
+                                                <p:column headerText="Expositor" width="500"/>
+                                                <p:column headerText="Persona que registra" width="200"/>
+                                                <p:column headerText="Alcance de la notificación" width="400"/>
+                                                <p:column headerText="General" width="200"/>
+                                                <p:column headerText="Fecha de registro" width="150"/>
+                                            </p:row>
+                                        </p:columnGroup>
+
+                                        <p:column>
+                                            <p:commandButton class="btn btn-danger btn-sm"
+                                                             icon="fa fa-trash"
+                                                             title="Eliminar notificación"
+                                                             >
+                                                <p:confirm header="Eliminar notificación" 
+                                                           message="¿Está seguro de eliminar la notificación: #{notificacionCe.tituloPrincipal}?" 
+                                                           icon="ui-icon-alert" />
+                                            </p:commandButton>
+                                            <p:commandButton id="btnConsultaEnlaces"
+                                                             value="#{!empty notificacionCe.notificacionesEnlacesList?'Consultar enlaces de consulta':'Asignar enlaces de consulta'}"
+                                                             actionListener="#{registroNotificacionesGeneral.abrirModalConsultaEnlaces(notificacionCe)}"
+                                                             class="btn btn-sm #{empty notificacionCe.notificacionesEnlacesList?'btn-warning':'btn-info'}" 
+                                                             icon="fa fa-list-ul"
+                                                             title="#{!empty notificacionCe.notificacionesEnlacesList?'Consultar enlaces de consulta':'Asignar enlaces de consulta'}"
+                                                             style="width: 18em"
+                                                             process="@this"
+                                                             global="false"
+                                                             />
+                                            <p:commandButton id="btnConsultaImagenes"
+                                                             value="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar imágenes':'Asignar imágenes'}"
+                                                             actionListener="#{registroNotificacionesGeneral.abrirModalConsultaImagenes(notificacionCe)}"
+                                                             class="btn btn-sm #{empty notificacionCe.notificacionesCeImagenesList?'btn-warning':'btn-info'}" 
+                                                             icon="fa fa-image"
+                                                             title="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar imágenes':'Asignar imágenes'}"
+                                                             style="width: 14em"
+                                                             process="@this"
+                                                             global="false"
+                                                             />
+                                            <p:commandButton id="btnAsignarAreas"
+                                                             value="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar áreas':'Asignar áreas'}"
+                                                             class="btn btn-sm #{empty notificacionCe.notificacionesCeImagenesList?'btn-warning':'btn-info'}" 
+                                                             icon="fa fa-check-circle"
+                                                             title="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar áreas asignadas':'Asignar áreas'}"
+                                                             style="width: 12em"
+                                                             process="@this"
+                                                             global="false"
+                                                             />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.notificacion}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.fechaInicioDuracion}">
+                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.fechaFinDuracion}">
+                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.tituloPrincipal}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.subtitulo}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.tipo}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.contenido}" />
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.lugar}" />
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.horaInicio}" />
+                                            <!--<f:convertDateTime type="both" pattern="yyyy/MM/dd HH:mm:ss"/>-->
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.duracionEvento}" />
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.personaResponsable}" />
+                                        </p:column>
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.expositor}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.personaRegistro}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.alcance}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.general?'Consulte Áreas Seleccionadas':'Área'}" />
+                                        </p:column>
+
+                                        <p:column>
+                                            <h:outputText value="#{notificacionCe.fechaRegistro}">
+                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                            </h:outputText>
+                                        </p:column>
+
+                                        <f:facet name="footer">
+                                            Usted ha registrado un total de: #{fn:length(registroNotificacionesGeneral.rol.listaNotificacionesCe)} notificaciones.
+                                        </f:facet>
+
+                                    </p:dataTable>
+
+
+                                </div>
+                                <!--Fin Tarjeta Avisos-->
                             </div>
-                            <!--Tarjeta Registrar Acgtividad-->
-<!--                            <div class="col-lg-4 col-md-6 col-xs-12">
-                                <div id="avisos" class="small-box bg-green">
-                                    <div class="inner">
-                                        <h3>Registro A.</h3>
-                                        <p>Aqui se deben registrar las actividades</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="fa fa-newspaper-o"/>
-                                    </div>
-                                    <p:link outcome="registroActividades"  class="small-box-footer">
-                                        Registrar <i class="fa fa-file-text-o"></i>
-                                    </p:link>
-                                    <h:form><p:remoteCommand name="registroActividades" action="registroActividades" /></h:form>
-                                </div>
-                            </div>-->
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </h:form>
+                </c:if>
+            </c:if>
             <!--Fin gadget de avisos-->
             <!--c:if test="#{premios.aplica}">
                 <div class="box box-primary">
