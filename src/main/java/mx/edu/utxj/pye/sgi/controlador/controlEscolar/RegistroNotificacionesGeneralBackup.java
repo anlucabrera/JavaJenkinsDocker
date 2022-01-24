@@ -48,7 +48,7 @@ import org.primefaces.event.UnselectEvent;
  */
 @Named
 @ViewScoped
-public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desarrollable{
+public class RegistroNotificacionesGeneralBackup extends ViewScopedRol implements Desarrollable{
     private static final long serialVersionUID = -3552096699095522780L;
     @Getter     @Setter                         private                     RegistroNotificacionRolGeneral              rol;         
     @Getter     Boolean                         tieneAcceso = false;
@@ -271,40 +271,9 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         }
     }
     
-    /*********************************************** Manejo de datos *********************************************************/
-    
-    public int obtenerPorcentajeFechas(Date fechaInicio, Date fechaFin) {
-        long now = System.currentTimeMillis();
-        long s = fechaInicio.getTime();
-        long e = fechaFin.getTime();
-        if (s >= e || now >= e) {
-            return 0;
-        }
-        if (now <= s) {
-            return 100;
-        }
-        return (int) ((e - now) * 100 / (e - s));
-    }
-    
-      public int obtenerDiferenciaDias(Date fechaFin){
-            long fechaInicio = System.currentTimeMillis();
-             return (int)( (fechaFin.getTime() - fechaInicio) / (1000 * 60 * 60 * 24));
-     }
-    
-    
     /*********************************************** Llenado de listas *********************************************************/
     public void obtenerListaNotificacionesUltimosDiez(){
         ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesUltimosDiez();
-        if(resNotificaciones.getCorrecto()){
-            rol.setListaNotificacionesCe(resNotificaciones.getValor());
-            mostrarMensajeResultadoEJB(resNotificaciones);
-        }else{
-            inicializarListaNotificacionesCe();
-        }
-    }
-    
-    public void obtenerListaNotificacionesActivas(){
-        ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesActivas();
         if(resNotificaciones.getCorrecto()){
             rol.setListaNotificacionesCe(resNotificaciones.getValor());
             mostrarMensajeResultadoEJB(resNotificaciones);

@@ -704,188 +704,98 @@
                 </div>
             </c:if>
             <!--Gadget de Avisos-->
-            <c:if test="true">
-                <c:if test="true">
-                    <h:form>
-                        <div class="box box-primary">
-                            <div class="box box-solid">
-                                <div class="box-header with-border">
-                                    <h2 class="box-title">Avisos</h2>
-                                    <div class="box-tools pull-right">
-                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                        </button>
+            <!--<h:form>-->
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h2 class="box-title">Avisos</h2>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!--Mostrar Tarjeta Avisos-->
+                    <div class="box-body">
+                        <c:forEach var="index" begin="0" end="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.size()-1}">
+                            <!--Establecimiento de parametros-->
+                            <c:set var="notificacionCe" value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.get(index)}"/>
+                            <c:set var="porcentaje" value="#{registroNotificacionesGeneral.obtenerPorcentajeFechas(notificacionCe.fechaInicioDuracion, notificacionCe.horaInicio)}"/>
+                            <c:set var="diferencia" value="#{registroNotificacionesGeneral.obtenerDiferenciaDias(notificacionCe.fechaFinDuracion)}"/>
+                            <c:if test="#{diferencia ne 0}">
+                                <c:set var="color" value="bg-blue"/>
+                            </c:if>
+                            <c:if test="#{diferencia eq 1}">
+                                <c:set var="color" value="bg-yellow"/>
+                            </c:if>
+                            <c:if test="#{diferencia eq 0}">
+                                <c:set var="color" value="bg-green"/>
+                            </c:if>
+                            <!--Widget a mostrar-->
+                            <div class="col-lg-6 col-md-12 col-xs-12">
+                                <a id="abrirmodal#{index}" href="#" class="info-box-footer" data-toggle="modal" data-target="#modal-default#{index}" >
+                                    <div class="info-box #{color}">
+                                        <span class="info-box-icon"><i class="fa fa-comments-o"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo}</span></span>
+                                            <span class="info-box-text">#{notificacionCe.tituloPrincipal}</span>
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: ${100-porcentaje}%"></div>
+                                            </div>
+                                            <span class="progress-description">
+                                                <c:if test="#{diferencia ne 0}">
+                                                    Faltan #{diferencia} dias
+                                                </c:if>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <!--Ventanas Modal-->
+                            <div class="modal fade" id="modal-default#{index}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background-color: #374850">
+                                            <h3 class="modal-title" style="color: #ffffff">#{notificacionCe.tituloPrincipal}</h3>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            </button>
+                                        </div> 
+                                        <div class="modal-body">
+                                            <h4><p><strong>Lugar: </strong>#{notificacionCe.lugar}</p></h4>
+                                            <h4>
+                                                <p><strong>Fecha: </strong>
+                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                        <f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel>
+                                                </p>
+                                            </h4>
+                                            <h4>
+                                                <p><strong>Hora: </strong>
+                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                        <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel>
+                                                </p>
+                                            </h4>
+                                            <h4>
+                                                <p><strong>Duracion: </strong>
+                                                    <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                        <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel> horas
+                                                </p>
+                                            </h4>
+                                            <h4><p><strong>Encargado: </strong>#{notificacionCe.personaResponsable}</p></h4>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button style="background-color: #374850; color: #ffffff" type="button" class="btn" data-dismiss="modal">Cerrar</button>
+                                        </div>
                                     </div>
                                 </div>
-                                <!--Mostrar Tarjeta Avisos-->
-                                <div class="box-body">
-                                    #{registroNotificacionesGeneral.rol.listaNotificacionesCe.size()-1}
-
-                                    <p:dataTable id="dtNotificaciones"
-                                                 value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe}"
-                                                 var="notificacionCe"
-                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                 resizeMode="expand"
-                                                 emptyMessage="Aún no se han registrado notificaciones"
-                                                 >
-                                        <p:columnGroup type="header">
-                                            <p:row class="sucess">
-                                                <p:column headerText="Opciones" width="570"/>
-                                                <p:column headerText="Notificación" width="100"/>
-                                                <p:column headerText="Fecha de inicio (Duración)" width="150"/>
-                                                <p:column headerText="Fecha de fin (Duración)" width="150"/>
-                                                <p:column headerText="Título Principal" width="200"/>
-                                                <p:column headerText="Subtítulo" width="400"/>
-                                                <p:column headerText="Tipo de notificación" width="100"/>
-                                                <p:column headerText="Contenido de la notificación" width="500"/>
-                                                <p:column headerText="Lugar" width="500"/>
-                                                <p:column headerText="Hora del evento" width="500"/>
-                                                <p:column headerText="Duracion del Evento" width="500"/>
-                                                <p:column headerText="Persona Responsable" width="500"/>
-                                                <p:column headerText="Expositor" width="500"/>
-                                                <p:column headerText="Persona que registra" width="200"/>
-                                                <p:column headerText="Alcance de la notificación" width="400"/>
-                                                <p:column headerText="General" width="200"/>
-                                                <p:column headerText="Fecha de registro" width="150"/>
-                                            </p:row>
-                                        </p:columnGroup>
-
-                                        <p:column>
-                                            <p:commandButton class="btn btn-danger btn-sm"
-                                                             icon="fa fa-trash"
-                                                             title="Eliminar notificación"
-                                                             >
-                                                <p:confirm header="Eliminar notificación" 
-                                                           message="¿Está seguro de eliminar la notificación: #{notificacionCe.tituloPrincipal}?" 
-                                                           icon="ui-icon-alert" />
-                                            </p:commandButton>
-                                            <p:commandButton id="btnConsultaEnlaces"
-                                                             value="#{!empty notificacionCe.notificacionesEnlacesList?'Consultar enlaces de consulta':'Asignar enlaces de consulta'}"
-                                                             actionListener="#{registroNotificacionesGeneral.abrirModalConsultaEnlaces(notificacionCe)}"
-                                                             class="btn btn-sm #{empty notificacionCe.notificacionesEnlacesList?'btn-warning':'btn-info'}" 
-                                                             icon="fa fa-list-ul"
-                                                             title="#{!empty notificacionCe.notificacionesEnlacesList?'Consultar enlaces de consulta':'Asignar enlaces de consulta'}"
-                                                             style="width: 18em"
-                                                             process="@this"
-                                                             global="false"
-                                                             />
-                                            <p:commandButton id="btnConsultaImagenes"
-                                                             value="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar imágenes':'Asignar imágenes'}"
-                                                             actionListener="#{registroNotificacionesGeneral.abrirModalConsultaImagenes(notificacionCe)}"
-                                                             class="btn btn-sm #{empty notificacionCe.notificacionesCeImagenesList?'btn-warning':'btn-info'}" 
-                                                             icon="fa fa-image"
-                                                             title="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar imágenes':'Asignar imágenes'}"
-                                                             style="width: 14em"
-                                                             process="@this"
-                                                             global="false"
-                                                             />
-                                            <p:commandButton id="btnAsignarAreas"
-                                                             value="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar áreas':'Asignar áreas'}"
-                                                             class="btn btn-sm #{empty notificacionCe.notificacionesCeImagenesList?'btn-warning':'btn-info'}" 
-                                                             icon="fa fa-check-circle"
-                                                             title="#{!empty notificacionCe.notificacionesCeImagenesList?'Consultar áreas asignadas':'Asignar áreas'}"
-                                                             style="width: 12em"
-                                                             process="@this"
-                                                             global="false"
-                                                             />
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.notificacion}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.fechaInicioDuracion}">
-                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                            </h:outputText>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.fechaFinDuracion}">
-                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                            </h:outputText>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.tituloPrincipal}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.subtitulo}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.tipo}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.contenido}" />
-                                        </p:column>
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.lugar}" />
-                                        </p:column>
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.horaInicio}" />
-                                            <!--<f:convertDateTime type="both" pattern="yyyy/MM/dd HH:mm:ss"/>-->
-                                        </p:column>
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.duracionEvento}" />
-                                        </p:column>
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.personaResponsable}" />
-                                        </p:column>
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.expositor}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.personaRegistro}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.alcance}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.general?'Consulte Áreas Seleccionadas':'Área'}" />
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputText value="#{notificacionCe.fechaRegistro}">
-                                                <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                            </h:outputText>
-                                        </p:column>
-
-                                        <f:facet name="footer">
-                                            Usted ha registrado un total de: #{fn:length(registroNotificacionesGeneral.rol.listaNotificacionesCe)} notificaciones.
-                                        </f:facet>
-
-                                    </p:dataTable>
-                                    <c:forEach var="index" begin="0" end="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.size()-1}">
-                                        <c:set var="notificacionCe" value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.get(index)}"/>
-                                        <div class="col-lg-6 col-md-12 col-xs-12">
-                                            <div id="avisos" class="small-box bg-green">
-                                                <div class="inner">
-                                                    <h3>#{notificacionCe.tipo}</h3>
-                                                    <p>#{notificacionCe.tituloPrincipal}. <br/>
-                                                        <h:outputLabel value="#{notificacionCe.fechaFinDuracion}"><f:convertDateTime pattern="dd-MM-yyyy" timeZone="America/Mexico_City"/></h:outputLabel>
-                                                        .
-                                                    </p>
-                                                </div>
-                                                <div class="icon">
-                                                    <i class="fa fa fa-newspaper-o"/>
-                                                </div>
-                                                <p:link class="small-box-footer">Consultar <i class="fa fa-eye" aria-hidden="true"/> </p:link>
-                                            </div>
-                                        </div>
-                                    </c:forEach> 
-
-                                </div>
-                                <!--Fin Tarjeta Avisos-->
                             </div>
-                        </div>
-                    </h:form>
-                </c:if>
-            </c:if>
+                            <!--Fin Ventana Modal-->
+                        </c:forEach> 
+                    </div>
+                    <!--Fin Tarjeta Avisos-->
+                </div>
+            </div>
             <!--Fin gadget de avisos-->
             <!--c:if test="#{premios.aplica}">
                 <div class="box box-primary">
