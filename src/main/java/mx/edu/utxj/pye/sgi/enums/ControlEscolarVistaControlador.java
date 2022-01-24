@@ -87,6 +87,7 @@ public enum ControlEscolarVistaControlador {
     SEGUIMIENTO_ESTADIA_ESCOLARES("/controlEscolar/se/seguimientoEstadiaEscolares.xhtml", SeguimientoEstadiaEscolares.class),
     REGISTRO_EGRESADO_TERMINACION_ESTUDIOS("/controlEscolar/se/registroEgresados.xhtml", RegistroEgresadoTerminacionEstudioServiciosEscolares.class),
     ELIMINAR_INSCRIPCION("/controlEscolar/se/eliminarInscripcion.xhtml", EliminarInscripcionServiciosEscolares.class),
+    ADMINISTRAR_CATEVIDINSTEVAL("/controlEscolar/se/administracionCatEvidInstEval.xhtml", AdministracionCatEvidInstEvalEscolares.class),
 
     CARTA_NO_ADUEDO_FINANZAS("/controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml", CartaNoAdeudoFinanzas.class),
 

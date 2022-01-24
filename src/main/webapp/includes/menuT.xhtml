@@ -160,6 +160,7 @@
                     <c:if test="#{cartaNoAdeudoFinanzas.mostrarEnDesarrollo(request) and cartaNoAdeudoFinanzas.tieneAcceso}"><li><p:link href="#{request.contextPath}//controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
 
                     <!-- Administrador -->
+                    <c:if test="#{administracionCatEvidInstEvalEscolares.mostrarEnDesarrollo(request) and administracionCatEvidInstEvalEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/administracionCatEvidInstEval.xhtml"><i class="fa fa-gears"></i><span>Categorías, evidencias e <br/>instrumentos de evaluación</span></p:link></li></c:if>
                     <c:if test="#{registroEventosEscolares.mostrarEnDesarrollo(request) and registroEventosEscolares.tieneAcceso}">
 
                         <li class="treeview">
