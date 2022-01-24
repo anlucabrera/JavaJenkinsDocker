@@ -191,19 +191,18 @@
                                                                          style="margin-bottom:20px"
                                                                          emptyMessage="No se encontraron Registros." rendered="true">
 
-                                                                <p:column headerText="Nomina" groupRow="true"  style="width: 10%;text-align: center;font-size: smaller">
+                                                                <p:column headerText="Trabajador" groupRow="true"  style="width: 15%;text-align: center;font-size: smaller">
                                                                     <h:outputText value="#{remotas.clavePersonal.clave}" />
-                                                                </p:column>
-                                                                <p:column headerText="Nombre" groupRow="true"  style="width: 15%;text-align: justify;font-size: smaller;">
+                                                                    <br/>
                                                                     <h:outputText value="#{remotas.clavePersonal.nombre}" />
-                                                                </p:column>    
+                                                                </p:column>
                                                                 <p:column headerText="Fecha" style="width: 12%;font-size: smaller">
                                                                     <h:outputLabel value="#{remotas.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
                                                                 </p:column>      
-                                                                <p:column headerText="Justificación" style="width: 30%;text-align: justify; font-size: smaller">
+                                                                <p:column headerText="Justificación" style="width: 63%;text-align: justify; font-size: smaller">
                                                                     <h:outputText value="#{remotas.actividades}" />
                                                                 </p:column>                                              
-                                                                <p:column headerText="Estado" style="width: 12%;text-align: center;font-size: smaller">
+                                                                <p:column headerText="Estado" style="width: 10%;text-align: center;font-size: smaller">
                                                                     <h:outputText value="#{remotas.validado ?'Aceptado':'NO Aceptado'}" />
                                                                 </p:column>                                                                      
                                                             </p:dataTable>                                                  
