@@ -20,119 +20,102 @@
     <ui:define name="title"/>
 
     <ui:define name="body">
-        <c:if test="#{personalAdmin.cargado}">
-        <style>
-            .description-block{
-                text-align: justify;
-            }
-            .description-header{
-                text-align: center;
-            }
-
-            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
-                width: 100%;
-            }
-            button, input, optgroup, select, textarea{
-                color: black;
-            }
-            .ui-tabs .ui-tabs-navscroller-btn-right{
-                right: .1em;
-                background: white;
-                block-size: 2.6em;
-            }
-            .ui-tabs .ui-tabs-navscroller-btn-left{
-                left: .1em;
-                background: white;
-                block-size: 2.6em;
-            }
-            .aceptado{
-                background-color: white;
-            }
-            .denegado{
-                background-color: #f39c12;
-            }
-        </style>
-        <script>
-            function descargar(ruta) {
-                var win = window.open(ruta, '_blank');
-                if (win) {
-                    win.focus();
+        <c:if test="#{datosAcceso.cargado}">
+            <style>
+                .description-block{
+                    text-align: justify;
                 }
-            }
-        </script>
-        <h:outputScript>
-            PrimeFaces.locales['es'] = {
-            closeText: 'Cerrar',
-            prevText: 'Anterior',
-            nextText: 'Siguiente',
-            monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
-            dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
-            dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-            dayNamesMin: ['D','L','M','M','J','V','S'],
-            weekHeader: 'Semana',
-            firstDay: 1,
-            isRTL: false,
-            showMonthAfterYear: false,
-            yearSuffix: '',
-            timeOnlyTitle: 'Sólo hora',
-            timeText: 'Tiempo',
-            hourText: 'Hora',
-            minuteText: 'Minuto',
-            secondText: 'Segundo',
-            currentText: 'Fecha actual',
-            ampm: false,
-            month: 'Mes',
-            week: 'Semana',
-            day: 'Día',
-            allDayText : 'Todo el día'
-            };
-        </h:outputScript>
-        <p:panel id="informacion">
-            <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 
-                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 579
-                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 511
-                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 349
-                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 617
-                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 203}">
+                .description-header{
+                    text-align: center;
+                }
+
+                .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                    width: 100%;
+                }
+                button, input, optgroup, select, textarea{
+                    color: black;
+                }
+                .ui-tabs .ui-tabs-navscroller-btn-right{
+                    right: .1em;
+                    background: white;
+                    block-size: 2.6em;
+                }
+                .ui-tabs .ui-tabs-navscroller-btn-left{
+                    left: .1em;
+                    background: white;
+                    block-size: 2.6em;
+                }
+                .aceptado{
+                    background-color: white;
+                }
+                .denegado{
+                    background-color: #f39c12;
+                }
+            </style>
+            <script>
+                function descargar(ruta) {
+                    var win = window.open(ruta, '_blank');
+                    if (win) {
+                        win.focus();
+                    }
+                }
+            </script>
+            <h:outputScript>
+                PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['Enero','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+                dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D','L','M','M','J','V','S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText : 'Todo el día'
+                };
+            </h:outputScript>            
+            <p:panel id="informacion">
                 <div class="row">
                     <h:form id="frmFunciones">
-                        <p:outputLabel value="Subordinados(as)" for="clave" class="col-sm-2 control-label"/>
-                        <div class="col-sm-3">
-                            <p:selectOneMenu id="clave" value="#{personalAdmin.contactoDestino}" filter="true" 
-                                             filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label"
-                                             valueChangeListener="#{personalAdmin.asignarPersona}">
-                                <f:selectItem itemValue="0" itemLabel=" Regresar "/>
-                                <f:selectItems value="#{personalAdmin.listaPersonal}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.clave} - #{personal.nombre} - #{personal.categoriaOperativa.nombre}" />
-                                <p:ajax update="@form :frmFunciones :informacion panelDatos" listener="#{personalAdmin.imprimirValores()}"/>
-                            </p:selectOneMenu>  
-                            <p:message for="clave"/>
-                        </div>
                         <div class="col-sm-2">
                             <p:commandButton value="Datos acceso" id="btnBuscarActiuvidades" 
-                                             actionListener="#{personalAdmin.imprimirValores()}"  
+                                             actionListener="#{datosAcceso.imprimirValores()}"  
                                              oncomplete="PF('dlgRdVPC').show()" process="@this" 
-                                             class="btn-primary btn-block col-md-3" disabled="#{personalAdmin.contactoDestino eq 0}"
+                                             class="btn-primary btn-block col-md-3" disabled="#{datosAcceso.contactoDestino eq 0}"
                                              icon="fa fa-binoculars" styleClass="btn-primary"/>
                         </div>
                         <div class="col-sm-2">
                             <p:commandButton value="Resetar contraseña" id="btnReset" 
-                                             actionListener="#{personalAdmin.imprimirValores()}"  
+                                             actionListener="#{datosAcceso.imprimirValores()}"  
                                              oncomplete="PF('dlgJusMes').show()" process="@this" 
-                                             class="btn-primary btn-block col-md-3" disabled="#{personalAdmin.contactoDestino eq 0}"
+                                             class="btn-primary btn-block col-md-3" disabled="#{datosAcceso.contactoDestino eq 0}"
                                              icon="fa fa-key" styleClass="btn-primary"/>
                         </div>
                     </h:form>
                 </div> 
                 <section class="content">
                     <div class="row">
-                        <ui:include src="/includes/plantillaAdminlPersonal.xhtml"/>
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
                         <div class="col-md-9">
                             <div class="nav-tabs-custom">
                                 <div class="row">
                                     <div class="col-lg-10 col-xs-10"/>
                                     <div class="col-lg-2 col-xs-2">
-                                        <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                        <p:link outcome="perfilEmpleado">
                                             <i class="fa fa-reply"></i>
                                             <span>Regresar a mi perfil</span>
                                         </p:link>
@@ -180,7 +163,7 @@
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Nombre completo</strong>
                                                                                                 <p class="text-muted">
-                                                                                                    #{personalAdmin.nuevoOBJListaPersonal.nombre}
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.nombre}
                                                                                                 </p>
                                                                                                 <hr/>
                                                                                             </div>
@@ -189,7 +172,7 @@
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>CURP</strong>
                                                                                                 <p class="text-muted" style="text-transform: uppercase">
-                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.curp}
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.curp}
                                                                                                 </p>
                                                                                                 <hr/>
                                                                                             </div>
@@ -199,7 +182,7 @@
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Lugar de nacimiento</strong>
                                                                                                 <p class="text-muted">
-                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}
                                                                                                 </p> 
                                                                                                 <hr/>
                                                                                             </div>
@@ -208,7 +191,7 @@
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>RFC</strong>
                                                                                                 <p class="text-muted" style="text-transform: uppercase">
-                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.rfc}
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.rfc}
                                                                                                 </p>
                                                                                                 <hr/>
                                                                                             </div>
@@ -217,7 +200,7 @@
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Edad</strong>
                                                                                                 <p class="text-muted">
-                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.edad} años
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.edad} años
                                                                                                 </p>                                                             
                                                                                                 <hr/>
                                                                                             </div>
@@ -226,7 +209,7 @@
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Estado civil</strong>
                                                                                                 <p class="text-muted">
-                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.estadoCivil}
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.estadoCivil}
                                                                                                 </p>
                                                                                                 <hr/>
                                                                                             </div>
@@ -237,7 +220,7 @@
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Sexo</strong>
                                                                                                 <p class="text-muted">
-                                                                                                    #{personalAdmin.nuevoOBJListaPersonal.generoNombre}
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.generoNombre}
                                                                                                 </p>
                                                                                                 <hr/>
                                                                                             </div>
@@ -246,7 +229,7 @@
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Fecha de nacimiento</strong>
                                                                                                 <p class="text-muted">
-                                                                                                    <h:outputLabel value="#{personalAdmin.nuevoOBJListaPersonal.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                                                    <h:outputLabel value="#{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
                                                                                                 </p>                                                                
                                                                                                 <hr/>
                                                                                             </div>
@@ -255,7 +238,7 @@
                                                                                             <div class="description-block" style="text-align: justify">
                                                                                                 <strong>Dirección</strong>
                                                                                                 <p class="text-muted">
-                                                                                                    #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.direccion}
+                                                                                                    #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.direccion}
                                                                                                 </p>
                                                                                             </div>
                                                                                         </div>
@@ -264,9 +247,9 @@
                                                                                                 <strong>Correo electrónico</strong>
                                                                                                 <ul style="list-style-type: square">
                                                                                                     <li>
-                                                                                                        #{personalAdmin.nuevoOBJListaPersonal.correoElectronico}
+                                                                                                        #{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.correoElectronico}
                                                                                                         <br/>
-                                                                                                        #{personalAdmin.nuevoOBJListaPersonal.correoElectronico2}
+                                                                                                        #{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.correoElectronico2}
                                                                                                     </li>
                                                                                                 </ul>
                                                                                             </div>
@@ -276,10 +259,10 @@
                                                                                                 <strong>Número de teléfono</strong>
                                                                                                 <ul style="list-style-type: square">
                                                                                                     <li>
-                                                                                                        Casa: #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.numTelFijo}
+                                                                                                        Casa: #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.numTelFijo}
                                                                                                     </li>
                                                                                                     <li>
-                                                                                                        Cel.: #{personalAdmin.nuevoOBJInformacionAdicionalPersonal.numTelMovil}
+                                                                                                        Cel.: #{controladorEmpleadoLogeado.nuevoOBJInformacionAdicionalPersonal.numTelMovil}
                                                                                                     </li>
                                                                                                 </ul>
                                                                                             </div>
@@ -305,8 +288,8 @@
                                                         <div class="col-sm-12 border-right">
                                                             <div class="description-block">
                                                                 <h5 class="description-header">Función genérica</h5>
-                                                                <c:forEach var="i" begin="0" end="#{personalAdmin.listaFuncioneSubordinado.size()-1}">
-                                                                    <c:set var="eje" value="#{personalAdmin.listaFuncioneSubordinado.get(i)}"/>
+                                                                <c:forEach var="i" begin="0" end="#{controladorEmpleadoLogeado.listaFuncionesLogeado.size()-1}">
+                                                                    <c:set var="eje" value="#{controladorEmpleadoLogeado.listaFuncionesLogeado.get(i)}"/>
                                                                     <c:if test="#{eje.tipo eq 'GENERAL'}">
                                                                         <br/>
                                                                         <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
@@ -321,8 +304,8 @@
                                                         <div class="col-sm-12 border-right">
                                                             <div class="description-block">
                                                                 <h5 class="description-header">Funciones específicas </h5>
-                                                                <c:forEach var="f" begin="0" end="#{personalAdmin.listaFuncioneSubordinado.size()-1}">
-                                                                    <c:set var="eje" value="#{personalAdmin.listaFuncioneSubordinado.get(f)}"/>
+                                                                <c:forEach var="f" begin="0" end="#{controladorEmpleadoLogeado.listaFuncionesLogeado.size()-1}">
+                                                                    <c:set var="eje" value="#{controladorEmpleadoLogeado.listaFuncionesLogeado.get(f)}"/>
                                                                     <c:if test="#{eje.tipo ne 'GENERAL'}">
                                                                         <br/>
                                                                         <span class="description-text" style="text-align: justify">#{eje.nombre}</span>
@@ -346,41 +329,30 @@
 
                     <h3>Usuario</h3> 
 
-                    <h5>#{personalAdmin.user.username}</h5> 
+                    <h5>#{datosAcceso.user.username}</h5> 
 
                     <h3>Contraseña</h3> 
 
-                    <h5>#{personalAdmin.user.password}</h5> 
+                    <h5>#{datosAcceso.user.password}</h5> 
                 </p:dialog>
 
                 <h:form id="frmJuM">
                     <p:dialog header="Resetear Contraseña" widgetVar="dlgJusMes" modal="true" showEffect="fade" hideEffect="fade" resizable="false" closeOnEscape="true">
                         <p:panelGrid id="pnlAgregarJusMes" style="text-align:justify;" columns="1">
-                            <p:outputLabel value="Trabajador: #{personalAdmin.nuevoOBJListaPersonal.nombre}" />
-                            <p:inputText id="txtComentario" value="#{personalAdmin.newPwd}" />
+                            <p:outputLabel value="Trabajador: #{controladorEmpleadoLogeado.nuevoOBJListaListaPersonal.nombre}" />
+                            <p:outputLabel value="Escriba la nueva contraseña" />
+                            <p:inputText id="txtComentario" value="#{datosAcceso.newPwd}" />
                             <p:message for="txtComentario" />
                             <h:outputText id="display" />
-                            <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{personalAdmin.cambiarPwd()}"
+                            <p:commandButton id="btnAceptarComentario" value="Aceptar" actionListener="#{datosAcceso.cambiarPwd()}"
                                              icon="fa fa-chek" styleClass="btn-primary"  update="@form"
                                              onsuccess="PF('dlgJusMes').hide()" />
                         </p:panelGrid>
                     </p:dialog>
                 </h:form>
 
-
-            </c:if>
-            <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.clave eq 564 
-                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 579
-                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 511
-                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 349
-                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 617
-                          || controladorEmpleado.nuevoOBJListaPersonal.clave eq 203)}">
-                <h1>
-                    Esta página está disponible solo para personal adscrito al área de personal
-                </h1>
-            </c:if>
-        </p:panel>
-            </c:if>
+            </p:panel>
+        </c:if>
     </ui:define>
     <h:outputScript library="js" name="funciones.js" />
 

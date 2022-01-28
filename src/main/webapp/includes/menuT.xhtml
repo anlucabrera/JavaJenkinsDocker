@@ -143,13 +143,11 @@
                                 <span>Cuidados</span>
                             </p:link>
                         </li>
-                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9}">
-                            <li>
-                                <p:link href="#{request.contextPath}/capitalHumano/actividadesRemotos.xhtml"><i class="fa fa-laptop"></i>
-                                    <span>Actividades Remotas</span>
-                                </p:link>
-                            </li>                            
-                        </c:if>
+                        <li>
+                            <p:link href="#{request.contextPath}/capitalHumano/actividadesRemotos.xhtml"><i class="fa fa-laptop"></i>
+                                <span>Actividades Remotas</span>
+                            </p:link>
+                        </li>   
                     </ul>
                 </li>
 
@@ -1160,13 +1158,13 @@
                                         <span>Activo</span>
                                     </p:link>
                                 </li>
-                                <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}">
-                                    <li>
-                                        <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalAltaYBajas.xhtml"><i class="fa fa-user-times"></i>
-                                            <span>Altas y bajas</span>
-                                        </p:link>
-                                    </li>
-                                </c:if>
+                                <!--c:if test="# {controladorEmpleado.nuevoOBJListaPersonal.clave ne 564}"-->
+                                <li>
+                                    <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalAltaYBajas.xhtml"><i class="fa fa-user-times"></i>
+                                        <span>Altas y bajas</span>
+                                    </p:link>
+                                </li>
+                                <!--/c:if-->
 
                                 <li>
                                     <p:link href="#{request.contextPath}/capitalHumano/personal/perfilPersonalconfiguracion.xhtml"><i class="fa fa-cogs"></i>

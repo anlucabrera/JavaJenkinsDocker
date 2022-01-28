@@ -25,6 +25,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.shiro.User;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Messages;
@@ -51,6 +52,7 @@ public class ControladorPersonalAltasYBajas implements Serializable {
 
     @Getter    @Setter    private Short actividad = 0, categoriaOP = 0, categoriaOF = 0, categoria360 = 0, grado = 0, genero = 0;
     @Getter    @Setter    private Integer claveUltimaEmpleado = 0;
+    @Getter    @Setter    private User user = new User();
     @Getter    @Setter    private Personal nuevOBJPersonalSubordinado, nuevOBJPersonalUltimoAgragado;
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal = new InformacionAdicionalPersonal();
 
@@ -154,6 +156,12 @@ public class ControladorPersonalAltasYBajas implements Serializable {
             nuevOBJPersonalSubordinado.getCategoriaEspecifica().setCategoriaEspecifica(Short.parseShort("1"));
             ejbPersonal.crearNuevoPersonal(nuevOBJPersonalSubordinado);
 
+//            user.setClaveNomina(nuevOBJPersonalSubordinado.getClave().toString());
+//            user.setPassword("3TASB6Q9S5bFbobwCXGD9A==");
+//            user.setUpdateC(Boolean.FALSE);
+//            
+//            ejbPersonal.crearUser(user);
+            
             utilidadesCH.agregaBitacora(controladorEmpleado.getEmpleadoLogeado(), nuevOBJPersonalSubordinado.getClave().toString(), "Personal", "Create");
 
             agregaInformacionAdicional();
