@@ -55,6 +55,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "NotificacionesCe.findByAlcance", query = "SELECT n FROM NotificacionesCe n WHERE n.alcance = :alcance"),
     @NamedQuery(name = "NotificacionesCe.findByGeneral", query = "SELECT n FROM NotificacionesCe n WHERE n.general = :general"),
     @NamedQuery(name = "NotificacionesCe.findByFechaRegistro", query = "SELECT n FROM NotificacionesCe n WHERE n.fechaRegistro = :fechaRegistro"),
+    @NamedQuery(name = "NotificacionesCe.findNotificacionesActivas", query = "SELECT n FROM NotificacionesCe n WHERE EXTRACT(YEAR FROM n.horaInicio) = EXTRACT(YEAR FROM :horaInicio) and EXTRACT(MONTH FROM n.horaInicio) = EXTRACT(MONTH FROM :horaInicio)"),
     @NamedQuery(name = "NotificacionesCe.findByAreaResponsable", query = "SELECT n FROM NotificacionesCe n WHERE n.areaResponsable = :areaResponsable")})
 public class NotificacionesCe implements Serializable {
 

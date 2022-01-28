@@ -50,7 +50,7 @@ import org.primefaces.event.UnselectEvent;
  */
 @Named
 @ViewScoped
-public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desarrollable {
+public class ConsultaNotificacionesEstudiantes extends ViewScopedRol implements Desarrollable {
 
     private static final long serialVersionUID = -3552096699095522780L;
     @Getter
@@ -87,17 +87,17 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.REGISTRO_NOTIFICACIONES);
 
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejbValidacionRol.validarPersonalActivo(logonMB.getPersonal().getClave());
-            if (!resAcceso.getCorrecto()) {
-                mostrarMensajeResultadoEJB(resAcceso);
+//            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejbValidacionRol.validarPersonalActivo(logonMB.getPersonal().getClave());
+            ResultadoEJB<Estudiante> resAcceso2 = ejbValidacionRol.validarEstudiante(logonMB.getEstuduianteAutenticado().getUsuario());
+            if (!resAcceso2.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resAcceso2);
                 return;
             }
-            rol = new RegistroNotificacionRolGeneral(resAcceso.getValor());
-            rol.setNivelRol(NivelRol.OPERATIVO);
+//            rol = new RegistroNotificacionRolGeneral(resAcceso2.getValor());
+//            rol.setNivelRol(NivelRol.OPERATIVO);
             cargaAreasParaAsignarNotificacion();
             inicializarGeneral();
             obtenerListaNotificacionesActivas();
-
         } catch (Exception e) {
             mostrarExcepcion(e);
         }

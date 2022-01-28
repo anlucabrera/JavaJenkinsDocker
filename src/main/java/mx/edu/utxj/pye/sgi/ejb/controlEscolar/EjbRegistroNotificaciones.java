@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -124,7 +125,22 @@ public class EjbRegistroNotificaciones {
     
     public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesActivas(){
         try {
-            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n ORDER BY n.horaInicio ASC", NotificacionesCe.class)
+            LocalDate horaInicio = LocalDate.now();
+//            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n ORDER BY n.horaInicio ASC", NotificacionesCe.class)
+            List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findNotificacionesActivas")
+                    .setParameter("horaInicio", horaInicio)
+                    .setMaxResults(10)
+                    .getResultList();
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
+            else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las ultimas diez notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesUltimosDiez): ", e, null);
+        }
+    }
+    
+    public ResultadoEJB<List<NotificacionesCe>> consultarFechasNotificaciones(){
+        try {
+            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n.horaInicio FROM NotificacionesCe n ORDER BY n.horaInicio ASC", NotificacionesCe.class)
                     .setMaxResults(10)
                     .getResultList();
             if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
