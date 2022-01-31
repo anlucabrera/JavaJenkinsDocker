@@ -40,6 +40,7 @@ import mx.edu.utxj.pye.sgi.enums.RolNotificacion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
+import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.primefaces.event.UnselectEvent;
@@ -68,6 +69,8 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
 
     @Inject
     LogonMB logonMB;
+    @Inject
+    UtilidadesCH utilidadesCH;
     @Getter
     private Boolean cargado = false;
 
@@ -84,16 +87,22 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
                 return;
             }
-            cargado = true;
+            ResultadoEJB<Filter<PersonalActivo>> regAcceso = ejbValidacionRol.validarTrabajador(logonMB.getPersonal().getClave());
+            if(regAcceso.getCorrecto()){
+                tieneAcceso = true;
+                cargado = true;
+            }
+            
             setVistaControlador(ControlEscolarVistaControlador.REGISTRO_NOTIFICACIONES);
 
-            ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejbValidacionRol.validarPersonalActivo(logonMB.getPersonal().getClave());
-            if (!resAcceso.getCorrecto()) {
-                mostrarMensajeResultadoEJB(resAcceso);
+            ResultadoEJB<Filter<PersonalActivo>> notifAcceso = ejbValidacionRol.validarPersonalActivo(logonMB.getPersonal().getClave());
+            if (!notifAcceso.getCorrecto()) {
+                mostrarMensajeResultadoEJB(notifAcceso);
                 return;
             }
-            rol = new RegistroNotificacionRolGeneral(resAcceso.getValor());
-            rol.setNivelRol(NivelRol.OPERATIVO);
+            
+            rol = new RegistroNotificacionRolGeneral(notifAcceso.getValor());
+            rol.setNivelRol(NivelRol.CONSULTA);
             cargaAreasParaAsignarNotificacion();
             inicializarGeneral();
             obtenerListaNotificacionesActivas();
@@ -311,7 +320,9 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
      * ********************************************* Manejo de datos
      * ********************************************************
      */
-    public int obtenerPorcentajeFechas(Date fechaInicio, Date fechaFin) {
+    public int obtenerPorcentajeFechas(Date fechaFin) {
+        LocalDate fechaI = utilidadesCH.castearDaLD(fechaFin);
+        Date fechaInicio = utilidadesCH.castearLDaD(fechaI.minusDays(7));
         long now = System.currentTimeMillis();
         long s = fechaInicio.getTime();
         long e = fechaFin.getTime();
@@ -354,7 +365,10 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     }
 
     public void obtenerListaNotificacionesActivas() {
-        ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesActivas();
+        LocalDate fechaActual = LocalDate.now();
+            LocalDate fechaI = fechaActual.minusDays(3);
+            LocalDate fechaF = fechaActual.plusDays(8);
+        ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesActivas(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
         if (resNotificaciones.getCorrecto()) {
             rol.setListaNotificacionesCe(resNotificaciones.getValor());
             mostrarMensajeResultadoEJB(resNotificaciones);

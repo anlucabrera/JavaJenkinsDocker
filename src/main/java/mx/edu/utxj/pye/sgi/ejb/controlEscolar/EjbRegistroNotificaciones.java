@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -123,13 +124,13 @@ public class EjbRegistroNotificaciones {
         }
     }
     
-    public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesActivas(){
+    public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesActivas(Date fechaI, Date fechaF){
         try {
-            LocalDate horaInicio = LocalDate.now();
-//            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n ORDER BY n.horaInicio ASC", NotificacionesCe.class)
-            List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findNotificacionesActivas")
-                    .setParameter("horaInicio", horaInicio)
-                    .setMaxResults(10)
+//            List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findAll")
+            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.fechaFinDuracion BETWEEN :fechaI AND :fechaF ORDER BY n.horaInicio ASC")
+                    .setParameter("fechaI", fechaI)
+                    .setParameter("fechaF", fechaF)
+//                    .setMaxResults(10)
                     .getResultList();
             if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
             else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");

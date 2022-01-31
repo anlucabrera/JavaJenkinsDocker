@@ -5,7 +5,6 @@
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
                 xmlns:p="http://primefaces.org/ui" 
                 xmlns:hf="http://highfaces.org"
-                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
                 xmlns:h="http://xmlns.jcp.org/jsf/html">
 
     <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
@@ -417,110 +416,6 @@
                     </div>
                 </div>
             </div> 
-            <!--Gadget de Avisos-->
-            <div class="box box-primary">
-                <div class="box box-solid">
-                    <div class="box-header with-border">
-                        <h2 class="box-title">Avisos</h2>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <!--Mostrar Tarjeta Avisos-->
-                    <div class="box-body">
-                        <c:forEach var="index" begin="0" end="#{consultaNotificacionesEstudiantes.rol.listaNotificacionesCe.size()-1}">
-                            <!--Establecimiento de parametros-->
-                            <c:set var="notificacionCe" value="#{consultaNotificacionesEstudiantes.rol.listaNotificacionesCe.get(index)}"/>
-                            <c:set var="porcentaje" value="#{consultaNotificacionesEstudiantes.obtenerPorcentajeFechas(notificacionCe.fechaInicioDuracion, notificacionCe.horaInicio)}"/>
-                            <c:set var="diferencia" value="#{consultaNotificacionesEstudiantes.obtenerDiferenciaDias(notificacionCe.fechaFinDuracion)}"/>
-                            <c:if test="#{diferencia eq 1}">
-                                <c:set var="color" value="bg-yellow"/>
-                            </c:if>
-                            <c:if test="#{diferencia eq 0}">
-                                <c:set var="color" value="bg-green"/>
-                            </c:if>
-                            <c:if test="#{diferencia gt 0}">
-                                <c:set var="color" value="bg-blue"/>
-                            </c:if>
-                            <c:if test="#{diferencia lt 0}">
-                                <c:set var="color" value="bg-red"/>
-                            </c:if>
-                            <!--Widget a mostrar-->
-                                <div class="col-lg-6 col-md-12 col-xs-12">
-                                    <a id="abrirmodal#{index}" href="#" class="info-box-footer" data-toggle="modal" data-target="#modal-default#{index}" >
-                                        <div class="info-box #{color}">
-                                            <span class="info-box-icon"><i class="fa fa-comments-o"></i></span>
-                                            <div class="info-box-content">
-                                                <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo}</span></span>
-                                                <span class="info-box-text">#{notificacionCe.tituloPrincipal}</span>
-                                                <div class="progress">
-                                                    <div class="progress-bar" style="width: ${100-porcentaje}%"></div>
-                                                </div>
-                                                <span class="progress-description">
-                                                    <c:if test="#{diferencia eq 0}">
-                                                        El evento inicia hoy a las 
-                                                        <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel>
-                                                    </c:if>
-                                                    <c:if test="#{diferencia lt 0}">
-                                                        Este evento a terminado
-                                                    </c:if>
-                                                    <c:if test="#{diferencia gt 0}">
-                                                        Faltan #{diferencia} dias
-                                                    </c:if>
-
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </a>
-                                </div>
-                            <!--Ventanas Modal-->
-                            <div class="modal fade" id="modal-default#{index}">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header" style="background-color: #374850">
-                                            <h3 class="modal-title" style="color: #ffffff">#{notificacionCe.tituloPrincipal}</h3>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            </button>
-                                        </div> 
-                                        <div class="modal-body">
-                                            <h4><p><strong>Lugar: </strong>#{notificacionCe.lugar}</p></h4>
-                                            <h4>
-                                                <p><strong>Fecha: </strong>
-                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                        <f:convertDateTime pattern="dd-MM-yyyy" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                    </h:outputLabel>
-                                                </p>
-                                            </h4>
-                                            <h4>
-                                                <p><strong>Hora: </strong>
-                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                        <f:convertDateTime pattern="HH:mm" locale="es" timeZone="America/Mexico_City"/>
-                                                    </h:outputLabel>
-                                                </p>
-                                            </h4>
-                                            <h4>
-                                                <p><strong>Duracion: </strong>
-                                                    <h:outputLabel value="#{notificacionCe.duracionEvento}">
-                                                        <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
-                                                    </h:outputLabel> horas
-                                                </p>
-                                            </h4>
-                                            <h4><p><strong>Encargado: </strong>#{notificacionCe.personaResponsable}</p></h4>
-                                        </div>
-                                        <div class="modal-footer justify-content-between">
-                                            <button style="background-color: #374850; color: #ffffff" type="button" class="btn" data-dismiss="modal">Cerrar</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--Fin Ventana Modal-->
-                        </c:forEach> 
-                    </div>
-                    <!--Fin Tarjeta Avisos-->
-                </div>
-            </div>
-            <!--Fin gadget de avisos-->
         </p:outputPanel>
     </div>
 

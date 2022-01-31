@@ -719,48 +719,51 @@
                         <c:forEach var="index" begin="0" end="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.size()-1}">
                             <!--Establecimiento de parametros-->
                             <c:set var="notificacionCe" value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.get(index)}"/>
-                            <c:set var="porcentaje" value="#{registroNotificacionesGeneral.obtenerPorcentajeFechas(notificacionCe.fechaInicioDuracion, notificacionCe.horaInicio)}"/>
+                            <c:set var="porcentaje" value="#{registroNotificacionesGeneral.obtenerPorcentajeFechas(notificacionCe.horaInicio)}"/>
                             <c:set var="diferencia" value="#{registroNotificacionesGeneral.obtenerDiferenciaDias(notificacionCe.fechaFinDuracion)}"/>
-                            <c:if test="#{diferencia eq 1}">
+                            <c:if test="#{diferencia eq 0}">
                                 <c:set var="color" value="bg-yellow"/>
                             </c:if>
-                            <c:if test="#{diferencia eq 0}">
-                                <c:set var="color" value="bg-green"/>
-                            </c:if>
                             <c:if test="#{diferencia gt 0}">
-                                <c:set var="color" value="bg-blue"/>
+                                <c:set var="color" value="bg-green"/>
                             </c:if>
                             <c:if test="#{diferencia lt 0}">
                                 <c:set var="color" value="bg-red"/>
                             </c:if>
                             <!--Widget a mostrar-->
-                                <div class="col-lg-6 col-md-12 col-xs-12">
-                                    <a id="abrirmodal#{index}" href="#" class="info-box-footer" data-toggle="modal" data-target="#modal-default#{index}" >
-                                        <div class="info-box #{color}">
-                                            <span class="info-box-icon"><i class="fa fa-comments-o"></i></span>
-                                            <div class="info-box-content">
-                                                <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo}</span></span>
-                                                <span class="info-box-text">#{notificacionCe.tituloPrincipal}</span>
-                                                <div class="progress">
-                                                    <div class="progress-bar" style="width: ${100-porcentaje}%"></div>
-                                                </div>
-                                                <span class="progress-description">
-                                                    <c:if test="#{diferencia eq 0}">
-                                                        El evento inicia hoy a las 
-                                                        <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel>
-                                                    </c:if>
-                                                    <c:if test="#{diferencia lt 0}">
-                                                        Este evento a terminado
-                                                    </c:if>
-                                                    <c:if test="#{diferencia gt 0}">
-                                                        Faltan #{diferencia} dias
-                                                    </c:if>
-
-                                                </span>
+                            <div class="col-lg-6 col-md-12 col-xs-12">
+                                <a id="abrirmodal#{index}" href="#" class="info-box-footer" data-toggle="modal" data-target="#modal-default#{index}" >
+                                    <div class="info-box #{color}">
+                                        <span class="info-box-icon">
+                                            <span class="info-box-number">
+                                                <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                    <f:convertDateTime pattern="E, dd" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                </h:outputLabel>
+                                            </span>
+                                        </span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo}</span></span>
+                                            <span class="info-box-text">#{notificacionCe.tituloPrincipal}</span>
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: ${100-porcentaje}%"></div>
                                             </div>
+                                            <span class="progress-description">
+                                                <c:if test="#{diferencia eq 0}">
+                                                    El evento inicia hoy a las 
+                                                    <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel>
+                                                </c:if>
+                                                <c:if test="#{diferencia lt 0}">
+                                                    Este evento ha terminado.
+                                                </c:if>
+                                                <c:if test="#{diferencia gt 0}">
+                                                    Faltan #{diferencia} días 
+                                                </c:if>
+
+                                            </span>
                                         </div>
-                                    </a>
-                                </div>
+                                    </div>
+                                </a>
+                            </div>
                             <!--Ventanas Modal-->
                             <div class="modal fade" id="modal-default#{index}">
                                 <div class="modal-dialog">
@@ -775,14 +778,14 @@
                                             <h4>
                                                 <p><strong>Fecha: </strong>
                                                     <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                        <f:convertDateTime pattern="dd-MM-yyyy" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                        <f:convertDateTime pattern="EEEE, dd 'de' MMMM 'de' yyyy" locale="es-MX" timeZone="America/Mexico_City"/>
                                                     </h:outputLabel>
                                                 </p>
                                             </h4>
                                             <h4>
                                                 <p><strong>Hora: </strong>
                                                     <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                        <f:convertDateTime pattern="HH:mm" locale="es" timeZone="America/Mexico_City"/>
+                                                        <f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
                                                     </h:outputLabel>
                                                 </p>
                                             </h4>

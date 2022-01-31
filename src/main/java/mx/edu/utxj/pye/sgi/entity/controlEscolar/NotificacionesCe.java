@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "notificaciones_ce", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "NotificacionesCe.findAll", query = "SELECT n FROM NotificacionesCe n"),
+    @NamedQuery(name = "NotificacionesCe.findAll", query = "SELECT n FROM NotificacionesCe n ORDER BY n.horaInicio ASC"),
     @NamedQuery(name = "NotificacionesCe.findByNotificacion", query = "SELECT n FROM NotificacionesCe n WHERE n.notificacion = :notificacion"),
     @NamedQuery(name = "NotificacionesCe.findByFechaInicioDuracion", query = "SELECT n FROM NotificacionesCe n WHERE n.fechaInicioDuracion = :fechaInicioDuracion"),
     @NamedQuery(name = "NotificacionesCe.findByFechaFinDuracion", query = "SELECT n FROM NotificacionesCe n WHERE n.fechaFinDuracion = :fechaFinDuracion"),
@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "NotificacionesCe.findByAlcance", query = "SELECT n FROM NotificacionesCe n WHERE n.alcance = :alcance"),
     @NamedQuery(name = "NotificacionesCe.findByGeneral", query = "SELECT n FROM NotificacionesCe n WHERE n.general = :general"),
     @NamedQuery(name = "NotificacionesCe.findByFechaRegistro", query = "SELECT n FROM NotificacionesCe n WHERE n.fechaRegistro = :fechaRegistro"),
-    @NamedQuery(name = "NotificacionesCe.findNotificacionesActivas", query = "SELECT n FROM NotificacionesCe n WHERE EXTRACT(YEAR FROM n.horaInicio) = EXTRACT(YEAR FROM :horaInicio) and EXTRACT(MONTH FROM n.horaInicio) = EXTRACT(MONTH FROM :horaInicio)"),
+    @NamedQuery(name = "NotificacionesCe.findNotificacionesActivas", query = "SELECT n FROM NotificacionesCe n WHERE EXTRACT(YEAR FROM n.horaInicio) = EXTRACT(YEAR FROM :horaInicio) and EXTRACT(MONTH FROM n.horaInicio) = EXTRACT(MONTH FROM :horaInicio) ORDER BY n.horaInicio ASC"),
     @NamedQuery(name = "NotificacionesCe.findByAreaResponsable", query = "SELECT n FROM NotificacionesCe n WHERE n.areaResponsable = :areaResponsable")})
 public class NotificacionesCe implements Serializable {
 
