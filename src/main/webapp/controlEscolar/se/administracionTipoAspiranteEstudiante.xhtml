@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de de tipo de aspirante y estudiante
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionTipoAspiranteEstudianteEscolares.cargado}">
+        <adm:breadcrumb title="Administración de tipo de aspirante y estudiante"/>
+        <div class="contenedor">
+            <c:if test="#{administracionTipoAspiranteEstudianteEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(administracionTipoAspiranteEstudianteEscolares.rol.periodoActivo.periodo)}" />
+                                        
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla1" value="#{'col-sm-12 col-md-2 col-lg-3'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <c:if test="#{administracionTipoAspiranteEstudianteEscolares.rol.pestaniaActiva eq 0}">
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarTipoAspirante" styleClass="form-control" value="#{administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoAspirante}" valueChangeListener="#{administracionTipoAspiranteEstudianteEscolares.cambiarAgregarAspirante}" rendered="#{!administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoEstudiante}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarTipoAspirante" value="#{administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoAspirante?'Agregar aspirante':'No agregar aspirante'}" rendered="#{!administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoEstudiante}"/>
+                                                    <p:message for="agregarTipoAspirante" display="tooltip" rendered="#{!administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoAspirante}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:inputText id="nuevoAspirante" value="#{administracionTipoAspiranteEstudianteEscolares.rol.nuevoAspirante}" size="15" maxlength="45" rendered="#{administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoAspirante}"/>
+                                                    <p:outputLabel value="Nuevo aspirante" for="nuevoAspirante" rendered="#{administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoAspirante}"/>
+                                                    <p:message for="nuevoAspirante" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarAspirante" value="Guardar" actionListener="#{administracionTipoAspiranteEstudianteEscolares.guardarTipoAspirante()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoAspirante}"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                        <c:if test="#{administracionTipoAspiranteEstudianteEscolares.rol.pestaniaActiva eq 1}">
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarTipoEstudiante" styleClass="form-control" value="#{administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoEstudiante}" valueChangeListener="#{administracionTipoAspiranteEstudianteEscolares.cambiarAgregarEstudiante}" rendered="#{!administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoAspirante}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarTipoEstudiante" value="#{administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoEstudiante?'Agregar estudiante':'No agregar estudiante'}" rendered="#{!administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoAspirante}"/>
+                                                    <p:message for="agregarTipoEstudiante" display="tooltip" rendered="#{!administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoEstudiante}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:inputText id="nuevoEstudiante" value="#{administracionTipoAspiranteEstudianteEscolares.rol.nuevoEstudiante}" size="15" maxlength="45" rendered="#{administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoEstudiante}"/>
+                                                    <p:outputLabel value="Nuevo estudiante" for="nuevoEstudiante" rendered="#{administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoEstudiante}"/>
+                                                    <p:message for="nuevoEstudiante" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarEstudiante" value="Guardar" actionListener="#{administracionTipoAspiranteEstudianteEscolares.guardarTipoEstudiante()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionTipoAspiranteEstudianteEscolares.rol.agregarTipoEstudiante}"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                    <h:outputText value="&#160;" />
+                                    <h:outputText value="&#160;" />
+                                    <div class="row">
+                                            <center>
+                                                <p:tabView activeIndex="#{administracionTipoAspiranteEstudianteEscolares.rol.pestaniaActiva}">
+                                                    <p:ajax event="tabChange" listener="#{administracionTipoAspiranteEstudianteEscolares.cambiarPestania}" update="@form"/>
+                                                    <p:tab id="twbTipoAspirante" title="Lista de tipo de aspirante"> 
+                                                        <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaTipoAspirante" var="tipoAspirante" value="#{administracionTipoAspiranteEstudianteEscolares.rol.tiposAspirante}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Clave" style="width: 150px;"/>
+                                                                        <p:column headerText="Descripción" style="width: 250px;"/>
+                                                                        <p:column headerText="Eliminar" style="width: 200px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{tipoAspirante.idTipoAspirante}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{tipoAspirante.descripcion}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <center>
+                                                                        <p:commandButton actionListener="#{administracionTipoAspiranteEstudianteEscolares.eliminarTipoAspirante(tipoAspirante)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar aspirante." rendered="#{!administracionTipoAspiranteEstudianteEscolares.deshabilitarEliminacionAspirante(tipoAspirante)}">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el tipo de aspirante seleccionado?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </center>
+                                                                    <h:outputText value="No se puede eliminar el tipo de aspirante seleccionado porque tiene registros relacionados." rendered="#{administracionTipoAspiranteEstudianteEscolares.deshabilitarEliminacionAspirante(tipoAspirante)}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab id="twbTipoEstudiante" title="Lista de tipo de estudiante"> 
+                                                        <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaTipoEstudiante" var="tipoEstudiante" value="#{administracionTipoAspiranteEstudianteEscolares.rol.tiposEstudiante}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Clave" style="width: 150px;"/>
+                                                                        <p:column headerText="Descripción" style="width: 200px;"/>
+                                                                        <p:column headerText="Activo/Inactivo" style="width: 150px;"/>
+                                                                        <p:column headerText="Eliminar" style="width: 250px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{tipoEstudiante.idTipoEstudiante}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{tipoEstudiante.descripcion}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:commandButton actionListener="#{administracionTipoAspiranteEstudianteEscolares.activarDesactivarTipoEstudiante(tipoEstudiante)}"
+                                                                                     class="btn btn-sm #{!tipoEstudiante.activo?'btn-danger':'btn-success'}" icon="#{!tipoEstudiante.activo?'fa fa-close':'fa fa-check'}"
+                                                                                     title="#{tipoEstudiante.activo?'Desactivar estudiante.':'Activar estudiante.'}" update="@this @(.tabla)"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <center>
+                                                                        <p:commandButton actionListener="#{administracionTipoAspiranteEstudianteEscolares.eliminarTipoEstudiante(tipoEstudiante)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar estudiante." rendered="#{!administracionTipoAspiranteEstudianteEscolares.deshabilitarEliminacionEstudiante(tipoEstudiante)}">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el tipo de estudiante seleccionado?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </center>
+                                                                    <h:outputText value="No se puede eliminar el tipo de estudiante seleccionado porque tiene registros relacionados." rendered="#{administracionTipoAspiranteEstudianteEscolares.deshabilitarEliminacionEstudiante(tipoEstudiante)}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty administracionTipoAspiranteEstudianteEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{administracionTipoAspiranteEstudianteEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para admininistrar categorías y evidencias de evaluación</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{administracionTipoAspiranteEstudianteEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!administracionTipoAspiranteEstudianteEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal de Servicios Escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
