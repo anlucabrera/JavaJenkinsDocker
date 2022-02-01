@@ -26,6 +26,7 @@ public enum ControlEscolarVistaControlador {
     CALENDARIO_EVENTOS_ESCOLARES("/controlEscolar/calendarioEventosEscolares.xhtml", CalendarioEventosEscolares.class),
     SEGUIMIENTO_EVALUACION_ESTADIA_MULTIPLE("/controlEscolar/seguimientoEvaluacionEstadia.xhtml", SeguimientoEvaluacionEstadiaMultiple.class),
     CARTA_NO_ADUEDO_ESTADISTICA("/controlEscolar/pye/cartaNoAdeudoEstadistica.xhtml", CartaNoAdeudoEstadistica.class),
+    ADMINISTRACION_DOCUMENTOS_PROCESO("/controlEscolar/administracionDocumentosProceso.xhtml", AdministracionCatalogosDocumentosProceso.class),
 
     CONCENTRADO_CALIFICACIONES_SECACA("/controlEscolar/secAcademica/concentradoCal.xhtml",  ConcentradoCalificacionesSecAca.class),
     AVANCE_PROGRAMATICO_SECACA("/controlEscolar/secAcademica/avanceP.xhtml",  AvanceProgramaticoSecAca.class),

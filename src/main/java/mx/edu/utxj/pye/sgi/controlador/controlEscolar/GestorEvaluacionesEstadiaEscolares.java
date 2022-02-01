@@ -322,21 +322,27 @@ public class GestorEvaluacionesEstadiaEscolares extends ViewScopedRol implements
         }else mostrarMensajeResultadoEJB(res);
     }
     
-     /**
+    /**
      * Permite registrar lista de preguntas a la evaluación de estadía
      */
     public void registrarPreguntasEvaluacion(){
-        ResultadoEJB<List<CriterioEvaluacionEstadia>> res = ejb.registrarPreguntasEvaluacion(rol.getPreguntasRegistrarEvaluacion());
-        if(res.getCorrecto()){
-            rol.setPreguntasRegistradas(res.getValor());
-            rol.setPestaniaActiva(2);
-            inicializarNumEvaluacion();
-            rol.setRegistroEvaluacion(Boolean.FALSE);
-            listaEvaluacionesActivas();
-            listaEvaluacionesConsulta();
-            Ajax.update("contenederEval");
-            Ajax.update("contenederConsEval");
-        }else mostrarMensajeResultadoEJB(res);
+        Long coincidencias = rol.getPreguntasRegistrarEvaluacion().stream().filter(p->p.getPregunta().contains("Pregunta")).count();
+        if(coincidencias == 0){
+            ResultadoEJB<List<CriterioEvaluacionEstadia>> res = ejb.registrarPreguntasEvaluacion(rol.getPreguntasRegistrarEvaluacion());
+            if(res.getCorrecto()){
+                rol.setPreguntasRegistradas(res.getValor());
+                rol.setPestaniaActiva(2);
+                inicializarNumEvaluacion();
+                rol.setRegistroEvaluacion(Boolean.FALSE);
+                listaEvaluacionesActivas();
+                listaEvaluacionesConsulta();
+                Ajax.update("contenederEval");
+                Ajax.update("contenederConsEval");
+                mostrarMensajeResultadoEJB(res);
+            }else mostrarMensajeResultadoEJB(res);
+        }else{
+            Messages.addGlobalWarn("Verifique las preguntas capturadas, de lo contrario no podrá realizar el registro correctamente.");
+        }
     }
     
      /**
