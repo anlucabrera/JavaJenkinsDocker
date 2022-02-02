@@ -281,8 +281,8 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             mostrarMensajeError("El alcance de la notificación debe contener al menos un dato");
         } else {
             List<String> listaAlcanceOrdenada = RolNotificacion.ListaValoresLabel();
-            rol.getNotificacionCe().setFechaInicioDuracion(rol.getFechaInicio());
-            rol.getNotificacionCe().setFechaFinDuracion(rol.getFechaFin());
+            rol.getNotificacionCe().setHoraInicio(rol.getFechaInicio());
+            rol.getNotificacionCe().setHoraFin(rol.getFechaFin());
             rol.getNotificacionCe().setGeneral(Boolean.FALSE);
             listaAlcanceOrdenada.retainAll(rol.getAlcance());
             rol.getNotificacionCe().setAlcance(String.join(",", listaAlcanceOrdenada));
@@ -320,12 +320,12 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
      * ********************************************* Manejo de datos
      * ********************************************************
      */
-    public int obtenerPorcentajeFechas(Date fechaFin) {
-        LocalDate fechaI = utilidadesCH.castearDaLD(fechaFin);
-        Date fechaInicio = utilidadesCH.castearLDaD(fechaI.minusDays(7));
+    public int obtenerPorcentajeFechas(Date horaInicio) {
+        LocalDateTime fechaI = utilidadesCH.castearDaLDT(horaInicio);
+        Date fechaInicio = utilidadesCH.castearLDTaD(fechaI.minusDays(6));
         long now = System.currentTimeMillis();
         long s = fechaInicio.getTime();
-        long e = fechaFin.getTime();
+        long e = horaInicio.getTime();
         if (s >= e || now >= e) {
             return 0;
         }
@@ -335,7 +335,9 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         return (int) ((e - now) * 100 / (e - s));
     }
 
-    public int obtenerDiferenciaDias(Date fechaFin) {
+    public int obtenerDiferenciaDias(Date horaInicio) {
+        LocalDateTime fechaI = utilidadesCH.castearDaLDT(horaInicio);
+        Date fechaFin = utilidadesCH.castearLDTaD(fechaI.with(LocalTime.MIN).plusDays(1));
         long fechaInicio = System.currentTimeMillis();
         return (int) ((fechaFin.getTime() - fechaInicio) / (1000 * 60 * 60 * 24));
     }
@@ -366,7 +368,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
 
     public void obtenerListaNotificacionesActivas() {
         LocalDate fechaActual = LocalDate.now();
-            LocalDate fechaI = fechaActual.minusDays(3);
+            LocalDate fechaI = fechaActual.minusDays(2);
             LocalDate fechaF = fechaActual.plusDays(8);
         ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesActivas(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
         if (resNotificaciones.getCorrecto()) {

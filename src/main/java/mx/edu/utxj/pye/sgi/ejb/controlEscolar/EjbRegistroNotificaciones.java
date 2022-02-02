@@ -127,7 +127,7 @@ public class EjbRegistroNotificaciones {
     public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesActivas(Date fechaI, Date fechaF){
         try {
 //            List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findAll")
-            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.fechaFinDuracion BETWEEN :fechaI AND :fechaF ORDER BY n.horaInicio ASC")
+            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.horaInicio BETWEEN :fechaI AND :fechaF ORDER BY n.horaInicio ASC")
                     .setParameter("fechaI", fechaI)
                     .setParameter("fechaF", fechaF)
 //                    .setMaxResults(10)
