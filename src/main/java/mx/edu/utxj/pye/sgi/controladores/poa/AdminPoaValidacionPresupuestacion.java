@@ -136,6 +136,9 @@ public class AdminPoaValidacionPresupuestacion implements Serializable {
             listaListaEjeEstrategia = new ArrayList<>();
             listaListaEjeEstrategia.clear();
 
+            productosAreases = new ArrayList<>();
+            productosAreases = ejbPresupuestacion.mostrarProductosAreases(claveArea, ejercicioFiscal);
+
             ejesEsLaAp = new ArrayList<>();
             ejesEsLaAp.clear();
             List<EjesRegistro> ers = new ArrayList<>();

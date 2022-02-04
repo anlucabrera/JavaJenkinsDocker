@@ -161,6 +161,7 @@ public class ControladorSubordinados implements Serializable {
             incapacidads.clear();
             List<Actividadesremotas> remotas = new ArrayList<>();
             remotas.clear();
+            
             listaIncidenciasReporteImpresion = new ArrayList<>();
             modulosRegistro = ejbDatosUsuarioLogeado.mostrarModuloregistro("Incidencia");
             if (modulosRegistro == null) {
@@ -222,7 +223,6 @@ public class ControladorSubordinados implements Serializable {
                     });
                 }
                 
-                remotas = new ArrayList<>();
                 remotas= ejbNotificacionesIncidencias.mostrarActividadesremotasReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
                 if (!remotas.isEmpty()) {
                     remotas.forEach((t) -> {

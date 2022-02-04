@@ -153,7 +153,21 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
         
         rol.setAnioIni(LocalDate.now().getYear()-2);
         rol.setAnioFin(LocalDate.now().getYear());
-
+        
+        rol.setTiposCalificaciones(new ArrayList<>());
+        rol.getTiposCalificaciones().add("Equivalencia");
+        rol.getTiposCalificaciones().add("Invalidar calificación por recurso de materia");
+        rol.getTiposCalificaciones().add("Invalidar por baja");
+        rol.getTiposCalificaciones().add("Invalidar por cambio de programa educativo");
+        
+        rol.setTiposEstudiantes(new ArrayList<>());
+        rol.getTiposEstudiantes().add(new TipoEstudiante(Short.parseShort("1"), "Regular", Boolean.FALSE));
+        rol.getTiposEstudiantes().add(new TipoEstudiante(Short.parseShort("2"), "Baja Temporal", Boolean.FALSE));
+        rol.getTiposEstudiantes().add(new TipoEstudiante(Short.parseShort("3"), "Baja Definitiva", Boolean.FALSE));
+        rol.getTiposEstudiantes().add(new TipoEstudiante(Short.parseShort("4"), "Egresado No Titulado", Boolean.FALSE));
+        rol.getTiposEstudiantes().add(new TipoEstudiante(Short.parseShort("5"), "Reincorporacion TSU", Boolean.FALSE));
+        rol.getTiposEstudiantes().add(new TipoEstudiante(Short.parseShort("6"), "Reincorporacion ING", Boolean.FALSE));
+        rol.getTiposEstudiantes().add(new TipoEstudiante(Short.parseShort("7"), "Invalido por repetición de cuatrimestre", Boolean.TRUE));
     }
     
     public void estudianteConsultado() {
@@ -249,6 +263,15 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
         if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
         buscarAlineacionCalificaciones();
     }
+    
+    public void onRowEditRegistros(RowEditEvent event) {
+        DtoReincorporacion.HistoricoReincorporaciones cr = (DtoReincorporacion.HistoricoReincorporaciones) event.getObject();
+        System.out.println("onRowEditRegistros()"+cr.getTipoCalificacion());
+        System.out.println("onRowEditRegistros()"+cr.getTipoEstudiante().getIdTipoEstudiante());
+        ResultadoEJB<DtoReincorporacion.HistoricoReincorporaciones> rejb = ejb.actualizacionRegistrosReincorporaciones(cr);
+//        if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
+//        buscarAlineacionCalificaciones();
+    }
 
      public void onRowCancel(RowEditEvent event) {
         Messages.addGlobalInfo("¡Operación cancelada!");
@@ -336,6 +359,7 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
         String per=escolares.getMesInicio().getMes()+" - "+escolares.getMesFin().getMes()+" - "+escolares.getAnio();
         return per;
     }  
+    
     public String colocaEstilo (Short tipoE){
         if(null == tipoE){
             return "color: #000000;";
@@ -348,6 +372,23 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
                 return "color: #00cc00;";
             default:
                 return "color: #000000;";
+        }
+    }  
+    
+    public String defineVisibility (Short tipoE){
+        if(null == tipoE){
+            return "visibility: hidden";
+        }else switch (tipoE) {
+            case 1:
+            case 2:
+            case 3:
+                return "visibility: visible";
+            case 4:
+            case 5:
+            case 6:
+                return "visibility: hidden";
+            default:
+                return "visibility: visible";
         }
     }  
 }

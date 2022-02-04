@@ -149,8 +149,8 @@ public class AdminPoaValidacionProgramacion implements Serializable {
 
     public void onRowEditAc(RowEditEvent event) {
         try {
-            ActividadesPoa ap = (ActividadesPoa) event.getObject();
-            ejbRegistroActividades.actualizaActividadesPoa(ap);
+            DTOreportePoa.ActividadRecurso ap = (DTOreportePoa.ActividadRecurso) event.getObject();
+            ejbRegistroActividades.actualizaActividadesPoa(ap.getActividadesPoa());
             consultarListasValidacionFinal();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());

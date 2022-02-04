@@ -123,7 +123,7 @@
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{incidencia.validado?'actividad':'subactiviades'}"
                                                          emptyMessage="No se encontraron Registros." rendered="true">
                                                 <f:facet name="header">
-                                                   
+
                                                 </f:facet>
 
                                                 <p:ajax event="rowEdit" listener="#{regisroActividadesRemotas.onRowEdit}" update="tblActividades" />
@@ -135,7 +135,7 @@
                                                         <p:confirm header="Confirmación" message="¿Confirma la eliminación de su trabajo remoto del día #{incidencia.fecha}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
-                                                
+
                                                 <p:column headerText="Fecha" 
                                                           sortBy="#{incidencia.fecha}" 
                                                           filterBy="#{incidencia.fecha}" 
@@ -152,15 +152,18 @@
                                                           sortBy="#{incidencia.actividades}" 
                                                           filterBy="#{incidencia.actividades}" 
                                                           filterMatchMode="contains" 
-                                                          style="width: 40%">
+                                                          style="width: 74%">
                                                     <p:cellEditor>
                                                         <f:facet name="output"><h:outputText value="#{incidencia.actividades}" /></f:facet>
                                                         <f:facet name="input">
                                                             <f:facet name="input"><p:inputTextarea value="#{incidencia.actividades}" style = "height:100%; width: 100%; object-fit: contain;"/></f:facet>
                                                         </f:facet>
                                                     </p:cellEditor>
-                                                </p:column>                                                
-                                                
+                                                </p:column>   
+                                                <p:column headerText="Estatus" style="text-align: justify; font-size: smaller;width: 10%">
+                                                    <h:outputText value="#{incidencia.validado  ?'Aceptado':'Pendiente'}" />
+                                                </p:column>                                              
+
                                                 <p:column style="width:6%" class="noprint" >
                                                     <p:rowEditor style="visibility: #{!incidencia.validado?'visible':'hidden'}"/>
                                                 </p:column>
@@ -175,7 +178,7 @@
                                 </p:tab>
                             </p:tabView>
 
-                                   
+
                         </div>
                     </div>
                 </div>

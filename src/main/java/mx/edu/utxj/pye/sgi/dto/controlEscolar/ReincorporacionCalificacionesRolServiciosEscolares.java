@@ -41,6 +41,7 @@ public class ReincorporacionCalificacionesRolServiciosEscolares extends Abstract
     @Getter @Setter private Integer anioFin;
     
     @Getter @Setter @NonNull private List<String> meses;
+    @Getter @Setter @NonNull private List<String> tiposCalificaciones;
     @Getter @Setter @NonNull private List<Integer> anios;
     
     
@@ -53,6 +54,7 @@ public class ReincorporacionCalificacionesRolServiciosEscolares extends Abstract
     @Getter @Setter private List<CalificacionesHistorialTsu> historialCalificacionesSaiiuts;
     
     @Getter @Setter @NonNull private List<Estudiante> estudiantesReincorporaciones;
+    @Getter @Setter @NonNull private List<TipoEstudiante> tiposEstudiantes;
     @Getter @Setter @NonNull private List<DtoReincorporacion.CalificacionesR> calificacionesTSU;
     @Getter @Setter @NonNull private List<DtoReincorporacion.CalificacionesR> calificacionesLIN;
     

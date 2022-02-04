@@ -728,939 +728,339 @@
                                 </ul>
                             </ul>
                         </div-->      
-                        <div class="col-lg-6 col-md-6 col-xs-12">
-                            <h1>Menú Actual</h1>
-                            <h:form>
-                                <p:tieredMenu style="width:200px">
-                                    <p:menuitem value="Inicio" />
-                                    <p:submenu label="Herramientas Externas">
-                                        <p:menuitem value="Prontuario" />
-                                        <p:menuitem value="Revisión por la dirección" />
-                                    </p:submenu>
-                                    <p:menuitem value="Retención" />
-                                    <p:menuitem value="Reprobación" />
-                                    <p:menuitem value="Deserción" />
+                        <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 9}">
+                            <div class="col-lg-6 col-md-6 col-xs-12">
+                                <h1>Menú Actual</h1>
+                                <h:form>
+                                    <p:tieredMenu style="width:200px">
+                                        <p:menuitem value="Inicio" />
+                                        <p:submenu label="Herramientas Externas">
+                                            <p:menuitem value="Prontuario" />
+                                            <p:menuitem value="Revisión por la dirección" />
+                                        </p:submenu>
+                                        <p:menuitem value="Retención" />
+                                        <p:menuitem value="Reprobación" />
+                                        <p:menuitem value="Deserción" />
 
-                                    <p:submenu label="Perfil del personal">
-                                        <p:menuitem value="Perfil" />
-                                        <p:menuitem value="Experiencia docente UTXJ" />
-                                        <p:menuitem value="Contacto de emergencias" />
-                                        <p:submenu label="Curriculum vitae">
-                                            <p:menuitem value="Datos personales" />
-                                            <p:menuitem value="Educación" />
-                                            <p:menuitem value="Habilidades" />
-                                            <p:menuitem value="Tecnología" />
-                                            <p:menuitem value="Premios" />
-                                            <p:menuitem value="Producción profesional" />
+                                        <p:submenu label="Perfil del personal">
+                                            <p:menuitem value="Perfil" />
+                                            <p:menuitem value="Experiencia docente UTXJ" />
+                                            <p:menuitem value="Contacto de emergencias" />
+                                            <p:submenu label="Curriculum vitae">
+                                                <p:menuitem value="Datos personales" />
+                                                <p:menuitem value="Educación" />
+                                                <p:menuitem value="Habilidades" />
+                                                <p:menuitem value="Tecnología" />
+                                                <p:menuitem value="Premios" />
+                                                <p:menuitem value="Producción profesional" />
+                                            </p:submenu>
+                                            <p:submenu label="Justificación de Asistencia">
+                                                <p:menuitem value="Incidencias" />
+                                                <p:menuitem value="Incapacidades" />
+                                                <p:menuitem value="Cuidados" />
+                                            </p:submenu>
                                         </p:submenu>
-                                        <p:submenu label="Justificación de Asistencia">
-                                            <p:menuitem value="Incidencias" />
-                                            <p:menuitem value="Incapacidades" />
-                                            <p:menuitem value="Cuidados" />
-                                        </p:submenu>
-                                    </p:submenu>
 
-                                    <p:submenu label="Control escolar"> 
-                                        <p:submenu label="Usuarios especiales">
-                                            <p:menuitem value="Calendario eventos escolares" /> 
-                                            <p:menuitem value="Reporte de Aspirantes" />
-                                        </p:submenu>
-                                        <p:submenu label="Administrador">
-                                            <p:submenu label="Eventos escolares">
-                                                <p:menuitem value="Registro calendario" />
-                                                <p:menuitem value="Aperturas extemporáneas" />
+                                        <p:submenu label="Control escolar"> 
+                                            <p:submenu label="Usuarios especiales">
+                                                <p:menuitem value="Calendario eventos escolares" /> 
+                                                <p:menuitem value="Reporte de Aspirantes" />
                                             </p:submenu>
-                                            <p:submenu label="Apertura Extemporánea">
-                                                <p:menuitem value="Grupal" />
-                                                <p:menuitem value="Estudiante" />
+                                            <p:submenu label="Administrador">
+                                                <p:submenu label="Eventos escolares">
+                                                    <p:menuitem value="Registro calendario" />
+                                                    <p:menuitem value="Aperturas extemporáneas" />
+                                                </p:submenu>
+                                                <p:submenu label="Apertura Extemporánea">
+                                                    <p:menuitem value="Grupal" />
+                                                    <p:menuitem value="Estudiante" />
+                                                </p:submenu>
+                                                <p:menuitem value="Reporte Aperturas" />
                                             </p:submenu>
-                                            <p:menuitem value="Reporte Aperturas" />
-                                        </p:submenu>
-                                        <p:submenu label="Secretaría Académica">
-                                            <p:menuitem value="Seguimiento de avance programático" />
-                                        </p:submenu>
-                                        <p:submenu label="Director Área Académica">
-                                            <p:menuitem value="Administración de Planes de Estudio" />
-                                            <p:menuitem value="Registro de evidencias e instrumentos de evaluación" />
-                                            <p:menuitem value="Asignación académica" />
-                                            <p:menuitem value="Asignación Tutor de Grupo" />
-                                            <p:menuitem value="Planeación Cuatrimestral Validación " />
-                                            <p:menuitem value="Listas de Asistencia" />
-                                            <p:menuitem value="Concentrado Asistencias" />
-                                            <p:menuitem value="Validación Baja" />
-                                            <p:menuitem value="Fusión de grupos" />
-                                            <p:menuitem value="Seguimiento de avance programático" />
-                                            <p:menuitem value="Cédula de Identificación" />
-                                            <p:menuitem value="Validación de Plan de Acción Tutorial" />
-                                            <p:menuitem value="Seguimiento Evaluación Estadía" />
-                                        </p:submenu>
-                                        <p:submenu label="Servicios Escolares">
-                                            <p:menuitem value="Asignación académica" />
-                                            <p:menuitem value="Generación de grupos" />
-                                            <p:menuitem value="Proceso de inscripción" />
-                                            <p:menuitem value="Inscripción Ing | Lic" />
-                                            <p:submenu label="Reincorporaciones">
-                                                <p:menuitem value="Registro" />
-                                                <p:menuitem value="Calificaciones" />
-                                                <p:menuitem value="Reporte" />
-                                            </p:submenu>                                
-                                            <p:menuitem value="Credencialización" />
-                                            <p:menuitem value="Registrar Bajas" />
-                                            <p:menuitem value="Reporte Bajas" />
-                                            <p:menuitem value="Concentrado Bajas" />
-                                            <p:menuitem value="Historial Movimientos" />
-                                            <p:menuitem value="Fusión de grupos" />
-                                            <p:menuitem value="Cédula de Identificación" />
-                                            <p:menuitem value="Préstamo de documentos" />
-                                            <p:menuitem value="Registro documentos oficiales" />
-                                            <p:menuitem value="Reinscripciones" />
-                                            <p:menuitem value="Registro de ficha de admisión" />
-                                        </p:submenu>
-                                        <p:submenu label="Titulación">
-                                            <p:menuitem value="Registro eventos" />
-                                            <p:menuitem value="Expedientes por Generación" />
-                                            <p:menuitem value="Expedientes por Matricula" />
-                                            <p:menuitem value="Registrar Expediente" />
-                                            <p:menuitem value="Fechas Terminación" />
-                                        </p:submenu>
-                                        <p:submenu label="Psicopedagogía">
-                                            <p:menuitem value="Dictamen Baja" />
-                                            <p:menuitem value="Cédula de Identificación" />
-                                            <p:menuitem value="Seguimiento Tutorías y Asesorías" />
-                                            <p:menuitem value="Plantilla Plan de Acción Tutorial" />
-                                            <p:menuitem value="Seguimiento Test Aprendizaje" />
-                                        </p:submenu>
-                                        <p:submenu label="Especialista">
-                                            <p:menuitem value="Seguimiento Caso Crítico Especialista" />
-                                        </p:submenu>
-                                        <p:submenu label="Registro múltiple">
-                                            <p:menuitem value="Registrar Notificaciones" />
-                                            <p:menuitem value="Registro de Asesorías Generales" />
-                                        </p:submenu>
-                                        <p:submenu label="Consultas múltiples">
-                                            <p:menuitem value="Consultar calificaciones" />
-                                            <p:menuitem value="Resultado de Planeaciones" />
-                                            <p:menuitem value="Resultado Registro del estudiante" />
-                                            <p:menuitem value="Concentrado Calificaciones" />
-                                            <p:menuitem value="Reportes Académicos" />
-                                            <p:menuitem value="Seguimiento Evaluación Estadía" />
-                                        </p:submenu>
-                                        <p:submenu label="Estadía">
                                             <p:submenu label="Secretaría Académica">
-                                                <p:menuitem value="Calendario eventos" />
-                                                <p:menuitem value="Reportes" />
-                                                <p:submenu label="Formatos">
-                                                    <p:menuitem value="Reporte mensual" />
-                                                    <p:menuitem value="Carta de aceptación" />
-                                                    <p:menuitem value="Carta de liberación" />
-                                                    <p:menuitem value="Evaluación empresarial" />
-                                                    <p:menuitem value="Presentación estadías 2021" />
-                                                </p:submenu>
+                                                <p:menuitem value="Seguimiento de avance programático" />
                                             </p:submenu>
-                                            <p:submenu label="Coordinador de Estadías">
-                                                <p:menuitem value="Seguimiento de estadía" />
-                                                <p:menuitem value="Calendario eventos" />
-                                                <p:menuitem value="Reportes" />
-                                                <p:submenu label="Formatos">
-                                                    <p:menuitem value="Reporte mensual" />
-                                                    <p:menuitem value="Carta de aceptación" />
-                                                    <p:menuitem value="Carta de liberación" />
-                                                    <p:menuitem value="Evaluación empresarial" />
-                                                    <p:menuitem value="Presentación estadías 2021" />
-                                                </p:submenu>
+                                            <p:submenu label="Director Área Académica">
+                                                <p:menuitem value="Administración de Planes de Estudio" />
+                                                <p:menuitem value="Registro de evidencias e instrumentos de evaluación" />
+                                                <p:menuitem value="Asignación académica" />
+                                                <p:menuitem value="Asignación Tutor de Grupo" />
+                                                <p:menuitem value="Planeación Cuatrimestral Validación " />
+                                                <p:menuitem value="Listas de Asistencia" />
+                                                <p:menuitem value="Concentrado Asistencias" />
+                                                <p:menuitem value="Validación Baja" />
+                                                <p:menuitem value="Fusión de grupos" />
+                                                <p:menuitem value="Seguimiento de avance programático" />
+                                                <p:menuitem value="Cédula de Identificación" />
+                                                <p:menuitem value="Validación de Plan de Acción Tutorial" />
+                                                <p:menuitem value="Seguimiento Evaluación Estadía" />
                                             </p:submenu>
-                                            <p:submenu label="Director de carrera">
-                                                <p:menuitem value="Asignación roles de estadía" />
-                                                <p:menuitem value="Seguimiento de estadía" />
-                                                <p:menuitem value="Aperturas extemporáneas" />
-                                                <p:menuitem value="Calendario eventos" />
-                                                <p:menuitem value="Reportes" />
-                                                <p:submenu label="Formatos">
-                                                    <p:menuitem value="Reporte mensual" />
-                                                    <p:menuitem value="Carta de aceptación" />
-                                                    <p:menuitem value="Carta de liberación" />
-                                                    <p:menuitem value="Evaluación empresarial" />
-                                                    <p:menuitem value="Presentación estadías 2021" />
-                                                </p:submenu>
+                                            <p:submenu label="Servicios Escolares">
+                                                <p:menuitem value="Asignación académica" />
+                                                <p:menuitem value="Generación de grupos" />
+                                                <p:menuitem value="Proceso de inscripción" />
+                                                <p:menuitem value="Inscripción Ing | Lic" />
+                                                <p:submenu label="Reincorporaciones">
+                                                    <p:menuitem value="Registro" />
+                                                    <p:menuitem value="Calificaciones" />
+                                                    <p:menuitem value="Reporte" />
+                                                </p:submenu>                                
+                                                <p:menuitem value="Credencialización" />
+                                                <p:menuitem value="Registrar Bajas" />
+                                                <p:menuitem value="Reporte Bajas" />
+                                                <p:menuitem value="Concentrado Bajas" />
+                                                <p:menuitem value="Historial Movimientos" />
+                                                <p:menuitem value="Fusión de grupos" />
+                                                <p:menuitem value="Cédula de Identificación" />
+                                                <p:menuitem value="Préstamo de documentos" />
+                                                <p:menuitem value="Registro documentos oficiales" />
+                                                <p:menuitem value="Reinscripciones" />
+                                                <p:menuitem value="Registro de ficha de admisión" />
                                             </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Docente">
-                                            <p:menuitem value="Captura de calificaciones" />
-                                            <p:menuitem value="Tarea integradora Nivelación" />
-                                            <p:menuitem value="Configuración Unidad Materia" />
-                                            <p:menuitem value="Asignación Evidencias e Instrumentos de Evaluación" />
-                                            <p:menuitem value="Impresión de Planeación Cuatrimestral" />
-                                            <p:menuitem value="Lista de asistencia" />
-                                            <p:menuitem value="Seguimiento Pase de Lista Docente" />
-                                            <p:menuitem value="Seguimiento de avance programático" />
-                                            <p:menuitem value="Registro de Asesorías" />
-                                            <p:submenu label="Solicitar Apertura (En proceso de validación para su activación)" style="background: yellowgreen">
-                                                <p:menuitem value="Grupal" />
-                                                <p:menuitem value="Estudiante" />
+                                            <p:submenu label="Titulación">
+                                                <p:menuitem value="Registro eventos" />
+                                                <p:menuitem value="Expedientes por Generación" />
+                                                <p:menuitem value="Expedientes por Matricula" />
+                                                <p:menuitem value="Registrar Expediente" />
+                                                <p:menuitem value="Fechas Terminación" />
                                             </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Tutor">
-                                            <p:menuitem value="Concentrado Asistencias" />
-                                            <p:menuitem value="Tramitar Baja" />
-                                            <p:menuitem value="Cédula de Identificación" />
-                                            <p:menuitem value="Registro de Plan de Acción Tutorial" />
-                                            <p:menuitem value="Registro de Tutorías Grupales" />
-                                            <p:menuitem value="Registro de Tutorías Individuales" />
-                                            <p:menuitem value="Planes de Acción Tutorial" />
-                                            <p:menuitem value="Seguimiento de Test" />
-                                            <p:menuitem value="Seguimiento de Evaluación Estadía" />
-                                        </p:submenu>
-                                        <p:submenu label="Asesor de estadía">
-                                            <p:menuitem value="Asignación estudiantes" />
-                                            <p:menuitem value="Seguimiento estudiantes" />
-                                            <p:menuitem value="Calendario eventos" />
-                                            <p:submenu label="Formatos">
-                                                <p:menuitem value="Reporte mensual" />
-                                                <p:menuitem value="Carta de aceptación" />
-                                                <p:menuitem value="Carta de liberación" />
-                                                <p:menuitem value="Evaluación empresarial" />
-                                                <p:menuitem value="Presentación estadías 2021" />
+                                            <p:submenu label="Psicopedagogía">
+                                                <p:menuitem value="Dictamen Baja" />
+                                                <p:menuitem value="Cédula de Identificación" />
+                                                <p:menuitem value="Seguimiento Tutorías y Asesorías" />
+                                                <p:menuitem value="Plantilla Plan de Acción Tutorial" />
+                                                <p:menuitem value="Seguimiento Test Aprendizaje" />
                                             </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Coordinador de estadía por área académica">
-                                            <p:menuitem value="Seguimiento estudiantes" />
-                                            <p:menuitem value="Calendario eventos" />
-                                            <p:submenu label="Formatos">
-                                                <p:menuitem value="Reporte mensual" />
-                                                <p:menuitem value="Carta de aceptación" />
-                                                <p:menuitem value="Carta de liberación" />
-                                                <p:menuitem value="Evaluación empresarial" />
-                                                <p:menuitem value="Presentación estadías 2021" />
+                                            <p:submenu label="Especialista">
+                                                <p:menuitem value="Seguimiento Caso Crítico Especialista" />
                                             </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Estadías para Servicios Escolares">    
-                                            <p:menuitem value="Registro de eventos" />
-                                            <p:menuitem value="Entrega de fotografías" />
-                                            <p:menuitem value="Gestor evaluaciones" />
-                                            <p:menuitem value="Aperturas extemporáneas" />
-                                            <p:menuitem value="Reportes" />
-                                            <p:submenu label="Formatos">
-                                                <p:menuitem value="Reporte mensual" />
-                                                <p:menuitem value="Carta de aceptación" />
-                                                <p:menuitem value="Carta de liberación" />
-                                                <p:menuitem value="Evaluación empresarial" />
-                                                <p:menuitem value="Presentación estadías 2021" />
+                                            <p:submenu label="Registro múltiple">
+                                                <p:menuitem value="Registrar Notificaciones" />
+                                                <p:menuitem value="Registro de Asesorías Generales" />
                                             </p:submenu>
-                                        </p:submenu> 
-                                    </p:submenu>
-                                    <p:submenu label="Evaluaciones y encuestas"> 
-                                        <p:menuitem value="Satisfacción de servicios" />
-                                        <p:submenu label="Evaluaciones">
-                                            <p:menuitem value="Evaluación pares académicos" />
-                                            <p:menuitem value="Evaluación de Ética" />
-                                            <p:menuitem value="Evaluación de Desempeño Ambiental" />
-                                            <p:menuitem value="Desempeño" />
-                                            <p:menuitem value="360 grados" />
-                                            <p:menuitem value="Evaluación de control interno" />
-                                            <p:menuitem value="Clima laboral" />
-                                        </p:submenu>
-                                        <p:submenu label="Cuestionarios a personal">
-                                            <p:menuitem value="Cuestionario información personal" />
-                                        </p:submenu>
-                                        <p:submenu label="Administración evaluaciones">
-                                            <p:submenu label="secretaria académica">
-                                                <p:menuitem value="Evaluaciones por carrera" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Seguimiento de Evaluación y Encuestas por parte de: PYE, SA, IYE, directores Académicos y Tutores">
-                                            <p:submenu label="Seguimiento encuestas">
-                                                <p:menuitem value="Encuesta satisfacción TSU" />
-                                                <p:menuitem value="Encuesta satisfacción ING" />
-                                                <p:menuitem value="Encuesta servicios" />
-                                                <p:menuitem value="Evaluación Estadía" />
-                                                <p:menuitem value="Encuesta Condiciones Estudio" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Seguimiento de Evaluaciones a Tutor y Evaluación a Docente">
-                                            <p:submenu label="Seguimiento Evaluaciones">
-                                                <p:menuitem value="Evaluación a Tutor" />
-                                                <p:menuitem value="Evaluación a Docente" />
-                                                <p:menuitem value="Cuestionario Psicopedagógico" />
-                                                <p:menuitem value="Cuestionario Psicopedagógico" />
-                                                <p:menuitem value="Cuestionario Psicopedagógico" />
-                                                <p:menuitem value="Ev. Pares Académicos" />
-                                                <p:menuitem value="Seguimiento Evaluación Ambiental" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Directivos/Directores de carrera">
-                                            <p:menuitem value="Administración de Evaluaciones" />
-                                            <p:submenu label="Ev. entre pares académicos">
-                                                <p:menuitem value="Combinaciones" />
-                                                <p:menuitem value="Resultados" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:menuitem value="Administración de Evaluaciones" />
-                                        <p:menuitem value="Administración de evaluaciones" />
-                                        <p:menuitem value="Resultados subordinados" />
-                                        <p:submenu label="Administradores especiales">
-                                            <p:submenu label="Jefe de personal">
-                                                <p:menuitem value="Genera Evaluaciones" />
-                                                <p:menuitem value="Resultados generales" />
-                                            </p:submenu>
-                                            <p:submenu label="Seguimiento a egresados">
-                                                <p:menuitem value="Estudio egresado" />
-                                                <p:menuitem value="Reporte egresados" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:menuitem value="Resultados de evaluaciones" />
-                                    </p:submenu>
-                                    <p:submenu label="Becas para Servicios Estudiantiles"> 
-                                        <p:menuitem value="Reporte Becas" />
-                                    </p:submenu>
-                                    <p:submenu label="Planeación Cuatrimestral">
-                                        <p:menuitem value="Director" />
-                                        <p:menuitem value="Sec. Académica" />
-                                        <p:menuitem value="Dir. Personal" />
-                                    </p:submenu>
-                                    <p:submenu label="Registros de información">
-                                        <p:menuitem value="Módulos Registro" />
-                                        <p:menuitem value="Repositorio de Archivos" />
-                                    </p:submenu>
-                                    <p:submenu label="Registro POA">
-                                        <p:menuitem value="Registro" />
-                                        <p:menuitem value="Recurso y Justificaciones" />
-                                        <p:menuitem value="Evaluación" />
-                                        <p:menuitem value="Cuadro de Mando Integral" />
-                                        <p:menuitem value="Consulta" />
-                                        <p:menuitem value="Estatus" />
-                                    </p:submenu>
-                                    <p:submenu label="Titulación">
-                                        <p:submenu label="Expedientes">
-                                            <p:menuitem value="Registrar Expediente" />
-                                            <p:menuitem value="Seguimiento por Matricula" />
-                                            <p:menuitem value="Seguimiento Nivel ING/LIC" />
-                                            <p:menuitem value="Seguimiento Nivel TSU" />
-                                        </p:submenu>
-                                        <p:submenu label="Títulos (Oculto)" style="background: yellow">
-                                            <p:menuitem value="Cargar Título Electrónico" />
-                                            <p:menuitem value="Listado de Titulados" />
-                                        </p:submenu>
-                                        <p:submenu label="Catálogos - Reportes">
-                                            <p:menuitem value="Registrar Fechas Documentos" />
-                                            <p:menuitem value="Reporte por Generación y P.E." />
-                                        </p:submenu>
-                                    </p:submenu>
-                                    <p:submenu label="Titulación Servicios Escolares">
-                                        <p:submenu label="Expedientes">
-                                            <p:menuitem value="Seguimiento por Matricula" />
-                                        </p:submenu>
-                                    </p:submenu>
-                                    <p:submenu label="Funciones y organigrama">
-                                        <p:menuitem value="Organigrama operativo" />
-                                        <p:menuitem value="Consulta Funciones" />
-                                    </p:submenu>
-                                    <p:submenu label="Herramientas directivos">
-                                        <p:menuitem value="Perfil de subordinados(as)" />
-                                        <p:menuitem value="Reporte de Registros" />
-                                        <p:menuitem value="Incidencias Subordinados" />
-                                    </p:submenu>
-                                    <p:submenu label="SGI">
-                                        <p:menuitem value="Interacción  de Procesos" />
-                                        <p:submenu label="Mandatorios">
-                                            <p:menuitem value="Atención a Quejas, Observaciones y Sugerencias" />
-                                            <p:submenu label="Acciones Correctivas">
-                                                <p:menuitem value="Procedimiento" />
-                                                <p:menuitem value="Formato" />
-                                            </p:submenu>
-                                            <p:submenu label="Control de Salidas No Conforme">
-                                                <p:menuitem value="Procedimiento" />
-                                                <p:menuitem value="Formato" />
-                                            </p:submenu>
-                                            <p:submenu label="Control de Registro">
-                                                <p:menuitem value="Procedimiento" />
-                                                <p:menuitem value="Formato" />
-                                            </p:submenu>
-                                            <p:submenu label="Control de documentos">
-                                                <p:menuitem value="Procedimiento" />
-                                                <p:menuitem value="Lista Maestra de Doc. Externos" />
-                                                <p:menuitem value="Lista Maestra de Doc. Internos" />
-                                                <p:menuitem value="Registro de la Revisión y Aprobación de Documentos" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Auditorias">
-                                            <p:menuitem value="Procedimiento" />
-                                            <p:menuitem value="Informe de Auditoria" />
-                                            <p:menuitem value="Registro de Hallazgos" />
-                                        </p:submenu>
-                                        <p:submenu label="Academia">
-                                            <p:submenu label="Procesos">
-                                                <p:menuitem value="Estadía técnica" />
-                                                <p:menuitem value="Tutorías y Asesorías" />
-                                                <p:menuitem value="Visitas" />
-                                                <p:menuitem value="Planeación y Seguimiento Académico" />
+                                            <p:submenu label="Consultas múltiples">
+                                                <p:menuitem value="Consultar calificaciones" />
+                                                <p:menuitem value="Resultado de Planeaciones" />
+                                                <p:menuitem value="Resultado Registro del estudiante" />
+                                                <p:menuitem value="Concentrado Calificaciones" />
+                                                <p:menuitem value="Reportes Académicos" />
+                                                <p:menuitem value="Seguimiento Evaluación Estadía" />
                                             </p:submenu>
                                             <p:submenu label="Estadía">
-                                                <p:menuitem value="Guía Proceso de Estadía  TSU 2021" />
-                                                <p:menuitem value="1. Espacios concertados" />
-                                                <p:menuitem value="2. Concentrado de estadías" />
-                                                <p:menuitem value="3. Carta de presentación" />
-                                                <p:menuitem value="4. Carta de aceptación" />
-                                                <p:menuitem value="5. Seguimiento de la estadía" />
-                                                <p:menuitem value="6. Informe mensual" />
-                                                <p:menuitem value="7. Evaluación asesor empresarial" />
-                                                <p:menuitem value="8. Carta de liberación empresarial" />
-                                                <p:menuitem value="9. Evaluación, acreditación estadía" />
-                                                <p:menuitem value="Solicitud Empresas Estadias UTXJ 2021" />
-                                            </p:submenu>
-                                            <p:submenu label="Tutorías y Asesorías">
-                                                <p:menuitem value="1. Plan Acción Tutorial" />
-                                                <p:menuitem value="2. Registro General del Estudiante" />
-                                                <p:submenu label="3. Test Diagnostico de Aprendizaje">
-                                                    <p:menuitem value="Multiple 30 test" />
-                                                    <p:menuitem value="Individual 1 test" />
+                                                <p:submenu label="Secretaría Académica">
+                                                    <p:menuitem value="Calendario eventos" />
+                                                    <p:menuitem value="Reportes" />
+                                                    <p:submenu label="Formatos">
+                                                        <p:menuitem value="Reporte mensual" />
+                                                        <p:menuitem value="Carta de aceptación" />
+                                                        <p:menuitem value="Carta de liberación" />
+                                                        <p:menuitem value="Evaluación empresarial" />
+                                                        <p:menuitem value="Presentación estadías 2021" />
+                                                    </p:submenu>
                                                 </p:submenu>
-                                                <p:submenu label="4. Diagnóstico del Grupo Tutorado">
-                                                    <p:menuitem value="Ejemplo" />
-                                                    <p:menuitem value="Formato" />
+                                                <p:submenu label="Coordinador de Estadías">
+                                                    <p:menuitem value="Seguimiento de estadía" />
+                                                    <p:menuitem value="Calendario eventos" />
+                                                    <p:menuitem value="Reportes" />
+                                                    <p:submenu label="Formatos">
+                                                        <p:menuitem value="Reporte mensual" />
+                                                        <p:menuitem value="Carta de aceptación" />
+                                                        <p:menuitem value="Carta de liberación" />
+                                                        <p:menuitem value="Evaluación empresarial" />
+                                                        <p:menuitem value="Presentación estadías 2021" />
+                                                    </p:submenu>
                                                 </p:submenu>
-                                                <p:menuitem value="5. Foda Grupal" />
-                                                <p:menuitem value="6. Tutoría Grupal (con lista de asistencia)" />
-                                                <p:menuitem value="7. Tutoría Individual y Casos Críticos" />
-                                                <p:menuitem value="8. Justificante" />
-                                                <p:menuitem value="9. Asesoría" />
-                                                <p:menuitem value="10. Citatorio" />
-                                                <p:menuitem value="11. Supervisión de Tutoría" />
-                                                <p:menuitem value="12. Expediente de caso en Psicopedagogía" />
-                                                <p:menuitem value="13. Carnet de Citas de Psicopedagogía" />
-                                                <p:menuitem value="14. Baja" />
-                                            </p:submenu>
-                                            <p:submenu label="Plan de Acción Tutorial">
-                                                <p:submenu label="enero-abril 2021">
-                                                    <p:menuitem value="Propuesto 2°" />
-                                                    <p:menuitem value="Propuesto 5°" />
-                                                    <p:menuitem value="Propuesto 8°" />
-                                                </p:submenu>
-                                                <p:submenu label="mayo-agosto 2021">
-                                                    <p:menuitem value="Propuesto 3°" />
-                                                    <p:menuitem value="Propuesto 9°" />
-                                                </p:submenu>
-                                                <p:submenu label="septiembre-diciembre 2021">
-                                                    <p:menuitem value="Propuesto 1°" />
-                                                    <p:menuitem value="Propuesto 4°" />
-                                                    <p:menuitem value="Propuesto 7°" />
-                                                    <p:menuitem value="Propuesto 10°" />
+                                                <p:submenu label="Director de carrera">
+                                                    <p:menuitem value="Asignación roles de estadía" />
+                                                    <p:menuitem value="Seguimiento de estadía" />
+                                                    <p:menuitem value="Aperturas extemporáneas" />
+                                                    <p:menuitem value="Calendario eventos" />
+                                                    <p:menuitem value="Reportes" />
+                                                    <p:submenu label="Formatos">
+                                                        <p:menuitem value="Reporte mensual" />
+                                                        <p:menuitem value="Carta de aceptación" />
+                                                        <p:menuitem value="Carta de liberación" />
+                                                        <p:menuitem value="Evaluación empresarial" />
+                                                        <p:menuitem value="Presentación estadías 2021" />
+                                                    </p:submenu>
                                                 </p:submenu>
                                             </p:submenu>
-                                            <p:submenu label="Planeación y Seguimiento Académico">
-                                                <p:menuitem value="1. Distribución de Horas" />
-                                                <p:menuitem value="2. Horario de grupo" />
-                                                <p:menuitem value="3. Carga Horaria" />
-                                                <p:menuitem value="4. Matriz de espacios" />
-                                                <p:menuitem value="5. Relación de Practicas" />
-                                            </p:submenu>                                            
-                                            <p:submenu label="Visitas">
-                                                <p:menuitem value="2. Programa de visitas" />
-                                                <p:menuitem value="3. Confirmación, Itinerario e informe de Visitas 2020" />
-                                                <p:menuitem value="4. Listado de estudiantes con eSS vigente" />
-                                                <p:menuitem value="5. Carta Responsiva" />
-                                                <p:menuitem value="6. Encuesta Proceso de Visitas" />
+                                            <p:submenu label="Docente">
+                                                <p:menuitem value="Captura de calificaciones" />
+                                                <p:menuitem value="Tarea integradora Nivelación" />
+                                                <p:menuitem value="Configuración Unidad Materia" />
+                                                <p:menuitem value="Asignación Evidencias e Instrumentos de Evaluación" />
+                                                <p:menuitem value="Impresión de Planeación Cuatrimestral" />
+                                                <p:menuitem value="Lista de asistencia" />
+                                                <p:menuitem value="Seguimiento Pase de Lista Docente" />
+                                                <p:menuitem value="Seguimiento de avance programático" />
+                                                <p:menuitem value="Registro de Asesorías" />
+                                                <p:submenu label="Solicitar Apertura (En proceso de validación para su activación)" style="background: yellowgreen">
+                                                    <p:menuitem value="Grupal" />
+                                                    <p:menuitem value="Estudiante" />
+                                                </p:submenu>
                                             </p:submenu>
-                                        </p:submenu>                                        
-                                        <p:submenu label="Vinculación">
-                                            <p:menuitem value="Escuela - Organización" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="Finanzas">
-                                            <p:menuitem value="Proceso de administración de recursos" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="14001">
-                                            <p:menuitem value="4.1 Compresión de la UTXJ y su contexto" />
-                                            <p:menuitem value="4.2 Compresión de las necesidades y expectativas de las Partes Interesadas" />                                            
-                                            <p:submenu label="Matriz de Aspectos Ambientales">      
-                                                <p:menuitem value="Enseñanza - Aprendizaje" />
-                                                <p:menuitem value="Administrativo" />
-                                                <p:menuitem value="Servicios Materiales" />
-                                                <p:menuitem value="Modificaciones" />
-                                                <p:menuitem value="Clínica TFAR" />
-                                            </p:submenu>                                            
-                                            <p:submenu label="Obligaciones Legales">          
-                                                <p:menuitem value="Federal" />
-                                                <p:menuitem value="Estatal" />
-                                                <p:menuitem value="Municipal" />
+                                            <p:submenu label="Tutor">
+                                                <p:menuitem value="Concentrado Asistencias" />
+                                                <p:menuitem value="Tramitar Baja" />
+                                                <p:menuitem value="Cédula de Identificación" />
+                                                <p:menuitem value="Registro de Plan de Acción Tutorial" />
+                                                <p:menuitem value="Registro de Tutorías Grupales" />
+                                                <p:menuitem value="Registro de Tutorías Individuales" />
+                                                <p:menuitem value="Planes de Acción Tutorial" />
+                                                <p:menuitem value="Seguimiento de Test" />
+                                                <p:menuitem value="Seguimiento de Evaluación Estadía" />
                                             </p:submenu>
-                                            <p:menuitem value="6.1 Acciones para bordar riesgos y oportunidades" />                                            
-                                            <p:submenu label="Pocedimientos">          
-                                                <p:menuitem value="Agua" />
-                                                <p:menuitem value="Energía" />
-                                                <p:menuitem value="Papel" />
-                                                <p:menuitem value="Almacenamiento de residuos" />
-                                                <p:menuitem value="RPBI" />
+                                            <p:submenu label="Asesor de estadía">
+                                                <p:menuitem value="Asignación estudiantes" />
+                                                <p:menuitem value="Seguimiento estudiantes" />
+                                                <p:menuitem value="Calendario eventos" />
+                                                <p:submenu label="Formatos">
+                                                    <p:menuitem value="Reporte mensual" />
+                                                    <p:menuitem value="Carta de aceptación" />
+                                                    <p:menuitem value="Carta de liberación" />
+                                                    <p:menuitem value="Evaluación empresarial" />
+                                                    <p:menuitem value="Presentación estadías 2021" />
+                                                </p:submenu>
                                             </p:submenu>
-                                            <p:menuitem value="Bitácora de RP" />
-                                            <p:menuitem value="Bitácora de RPBI" />
-                                            <p:menuitem value="Etiquetas de RP" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="9001">
-                                            <p:menuitem value="4.1 Comprensión de la UTXJ y su contexto" />
-                                            <p:menuitem value="4.2 Compresión de las necesidades y expectativas de las Partes Interesadas" />
-                                            <p:menuitem value="6.1 Acciones para abordar riesgos y oportunidades" />
-                                            <p:menuitem value="7.1.6 Capital del conocimiento" />
-                                            <p:menuitem value="7.4 Cédula de Comunicación" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="Procedimientos">
-                                            <p:menuitem value="Atención a quejas" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="Revisión Por La Dirección">
-                                            <p:menuitem value="Revisión Por La Dirección " />
-                                        </p:submenu>                                        
-                                        <p:submenu label="Planificación">
-                                            <p:menuitem value="Planificación " />
+                                            <p:submenu label="Coordinador de estadía por área académica">
+                                                <p:menuitem value="Seguimiento estudiantes" />
+                                                <p:menuitem value="Calendario eventos" />
+                                                <p:submenu label="Formatos">
+                                                    <p:menuitem value="Reporte mensual" />
+                                                    <p:menuitem value="Carta de aceptación" />
+                                                    <p:menuitem value="Carta de liberación" />
+                                                    <p:menuitem value="Evaluación empresarial" />
+                                                    <p:menuitem value="Presentación estadías 2021" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:submenu label="Estadías para Servicios Escolares">    
+                                                <p:menuitem value="Registro de eventos" />
+                                                <p:menuitem value="Entrega de fotografías" />
+                                                <p:menuitem value="Gestor evaluaciones" />
+                                                <p:menuitem value="Aperturas extemporáneas" />
+                                                <p:menuitem value="Reportes" />
+                                                <p:submenu label="Formatos">
+                                                    <p:menuitem value="Reporte mensual" />
+                                                    <p:menuitem value="Carta de aceptación" />
+                                                    <p:menuitem value="Carta de liberación" />
+                                                    <p:menuitem value="Evaluación empresarial" />
+                                                    <p:menuitem value="Presentación estadías 2021" />
+                                                </p:submenu>
+                                            </p:submenu> 
                                         </p:submenu>
-                                    </p:submenu>                                    
-                                    <p:submenu label="ACADEMIA DE EOE Y FSC">                                        
-                                        <p:submenu label="Formación Sociocultural">
-                                            <p:menuitem value="Formación Sociocultural" />
-                                            <p:menuitem value="Manual de Prácticas UTXJ Formación Sociocultural II" />
-                                            <p:menuitem value="Manual de Prácticas UTXJ Formación Sociocultural III" />
-                                            <p:menuitem value="Manual de Prácticas UTXJ Formación Sociocultural IV" />
-                                            <p:menuitem value="Formación Sociocultural III" />
-                                            <p:menuitem value="Formación Sociocultural IV" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="Expresión Oral y Escrita">
-                                            <p:menuitem value="Manual de Prácticas UTXJ EOyE II" />
+                                        <p:submenu label="Evaluaciones y encuestas"> 
+                                            <p:menuitem value="Satisfacción de servicios" />
+                                            <p:submenu label="Evaluaciones">
+                                                <p:menuitem value="Evaluación pares académicos" />
+                                                <p:menuitem value="Evaluación de Ética" />
+                                                <p:menuitem value="Evaluación de Desempeño Ambiental" />
+                                                <p:menuitem value="Desempeño" />
+                                                <p:menuitem value="360 grados" />
+                                                <p:menuitem value="Evaluación de control interno" />
+                                                <p:menuitem value="Clima laboral" />
+                                            </p:submenu>
+                                            <p:submenu label="Cuestionarios a personal">
+                                                <p:menuitem value="Cuestionario información personal" />
+                                            </p:submenu>
+                                            <p:submenu label="Administración evaluaciones">
+                                                <p:submenu label="secretaria académica">
+                                                    <p:menuitem value="Evaluaciones por carrera" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:submenu label="Seguimiento de Evaluación y Encuestas por parte de: PYE, SA, IYE, directores Académicos y Tutores">
+                                                <p:submenu label="Seguimiento encuestas">
+                                                    <p:menuitem value="Encuesta satisfacción TSU" />
+                                                    <p:menuitem value="Encuesta satisfacción ING" />
+                                                    <p:menuitem value="Encuesta servicios" />
+                                                    <p:menuitem value="Evaluación Estadía" />
+                                                    <p:menuitem value="Encuesta Condiciones Estudio" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:submenu label="Seguimiento de Evaluaciones a Tutor y Evaluación a Docente">
+                                                <p:submenu label="Seguimiento Evaluaciones">
+                                                    <p:menuitem value="Evaluación a Tutor" />
+                                                    <p:menuitem value="Evaluación a Docente" />
+                                                    <p:menuitem value="Cuestionario Psicopedagógico" />
+                                                    <p:menuitem value="Cuestionario Psicopedagógico" />
+                                                    <p:menuitem value="Cuestionario Psicopedagógico" />
+                                                    <p:menuitem value="Ev. Pares Académicos" />
+                                                    <p:menuitem value="Seguimiento Evaluación Ambiental" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:submenu label="Directivos/Directores de carrera">
+                                                <p:menuitem value="Administración de Evaluaciones" />
+                                                <p:submenu label="Ev. entre pares académicos">
+                                                    <p:menuitem value="Combinaciones" />
+                                                    <p:menuitem value="Resultados" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:menuitem value="Administración de Evaluaciones" />
+                                            <p:menuitem value="Administración de evaluaciones" />
+                                            <p:menuitem value="Resultados subordinados" />
+                                            <p:submenu label="Administradores especiales">
+                                                <p:submenu label="Jefe de personal">
+                                                    <p:menuitem value="Genera Evaluaciones" />
+                                                    <p:menuitem value="Resultados generales" />
+                                                </p:submenu>
+                                                <p:submenu label="Seguimiento a egresados">
+                                                    <p:menuitem value="Estudio egresado" />
+                                                    <p:menuitem value="Reporte egresados" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:menuitem value="Resultados de evaluaciones" />
                                         </p:submenu>
-                                    </p:submenu>                                    
-                                    <p:submenu label="Diseño Instruccional">                                          
-                                        <p:submenu label="Formación Sociocultural">
-                                            <p:menuitem value="FSC I" />
-                                            <p:menuitem value="FSC I Mantenimiento" />
-                                            <p:menuitem value="FSC I Mantenimiento" />
-                                            <p:menuitem value="FSC II Mantenimiento " />
-                                            <p:menuitem value="FSC III" />
-                                            <p:menuitem value="FSC IV" />
-                                            <p:menuitem value="FSC II Procesos" />
-                                            <p:menuitem value="FSC II SALUD, TIC, ADMON, AGRO, GASTRO" />
-                                            <p:menuitem value="FSC IV PROCESOS, MANTO, GASTRO" />
-                                            <p:menuitem value="FSC II QUÍMICA" />
-                                            <p:menuitem value="FSC III QUÍMICA" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="Expresión Oral y Escrita">
-                                            <p:menuitem value="EOE I" />
-                                            <p:menuitem value="EOE II" />
-                                            <p:menuitem value="EOE II MANTO, SALUD, TIC, ADMON, MECA, AGRICULTURA, GASTRO" />
-                                            <p:menuitem value="EOE II PROCESOS" />                        
+                                        <p:submenu label="Becas para Servicios Estudiantiles"> 
+                                            <p:menuitem value="Reporte Becas" />
                                         </p:submenu>
-                                    </p:submenu>                                    
-                                    <p:submenu label="ADMINISTRADOR">                                        
-                                        <p:submenu label="Administración POA">
-                                            <p:menuitem value="Asignación Presupuesto" />
+                                        <p:submenu label="Planeación Cuatrimestral">
+                                            <p:menuitem value="Director" />
+                                            <p:menuitem value="Sec. Académica" />
+                                            <p:menuitem value="Dir. Personal" />
+                                        </p:submenu>
+                                        <p:submenu label="Registros de información">
+                                            <p:menuitem value="Módulos Registro" />
+                                            <p:menuitem value="Repositorio de Archivos" />
+                                        </p:submenu>
+                                        <p:submenu label="Registro POA">
+                                            <p:menuitem value="Registro" />
+                                            <p:menuitem value="Recurso y Justificaciones" />
                                             <p:menuitem value="Evaluación" />
-                                            <p:menuitem value="Programa Anual de Trabajo" />
-                                            <p:menuitem value="Reportes" />
-                                            <p:menuitem value="Validación final" />
-                                            <p:menuitem value="Validación finanzas" />
-                                            <p:menuitem value="Validación Programación" />                        
-                                        </p:submenu>                                        
-                                        <p:submenu label="Control Escolar">
-                                            <p:menuitem value="Reportes Planeación C" />
+                                            <p:menuitem value="Cuadro de Mando Integral" />
+                                            <p:menuitem value="Consulta" />
+                                            <p:menuitem value="Estatus" />
                                         </p:submenu>
-                                        <p:menuitem value="Errores" />                                        
-                                        <p:submenu label="Incidencias">
-                                            <p:menuitem value="Reportes" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="Usuarios">
-                                            <p:menuitem value="Datos Acceso Alumnos" />
-                                            <p:menuitem value="Datos Acceso Personal" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="Plantilla laboral">
-                                            <p:menuitem value="Activo" />
-                                            <p:menuitem value="Configuración" />
-                                            <p:menuitem value="Incidencias Personal" />
-                                            <p:menuitem value="Reporte de Registros" />
+                                        <p:submenu label="Titulación">
+                                            <p:submenu label="Expedientes">
+                                                <p:menuitem value="Registrar Expediente" />
+                                                <p:menuitem value="Seguimiento por Matricula" />
+                                                <p:menuitem value="Seguimiento Nivel ING/LIC" />
+                                                <p:menuitem value="Seguimiento Nivel TSU" />
+                                            </p:submenu>
+                                            <p:submenu label="Títulos (Oculto)" style="background: yellow">
+                                                <p:menuitem value="Cargar Título Electrónico" />
+                                                <p:menuitem value="Listado de Titulados" />
+                                            </p:submenu>
+                                            <p:submenu label="Catálogos - Reportes">
+                                                <p:menuitem value="Registrar Fechas Documentos" />
+                                                <p:menuitem value="Reporte por Generación y P.E." />
+                                            </p:submenu>
                                         </p:submenu>
-                                    </p:submenu>                                    
-                                    <p:submenu label="Personal">                                        
-                                        <p:submenu label="Plantilla laboral">
-                                            <p:menuitem value="Activo" />
-                                            <p:menuitem value="Altas y bajas" />
-                                            <p:menuitem value="Configuración" />
-                                            <p:menuitem value="Incidencias Personal" />
-                                            <p:menuitem value="Contactos de emergencia" />
-                                            <p:menuitem value="Reporte de Registros" />
+                                        <p:submenu label="Titulación Servicios Escolares">
+                                            <p:submenu label="Expedientes">
+                                                <p:menuitem value="Seguimiento por Matricula" />
+                                            </p:submenu>
                                         </p:submenu>
-                                    </p:submenu>                                    
-                                    <p:submenu label="Estadística">
-                                        <p:menuitem value="Plantilla Personal" />
-                                        <p:menuitem value="Histórico Plantilla Personal" />
-                                    </p:submenu>                                    
-                                    <p:submenu label="Fortalecimiento">
-                                        <p:menuitem value="Plantilla docente" />
-                                    </p:submenu>                                    
-                                    <p:submenu label="Comunicación interna">
-                                        <p:menuitem value="Directorio de Correos" />
-                                        <p:menuitem value="Directorio Estudiantes Tutorados" />
-                                        <p:menuitem value="Mensajería" />
-                                    </p:submenu>                                    
-                                    <p:submenu label="Documentación">
-                                        <p:menuitem value="Manual de Organización" />
-                                        <p:menuitem value="Manual de Procedimientos Administrativos" />
-                                        <p:menuitem value="Código de conducta" />
-                                        <p:menuitem value="Código de ética" />
-                                        <p:menuitem value="Modelo Nacional de Tutorías de la CGUTyP" />
-                                        <p:menuitem value="Programa Institucional de Tutorías" />
-                                        <p:menuitem value="Resumen del Modelo Nacional de Tutorías de la CGUTyP" />
-                                        <p:menuitem value="Soporte técnico" />
-                                        <p:menuitem value="Calendario" />
-                                    </p:submenu>
-                                </p:tieredMenu>
-                            </h:form>
-                        </div>
-
-                        <div class="col-lg-6 col-md-6 col-xs-12">
-                            <h1>Menú Propuesta</h1>
-                            <h:form>
-                                <p:tieredMenu style="width:200px">
-                                    <p:menuitem value="Inicio" />
-                                    <p:submenu label="Perfil del personal" icon="fa fa-user">
-                                        <p:menuitem value="Perfil" />
-                                        <p:menuitem value="Experiencia docente UTXJ" />
-                                        <p:menuitem value="Contacto de emergencias" />
-                                        <p:submenu label="Curriculum vitae">
-                                            <p:menuitem value="Datos personales" />
-                                            <p:menuitem value="Educación" />
-                                            <p:menuitem value="Habilidades" />
-                                            <p:menuitem value="Tecnología" />
-                                            <p:menuitem value="Premios" />
-                                            <p:menuitem value="Producción profesional" />
-                                        </p:submenu>
-                                        <p:submenu label="Justificación de Asistencia">
-                                            <p:menuitem value="Incidencias" />
-                                            <p:menuitem value="Incapacidades" />
-                                            <p:menuitem value="Cuidados" />
+                                        <p:submenu label="Funciones y organigrama">
+                                            <p:menuitem value="Organigrama operativo" />
+                                            <p:menuitem value="Consulta Funciones" />
                                         </p:submenu>
                                         <p:submenu label="Herramientas directivos">
                                             <p:menuitem value="Perfil de subordinados(as)" />
                                             <p:menuitem value="Reporte de Registros" />
                                             <p:menuitem value="Incidencias Subordinados" />
                                         </p:submenu>
-                                        <p:submenu label="Funciones y organigrama">
-                                            <p:menuitem value="Organigrama operativo" />
-                                            <p:menuitem value="Consulta Funciones" />
-                                        </p:submenu>
-                                    </p:submenu>
-                                    <p:submenu label="Estadística básica">
-                                        <p:menuitem value="Prontuario" />
-                                        <p:menuitem value="Retención" />
-                                        <p:menuitem value="Reprobación" />
-                                        <p:menuitem value="Deserción" />
-                                        <p:menuitem value="Plantilla Personal" />
-                                        <p:menuitem value="Histórico Plantilla Personal" />
-                                    </p:submenu>
-
-                                    <p:submenu label="Control escolar"> 
-                                        <p:submenu label="Usuarios especiales">
-                                            <p:menuitem value="Calendario eventos escolares" /> 
-                                            <p:menuitem value="Reporte de Aspirantes" />
-                                        </p:submenu>
-                                        <p:submenu label="Administrador">
-                                            <p:submenu label="Eventos escolares">
-                                                <p:menuitem value="Registro calendario" />
-                                                <p:menuitem value="Aperturas extemporáneas" />
-                                            </p:submenu>
-                                            <p:submenu label="Apertura Extemporánea">
-                                                <p:menuitem value="Grupal" />
-                                                <p:menuitem value="Estudiante" />
-                                            </p:submenu>
-                                            <p:menuitem value="Reporte Aperturas" />
-                                        </p:submenu>
-                                        <p:submenu label="Secretaría Académica">
-                                            <p:menuitem value="Seguimiento de avance programático" />
-                                        </p:submenu>
-                                        <p:submenu label="Director Área Académica">
-                                            <p:menuitem value="Administración de Planes de Estudio" />
-                                            <p:menuitem value="Registro de evidencias e instrumentos de evaluación" />
-                                            <p:menuitem value="Asignación académica" />
-                                            <p:menuitem value="Asignación Tutor de Grupo" />
-                                            <p:menuitem value="Planeación Cuatrimestral Validación " />
-                                            <p:menuitem value="Listas de Asistencia" />
-                                            <p:menuitem value="Concentrado Asistencias" />
-                                            <p:menuitem value="Validación Baja" />
-                                            <p:menuitem value="Fusión de grupos" />
-                                            <p:menuitem value="Seguimiento de avance programático" />
-                                            <p:menuitem value="Cédula de Identificación" />
-                                            <p:menuitem value="Validación de Plan de Acción Tutorial" />
-                                            <p:menuitem value="Seguimiento Evaluación Estadía" />
-                                        </p:submenu>
-                                        <p:submenu label="Servicios Escolares">
-                                            <p:menuitem value="Asignación académica" />
-                                            <p:menuitem value="Generación de grupos" />
-                                            <p:menuitem value="Proceso de inscripción" />
-                                            <p:menuitem value="Inscripción Ing | Lic" />
-                                            <p:submenu label="Reincorporaciones">
-                                                <p:menuitem value="Registro" />
-                                                <p:menuitem value="Calificaciones" />
-                                                <p:menuitem value="Reporte" />
-                                            </p:submenu>                                
-                                            <p:menuitem value="Credencialización" />
-                                            <p:menuitem value="Registrar Bajas" />
-                                            <p:menuitem value="Reporte Bajas" />
-                                            <p:menuitem value="Concentrado Bajas" />
-                                            <p:menuitem value="Historial Movimientos" />
-                                            <p:menuitem value="Fusión de grupos" />
-                                            <p:menuitem value="Cédula de Identificación" />
-                                            <p:menuitem value="Préstamo de documentos" />
-                                            <p:menuitem value="Registro documentos oficiales" />
-                                            <p:menuitem value="Reinscripciones" />
-                                            <p:menuitem value="Registro de ficha de admisión" />
-                                        </p:submenu>
-                                        <p:submenu label="Titulación">
-                                            <p:menuitem value="Registro eventos" />
-                                            <p:menuitem value="Expedientes por Generación" />
-                                            <p:menuitem value="Expedientes por Matricula" />
-                                            <p:menuitem value="Registrar Expediente" />
-                                            <p:menuitem value="Fechas Terminación" />
-                                        </p:submenu>
-                                        <p:submenu label="Psicopedagogía">
-                                            <p:menuitem value="Dictamen Baja" />
-                                            <p:menuitem value="Cédula de Identificación" />
-                                            <p:menuitem value="Seguimiento Tutorías y Asesorías" />
-                                            <p:menuitem value="Plantilla Plan de Acción Tutorial" />
-                                            <p:menuitem value="Seguimiento Test Aprendizaje" />
-                                        </p:submenu>
-                                        <p:submenu label="Especialista">
-                                            <p:menuitem value="Seguimiento Caso Crítico Especialista" />
-                                        </p:submenu>
-                                        <p:submenu label="Registro múltiple">
-                                            <p:menuitem value="Registrar Notificaciones" />
-                                            <p:menuitem value="Registro de Asesorías Generales" />
-                                        </p:submenu>
-                                        <p:submenu label="Consultas múltiples">
-                                            <p:menuitem value="Consultar calificaciones" />
-                                            <p:menuitem value="Resultado de Planeaciones" />
-                                            <p:menuitem value="Resultado Registro del estudiante" />
-                                            <p:menuitem value="Concentrado Calificaciones" />
-                                            <p:menuitem value="Reportes Académicos" />
-                                            <p:menuitem value="Seguimiento Evaluación Estadía" />
-                                        </p:submenu>
-                                        <p:submenu label="Estadía">
-                                            <p:submenu label="Secretaría Académica">
-                                                <p:menuitem value="Calendario eventos" />
-                                                <p:menuitem value="Reportes" />
-                                                <p:submenu label="Formatos">
-                                                    <p:menuitem value="Reporte mensual" />
-                                                    <p:menuitem value="Carta de aceptación" />
-                                                    <p:menuitem value="Carta de liberación" />
-                                                    <p:menuitem value="Evaluación empresarial" />
-                                                    <p:menuitem value="Presentación estadías 2021" />
-                                                </p:submenu>
-                                            </p:submenu>
-                                            <p:submenu label="Coordinador de Estadías">
-                                                <p:menuitem value="Seguimiento de estadía" />
-                                                <p:menuitem value="Calendario eventos" />
-                                                <p:menuitem value="Reportes" />
-                                                <p:submenu label="Formatos">
-                                                    <p:menuitem value="Reporte mensual" />
-                                                    <p:menuitem value="Carta de aceptación" />
-                                                    <p:menuitem value="Carta de liberación" />
-                                                    <p:menuitem value="Evaluación empresarial" />
-                                                    <p:menuitem value="Presentación estadías 2021" />
-                                                </p:submenu>
-                                            </p:submenu>
-                                            <p:submenu label="Director de carrera">
-                                                <p:menuitem value="Asignación roles de estadía" />
-                                                <p:menuitem value="Seguimiento de estadía" />
-                                                <p:menuitem value="Aperturas extemporáneas" />
-                                                <p:menuitem value="Calendario eventos" />
-                                                <p:menuitem value="Reportes" />
-                                                <p:submenu label="Formatos">
-                                                    <p:menuitem value="Reporte mensual" />
-                                                    <p:menuitem value="Carta de aceptación" />
-                                                    <p:menuitem value="Carta de liberación" />
-                                                    <p:menuitem value="Evaluación empresarial" />
-                                                    <p:menuitem value="Presentación estadías 2021" />
-                                                </p:submenu>
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Docente">
-                                            <p:menuitem value="Captura de calificaciones" />
-                                            <p:menuitem value="Tarea integradora Nivelación" />
-                                            <p:submenu label="Planeación Cuatrimestral">
-                                                <p:menuitem value="Configuración Unidad Materia" />
-                                                <p:menuitem value="Asignación Evidencias e Instrumentos de Evaluación" />
-                                                <p:menuitem value="Impresión y consulta" />
-                                            </p:submenu>
-                                            <p:submenu label="Asistencias">
-                                                <p:menuitem value="Pase de lista" />
-                                                <p:menuitem value="Seguimiento de Pase de Lista" />
-                                            </p:submenu>
-                                            <p:menuitem value="Seguimiento de avance programático" />
-                                            <p:menuitem value="Registro de Asesorías" />
-                                            <p:submenu label="Solicitar Apertura (En proceso de validación para su activación)" style="background: yellowgreen">
-                                                <p:menuitem value="Grupal" />
-                                                <p:menuitem value="Estudiante" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Tutor">
-                                            <p:menuitem value="Concentrado Asistencias" />
-                                            <p:menuitem value="Tramitar Baja" />
-                                            <p:menuitem value="Cédula de Identificación" />
-                                            <p:menuitem value="Registro de Plan de Acción Tutorial" />
-                                            <p:menuitem value="Registro de Tutorías Grupales" />
-                                            <p:menuitem value="Registro de Tutorías Individuales" />
-                                            <p:menuitem value="Planes de Acción Tutorial" />
-                                            <p:menuitem value="Seguimiento de Test" />
-                                            <p:menuitem value="Seguimiento de Evaluación Estadía" />
-                                        </p:submenu>
-                                        <p:submenu label="Asesor de estadía">
-                                            <p:menuitem value="Asignación estudiantes" />
-                                            <p:menuitem value="Seguimiento estudiantes" />
-                                            <p:menuitem value="Calendario eventos" />
-                                            <p:submenu label="Formatos">
-                                                <p:menuitem value="Reporte mensual" />
-                                                <p:menuitem value="Carta de aceptación" />
-                                                <p:menuitem value="Carta de liberación" />
-                                                <p:menuitem value="Evaluación empresarial" />
-                                                <p:menuitem value="Presentación estadías 2021" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Coordinador de estadía por área académica">
-                                            <p:menuitem value="Seguimiento estudiantes" />
-                                            <p:menuitem value="Calendario eventos" />
-                                            <p:submenu label="Formatos">
-                                                <p:menuitem value="Reporte mensual" />
-                                                <p:menuitem value="Carta de aceptación" />
-                                                <p:menuitem value="Carta de liberación" />
-                                                <p:menuitem value="Evaluación empresarial" />
-                                                <p:menuitem value="Presentación estadías 2021" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Estadías para Servicios Escolares">    
-                                            <p:menuitem value="Registro de eventos" />
-                                            <p:menuitem value="Entrega de fotografías" />
-                                            <p:menuitem value="Gestor evaluaciones" />
-                                            <p:menuitem value="Aperturas extemporáneas" />
-                                            <p:menuitem value="Reportes" />
-                                            <p:submenu label="Formatos">
-                                                <p:menuitem value="Reporte mensual" />
-                                                <p:menuitem value="Carta de aceptación" />
-                                                <p:menuitem value="Carta de liberación" />
-                                                <p:menuitem value="Evaluación empresarial" />
-                                                <p:menuitem value="Presentación estadías 2021" />
-                                            </p:submenu>
-                                        </p:submenu> 
-                                    </p:submenu>
-
-                                    <p:submenu label="Evaluaciones y encuestas"> 
-                                        <p:menuitem value="Satisfacción de servicios" />
-                                        <p:submenu label="Evaluaciones">
-                                            <p:menuitem value="Evaluación pares académicos" />
-                                            <p:menuitem value="Evaluación de Ética" />
-                                            <p:menuitem value="Evaluación de Desempeño Ambiental" />
-                                            <p:menuitem value="Desempeño" />
-                                            <p:menuitem value="360 grados" />
-                                            <p:menuitem value="Evaluación de control interno" />
-                                            <p:menuitem value="Clima laboral" />
-                                        </p:submenu>
-                                        <p:submenu label="Cuestionarios a personal">
-                                            <p:menuitem value="Cuestionario información personal" />
-                                        </p:submenu>
-                                        <p:submenu label="Administración evaluaciones">
-                                            <p:submenu label="secretaria académica">
-                                                <p:menuitem value="Evaluaciones por carrera" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Seguimiento de Evaluación y Encuestas por parte de: PYE, SA, IYE, directores Académicos y Tutores">
-                                            <p:submenu label="Seguimiento encuestas">
-                                                <p:menuitem value="Encuesta satisfacción TSU" />
-                                                <p:menuitem value="Encuesta satisfacción ING" />
-                                                <p:menuitem value="Encuesta servicios" />
-                                                <p:menuitem value="Evaluación Estadía" />
-                                                <p:menuitem value="Encuesta Condiciones Estudio" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Seguimiento de Evaluaciones a Tutor y Evaluación a Docente">
-                                            <p:submenu label="Seguimiento Evaluaciones">
-                                                <p:menuitem value="Evaluación a Tutor" />
-                                                <p:menuitem value="Evaluación a Docente" />
-                                                <p:menuitem value="Cuestionario Psicopedagógico" />
-                                                <p:menuitem value="Cuestionario Psicopedagógico" />
-                                                <p:menuitem value="Cuestionario Psicopedagógico" />
-                                                <p:menuitem value="Ev. Pares Académicos" />
-                                                <p:menuitem value="Seguimiento Evaluación Ambiental" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:submenu label="Directivos/Directores de carrera">
-                                            <p:menuitem value="Administración de Evaluaciones" />
-                                            <p:submenu label="Ev. entre pares académicos">
-                                                <p:menuitem value="Combinaciones" />
-                                                <p:menuitem value="Resultados" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:menuitem value="Administración de Evaluaciones" />
-                                        <p:menuitem value="Administración de evaluaciones" />
-                                        <p:menuitem value="Resultados subordinados" />
-                                        <p:submenu label="Administradores especiales">
-                                            <p:submenu label="Jefe de personal">
-                                                <p:menuitem value="Genera Evaluaciones" />
-                                                <p:menuitem value="Resultados generales" />
-                                            </p:submenu>
-                                            <p:submenu label="Seguimiento a egresados">
-                                                <p:menuitem value="Estudio egresado" />
-                                                <p:menuitem value="Reporte egresados" />
-                                            </p:submenu>
-                                        </p:submenu>
-                                        <p:menuitem value="Resultados de evaluaciones" />
-                                    </p:submenu>
-
-                                    <p:submenu label="Becas para Servicios Estudiantiles"> 
-                                        <p:menuitem value="Reporte Becas" />
-                                    </p:submenu>
-
-                                    <p:submenu label="Planeación Cuatrimestral (No utilizado desde su liberación)" style="background: tomato">
-                                        <p:menuitem value="Director" />
-                                        <p:menuitem value="Sec. Académica" />
-                                        <p:menuitem value="Dir. Personal" />
-                                    </p:submenu>
-
-                                    <p:submenu label="Registros de información">
-                                        <p:menuitem value="Módulos Registro" />
-                                        <p:menuitem value="Repositorio de Archivos" />
-                                    </p:submenu>
-
-                                    <p:submenu label="Registro POA">
-                                        <p:menuitem value="Registro" />
-                                        <p:menuitem value="Recurso y Justificaciones" />
-                                        <p:menuitem value="Evaluación" />
-                                        <p:menuitem value="Cuadro de Mando Integral" />
-                                        <p:menuitem value="Consulta" />
-                                        <p:menuitem value="Estatus" />
-
-
-                                    </p:submenu>
-
-                                    <p:submenu label="Titulación">
-                                        <p:submenu label="Expedientes">
-                                            <p:menuitem value="Registrar Expediente" />
-                                            <p:menuitem value="Seguimiento por Matricula" />
-                                            <p:menuitem value="Seguimiento Nivel ING/LIC" />
-                                            <p:menuitem value="Seguimiento Nivel TSU" />
-                                        </p:submenu>
-                                        <p:submenu label="Títulos (Oculto)" style="background: yellow">
-                                            <p:menuitem value="Cargar Título Electrónico" />
-                                            <p:menuitem value="Listado de Titulados" />
-                                        </p:submenu>
-                                        <p:submenu label="Catálogos - Reportes">
-                                            <p:menuitem value="Registrar Fechas Documentos" />
-                                            <p:menuitem value="Reporte por Generación y P.E." />
-                                        </p:submenu>
-                                    </p:submenu>
-
-                                    <p:submenu label="Titulación Servicios Escolares">
-                                        <p:submenu label="Expedientes">
-                                            <p:menuitem value="Seguimiento por Matricula" />
-                                        </p:submenu>
-                                    </p:submenu>
-
-                                    <p:submenu label="Documentación">
                                         <p:submenu label="SGI">
-                                            <p:submenu label="Revisión por la dirección">
-                                                <p:menuitem value="Sistema" />
-                                                <p:menuitem value="Documento" />
-                                            </p:submenu>
                                             <p:menuitem value="Interacción  de Procesos" />
                                             <p:submenu label="Mandatorios">
                                                 <p:menuitem value="Atención a Quejas, Observaciones y Sugerencias" />
@@ -1760,7 +1160,6 @@
                                                     <p:menuitem value="4. Listado de estudiantes con eSS vigente" />
                                                     <p:menuitem value="5. Carta Responsiva" />
                                                     <p:menuitem value="6. Encuesta Proceso de Visitas" />
-                                                    <p:menuitem value="Concentrado" />
                                                 </p:submenu>
                                             </p:submenu>                                        
                                             <p:submenu label="Vinculación">
@@ -1805,127 +1204,730 @@
                                             </p:submenu>                                        
                                             <p:submenu label="Procedimientos">
                                                 <p:menuitem value="Atención a quejas" />
-                                            </p:submenu>                                         
+                                            </p:submenu>                                        
+                                            <p:submenu label="Revisión Por La Dirección">
+                                                <p:menuitem value="Revisión Por La Dirección " />
+                                            </p:submenu>                                        
                                             <p:submenu label="Planificación">
                                                 <p:menuitem value="Planificación " />
                                             </p:submenu>
-                                        </p:submenu>   
+                                        </p:submenu>                                    
                                         <p:submenu label="ACADEMIA DE EOE Y FSC">                                        
                                             <p:submenu label="Formación Sociocultural">
                                                 <p:menuitem value="Formación Sociocultural" />
-                                                <p:submenu label="Manual de Prácticas UTXJ">
-                                                    <p:menuitem value="Formación Sociocultural II" />
-                                                    <p:menuitem value="Formación Sociocultural III" />
-                                                    <p:menuitem value="Formación Sociocultural IV" />
-                                                </p:submenu>
-                                                <p:submenu label="Manual de Asignatura UTXJ">
-                                                    <p:menuitem value="Formación Sociocultural III" />
-                                                    <p:menuitem value="Formación Sociocultural IV" />
-                                                </p:submenu>
+                                                <p:menuitem value="Manual de Prácticas UTXJ Formación Sociocultural II" />
+                                                <p:menuitem value="Manual de Prácticas UTXJ Formación Sociocultural III" />
+                                                <p:menuitem value="Manual de Prácticas UTXJ Formación Sociocultural IV" />
+                                                <p:menuitem value="Formación Sociocultural III" />
+                                                <p:menuitem value="Formación Sociocultural IV" />
                                             </p:submenu>                                        
                                             <p:submenu label="Expresión Oral y Escrita">
-                                                <p:submenu label="Manual de Prácticas UTXJ">
-                                                    <p:menuitem value="Expresión Oral y Escrita II" />
+                                                <p:menuitem value="Manual de Prácticas UTXJ EOyE II" />
+                                            </p:submenu>
+                                        </p:submenu>                                    
+                                        <p:submenu label="Diseño Instruccional">                                          
+                                            <p:submenu label="Formación Sociocultural">
+                                                <p:menuitem value="FSC I" />
+                                                <p:menuitem value="FSC I Mantenimiento" />
+                                                <p:menuitem value="FSC I Mantenimiento" />
+                                                <p:menuitem value="FSC II Mantenimiento " />
+                                                <p:menuitem value="FSC III" />
+                                                <p:menuitem value="FSC IV" />
+                                                <p:menuitem value="FSC II Procesos" />
+                                                <p:menuitem value="FSC II SALUD, TIC, ADMON, AGRO, GASTRO" />
+                                                <p:menuitem value="FSC IV PROCESOS, MANTO, GASTRO" />
+                                                <p:menuitem value="FSC II QUÍMICA" />
+                                                <p:menuitem value="FSC III QUÍMICA" />
+                                            </p:submenu>                                        
+                                            <p:submenu label="Expresión Oral y Escrita">
+                                                <p:menuitem value="EOE I" />
+                                                <p:menuitem value="EOE II" />
+                                                <p:menuitem value="EOE II MANTO, SALUD, TIC, ADMON, MECA, AGRICULTURA, GASTRO" />
+                                                <p:menuitem value="EOE II PROCESOS" />                        
+                                            </p:submenu>
+                                        </p:submenu>                                    
+                                        <p:submenu label="ADMINISTRADOR">                                        
+                                            <p:submenu label="Administración POA">
+                                                <p:menuitem value="Asignación Presupuesto" />
+                                                <p:menuitem value="Evaluación" />
+                                                <p:menuitem value="Programa Anual de Trabajo" />
+                                                <p:menuitem value="Reportes" />
+                                                <p:menuitem value="Validación final" />
+                                                <p:menuitem value="Validación finanzas" />
+                                                <p:menuitem value="Validación Programación" />                        
+                                            </p:submenu>                                        
+                                            <p:submenu label="Control Escolar">
+                                                <p:menuitem value="Reportes Planeación C" />
+                                            </p:submenu>
+                                            <p:menuitem value="Errores" />                                        
+                                            <p:submenu label="Incidencias">
+                                                <p:menuitem value="Reportes" />
+                                            </p:submenu>                                        
+                                            <p:submenu label="Usuarios">
+                                                <p:menuitem value="Datos Acceso Alumnos" />
+                                                <p:menuitem value="Datos Acceso Personal" />
+                                            </p:submenu>                                        
+                                            <p:submenu label="Plantilla laboral">
+                                                <p:menuitem value="Activo" />
+                                                <p:menuitem value="Configuración" />
+                                                <p:menuitem value="Incidencias Personal" />
+                                                <p:menuitem value="Reporte de Registros" />
+                                            </p:submenu>
+                                        </p:submenu>                                    
+                                        <p:submenu label="Personal">                                        
+                                            <p:submenu label="Plantilla laboral">
+                                                <p:menuitem value="Activo" />
+                                                <p:menuitem value="Altas y bajas" />
+                                                <p:menuitem value="Configuración" />
+                                                <p:menuitem value="Incidencias Personal" />
+                                                <p:menuitem value="Contactos de emergencia" />
+                                                <p:menuitem value="Reporte de Registros" />
+                                            </p:submenu>
+                                        </p:submenu>                                    
+                                        <p:submenu label="Estadística">
+                                            <p:menuitem value="Plantilla Personal" />
+                                            <p:menuitem value="Histórico Plantilla Personal" />
+                                        </p:submenu>                                    
+                                        <p:submenu label="Fortalecimiento">
+                                            <p:menuitem value="Plantilla docente" />
+                                        </p:submenu>                                    
+                                        <p:submenu label="Comunicación interna">
+                                            <p:menuitem value="Directorio de Correos" />
+                                            <p:menuitem value="Directorio Estudiantes Tutorados" />
+                                            <p:menuitem value="Mensajería" />
+                                        </p:submenu>                                    
+                                        <p:submenu label="Documentación">
+                                            <p:menuitem value="Manual de Organización" />
+                                            <p:menuitem value="Manual de Procedimientos Administrativos" />
+                                            <p:menuitem value="Código de conducta" />
+                                            <p:menuitem value="Código de ética" />
+                                            <p:menuitem value="Modelo Nacional de Tutorías de la CGUTyP" />
+                                            <p:menuitem value="Programa Institucional de Tutorías" />
+                                            <p:menuitem value="Resumen del Modelo Nacional de Tutorías de la CGUTyP" />
+                                            <p:menuitem value="Soporte técnico" />
+                                            <p:menuitem value="Calendario" />
+                                        </p:submenu>
+                                    </p:tieredMenu>
+                                </h:form>
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-xs-12">
+                                <h1>Menú Propuesta</h1>
+                                <h:form>
+                                    <p:tieredMenu style="width:200px">
+                                        <p:menuitem value="Inicio" />
+                                        <p:submenu label="Perfil del personal" icon="fa fa-user">
+                                            <p:menuitem value="Perfil" />
+                                            <p:menuitem value="Experiencia docente UTXJ" />
+                                            <p:menuitem value="Contacto de emergencias" />
+                                            <p:submenu label="Curriculum vitae">
+                                                <p:menuitem value="Datos personales" />
+                                                <p:menuitem value="Educación" />
+                                                <p:menuitem value="Habilidades" />
+                                                <p:menuitem value="Tecnología" />
+                                                <p:menuitem value="Premios" />
+                                                <p:menuitem value="Producción profesional" />
+                                            </p:submenu>
+                                            <p:submenu label="Justificación de Asistencia">
+                                                <p:menuitem value="Incidencias" />
+                                                <p:menuitem value="Incapacidades" />
+                                                <p:menuitem value="Cuidados" />
+                                            </p:submenu>
+                                            <p:submenu label="Herramientas directivos">
+                                                <p:menuitem value="Perfil de subordinados(as)" />
+                                                <p:menuitem value="Reporte de Registros" />
+                                                <p:menuitem value="Incidencias Subordinados" />
+                                            </p:submenu>
+                                            <p:submenu label="Funciones y organigrama">
+                                                <p:menuitem value="Organigrama operativo" />
+                                                <p:menuitem value="Consulta Funciones" />
+                                            </p:submenu>
+                                        </p:submenu>
+                                        <p:submenu label="Estadística básica">
+                                            <p:menuitem value="Prontuario" />
+                                            <p:menuitem value="Retención" />
+                                            <p:menuitem value="Reprobación" />
+                                            <p:menuitem value="Deserción" />
+                                            <p:menuitem value="Plantilla Personal" />
+                                            <p:menuitem value="Histórico Plantilla Personal" />
+                                        </p:submenu>
+
+                                        <p:submenu label="Control escolar"> 
+                                            <p:submenu label="Usuarios especiales">
+                                                <p:menuitem value="Calendario eventos escolares" /> 
+                                                <p:menuitem value="Reporte de Aspirantes" />
+                                            </p:submenu>
+                                            <p:submenu label="Administrador">
+                                                <p:submenu label="Eventos escolares">
+                                                    <p:menuitem value="Registro calendario" />
+                                                    <p:menuitem value="Aperturas extemporáneas" />
+                                                </p:submenu>
+                                                <p:submenu label="Apertura Extemporánea">
+                                                    <p:menuitem value="Grupal" />
+                                                    <p:menuitem value="Estudiante" />
+                                                </p:submenu>
+                                                <p:menuitem value="Reporte Aperturas" />
+                                            </p:submenu>
+                                            <p:submenu label="Secretaría Académica">
+                                                <p:menuitem value="Seguimiento de avance programático" />
+                                            </p:submenu>
+                                            <p:submenu label="Director Área Académica">
+                                                <p:menuitem value="Administración de Planes de Estudio" />
+                                                <p:menuitem value="Registro de evidencias e instrumentos de evaluación" />
+                                                <p:menuitem value="Asignación académica" />
+                                                <p:menuitem value="Asignación Tutor de Grupo" />
+                                                <p:menuitem value="Planeación Cuatrimestral Validación " />
+                                                <p:menuitem value="Listas de Asistencia" />
+                                                <p:menuitem value="Concentrado Asistencias" />
+                                                <p:menuitem value="Validación Baja" />
+                                                <p:menuitem value="Fusión de grupos" />
+                                                <p:menuitem value="Seguimiento de avance programático" />
+                                                <p:menuitem value="Cédula de Identificación" />
+                                                <p:menuitem value="Validación de Plan de Acción Tutorial" />
+                                                <p:menuitem value="Seguimiento Evaluación Estadía" />
+                                            </p:submenu>
+                                            <p:submenu label="Servicios Escolares">
+                                                <p:menuitem value="Asignación académica" />
+                                                <p:menuitem value="Generación de grupos" />
+                                                <p:menuitem value="Proceso de inscripción" />
+                                                <p:menuitem value="Inscripción Ing | Lic" />
+                                                <p:submenu label="Reincorporaciones">
+                                                    <p:menuitem value="Registro" />
+                                                    <p:menuitem value="Calificaciones" />
+                                                    <p:menuitem value="Reporte" />
+                                                </p:submenu>                                
+                                                <p:menuitem value="Credencialización" />
+                                                <p:menuitem value="Registrar Bajas" />
+                                                <p:menuitem value="Reporte Bajas" />
+                                                <p:menuitem value="Concentrado Bajas" />
+                                                <p:menuitem value="Historial Movimientos" />
+                                                <p:menuitem value="Fusión de grupos" />
+                                                <p:menuitem value="Cédula de Identificación" />
+                                                <p:menuitem value="Préstamo de documentos" />
+                                                <p:menuitem value="Registro documentos oficiales" />
+                                                <p:menuitem value="Reinscripciones" />
+                                                <p:menuitem value="Registro de ficha de admisión" />
+                                            </p:submenu>
+                                            <p:submenu label="Titulación">
+                                                <p:menuitem value="Registro eventos" />
+                                                <p:menuitem value="Expedientes por Generación" />
+                                                <p:menuitem value="Expedientes por Matricula" />
+                                                <p:menuitem value="Registrar Expediente" />
+                                                <p:menuitem value="Fechas Terminación" />
+                                            </p:submenu>
+                                            <p:submenu label="Psicopedagogía">
+                                                <p:menuitem value="Dictamen Baja" />
+                                                <p:menuitem value="Cédula de Identificación" />
+                                                <p:menuitem value="Seguimiento Tutorías y Asesorías" />
+                                                <p:menuitem value="Plantilla Plan de Acción Tutorial" />
+                                                <p:menuitem value="Seguimiento Test Aprendizaje" />
+                                            </p:submenu>
+                                            <p:submenu label="Especialista">
+                                                <p:menuitem value="Seguimiento Caso Crítico Especialista" />
+                                            </p:submenu>
+                                            <p:submenu label="Registro múltiple">
+                                                <p:menuitem value="Registrar Notificaciones" />
+                                                <p:menuitem value="Registro de Asesorías Generales" />
+                                            </p:submenu>
+                                            <p:submenu label="Consultas múltiples">
+                                                <p:menuitem value="Consultar calificaciones" />
+                                                <p:menuitem value="Resultado de Planeaciones" />
+                                                <p:menuitem value="Resultado Registro del estudiante" />
+                                                <p:menuitem value="Concentrado Calificaciones" />
+                                                <p:menuitem value="Reportes Académicos" />
+                                                <p:menuitem value="Seguimiento Evaluación Estadía" />
+                                            </p:submenu>
+                                            <p:submenu label="Estadía">
+                                                <p:submenu label="Secretaría Académica">
+                                                    <p:menuitem value="Calendario eventos" />
+                                                    <p:menuitem value="Reportes" />
+                                                    <p:submenu label="Formatos">
+                                                        <p:menuitem value="Reporte mensual" />
+                                                        <p:menuitem value="Carta de aceptación" />
+                                                        <p:menuitem value="Carta de liberación" />
+                                                        <p:menuitem value="Evaluación empresarial" />
+                                                        <p:menuitem value="Presentación estadías 2021" />
+                                                    </p:submenu>
+                                                </p:submenu>
+                                                <p:submenu label="Coordinador de Estadías">
+                                                    <p:menuitem value="Seguimiento de estadía" />
+                                                    <p:menuitem value="Calendario eventos" />
+                                                    <p:menuitem value="Reportes" />
+                                                    <p:submenu label="Formatos">
+                                                        <p:menuitem value="Reporte mensual" />
+                                                        <p:menuitem value="Carta de aceptación" />
+                                                        <p:menuitem value="Carta de liberación" />
+                                                        <p:menuitem value="Evaluación empresarial" />
+                                                        <p:menuitem value="Presentación estadías 2021" />
+                                                    </p:submenu>
+                                                </p:submenu>
+                                                <p:submenu label="Director de carrera">
+                                                    <p:menuitem value="Asignación roles de estadía" />
+                                                    <p:menuitem value="Seguimiento de estadía" />
+                                                    <p:menuitem value="Aperturas extemporáneas" />
+                                                    <p:menuitem value="Calendario eventos" />
+                                                    <p:menuitem value="Reportes" />
+                                                    <p:submenu label="Formatos">
+                                                        <p:menuitem value="Reporte mensual" />
+                                                        <p:menuitem value="Carta de aceptación" />
+                                                        <p:menuitem value="Carta de liberación" />
+                                                        <p:menuitem value="Evaluación empresarial" />
+                                                        <p:menuitem value="Presentación estadías 2021" />
+                                                    </p:submenu>
                                                 </p:submenu>
                                             </p:submenu>
-                                            <p:submenu label="Diseño Instruccional">                                          
+                                            <p:submenu label="Docente">
+                                                <p:menuitem value="Captura de calificaciones" />
+                                                <p:menuitem value="Tarea integradora Nivelación" />
+                                                <p:submenu label="Planeación Cuatrimestral">
+                                                    <p:menuitem value="Configuración Unidad Materia" />
+                                                    <p:menuitem value="Asignación Evidencias e Instrumentos de Evaluación" />
+                                                    <p:menuitem value="Impresión y consulta" />
+                                                </p:submenu>
+                                                <p:submenu label="Asistencias">
+                                                    <p:menuitem value="Pase de lista" />
+                                                    <p:menuitem value="Seguimiento de Pase de Lista" />
+                                                </p:submenu>
+                                                <p:menuitem value="Seguimiento de avance programático" />
+                                                <p:menuitem value="Registro de Asesorías" />
+                                                <p:submenu label="Solicitar Apertura (En proceso de validación para su activación)" style="background: yellowgreen">
+                                                    <p:menuitem value="Grupal" />
+                                                    <p:menuitem value="Estudiante" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:submenu label="Tutor">
+                                                <p:menuitem value="Concentrado Asistencias" />
+                                                <p:menuitem value="Tramitar Baja" />
+                                                <p:menuitem value="Cédula de Identificación" />
+                                                <p:menuitem value="Registro de Plan de Acción Tutorial" />
+                                                <p:menuitem value="Registro de Tutorías Grupales" />
+                                                <p:menuitem value="Registro de Tutorías Individuales" />
+                                                <p:menuitem value="Planes de Acción Tutorial" />
+                                                <p:menuitem value="Seguimiento de Test" />
+                                                <p:menuitem value="Seguimiento de Evaluación Estadía" />
+                                            </p:submenu>
+                                            <p:submenu label="Asesor de estadía">
+                                                <p:menuitem value="Asignación estudiantes" />
+                                                <p:menuitem value="Seguimiento estudiantes" />
+                                                <p:menuitem value="Calendario eventos" />
+                                                <p:submenu label="Formatos">
+                                                    <p:menuitem value="Reporte mensual" />
+                                                    <p:menuitem value="Carta de aceptación" />
+                                                    <p:menuitem value="Carta de liberación" />
+                                                    <p:menuitem value="Evaluación empresarial" />
+                                                    <p:menuitem value="Presentación estadías 2021" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:submenu label="Coordinador de estadía por área académica">
+                                                <p:menuitem value="Seguimiento estudiantes" />
+                                                <p:menuitem value="Calendario eventos" />
+                                                <p:submenu label="Formatos">
+                                                    <p:menuitem value="Reporte mensual" />
+                                                    <p:menuitem value="Carta de aceptación" />
+                                                    <p:menuitem value="Carta de liberación" />
+                                                    <p:menuitem value="Evaluación empresarial" />
+                                                    <p:menuitem value="Presentación estadías 2021" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:submenu label="Estadías para Servicios Escolares">    
+                                                <p:menuitem value="Registro de eventos" />
+                                                <p:menuitem value="Entrega de fotografías" />
+                                                <p:menuitem value="Gestor evaluaciones" />
+                                                <p:menuitem value="Aperturas extemporáneas" />
+                                                <p:menuitem value="Reportes" />
+                                                <p:submenu label="Formatos">
+                                                    <p:menuitem value="Reporte mensual" />
+                                                    <p:menuitem value="Carta de aceptación" />
+                                                    <p:menuitem value="Carta de liberación" />
+                                                    <p:menuitem value="Evaluación empresarial" />
+                                                    <p:menuitem value="Presentación estadías 2021" />
+                                                </p:submenu>
+                                            </p:submenu> 
+                                        </p:submenu>
+
+                                        <p:submenu label="Evaluaciones y encuestas"> 
+                                            <p:menuitem value="Satisfacción de servicios" />
+                                            <p:submenu label="Evaluaciones">
+                                                <p:menuitem value="Evaluación pares académicos" />
+                                                <p:menuitem value="Evaluación de Ética" />
+                                                <p:menuitem value="Evaluación de Desempeño Ambiental" />
+                                                <p:menuitem value="Desempeño" />
+                                                <p:menuitem value="360 grados" />
+                                                <p:menuitem value="Evaluación de control interno" />
+                                                <p:menuitem value="Clima laboral" />
+                                            </p:submenu>
+                                            <p:submenu label="Cuestionarios a personal">
+                                                <p:menuitem value="Cuestionario información personal" />
+                                            </p:submenu>
+                                            <p:submenu label="Administración evaluaciones">
+                                                <p:submenu label="secretaria académica">
+                                                    <p:menuitem value="Evaluaciones por carrera" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:submenu label="Seguimiento de Evaluación y Encuestas por parte de: PYE, SA, IYE, directores Académicos y Tutores">
+                                                <p:submenu label="Seguimiento encuestas">
+                                                    <p:menuitem value="Encuesta satisfacción TSU" />
+                                                    <p:menuitem value="Encuesta satisfacción ING" />
+                                                    <p:menuitem value="Encuesta servicios" />
+                                                    <p:menuitem value="Evaluación Estadía" />
+                                                    <p:menuitem value="Encuesta Condiciones Estudio" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:submenu label="Seguimiento de Evaluaciones a Tutor y Evaluación a Docente">
+                                                <p:submenu label="Seguimiento Evaluaciones">
+                                                    <p:menuitem value="Evaluación a Tutor" />
+                                                    <p:menuitem value="Evaluación a Docente" />
+                                                    <p:menuitem value="Cuestionario Psicopedagógico" />
+                                                    <p:menuitem value="Cuestionario Psicopedagógico" />
+                                                    <p:menuitem value="Cuestionario Psicopedagógico" />
+                                                    <p:menuitem value="Ev. Pares Académicos" />
+                                                    <p:menuitem value="Seguimiento Evaluación Ambiental" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:submenu label="Directivos/Directores de carrera">
+                                                <p:menuitem value="Administración de Evaluaciones" />
+                                                <p:submenu label="Ev. entre pares académicos">
+                                                    <p:menuitem value="Combinaciones" />
+                                                    <p:menuitem value="Resultados" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:menuitem value="Administración de Evaluaciones" />
+                                            <p:menuitem value="Administración de evaluaciones" />
+                                            <p:menuitem value="Resultados subordinados" />
+                                            <p:submenu label="Administradores especiales">
+                                                <p:submenu label="Jefe de personal">
+                                                    <p:menuitem value="Genera Evaluaciones" />
+                                                    <p:menuitem value="Resultados generales" />
+                                                </p:submenu>
+                                                <p:submenu label="Seguimiento a egresados">
+                                                    <p:menuitem value="Estudio egresado" />
+                                                    <p:menuitem value="Reporte egresados" />
+                                                </p:submenu>
+                                            </p:submenu>
+                                            <p:menuitem value="Resultados de evaluaciones" />
+                                        </p:submenu>
+
+                                        <p:submenu label="Becas para Servicios Estudiantiles"> 
+                                            <p:menuitem value="Reporte Becas" />
+                                        </p:submenu>
+
+                                        <p:submenu label="Planeación Cuatrimestral (No utilizado desde su liberación)" style="background: tomato">
+                                            <p:menuitem value="Director" />
+                                            <p:menuitem value="Sec. Académica" />
+                                            <p:menuitem value="Dir. Personal" />
+                                        </p:submenu>
+
+                                        <p:submenu label="Registros de información">
+                                            <p:menuitem value="Módulos Registro" />
+                                            <p:menuitem value="Repositorio de Archivos" />
+                                        </p:submenu>
+
+                                        <p:submenu label="Registro POA">
+                                            <p:menuitem value="Registro" />
+                                            <p:menuitem value="Recurso y Justificaciones" />
+                                            <p:menuitem value="Evaluación" />
+                                            <p:menuitem value="Cuadro de Mando Integral" />
+                                            <p:menuitem value="Consulta" />
+                                            <p:menuitem value="Estatus" />
+
+
+                                        </p:submenu>
+
+                                        <p:submenu label="Titulación">
+                                            <p:submenu label="Expedientes">
+                                                <p:menuitem value="Registrar Expediente" />
+                                                <p:menuitem value="Seguimiento por Matricula" />
+                                                <p:menuitem value="Seguimiento Nivel ING/LIC" />
+                                                <p:menuitem value="Seguimiento Nivel TSU" />
+                                            </p:submenu>
+                                            <p:submenu label="Títulos (Oculto)" style="background: yellow">
+                                                <p:menuitem value="Cargar Título Electrónico" />
+                                                <p:menuitem value="Listado de Titulados" />
+                                            </p:submenu>
+                                            <p:submenu label="Catálogos - Reportes">
+                                                <p:menuitem value="Registrar Fechas Documentos" />
+                                                <p:menuitem value="Reporte por Generación y P.E." />
+                                            </p:submenu>
+                                        </p:submenu>
+
+                                        <p:submenu label="Titulación Servicios Escolares">
+                                            <p:submenu label="Expedientes">
+                                                <p:menuitem value="Seguimiento por Matricula" />
+                                            </p:submenu>
+                                        </p:submenu>
+
+                                        <p:submenu label="Documentación">
+                                            <p:submenu label="SGI">
+                                                <p:submenu label="Revisión por la dirección">
+                                                    <p:menuitem value="Sistema" />
+                                                    <p:menuitem value="Documento" />
+                                                </p:submenu>
+                                                <p:menuitem value="Interacción  de Procesos" />
+                                                <p:submenu label="Mandatorios">
+                                                    <p:menuitem value="Atención a Quejas, Observaciones y Sugerencias" />
+                                                    <p:submenu label="Acciones Correctivas">
+                                                        <p:menuitem value="Procedimiento" />
+                                                        <p:menuitem value="Formato" />
+                                                    </p:submenu>
+                                                    <p:submenu label="Control de Salidas No Conforme">
+                                                        <p:menuitem value="Procedimiento" />
+                                                        <p:menuitem value="Formato" />
+                                                    </p:submenu>
+                                                    <p:submenu label="Control de Registro">
+                                                        <p:menuitem value="Procedimiento" />
+                                                        <p:menuitem value="Formato" />
+                                                    </p:submenu>
+                                                    <p:submenu label="Control de documentos">
+                                                        <p:menuitem value="Procedimiento" />
+                                                        <p:menuitem value="Lista Maestra de Doc. Externos" />
+                                                        <p:menuitem value="Lista Maestra de Doc. Internos" />
+                                                        <p:menuitem value="Registro de la Revisión y Aprobación de Documentos" />
+                                                    </p:submenu>
+                                                </p:submenu>
+                                                <p:submenu label="Auditorias">
+                                                    <p:menuitem value="Procedimiento" />
+                                                    <p:menuitem value="Informe de Auditoria" />
+                                                    <p:menuitem value="Registro de Hallazgos" />
+                                                </p:submenu>
+                                                <p:submenu label="Academia">
+                                                    <p:submenu label="Procesos">
+                                                        <p:menuitem value="Estadía técnica" />
+                                                        <p:menuitem value="Tutorías y Asesorías" />
+                                                        <p:menuitem value="Visitas" />
+                                                        <p:menuitem value="Planeación y Seguimiento Académico" />
+                                                    </p:submenu>
+                                                    <p:submenu label="Estadía">
+                                                        <p:menuitem value="Guía Proceso de Estadía  TSU 2021" />
+                                                        <p:menuitem value="1. Espacios concertados" />
+                                                        <p:menuitem value="2. Concentrado de estadías" />
+                                                        <p:menuitem value="3. Carta de presentación" />
+                                                        <p:menuitem value="4. Carta de aceptación" />
+                                                        <p:menuitem value="5. Seguimiento de la estadía" />
+                                                        <p:menuitem value="6. Informe mensual" />
+                                                        <p:menuitem value="7. Evaluación asesor empresarial" />
+                                                        <p:menuitem value="8. Carta de liberación empresarial" />
+                                                        <p:menuitem value="9. Evaluación, acreditación estadía" />
+                                                        <p:menuitem value="Solicitud Empresas Estadias UTXJ 2021" />
+                                                    </p:submenu>
+                                                    <p:submenu label="Tutorías y Asesorías">
+                                                        <p:menuitem value="1. Plan Acción Tutorial" />
+                                                        <p:menuitem value="2. Registro General del Estudiante" />
+                                                        <p:submenu label="3. Test Diagnostico de Aprendizaje">
+                                                            <p:menuitem value="Multiple 30 test" />
+                                                            <p:menuitem value="Individual 1 test" />
+                                                        </p:submenu>
+                                                        <p:submenu label="4. Diagnóstico del Grupo Tutorado">
+                                                            <p:menuitem value="Ejemplo" />
+                                                            <p:menuitem value="Formato" />
+                                                        </p:submenu>
+                                                        <p:menuitem value="5. Foda Grupal" />
+                                                        <p:menuitem value="6. Tutoría Grupal (con lista de asistencia)" />
+                                                        <p:menuitem value="7. Tutoría Individual y Casos Críticos" />
+                                                        <p:menuitem value="8. Justificante" />
+                                                        <p:menuitem value="9. Asesoría" />
+                                                        <p:menuitem value="10. Citatorio" />
+                                                        <p:menuitem value="11. Supervisión de Tutoría" />
+                                                        <p:menuitem value="12. Expediente de caso en Psicopedagogía" />
+                                                        <p:menuitem value="13. Carnet de Citas de Psicopedagogía" />
+                                                        <p:menuitem value="14. Baja" />
+                                                    </p:submenu>
+                                                    <p:submenu label="Plan de Acción Tutorial">
+                                                        <p:submenu label="enero-abril 2021">
+                                                            <p:menuitem value="Propuesto 2°" />
+                                                            <p:menuitem value="Propuesto 5°" />
+                                                            <p:menuitem value="Propuesto 8°" />
+                                                        </p:submenu>
+                                                        <p:submenu label="mayo-agosto 2021">
+                                                            <p:menuitem value="Propuesto 3°" />
+                                                            <p:menuitem value="Propuesto 9°" />
+                                                        </p:submenu>
+                                                        <p:submenu label="septiembre-diciembre 2021">
+                                                            <p:menuitem value="Propuesto 1°" />
+                                                            <p:menuitem value="Propuesto 4°" />
+                                                            <p:menuitem value="Propuesto 7°" />
+                                                            <p:menuitem value="Propuesto 10°" />
+                                                        </p:submenu>
+                                                    </p:submenu>
+                                                    <p:submenu label="Planeación y Seguimiento Académico">
+                                                        <p:menuitem value="1. Distribución de Horas" />
+                                                        <p:menuitem value="2. Horario de grupo" />
+                                                        <p:menuitem value="3. Carga Horaria" />
+                                                        <p:menuitem value="4. Matriz de espacios" />
+                                                        <p:menuitem value="5. Relación de Practicas" />
+                                                    </p:submenu>                                            
+                                                    <p:submenu label="Visitas">
+                                                        <p:menuitem value="2. Programa de visitas" />
+                                                        <p:menuitem value="3. Confirmación, Itinerario e informe de Visitas 2020" />
+                                                        <p:menuitem value="4. Listado de estudiantes con eSS vigente" />
+                                                        <p:menuitem value="5. Carta Responsiva" />
+                                                        <p:menuitem value="6. Encuesta Proceso de Visitas" />
+                                                        <p:menuitem value="Concentrado" />
+                                                    </p:submenu>
+                                                </p:submenu>                                        
+                                                <p:submenu label="Vinculación">
+                                                    <p:menuitem value="Escuela - Organización" />
+                                                </p:submenu>                                        
+                                                <p:submenu label="Finanzas">
+                                                    <p:menuitem value="Proceso de administración de recursos" />
+                                                </p:submenu>                                        
+                                                <p:submenu label="14001">
+                                                    <p:menuitem value="4.1 Compresión de la UTXJ y su contexto" />
+                                                    <p:menuitem value="4.2 Compresión de las necesidades y expectativas de las Partes Interesadas" />                                            
+                                                    <p:submenu label="Matriz de Aspectos Ambientales">      
+                                                        <p:menuitem value="Enseñanza - Aprendizaje" />
+                                                        <p:menuitem value="Administrativo" />
+                                                        <p:menuitem value="Servicios Materiales" />
+                                                        <p:menuitem value="Modificaciones" />
+                                                        <p:menuitem value="Clínica TFAR" />
+                                                    </p:submenu>                                            
+                                                    <p:submenu label="Obligaciones Legales">          
+                                                        <p:menuitem value="Federal" />
+                                                        <p:menuitem value="Estatal" />
+                                                        <p:menuitem value="Municipal" />
+                                                    </p:submenu>
+                                                    <p:menuitem value="6.1 Acciones para bordar riesgos y oportunidades" />                                            
+                                                    <p:submenu label="Pocedimientos">          
+                                                        <p:menuitem value="Agua" />
+                                                        <p:menuitem value="Energía" />
+                                                        <p:menuitem value="Papel" />
+                                                        <p:menuitem value="Almacenamiento de residuos" />
+                                                        <p:menuitem value="RPBI" />
+                                                    </p:submenu>
+                                                    <p:menuitem value="Bitácora de RP" />
+                                                    <p:menuitem value="Bitácora de RPBI" />
+                                                    <p:menuitem value="Etiquetas de RP" />
+                                                </p:submenu>                                        
+                                                <p:submenu label="9001">
+                                                    <p:menuitem value="4.1 Comprensión de la UTXJ y su contexto" />
+                                                    <p:menuitem value="4.2 Compresión de las necesidades y expectativas de las Partes Interesadas" />
+                                                    <p:menuitem value="6.1 Acciones para abordar riesgos y oportunidades" />
+                                                    <p:menuitem value="7.1.6 Capital del conocimiento" />
+                                                    <p:menuitem value="7.4 Cédula de Comunicación" />
+                                                </p:submenu>                                        
+                                                <p:submenu label="Procedimientos">
+                                                    <p:menuitem value="Atención a quejas" />
+                                                </p:submenu>                                         
+                                                <p:submenu label="Planificación">
+                                                    <p:menuitem value="Planificación " />
+                                                </p:submenu>
+                                            </p:submenu>   
+                                            <p:submenu label="ACADEMIA DE EOE Y FSC">                                        
                                                 <p:submenu label="Formación Sociocultural">
-                                                    <p:submenu label="Formación Sociocultural I">
-                                                        <p:menuitem value="General" />
-                                                        <p:menuitem value="Mantenimiento I" />
-                                                        <p:menuitem value="Mantenimiento II" />
+                                                    <p:menuitem value="Formación Sociocultural" />
+                                                    <p:submenu label="Manual de Prácticas UTXJ">
+                                                        <p:menuitem value="Formación Sociocultural II" />
+                                                        <p:menuitem value="Formación Sociocultural III" />
+                                                        <p:menuitem value="Formación Sociocultural IV" />
                                                     </p:submenu>
-                                                    <p:submenu label="Formación Sociocultural II">
-                                                        <p:menuitem value="Mantenimiento" />
-                                                        <p:menuitem value="Procesos" />
-                                                        <p:menuitem value="QUÍMICA" />
-                                                        <p:menuitem value="SALUD, TIC, ADMON, AGRO, GASTRO" />
+                                                    <p:submenu label="Manual de Asignatura UTXJ">
+                                                        <p:menuitem value="Formación Sociocultural III" />
+                                                        <p:menuitem value="Formación Sociocultural IV" />
                                                     </p:submenu>
-                                                    <p:submenu label="Formación Sociocultural III">
-                                                        <p:menuitem value="General" />
-                                                        <p:menuitem value="QUÍMICA" />
-                                                    </p:submenu>
-                                                    <p:submenu label="Formación Sociocultural IV">
-                                                        <p:menuitem value="General" />
-                                                        <p:menuitem value="PROCESOS, MANTO, GASTRO" />
-                                                    </p:submenu>    
                                                 </p:submenu>                                        
                                                 <p:submenu label="Expresión Oral y Escrita">
-                                                    <p:submenu label="Expresión Oral y Escrita I">
-                                                        <p:menuitem value="General" />                   
-                                                    </p:submenu>    
-                                                    <p:submenu label="Expresión Oral y Escrita II">
-                                                        <p:menuitem value="General" />
-                                                        <p:menuitem value="MANTO, SALUD, TIC, ADMON, MECA, AGRICULTURA, GASTRO" />
-                                                        <p:menuitem value="PROCESOS" />                        
-                                                    </p:submenu>                
+                                                    <p:submenu label="Manual de Prácticas UTXJ">
+                                                        <p:menuitem value="Expresión Oral y Escrita II" />
+                                                    </p:submenu>
                                                 </p:submenu>
-                                            </p:submenu>                                    
-                                        </p:submenu>  
-                                        <p:menuitem value="Manual de Organización" />
-                                        <p:menuitem value="Manual de Procedimientos Administrativos" />
-                                        <p:menuitem value="Código de conducta" />
-                                        <p:menuitem value="Código de ética" />
-                                        <p:menuitem value="Modelo Nacional de Tutorías de la CGUTyP" />
-                                        <p:menuitem value="Programa Institucional de Tutorías" />
-                                        <p:menuitem value="Resumen del Modelo Nacional de Tutorías de la CGUTyP" />
-                                        <p:menuitem value="Calendario" />
-                                    </p:submenu>
-
-                                    <p:submenu label="ADMINISTRADOR">                                        
-                                        <p:submenu label="Administración POA">
-                                            <p:menuitem value="Asignación Presupuesto" />
-                                            <p:menuitem value="Evaluación" />
-                                            <p:menuitem value="Programa Anual de Trabajo" />
-                                            <p:menuitem value="Reportes" />
-                                            <p:menuitem value="Validación final" />
-                                            <p:menuitem value="Validación finanzas" />
-                                            <p:menuitem value="Validación Programación" />                        
-                                        </p:submenu>                                        
-                                        <p:submenu label="Control Escolar">
-                                            <p:menuitem value="Reportes Planeación C" />
+                                                <p:submenu label="Diseño Instruccional">                                          
+                                                    <p:submenu label="Formación Sociocultural">
+                                                        <p:submenu label="Formación Sociocultural I">
+                                                            <p:menuitem value="General" />
+                                                            <p:menuitem value="Mantenimiento I" />
+                                                            <p:menuitem value="Mantenimiento II" />
+                                                        </p:submenu>
+                                                        <p:submenu label="Formación Sociocultural II">
+                                                            <p:menuitem value="Mantenimiento" />
+                                                            <p:menuitem value="Procesos" />
+                                                            <p:menuitem value="QUÍMICA" />
+                                                            <p:menuitem value="SALUD, TIC, ADMON, AGRO, GASTRO" />
+                                                        </p:submenu>
+                                                        <p:submenu label="Formación Sociocultural III">
+                                                            <p:menuitem value="General" />
+                                                            <p:menuitem value="QUÍMICA" />
+                                                        </p:submenu>
+                                                        <p:submenu label="Formación Sociocultural IV">
+                                                            <p:menuitem value="General" />
+                                                            <p:menuitem value="PROCESOS, MANTO, GASTRO" />
+                                                        </p:submenu>    
+                                                    </p:submenu>                                        
+                                                    <p:submenu label="Expresión Oral y Escrita">
+                                                        <p:submenu label="Expresión Oral y Escrita I">
+                                                            <p:menuitem value="General" />                   
+                                                        </p:submenu>    
+                                                        <p:submenu label="Expresión Oral y Escrita II">
+                                                            <p:menuitem value="General" />
+                                                            <p:menuitem value="MANTO, SALUD, TIC, ADMON, MECA, AGRICULTURA, GASTRO" />
+                                                            <p:menuitem value="PROCESOS" />                        
+                                                        </p:submenu>                
+                                                    </p:submenu>
+                                                </p:submenu>                                    
+                                            </p:submenu>  
+                                            <p:menuitem value="Manual de Organización" />
+                                            <p:menuitem value="Manual de Procedimientos Administrativos" />
+                                            <p:menuitem value="Código de conducta" />
+                                            <p:menuitem value="Código de ética" />
+                                            <p:menuitem value="Modelo Nacional de Tutorías de la CGUTyP" />
+                                            <p:menuitem value="Programa Institucional de Tutorías" />
+                                            <p:menuitem value="Resumen del Modelo Nacional de Tutorías de la CGUTyP" />
+                                            <p:menuitem value="Calendario" />
                                         </p:submenu>
-                                        <p:menuitem value="Errores" />                                        
-                                        <p:submenu label="Incidencias">
-                                            <p:menuitem value="Reportes" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="Usuarios">
-                                            <p:menuitem value="Datos Acceso Alumnos" />
-                                            <p:menuitem value="Datos Acceso Personal" />
-                                        </p:submenu>                                        
-                                        <p:submenu label="Plantilla laboral">
-                                            <p:menuitem value="Activo" />
-                                            <p:menuitem value="Configuración" />
-                                            <p:menuitem value="Incidencias Personal" />
-                                            <p:menuitem value="Reporte de Registros" />
-                                        </p:submenu>
-                                    </p:submenu>     
 
-                                    <p:submenu label="Personal">                                        
-                                        <p:submenu label="Plantilla laboral">
-                                            <p:menuitem value="Activo" />
-                                            <p:menuitem value="Altas y bajas" />
-                                            <p:menuitem value="Configuración" />
-                                            <p:menuitem value="Incidencias Personal" />
-                                            <p:menuitem value="Contactos de emergencia" />
-                                            <p:menuitem value="Reporte de Registros" />
-                                        </p:submenu>
-                                    </p:submenu>      
+                                        <p:submenu label="ADMINISTRADOR">                                        
+                                            <p:submenu label="Administración POA">
+                                                <p:menuitem value="Asignación Presupuesto" />
+                                                <p:menuitem value="Evaluación" />
+                                                <p:menuitem value="Programa Anual de Trabajo" />
+                                                <p:menuitem value="Reportes" />
+                                                <p:menuitem value="Validación final" />
+                                                <p:menuitem value="Validación finanzas" />
+                                                <p:menuitem value="Validación Programación" />                        
+                                            </p:submenu>                                        
+                                            <p:submenu label="Control Escolar">
+                                                <p:menuitem value="Reportes Planeación C" />
+                                            </p:submenu>
+                                            <p:menuitem value="Errores" />                                        
+                                            <p:submenu label="Incidencias">
+                                                <p:menuitem value="Reportes" />
+                                            </p:submenu>                                        
+                                            <p:submenu label="Usuarios">
+                                                <p:menuitem value="Datos Acceso Alumnos" />
+                                                <p:menuitem value="Datos Acceso Personal" />
+                                            </p:submenu>                                        
+                                            <p:submenu label="Plantilla laboral">
+                                                <p:menuitem value="Activo" />
+                                                <p:menuitem value="Configuración" />
+                                                <p:menuitem value="Incidencias Personal" />
+                                                <p:menuitem value="Reporte de Registros" />
+                                            </p:submenu>
+                                        </p:submenu>     
 
-                                    <p:submenu label="Fortalecimiento">
-                                        <p:menuitem value="Plantilla docente" />
-                                    </p:submenu>   
+                                        <p:submenu label="Personal">                                        
+                                            <p:submenu label="Plantilla laboral">
+                                                <p:menuitem value="Activo" />
+                                                <p:menuitem value="Altas y bajas" />
+                                                <p:menuitem value="Configuración" />
+                                                <p:menuitem value="Incidencias Personal" />
+                                                <p:menuitem value="Contactos de emergencia" />
+                                                <p:menuitem value="Reporte de Registros" />
+                                            </p:submenu>
+                                        </p:submenu>      
 
-                                    <p:submenu label="Comunicación interna">
-                                        <p:menuitem value="Directorio de Correos" />
-                                        <p:menuitem value="Directorio Estudiantes Tutorados" />
-                                        <p:menuitem value="Mensajería" />
-                                    </p:submenu>    
+                                        <p:submenu label="Fortalecimiento">
+                                            <p:menuitem value="Plantilla docente" />
+                                        </p:submenu>   
 
-                                    <p:menuitem value="Soporte técnico" />
-                                </p:tieredMenu>
-                            </h:form>
-                        </div>
+                                        <p:submenu label="Comunicación interna">
+                                            <p:menuitem value="Directorio de Correos" />
+                                            <p:menuitem value="Directorio Estudiantes Tutorados" />
+                                            <p:menuitem value="Mensajería" />
+                                        </p:submenu>    
+
+                                        <p:menuitem value="Soporte técnico" />
+                                    </p:tieredMenu>
+                                </h:form>
+                            </div>
+                        </c:if>
                     </div>
                 </div>
             </div>

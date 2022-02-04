@@ -1757,6 +1757,39 @@ public class EjbReincorporacion {
         }
     }   
     
+    public ResultadoEJB<DtoReincorporacion.HistoricoReincorporaciones> actualizacionRegistrosReincorporaciones(DtoReincorporacion.HistoricoReincorporaciones cr) {
+        try {
+//            System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReincorporacion.registrarCalificacionesPorPromedio(A)");
+            List<Estudiante> est = em.createQuery("SELECT e FROM Estudiante e WHERE e.idEstudiante=:idEstudiante", Estudiante.class).setParameter("idEstudiante", cr.getEstudiante().getIdEstudiante()).getResultList();
+            
+            List<CalificacionPromedio> calificacionPromedios = em.createQuery("SELECT c FROM CalificacionPromedio c INNER JOIN c.estudiante e WHERE e.idEstudiante=:idEstudiante", CalificacionPromedio.class).setParameter("idEstudiante", cr.getEstudiante().getIdEstudiante()).getResultList();
+            
+            
+            if (!est.isEmpty()) {
+                Estudiante e = est.get(0);
+                if (!Objects.equals(e.getTipoEstudiante().getIdTipoEstudiante(), cr.getTipoEstudiante().getIdTipoEstudiante())) {
+                    e.setTipoEstudiante(new TipoEstudiante());
+                    e.setTipoEstudiante(new TipoEstudiante(cr.getTipoEstudiante().getIdTipoEstudiante()));
+                    em.merge(e);
+                    f.setEntityClass(Estudiante.class);
+                    f.flush();
+                }
+            }
+            
+            if(!calificacionPromedios.isEmpty()){
+                calificacionPromedios.forEach((t) -> {
+                    t.setTipo(cr.getTipoCalificacion());
+                    em.merge(t);
+                    f.setEntityClass(CalificacionPromedio.class);
+                    f.flush();
+                });
+            }
+        return ResultadoEJB.crearCorrecto(cr, "DTOHistoricoReincorporaciones Encontrados");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo recuperar DTOHistoricoReincorporaciones (EjbReincorporacion.actualizacionRegistrosReincorporaciones).", e, null);
+        }
+    }   
+    
     public void enviarConfirmacionCorreoElectronico(String correoDestino, String titulo, String asunto, String mensaje) {
         // El correo gmail de envío
         String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";//correo del arrea de desarrollo

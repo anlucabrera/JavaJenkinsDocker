@@ -455,7 +455,7 @@
                                                             <p:column headerText="Fecha" style="width: 10%">
                                                                 <h:outputLabel value="#{remoto.fecha}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
                                                             </p:column>      
-                                                            <p:column headerText="Justificación" style="text-align: justify; font-size: smaller">
+                                                            <p:column headerText="Justificación" style="width: 50%;text-align: justify; font-size: smaller">
                                                                 <h:outputText value="#{remoto.actividades}" />
                                                             </p:column> 
                                                             <p:column style="width: 5%; border: #000000  !important;font-size: small;">
@@ -465,6 +465,9 @@
                                                                     <p:ajax update="tblActividades" />
                                                                 </p:selectBooleanCheckbox>
                                                             </p:column>  
+                                                            <p:column headerText="Estatus" style="width: 10%;text-align: justify; font-size: smaller">
+                                                                <h:outputText value="#{remoto.validado ?'Aceptado':'Pendiente'}" />
+                                                            </p:column> 
                                                         </p:dataTable>      
                                                     </p:outputPanel>   
                                                 </p:outputPanel>    
