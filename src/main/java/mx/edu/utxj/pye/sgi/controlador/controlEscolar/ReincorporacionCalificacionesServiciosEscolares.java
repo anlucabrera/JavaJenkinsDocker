@@ -269,8 +269,8 @@ public class ReincorporacionCalificacionesServiciosEscolares extends ViewScopedR
         System.out.println("onRowEditRegistros()"+cr.getTipoCalificacion());
         System.out.println("onRowEditRegistros()"+cr.getTipoEstudiante().getIdTipoEstudiante());
         ResultadoEJB<DtoReincorporacion.HistoricoReincorporaciones> rejb = ejb.actualizacionRegistrosReincorporaciones(cr);
-//        if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
-//        buscarAlineacionCalificaciones();
+        if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
+        buscarAlineacionCalificaciones();
     }
 
      public void onRowCancel(RowEditEvent event) {

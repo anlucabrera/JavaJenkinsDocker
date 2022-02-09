@@ -19,6 +19,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Actividadesremotas;
 import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
 import mx.edu.utxj.pye.sgi.entity.ch.Incidencias;
@@ -39,6 +40,7 @@ public class ControladorIncidenciasAdministrador implements Serializable {
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidads = new ArrayList<>();
     @Getter    @Setter    private List<Cuidados> listaCuidadoses = new ArrayList<>();
+    @Getter    @Setter    private List<Actividadesremotas> listaActividadesremotases = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>();
     @Getter    @Setter    private AreasUniversidad au = new AreasUniversidad();    
     @Getter    @Setter    private Integer anioNumero = 0;
@@ -84,9 +86,11 @@ public class ControladorIncidenciasAdministrador implements Serializable {
             listaIncidencias = new ArrayList<>();
             listaIncapacidads = new ArrayList<>();
             listaCuidadoses = new ArrayList<>();
+            listaActividadesremotases = new ArrayList<>();
             listaIncidencias.clear();
             listaIncapacidads.clear();
             listaCuidadoses.clear();
+            listaActividadesremotases.clear();
             List<Incidencias> is = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 01, 01)), utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 12, 31)));
             List<Incidencias> l =is.stream().filter(t-> t.getClavePersonal().getAreaOperativa()==au.getArea() || t.getClavePersonal().getAreaSuperior()==au.getArea()).collect(Collectors.toList());
             
@@ -95,6 +99,9 @@ public class ControladorIncidenciasAdministrador implements Serializable {
             
             List<Cuidados> icu = ejbNotificacionesIncidencias.mostrarCuidadosReporte(utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 01, 01)), utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 12, 31)));
             List<Cuidados> lcu =icu.stream().filter(t-> t.getPersonal().getAreaOperativa()==au.getArea() || t.getPersonal().getAreaSuperior()==au.getArea()).collect(Collectors.toList());
+            
+            List<Actividadesremotas> acr = ejbNotificacionesIncidencias.mostrarActividadesremotasReporte(utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 01, 01)), utilidadesCH.castearLDaD(LocalDate.of(anioNumero, 12, 31)));
+            List<Actividadesremotas> lar =acr.stream().filter(t-> t.getClavePersonal().getAreaOperativa()==au.getArea() || t.getClavePersonal().getAreaSuperior()==au.getArea()).collect(Collectors.toList());
             
             if(!l.isEmpty()){
                 l.forEach((t) -> {if(!au.getNombre().equals("Rectoría")){if(!au.getResponsable().equals(t.getClavePersonal().getClave())){listaIncidencias.add(t);}}else{listaIncidencias.add(t);}});
@@ -106,9 +113,14 @@ public class ControladorIncidenciasAdministrador implements Serializable {
                 lcu.forEach((t) -> {if(!au.getNombre().equals("Rectoría")){if(!au.getResponsable().equals(t.getPersonal().getClave())){listaCuidadoses.add(t);}}else{listaCuidadoses.add(t);}});
             }
             
+            if(!acr.isEmpty()){
+                lar.forEach((t) -> {if(!au.getNombre().equals("Rectoría")){if(!au.getResponsable().equals(t.getClavePersonal().getClave())){listaActividadesremotases.add(t);}}else{listaActividadesremotases.add(t);}});
+            }
+            
             listaIncidencias.stream().forEachOrdered(t-> t.getClavePersonal().getClave());
             listaIncapacidads.stream().forEachOrdered(t-> t.getClavePersonal().getClave());
             listaCuidadoses.stream().forEachOrdered(t-> t.getPersonal().getClave());
+            listaActividadesremotases.stream().forEachOrdered(t-> t.getClavePersonal().getClave());
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -126,6 +138,21 @@ public class ControladorIncidenciasAdministrador implements Serializable {
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void actualizarAP(ValueChangeEvent e) {
+        try {
+            String id = e.getComponent().getClientId();
+            Actividadesremotas ag = listaActividadesremotases.get(Integer.parseInt(id.split("tblActividades:")[1].split(":validar")[0]));
+            ag.setValidado((Boolean) e.getNewValue());
+            utilidadesCH.agregaBitacora(controladorEmpleado.getNuevoOBJListaPersonal().getClave(), ag.getIdActividadesRemotos().toString(), "Actividades Remotas", "Update Admin");
+            ejbNotificacionesIncidencias.actualizarActividadesremotas(ag);
+            Messages.addGlobalInfo("¡Operación exitosa!");
+            mostrarIncidencias();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

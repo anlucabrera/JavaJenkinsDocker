@@ -76,6 +76,9 @@ public class RegisroActividadesRemotas implements Serializable {
             fechaActual =LocalDate.now();
             actividadesremotas = new ArrayList<>();           
             actividadesremotas = ejbNotificacionesIncidencias.mostrarActividadesremotas(personal.getClave());
+            
+            Collections.sort(actividadesremotas, (x, y) -> Integer.compare(utilidadesCH.castearDaLD(y.getFecha()).getDayOfYear(), utilidadesCH.castearDaLD(x.getFecha()).getDayOfYear()));
+                
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause());
             Logger.getLogger(RegisroActividadesRemotas.class.getName()).log(Level.SEVERE, null, ex);

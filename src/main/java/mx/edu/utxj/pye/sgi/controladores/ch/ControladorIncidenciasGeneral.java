@@ -18,6 +18,7 @@ import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
+import mx.edu.utxj.pye.sgi.entity.ch.Actividadesremotas;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.Cuidados;
 import mx.edu.utxj.pye.sgi.entity.ch.Incapacidad;
@@ -39,6 +40,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
     @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidads = new ArrayList<>();
     @Getter    @Setter    private List<Cuidados> listaCuidadoses = new ArrayList<>();
+    @Getter    @Setter    private List<Actividadesremotas> listaActividadesremotases = new ArrayList<>();
     @Getter    @Setter    private List<Bitacoraacceso> listaBitacoraaccesos = new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>();
     @Getter    @Setter    private List<ListaBitacoraIncidencias> bitacoraIncidenciases = new ArrayList<>();
@@ -119,6 +121,8 @@ public class ControladorIncidenciasGeneral implements Serializable {
             incapacidads.clear();
             List<Cuidados> cuidadoses = new ArrayList<>();
             cuidadoses.clear();
+            List<Actividadesremotas> actividadesremotases = new ArrayList<>();
+            actividadesremotases.clear();
             if (area != 0) {
                 au = new AreasUniversidad();
                 au = areasLogeo.mostrarAreasUniversidad(area);
@@ -135,6 +139,7 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     fechaF = LocalDate.of(anioNumero, Integer.parseInt(mActual), LocalDate.of(anioNumero, Integer.parseInt(mActual), 01).lengthOfMonth());
                 }
             }
+            
             listaIncidencias = new ArrayList<>();
             listaIncidencias.clear();
             incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
@@ -214,10 +219,30 @@ public class ControladorIncidenciasGeneral implements Serializable {
                     }
                 });
             }
+            
+            listaActividadesremotases = new ArrayList<>();
+            listaActividadesremotases.clear();
+            actividadesremotases = ejbNotificacionesIncidencias.mostrarActividadesremotasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
+            if (!actividadesremotases.isEmpty()) {
+                actividadesremotases.forEach((t) -> {
+                    if (area != 0) {
+                        if (t.getClavePersonal().getAreaOperativa() == area) {
+                            if (t.getClavePersonal().getActividad().getActividad() == 1 || t.getClavePersonal().getActividad().getActividad() == 3) {
+                                listaActividadesremotases.add(t);
+                            }
+                        } else if (t.getClavePersonal().getAreaSuperior() == area) {
+                            listaActividadesremotases.add(t);
+                        }
+                    } else {
+                        listaActividadesremotases.add(t);
+                    }
+                });
+            }
 
             Ajax.update("frmInciGeneral");
             Ajax.update("frmIncaGeneral");
             Ajax.update("frmCuidGeneral");
+            Ajax.update("frmactRemGeneral");
             Ajax.update("frmbitacora");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
@@ -267,6 +292,17 @@ public class ControladorIncidenciasGeneral implements Serializable {
             ejbNotificacionesIncidencias.eliminarIncidencias(incidencias);
             mostrarIncidencias(mes);
             Ajax.update("frmInciGeneral");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void eliminarActRemotas(Actividadesremotas actividadesremotas) {
+        try {
+            ejbNotificacionesIncidencias.eliminarActividadesremotas(actividadesremotas);
+            mostrarIncidencias(mes);
+            Ajax.update("frmactRemGeneral");
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorIncidenciasPersonal.class.getName()).log(Level.SEVERE, null, ex);
