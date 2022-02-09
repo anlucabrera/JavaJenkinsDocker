@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
@@ -36,6 +37,8 @@ import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
+import org.primefaces.component.tabview.TabView;
+import org.primefaces.event.TabChangeEvent;
 
 /**
  *
@@ -155,6 +158,17 @@ public class AdministracionCatEvidInstEvalEscolares extends ViewScopedRol implem
             rol.setInstrumentosEvaluacion(res.getValor());
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);  
+    }
+    
+    /**
+     * Permite que al cambiar de pestaña se muestren las opciones correspondientes
+     * @param event Evento del cambio de valor
+     */
+    public void cambiarPestania(TabChangeEvent event){
+        TabView tv = (TabView) event.getComponent();
+        rol.setPestaniaActiva(tv.getActiveIndex());
+        rol.setAgregarEvidenciaCategoria(false);
+        rol.setAgregarInstrumentoEvaluacion(false);
     }
         
     /**
@@ -323,6 +337,34 @@ public class AdministracionCatEvidInstEvalEscolares extends ViewScopedRol implem
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(eliminar);
         
+    }
+    
+    /**
+     * Método para verificar si existe registro de la evidencia de evaluación seleccionada
+     * @param evidenciaEvaluacion
+     * @return Verdadero o Falso, según sea el caso
+     */
+    public Boolean deshabilitarEliminacionEvidencia(@NonNull EvidenciaEvaluacion evidenciaEvaluacion){
+        Boolean permiso= Boolean.FALSE;
+        ResultadoEJB<Boolean> res = ejb.verificarPlaneacionEvidenciaEvaluacion(evidenciaEvaluacion);
+        if(res.getCorrecto()){
+            permiso=res.getValor();
+        }else mostrarMensajeResultadoEJB(res);
+        return permiso;
+    }
+    
+    /**
+     * Método para verificar si existe registro del instrumento de evaluación seleccionado
+     * @param instrumentoEvaluacion
+     * @return Verdadero o Falso, según sea el caso
+     */
+    public Boolean deshabilitarEliminacionInstrumento(@NonNull InstrumentoEvaluacion instrumentoEvaluacion){
+        Boolean permiso= Boolean.FALSE;
+        ResultadoEJB<Boolean> res = ejb.verificarPlaneacionInstrumentoEvaluacion(instrumentoEvaluacion);
+        if(res.getCorrecto()){
+            permiso=res.getValor();
+        }else mostrarMensajeResultadoEJB(res);
+        return permiso;
     }
     
 }

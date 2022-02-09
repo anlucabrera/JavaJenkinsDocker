@@ -15,8 +15,10 @@ import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Criterio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionSugerida;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvidenciaEvaluacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.InstrumentoEvaluacion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateriaConfiguracionEvidenciaInstrumento;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -275,6 +277,68 @@ public class EjbAdministracionCatEvidInstEval {
             return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente el instrumento de evaluación seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el instrumento de evaluación seleccionado. (EjbAdministracionCatEvidInstEval.eliminarInstrumentoEvaluacion)", e, null);
+        }
+    }
+    
+     /**
+     * Permite verificar si existe registro de la evidencia de evaluación seleccionada
+     * @param evidenciaEvaluacion
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> verificarPlaneacionEvidenciaEvaluacion(EvidenciaEvaluacion evidenciaEvaluacion){
+        try{
+            Long configuracionesEvidencia = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionEvidenciaInstrumento u WHERE u.evidencia.evidencia=:evidencia", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+                    .setParameter("evidencia", evidenciaEvaluacion.getEvidencia())
+                    .getResultStream()
+                    .count();
+            
+            Long evaluacionSugeridaEvidencia = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.evidencia.evidencia=:evidencia", EvaluacionSugerida.class)
+                    .setParameter("evidencia", evidenciaEvaluacion.getEvidencia())
+                    .getResultStream()
+                    .count();
+                            
+            Boolean valor;
+            if(configuracionesEvidencia>0 || evaluacionSugeridaEvidencia>0)
+            {
+                valor = Boolean.TRUE;
+            }else{
+                valor = Boolean.FALSE;
+            }
+            
+           return ResultadoEJB.crearCorrecto(valor, "Resultados verificación de registro de la evidencia de evaluación seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se obtuvieron resultados de verificación de registro de la evidencia de evaluación seleccionada.", e, Boolean.TYPE);
+        }
+    }
+    
+     /**
+     * Permite verificar si existe registro del instrumento de evaluación seleccionado
+     * @param instrumentoEvaluacion
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> verificarPlaneacionInstrumentoEvaluacion(InstrumentoEvaluacion instrumentoEvaluacion){
+        try{
+            Long configuracionesInstrumento = em.createQuery("SELECT u FROM UnidadMateriaConfiguracionEvidenciaInstrumento u WHERE u.instrumento.instrumento=:instrumento", UnidadMateriaConfiguracionEvidenciaInstrumento.class)
+                    .setParameter("instrumento", instrumentoEvaluacion.getInstrumento())
+                    .getResultStream()
+                    .count();
+            
+            Long evaluacionSugeridaInstrumento = em.createQuery("SELECT e FROM EvaluacionSugerida e WHERE e.instrumento.instrumento=:instrumento", EvaluacionSugerida.class)
+                    .setParameter("instrumento", instrumentoEvaluacion.getInstrumento())
+                    .getResultStream()
+                    .count();
+                            
+            Boolean valor;
+            if(configuracionesInstrumento>0 || evaluacionSugeridaInstrumento>0)
+            {
+                valor = Boolean.TRUE;
+            }else{
+                valor = Boolean.FALSE;
+            }
+            
+           return ResultadoEJB.crearCorrecto(valor, "Resultados verificación de registro del instrumento de evaluación seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se obtuvieron resultados de verificación de registro del instrumento de evaluación seleccionado.", e, Boolean.TYPE);
         }
     }
     

@@ -26,6 +26,7 @@ public enum ControlEscolarVistaControlador {
     CALENDARIO_EVENTOS_ESCOLARES("/controlEscolar/calendarioEventosEscolares.xhtml", CalendarioEventosEscolares.class),
     SEGUIMIENTO_EVALUACION_ESTADIA_MULTIPLE("/controlEscolar/seguimientoEvaluacionEstadia.xhtml", SeguimientoEvaluacionEstadiaMultiple.class),
     CARTA_NO_ADUEDO_ESTADISTICA("/controlEscolar/pye/cartaNoAdeudoEstadistica.xhtml", CartaNoAdeudoEstadistica.class),
+    ADMINISTRACION_DOCUMENTOS_PROCESO("/controlEscolar/administracionDocumentosProceso.xhtml", AdministracionCatalogosDocumentosProceso.class),
 
     CONCENTRADO_CALIFICACIONES_SECACA("/controlEscolar/secAcademica/concentradoCal.xhtml",  ConcentradoCalificacionesSecAca.class),
     AVANCE_PROGRAMATICO_SECACA("/controlEscolar/secAcademica/avanceP.xhtml",  AvanceProgramaticoSecAca.class),
@@ -88,6 +89,8 @@ public enum ControlEscolarVistaControlador {
     REGISTRO_EGRESADO_TERMINACION_ESTUDIOS("/controlEscolar/se/registroEgresados.xhtml", RegistroEgresadoTerminacionEstudioServiciosEscolares.class),
     ELIMINAR_INSCRIPCION("/controlEscolar/se/eliminarInscripcion.xhtml", EliminarInscripcionServiciosEscolares.class),
     ADMINISTRAR_CATEVIDINSTEVAL("/controlEscolar/se/administracionCatEvidInstEval.xhtml", AdministracionCatEvidInstEvalEscolares.class),
+    ADMINISTRAR_TIPOASPEST("/controlEscolar/se/administracionTipoAspiranteEstudiante.xhtml", AdministracionTipoAspiranteEstudianteEscolares.class),
+    ADMINISTRAR_CATALOGOSADMISION("/controlEscolar/se/administracionCatalogosAdmision.xhtml", AdministracionCatalogosAdmisionEscolares.class),
 
     CARTA_NO_ADUEDO_FINANZAS("/controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml", CartaNoAdeudoFinanzas.class),
 

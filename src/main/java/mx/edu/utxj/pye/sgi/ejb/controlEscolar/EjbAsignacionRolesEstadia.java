@@ -153,7 +153,7 @@ public class EjbAsignacionRolesEstadia {
                 Generaciones generacion = em.find(Generaciones.class, evento.getGeneracion());
                 listaGeneraciones.add(generacion);
             });
-            
+             
             List<Generaciones> listaGeneracionesDistintas = listaGeneraciones.stream()
                     .distinct()
                     .collect(Collectors.toList());

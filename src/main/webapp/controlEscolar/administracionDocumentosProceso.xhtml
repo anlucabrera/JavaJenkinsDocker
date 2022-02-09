@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de catálogo de documentos y proceso
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionCatalogosDocumentosProceso.cargado}">
+        <adm:breadcrumb title="Administración de catálogo de documentos y proceso"/>
+        <div class="contenedor">
+            <c:if test="#{administracionCatalogosDocumentosProceso.tieneAcceso}">
+                <c:if test="#{administracionCatalogosDocumentosProceso.rol.procesos ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(administracionCatalogosDocumentosProceso.rol.periodoActivo.periodo)}" />
+                                        
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla1" value="#{'col-sm-12 col-md-2 col-lg-3'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-2 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <c:if test="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 0}">
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="proceso" value="#{administracionCatalogosDocumentosProceso.rol.proceso}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionCatalogosDocumentosProceso.cambiarProceso}" rendered="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 0}">
+                                                        <f:selectItems value="#{administracionCatalogosDocumentosProceso.rol.procesos}" var="proceso" itemValue="#{proceso}" itemLabel="#{proceso}" />
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Proceso" for="proceso" rendered="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 0}"/>
+                                                    <p:message for="proceso" rendered="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 0}"/>
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarDocumentoProceso" styleClass="form-control" value="#{administracionCatalogosDocumentosProceso.rol.agregarDocumentoProceso}" valueChangeListener="#{administracionCatalogosDocumentosProceso.cambiarAgregarDocumentoProceso}" rendered="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 0}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarDocumentoProceso" value="#{administracionCatalogosDocumentosProceso.rol.agregarDocumentoProceso?'Agregar documento al proceso':'No agregar documento al proceso'}" rendered="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 0}"/>
+                                                    <p:message for="agregarDocumentoProceso" display="tooltip" rendered="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 0}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="documentosDisponible" value="#{administracionCatalogosDocumentosProceso.rol.documentoSeleccionado}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionCatalogosDocumentosProceso.cambiarDocumento}" rendered="#{administracionCatalogosDocumentosProceso.rol.agregarDocumentoProceso}">
+                                                        <f:selectItems value="#{administracionCatalogosDocumentosProceso.rol.documentosDisponibles}" var="documentosDisponible" itemValue="#{documentosDisponible}" itemLabel="#{documentosDisponible.documento}. #{documentosDisponible.descripcion}" />
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Documento" for="documentosDisponible" rendered="#{administracionCatalogosDocumentosProceso.rol.agregarDocumentoProceso}"/>
+                                                    <p:message for="documentosDisponible" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarDocProceso" value="Guardar" actionListener="#{administracionCatalogosDocumentosProceso.guardarDocumentoProceso()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionCatalogosDocumentosProceso.rol.agregarDocumentoProceso}" update="@this @(.tabla)"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                        
+                                        <c:if test="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 1}">
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarDocumento" styleClass="form-control" value="#{administracionCatalogosDocumentosProceso.rol.agregarDocumento}" valueChangeListener="#{administracionCatalogosDocumentosProceso.cambiarAgregarDocumento}" rendered="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 1}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarDocumento" value="#{administracionCatalogosDocumentosProceso.rol.agregarDocumento?'Agregar documento':'No agregar documento'}" rendered="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 1}"/>
+                                                    <p:message for="agregarDocumento" display="tooltip" rendered="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva eq 1}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:inputText id="nuevoDocumento" value="#{administracionCatalogosDocumentosProceso.rol.nuevoDocumento}" size="30" maxlength="150" rendered="#{administracionCatalogosDocumentosProceso.rol.agregarDocumento}" required="true" requiredMessage="Es necesario que capture el nombre del documento"/>
+                                                    <p:outputLabel value="Nuevo documento" for="nuevoDocumento" rendered="#{administracionCatalogosDocumentosProceso.rol.agregarDocumento}"/>
+                                                    <p:message for="nuevoDocumento" display="display"><p:autoUpdate/></p:message>
+                                                </div>
+                                            </div>                                        
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:inputTextarea id="especificacionesDocumento" value="#{administracionCatalogosDocumentosProceso.rol.especificacionesDocumento}" cols="80" rows="3" maxlength="500" rendered="#{administracionCatalogosDocumentosProceso.rol.agregarDocumento}" required="true" requiredMessage="Es necesario que capture las especificaciones del documento"/>
+                                                    <p:outputLabel value="Especificaciones" for="especificacionesDocumento" rendered="#{administracionCatalogosDocumentosProceso.rol.agregarDocumento}"/>
+                                                    <p:message for="especificacionesDocumento" display="display"><p:autoUpdate/></p:message>
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:inputText id="nomenclaturaDocumento" value="#{administracionCatalogosDocumentosProceso.rol.nomenclaturaDocumento}" size="30" maxlength="100" placeholder="actaNacimiento" rendered="#{administracionCatalogosDocumentosProceso.rol.agregarDocumento}" required="true" requiredMessage="Es necesario que capture la nomenclatura del documento"/>
+                                                    <p:outputLabel value="Nomenclatura" for="nomenclaturaDocumento" rendered="#{administracionCatalogosDocumentosProceso.rol.agregarDocumento}"/>
+                                                    <p:message for="nomenclaturaDocumento" display="display"><p:autoUpdate/></p:message>
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarDocumento" value="Guardar" actionListener="#{administracionCatalogosDocumentosProceso.guardarDocumento()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionCatalogosDocumentosProceso.rol.agregarDocumento}" update="@this @(.tabla)"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                    <h:outputText value="&#160;" />
+                                    <h:outputText value="&#160;" />
+                                    <div class="row">
+                                            <center>
+                                                <p:tabView activeIndex="#{administracionCatalogosDocumentosProceso.rol.pestaniaActiva}">
+                                                    <p:ajax event="tabChange" listener="#{administracionCatalogosDocumentosProceso.cambiarPestania}" update="@form"/>
+                                                    <p:tab id="twbEvidenciasCategorias" title="Documentos por proceso"> 
+                                                            <p:dataTable id="tbListaDocumentosProceso" var="documentoProceso" value="#{administracionCatalogosDocumentosProceso.rol.listaDocumentosProceso}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se han registrado documentos para el proceso seleciconado"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Proceso" style="width: 150px;"/>
+                                                                        <p:column headerText="Documento" style="width: 250px;"/>
+                                                                        <p:column headerText="Especificaciones" style="width: 300px;"/>
+                                                                        <p:column headerText="Obligatorio" style="width: 150px;"/>
+                                                                        <p:column headerText="Eliminar" style="width: 150px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+
+                                                                <p:column style="text-align: center;" groupRow="true">
+                                                                    <h:outputText value="#{documentoProceso.proceso}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{documentoProceso.documento.descripcion}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{documentoProceso.documento.especificaciones}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:commandButton actionListener="#{administracionCatalogosDocumentosProceso.activarDesactivarDocumentoProcesoObligatorio(documentoProceso)}"
+                                                                                     class="btn btn-sm #{!documentoProceso.obligatorio?'btn-danger':'btn-success'}" icon="#{!documentoProceso.obligatorio?'fa fa-close':'fa fa-check'}"
+                                                                                     title="#{documentoProceso.obligatorio?'Desactivar obligatorio.':'Activar obligatorio.'}" update="@this @(.tabla)"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:commandButton actionListener="#{administracionCatalogosDocumentosProceso.eliminarDocumentoProceso(documentoProceso)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar documento del proceso." >
+                                                                        <p:confirm header="Eliminar documento del proceso" message="¿Está seguro que desea eliminar el documento del proceso?" icon="ui-icon-alert" />
+                                                                    </p:commandButton>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                    </p:tab>
+                                                    <p:tab id="twbDocumentos" title="Documentos"> 
+                                                            <p:dataTable id="tbListaDocumentos" var="documento" value="#{administracionCatalogosDocumentosProceso.rol.listaDocumentos}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información del nivel educativo seleccionado"
+                                                                         tableStyle="vertical-align: middle;" paginator="true" rows="20" rowsPerPageTemplate="20,40,60,80,100,120,140" resizeMode="expand"  editable="true" editMode="cell" expandableRowGroups="true"
+                                                                         paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Clave documento" style="width: 150px;"/>
+                                                                        <p:column headerText="Documento" style="width: 200px;" sortBy="#{documento.descripcion}" filterBy="#{documento.descripcion}" filterMatchMode="contains"/>
+                                                                        <p:column headerText="Especificaciones" style="width: 300px;" sortBy="#{documento.especificaciones}" filterBy="#{documento.especificaciones}" filterMatchMode="contains"/>
+                                                                        <p:column headerText="Nomenclatura" style="width: 150px;"/>
+                                                                        <p:column headerText="Activo/Inactivo" style="width: 150px;" sortBy="#{documento.activo?'Activo':'Inactivo'}" filterBy="#{documento.activo?'Activo':'Inactivo'}" filterMatchMode="contains"/>
+                                                                        <p:column headerText="Eliminar" style="width: 150px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:ajax event="cellEdit" listener="#{administracionCatalogosDocumentosProceso.onCellEdit}"/>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{documento.documento}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output"><h:outputText value="#{documento.descripcion}"/></f:facet>
+                                                                        <f:facet name="input"><p:inputText id="descripcionDocumento" value="#{documento.descripcion}" maxlength="150" /></f:facet>
+                                                                    </p:cellEditor> 
+                                                                </p:column>
+                                                                 <p:column style="text-align: justify;">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output"><h:outputText value="#{documento.especificaciones}"/></f:facet>
+                                                                        <f:facet name="input"><p:inputText id="especificacionesDocumento" value="#{documento.especificaciones}" maxlength="500" /></f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output"><h:outputText value="#{documento.nomenclatura}"/></f:facet>
+                                                                        <f:facet name="input"><p:inputText id="nomenclaturaDocumento" value="#{documento.nomenclatura}" maxlength="100" /></f:facet>
+                                                                    </p:cellEditor>
+                                                                    
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:commandButton actionListener="#{administracionCatalogosDocumentosProceso.activarDesactivarDocumento(documento)}"
+                                                                                     class="btn btn-sm #{!documento.activo?'btn-danger':'btn-success'}" icon="#{!documento.activo?'fa fa-close':'fa fa-check'}"
+                                                                                     title="#{documento.activo?'Desactivar documento.':'Activar documento.'}" update="@this @(.tabla)"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:commandButton actionListener="#{administracionCatalogosDocumentosProceso.eliminarDocumento(documento)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar documento." update="@this @(.tabla)" rendered="#{!administracionCatalogosDocumentosProceso.deshabilitarEliminacion(documento)}">
+                                                                        <p:confirm header="Eliminar documento" message="¿Está seguro de eliminar el documento seleccionado?" icon="ui-icon-alert" />
+                                                                    </p:commandButton>
+                                                                    
+                                                                     <h:outputText value="No se puede eliminar el documento porque tiene registros relacionados." rendered="#{administracionCatalogosDocumentosProceso.deshabilitarEliminacion(documento)}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty administracionCatalogosDocumentosProceso.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{administracionCatalogosDocumentosProceso.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para admininistrar categorías y evidencias de evaluación</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{administracionCatalogosDocumentosProceso.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{administracionCatalogosDocumentosProceso.rol.procesos eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay información registrada."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!administracionCatalogosDocumentosProceso.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal de Servicios Escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

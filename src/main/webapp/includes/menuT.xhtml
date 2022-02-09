@@ -158,7 +158,23 @@
                     <c:if test="#{cartaNoAdeudoFinanzas.mostrarEnDesarrollo(request) and cartaNoAdeudoFinanzas.tieneAcceso}"><li><p:link href="#{request.contextPath}//controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
 
                     <!-- Administrador -->
-                    <c:if test="#{administracionCatEvidInstEvalEscolares.mostrarEnDesarrollo(request) and administracionCatEvidInstEvalEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/administracionCatEvidInstEval.xhtml"><i class="fa fa-gears"></i><span>Categorías, evidencias e <br/>instrumentos de evaluación</span></p:link></li></c:if>
+                    <c:if test="#{administracionCatalogosDocumentosProceso.mostrarEnDesarrollo(request) and administracionCatalogosDocumentosProceso.tieneAcceso}">
+
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-wrench"></i> <span>Catálogos<small class="label pull-right bg-green">Nuevo</small></span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <c:if test="#{administracionTipoAspiranteEstudianteEscolares.mostrarEnDesarrollo(request) and administracionTipoAspiranteEstudianteEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/administracionTipoAspiranteEstudiante.xhtml"><i class="fa fa-user-plus"></i><span>Tipo aspirante y estudiante</span></p:link></li></c:if>
+                                <c:if test="#{administracionCatalogosAdmisionEscolares.mostrarEnDesarrollo(request) and administracionCatalogosAdmisionEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/administracionCatalogosAdmision.xhtml"><i class="fa fa-plus-circle"></i><span>Datos admisión</span></p:link></li></c:if>
+                                <c:if test="#{administracionCatalogosDocumentosProceso.mostrarEnDesarrollo(request) and administracionCatalogosDocumentosProceso.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/administracionDocumentosProceso.xhtml"><i class="fa fa-file-text-o"></i><span>Documentos de procesos</span></p:link></li></c:if>
+                                <c:if test="#{administracionCatEvidInstEvalEscolares.mostrarEnDesarrollo(request) and administracionCatEvidInstEvalEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/administracionCatEvidInstEval.xhtml"><i class="fa fa-gears"></i><span>Categorías, evidencias e <br/>instrumentos de evaluación</span></p:link></li></c:if>
+                            </ul>
+                        </li>
+                    </c:if>
                     <c:if test="#{registroEventosEscolares.mostrarEnDesarrollo(request) and registroEventosEscolares.tieneAcceso}">
 
                         <li class="treeview">
