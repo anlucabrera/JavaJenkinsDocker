@@ -66,7 +66,7 @@ public class AdministracionTipoAspiranteEstudianteEscolares extends ViewScopedRo
      */
     @Getter private Boolean cargado = false;
     
-     @PostConstruct
+    @PostConstruct
     public void init(){
         try{
         if(!logon.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
