@@ -90,13 +90,13 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
             rol.setPeriodoActivo(ejbAsignacionIndicadoresCriterios.getPeriodoActual());
 //            rol.setSoloLectura(true);
 
-            rol.getInstrucciones().add("REGISTRAR TIPO DE ASPIRANTE Y/O TIPO DE ESTUDIANTE.");
-            rol.getInstrucciones().add("Seleccionar la opción que corresponda dependiendo la pestaña en la que se encuentra AGREGAR ASPIRANTE o AGREGAR ESTUDIANTE.");
+            rol.getInstrucciones().add("REGISTRAR TIPO DE DISCAPACIDAD, LENGUA INDÍGENA, TIPO DE SANGRE Y/O MEDIO DE DIFUSIÓN.");
+            rol.getInstrucciones().add("Seleccionar la opción que corresponda dependiendo la pestaña en la que se encuentra AGREGAR DISCAPACIDAD, LENGUA INDÍGENA, TIPO DE SANGRE o MEDIO DE DIFUSIÓN.");
             rol.getInstrucciones().add("Ingresar el nombre en el campo correspondiente, máximo 45 caracteres.");
             rol.getInstrucciones().add("Dar clic en GUARDAR para registrar.");
-            rol.getInstrucciones().add("ACTIVAR O DESACTIVAR TIPO DE ESTUDIANTE");
-            rol.getInstrucciones().add("Dar clic en el primer icono (X o ✓) en la columna ACTIVO/INACTIVO de la fila que corresponda.");
-            rol.getInstrucciones().add("ELIMINAR TIPO DE ASPIRANTE O TIPO DE ESTUDIANTE.");
+            rol.getInstrucciones().add("ACTIVAR O DESACTIVAR TIPO DE DISCAPACIDAD O MEDIO DE DIFUSIÓN");
+            rol.getInstrucciones().add("Dar clic en el icono (X o ✓) en la columna ACTIVO/INACTIVO de la fila que corresponda.");
+            rol.getInstrucciones().add("ELIMINAR TIPO DE DISCAPACIDAD, LENGUA INDÍGENA, TIPO DE SANGRE O MEDIO DE DIFUSIÓN.");
             rol.getInstrucciones().add("Dar clic en el icono (cesto de basura) de la columna ELIMINAR de la fila que corresponda.");
 
             rol.setPestaniaActiva(0);
