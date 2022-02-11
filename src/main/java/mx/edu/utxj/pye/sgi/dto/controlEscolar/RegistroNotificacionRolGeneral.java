@@ -15,6 +15,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.NotificacionesCe;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.NotificacionesCeImagenes;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.NotificacionesEnlaces;
@@ -23,8 +24,9 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.NotificacionesEnlaces;
  *
  * @author UTXJ
  */
-public class RegistroNotificacionRolGeneral extends AbstractRol{
+public class RegistroNotificacionRolGeneral {
     @Getter             @NonNull                private                                     PersonalActivo                              personal;
+    @Getter             @NonNull                private                                     Estudiante                              estudiante;
     
     @Getter             @Setter                 private                                     Date                                        fechaInicio;
     @Getter             @Setter                 private                                     Date                                        fechaFin;
@@ -49,12 +51,21 @@ public class RegistroNotificacionRolGeneral extends AbstractRol{
     @Getter             private                 List<DtoNotificacionesAreas>                listaDtoNotificacionesAreas = new ArrayList<>();
 
     public RegistroNotificacionRolGeneral(@NonNull Filter<PersonalActivo> filtro) {
-        super(filtro);
+//        super(filtro);
         this.personal = filtro.getEntity();
+    }
+
+//    @override
+    public RegistroNotificacionRolGeneral(Estudiante estudiante) {
+        this.estudiante = estudiante;
     }
 
     public void setPersonal(PersonalActivo personal) {
         this.personal = personal;
+    }
+    
+    public void setEstudiante(Estudiante estudiante) {
+        this.estudiante = estudiante;
     }
 
     public void setPistaTituloPrincipal(String pistaTituloPrincipal) {

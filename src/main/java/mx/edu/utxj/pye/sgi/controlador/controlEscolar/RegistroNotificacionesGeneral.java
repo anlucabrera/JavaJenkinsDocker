@@ -84,15 +84,34 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     @PostConstruct
     public void init() {
         try {
-            if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
-                return;
+
+//            if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+//                return;
+//            }
+            if (logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE)) {
+                System.out.println("Usuario identificado como estudiante");
+                setVistaControlador(ControlEscolarVistaControlador.REGISTRO_NOTIFICACIONES);
+                System.out.println("Controlador seteado");
+                ResultadoEJB<Estudiante> notifAcceso = ejbValidacionRol.validarEstudiante(logonMB.getCurrentUser());
+                System.out.println("validacion del EJB realizada");
+
+                rol = new RegistroNotificacionRolGeneral(notifAcceso.getValor());
+                System.out.println("rol creado correctamente");
+                System.out.println("Inicializando variables");
+//                inicializarGeneral();
+                System.out.println("variables inicializadas");
+                System.out.println("A punto de iniciarlizar la lista de notificaciones");
+                obtenerListaNotificacionesActivas();
+                System.out.println("Lista inicializada todo deberia funcinoar correctamente");
             }
+
+                System.out.println("No entro al metodo de estudiante");
             ResultadoEJB<Filter<PersonalActivo>> regAcceso = ejbValidacionRol.validarTrabajador(logonMB.getPersonal().getClave());
-            if(regAcceso.getCorrecto()){
+            if (regAcceso.getCorrecto()) {
                 tieneAcceso = true;
                 cargado = true;
             }
-            
+
             setVistaControlador(ControlEscolarVistaControlador.REGISTRO_NOTIFICACIONES);
 
             ResultadoEJB<Filter<PersonalActivo>> notifAcceso = ejbValidacionRol.validarPersonalActivo(logonMB.getPersonal().getClave());
@@ -100,9 +119,9 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
                 mostrarMensajeResultadoEJB(notifAcceso);
                 return;
             }
-            
+
             rol = new RegistroNotificacionRolGeneral(notifAcceso.getValor());
-            rol.setNivelRol(NivelRol.CONSULTA);
+//            rol.setNivelRol(NivelRol.CONSULTA);
             cargaAreasParaAsignarNotificacion();
             inicializarGeneral();
             obtenerListaNotificacionesActivas();
@@ -177,7 +196,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     }
 
     public void inicializarGeneral() {
-        inicializarNotificacionCe();
+//        inicializarNotificacionCe();
         inicializarNotificacionCeEnlace();
         inicializarNotificacionCeImagen();
 
@@ -322,7 +341,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
      */
     public int obtenerPorcentajeFechas(Date horaInicio) {
         LocalDateTime fechaI = utilidadesCH.castearDaLDT(horaInicio);
-        Date fechaInicio = utilidadesCH.castearLDTaD(fechaI.minusDays(6));
+        Date fechaInicio = utilidadesCH.castearLDTaD(fechaI.minusDays(7));
         long now = System.currentTimeMillis();
         long s = fechaInicio.getTime();
         long e = horaInicio.getTime();
@@ -340,6 +359,15 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         Date fechaFin = utilidadesCH.castearLDTaD(fechaI.with(LocalTime.MIN).plusDays(1));
         long fechaInicio = System.currentTimeMillis();
         return (int) ((fechaFin.getTime() - fechaInicio) / (1000 * 60 * 60 * 24));
+    }
+
+    public boolean obtenerFinEvento(Date horaInicio) {
+        long fechaInicio = System.currentTimeMillis();
+        int diff = (int) ((horaInicio.getTime() - fechaInicio) / (1000 * 60 * 60 * 24));
+        if (diff >= 0) {
+            return false;
+        }
+        return true;
     }
 
 //    public boolean obtenerMes(Date fechaFin) {
@@ -368,8 +396,21 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
 
     public void obtenerListaNotificacionesActivas() {
         LocalDate fechaActual = LocalDate.now();
-            LocalDate fechaI = fechaActual.minusDays(2);
-            LocalDate fechaF = fechaActual.plusDays(8);
+        LocalDate fechaI = fechaActual.minusDays(2);
+        LocalDate fechaF = fechaActual.plusDays(8);
+        ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesActivas(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
+        if (resNotificaciones.getCorrecto()) {
+            rol.setListaNotificacionesCe(resNotificaciones.getValor());
+            mostrarMensajeResultadoEJB(resNotificaciones);
+        } else {
+            inicializarListaNotificacionesCe();
+        }
+    }
+
+    public void obtenerListaNotificacionesAlumnos() {
+        LocalDate fechaActual = LocalDate.now();
+        LocalDate fechaI = fechaActual.minusDays(2);
+        LocalDate fechaF = fechaActual.plusDays(8);
         ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesActivas(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
         if (resNotificaciones.getCorrecto()) {
             rol.setListaNotificacionesCe(resNotificaciones.getValor());

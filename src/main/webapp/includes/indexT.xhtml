@@ -23,6 +23,16 @@
         <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         <!-- Fin de estilos para campañas electorales-->
     </c:if>
+    <style>
+            .ui-icon.fa{
+                text-indent: 0;
+                background-image: none;
+            }
+            .ui-icon.fas{
+                text-indent: 0;
+                background-image: none;
+            }
+        </style>
 
     <script type="text/javascript">
         function myconfig() {
@@ -39,6 +49,7 @@
 
     <link rel="stylesheet" type="text/css" href="../resources/css/estilosGeneralesPrint.css" media="screen" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
+    <script src="https://kit.fontawesome.com/9e41a3eedf.js" crossorigin="anonymous"></script>
 
 
     <div class="col-md-12">
@@ -721,9 +732,11 @@
                             <c:set var="notificacionCe" value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.get(index)}"/>
                             <c:set var="porcentaje" value="#{registroNotificacionesGeneral.obtenerPorcentajeFechas(notificacionCe.horaInicio)}"/>
                             <c:set var="diferencia" value="#{registroNotificacionesGeneral.obtenerDiferenciaDias(notificacionCe.horaInicio)}"/>
-                            <c:if test="#{diferencia eq 0}"><c:set var="color" value="bg-orange"/></c:if>
+                            <c:set var="termino" value="#{registroNotificacionesGeneral.obtenerFinEvento(notificacionCe.horaInicio)}"/>
+                            <c:if test="#{diferencia eq 0 and termino eq false}"><c:set var="color" value="bg-yellow"/></c:if>
                             <c:if test="#{diferencia gt 0}"><c:set var="color" value="bg-green"/></c:if>
                             <c:if test="#{diferencia lt 0}"><c:set var="color" value="bg-red"/></c:if>
+                            <c:if test="#{diferencia le 0 and termino eq true}"><c:set var="color" value="bg-red"/></c:if>
 
                             <c:if test="#{notificacionCe.tipo eq 'Aviso'}"><c:set var="icon" value="fa-bell"/></c:if>
                             <c:if test="#{notificacionCe.tipo eq 'Bolsa de Trabajo'}"><c:set var="icon" value="fa-briefcase"/></c:if>
@@ -746,6 +759,7 @@
                                     <div class="info-box #{color}">
                                         <span class="info-box-icon">
                                             <i class="fa #{icon}" />
+                                            <!--<i class="fas fa-frog"></i>-->
                                         </span>
                                         <div class="info-box-content">
                                             <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo} - <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="E, dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel></span></span>
@@ -754,9 +768,12 @@
                                                 <div class="progress-bar" style="width: ${100-porcentaje}%"></div>
                                             </div>
                                             <span class="progress-description">
-                                                <c:if test="#{diferencia eq 0}">
+                                                <c:if test="#{diferencia eq 0 and termino eq false}">
                                                     El evento inicia hoy a las 
                                                     <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel>
+                                                </c:if>
+                                                <c:if test="#{diferencia eq 0 and termino eq true}">
+                                                    Este evento ha terminado.
                                                 </c:if>
                                                 <c:if test="#{diferencia lt 0}">
                                                     Este evento ha terminado.
