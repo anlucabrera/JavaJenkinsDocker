@@ -430,7 +430,6 @@
                     <!--Mostrar Tarjeta Avisos-->
                     <div class="box-body">
                         <c:forEach var="index" begin="0" end="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.size()-1}">
-                            #{index}
                             <!--Establecimiento de parametros-->
                             <c:set var="notificacionCe" value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.get(index)}"/>
                             <c:set var="porcentaje" value="#{registroNotificacionesGeneral.obtenerPorcentajeFechas(notificacionCe.horaInicio)}"/>
@@ -481,7 +480,10 @@
                                                 <c:if test="#{diferencia lt 0}">
                                                     Este evento ha terminado.
                                                 </c:if>
-                                                <c:if test="#{diferencia gt 0}">
+                                                <c:if test="#{diferencia eq 1}">
+                                                    Falta #{diferencia} día 
+                                                </c:if>
+                                                <c:if test="#{diferencia gt 1}">
                                                     Faltan #{diferencia} días 
                                                 </c:if>
                                             </span>

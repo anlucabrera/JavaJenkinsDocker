@@ -138,6 +138,34 @@ public class EjbRegistroNotificaciones {
             return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las ultimas diez notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesUltimosDiez): ", e, null);
         }
     }
+    public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesAlumnos(Date fechaI, Date fechaF){
+        try {
+//            List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findAll")
+            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.alcance LIKE 'Todos' AND n.horaInicio BETWEEN :fechaI AND :fechaF OR n.alcance LIKE 'Alumnos' AND n.horaInicio BETWEEN :fechaI AND :fechaF ORDER BY n.horaInicio ASC")
+                    .setParameter("fechaI", fechaI)
+                    .setParameter("fechaF", fechaF)
+//                    .setMaxResults(10)
+                    .getResultList();
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
+            else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las ultimas diez notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesUltimosDiez): ", e, null);
+        }
+    }
+    public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesTrabajador(Date fechaI, Date fechaF){
+        try {
+//            List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findAll")
+            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.alcance LIKE 'Personal' AND n.horaInicio BETWEEN :fechaI AND :fechaF OR n.alcance LIKE 'Todos' AND n.horaInicio BETWEEN :fechaI AND :fechaF ORDER BY n.horaInicio ASC")
+                    .setParameter("fechaI", fechaI)
+                    .setParameter("fechaF", fechaF)
+//                    .setMaxResults(10)
+                    .getResultList();
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
+            else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las ultimas diez notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesUltimosDiez): ", e, null);
+        }
+    }
     
     public ResultadoEJB<List<NotificacionesCe>> consultarFechasNotificaciones(){
         try {

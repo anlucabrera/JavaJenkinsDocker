@@ -758,8 +758,7 @@
                                 <a id="abrirmodal#{index}" href="#" class="info-box-footer" data-toggle="modal" data-target="#modal-default#{index}" >
                                     <div class="info-box #{color}">
                                         <span class="info-box-icon">
-                                            <i class="fa #{icon}" />
-                                            <!--<i class="fas fa-frog"></i>-->
+                                            <i class="fa #{icon}"/>
                                         </span>
                                         <div class="info-box-content">
                                             <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo} - <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="E, dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel></span></span>
@@ -778,7 +777,10 @@
                                                 <c:if test="#{diferencia lt 0}">
                                                     Este evento ha terminado.
                                                 </c:if>
-                                                <c:if test="#{diferencia gt 0}">
+                                                <c:if test="#{diferencia eq 1}">
+                                                    Falta #{diferencia} día 
+                                                </c:if>
+                                                <c:if test="#{diferencia gt 1}">
                                                     Faltan #{diferencia} días 
                                                 </c:if>
                                             </span>
