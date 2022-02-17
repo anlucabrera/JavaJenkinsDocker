@@ -180,7 +180,7 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
     public void listaReportes(){
         List<String> listaReportes = new ArrayList<>();
         
-        if((rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getPersonal().getAreaSuperior()==2) || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48  && rol.getUsuario().getPersonal().getAreaSuperior()==2) || rol.getUsuario().getPersonal().getAreaOperativa()==23){
+        if((rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getPersonal().getAreaSuperior()==2) || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48  && rol.getUsuario().getPersonal().getAreaSuperior()==2)){
             listaReportes.add("Estudiantes irregulares");
             listaReportes.add("Planeación docente");
         }
@@ -193,6 +193,12 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             listaReportes.add("Matricula");
             listaReportes.add("Distribución de matricula");
             listaReportes.add("Deserción académica");
+        }
+        else if(rol.getUsuario().getPersonal().getAreaOperativa()==23){
+            listaReportes.add("Estudiantes irregulares");
+            listaReportes.add("Planeación docente");
+            listaReportes.add("Aprovechamiento escolar");
+            listaReportes.add("Reprobación por asignatura");
         }
         
         rol.setReportes(listaReportes);
@@ -447,14 +453,24 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(rol.getTipoBusqueda().equals("busquedaPrograma")){
             ResultadoEJB<List<DtoAprovechamientoEscolar>> res = ejb.getAprovechamientoEscolarPrograma(rol.getPeriodo(), rol.getPrograma());
             if(res.getCorrecto()){
-                rol.setAprovechamientoEscolar(res.getValor());
-                Ajax.update("tbAprovechamientoEscolar");
+                 if(rol.getUsuario().getPersonal().getAreaOperativa()==23){
+                     rol.setAprovechamientoEscolar(res.getValor().stream().filter(p->p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Inglés") || p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Francés")).collect(Collectors.toList()));
+                     Ajax.update("tbAprovechamientoEscolar");
+                 }else{
+                     rol.setAprovechamientoEscolar(res.getValor());
+                     Ajax.update("tbAprovechamientoEscolar");
+                 }
             }else mostrarMensajeResultadoEJB(res);
         }else{
             ResultadoEJB<List<DtoAprovechamientoEscolar>> res = ejb.getAprovechamientoEscolar(rol.getPeriodo(), rol.getUsuario().getPersonal());
             if(res.getCorrecto()){
-                rol.setAprovechamientoEscolar(res.getValor());
-                Ajax.update("tbAprovechamientoEscolar");
+                if(rol.getUsuario().getPersonal().getAreaOperativa()==23){
+                     rol.setAprovechamientoEscolar(res.getValor().stream().filter(p->p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Inglés") || p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Francés")).collect(Collectors.toList()));
+                     Ajax.update("tbAprovechamientoEscolar");
+                 }else{
+                     rol.setAprovechamientoEscolar(res.getValor());
+                     Ajax.update("tbAprovechamientoEscolar");
+                 }
             }else mostrarMensajeResultadoEJB(res);
         }
     }
@@ -485,14 +501,24 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
         if(rol.getTipoBusqueda().equals("busquedaPrograma")){
             ResultadoEJB<List<DtoReprobacionAsignatura>> res = ejb.getReprobacionAsignaturaPrograma(rol.getPeriodo(), rol.getPrograma());
             if(res.getCorrecto()){
-                rol.setReprobacionAsignatura(res.getValor());
-                Ajax.update("tbReprobacionAsignatura");
+                if(rol.getUsuario().getPersonal().getAreaOperativa()==23){
+                    rol.setReprobacionAsignatura(res.getValor().stream().filter(p->p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Inglés") || p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Francés")).collect(Collectors.toList()));
+                    Ajax.update("tbReprobacionAsignatura");
+                }else{
+                    rol.setReprobacionAsignatura(res.getValor());
+                    Ajax.update("tbReprobacionAsignatura");
+                }
             }else mostrarMensajeResultadoEJB(res);
         }else{
             ResultadoEJB<List<DtoReprobacionAsignatura>> res = ejb.getReprobacionAsignatura(rol.getPeriodo(), rol.getUsuario().getPersonal());
             if(res.getCorrecto()){
-                rol.setReprobacionAsignatura(res.getValor());
-                Ajax.update("tbReprobacionAsignatura");
+                if(rol.getUsuario().getPersonal().getAreaOperativa()==23){
+                    rol.setReprobacionAsignatura(res.getValor().stream().filter(p->p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Inglés") || p.getPlanEstudioMateria().getIdMateria().getNombre().contains("Francés")).collect(Collectors.toList()));
+                    Ajax.update("tbReprobacionAsignatura");
+                }else{
+                    rol.setReprobacionAsignatura(res.getValor());
+                    Ajax.update("tbReprobacionAsignatura");
+                }
             }else mostrarMensajeResultadoEJB(res);
         }
     }

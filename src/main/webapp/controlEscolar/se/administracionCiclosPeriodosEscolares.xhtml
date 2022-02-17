@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de ciclos y periodos escolares
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionCiclosPeriodosEscolares.cargado}">
+        <adm:breadcrumb title="Administración de ciclos y periodos escolares"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{administracionCiclosPeriodosEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(administracionCiclosPeriodosEscolares.rol.periodoActivo.periodo)}" />
+                                        
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla1" value="#{'col-sm-12 col-md-2 col-lg-1'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-2 col-lg-3'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <c:if test="#{administracionCiclosPeriodosEscolares.rol.pestaniaActiva eq 0}">
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarCicloEscolar" styleClass="form-control" value="#{administracionCiclosPeriodosEscolares.rol.agregarCicloEscolar}" valueChangeListener="#{administracionCiclosPeriodosEscolares.cambiarAgregarCicloEscolar}" rendered="#{!administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarCicloEscolar" value="#{administracionCiclosPeriodosEscolares.rol.agregarCicloEscolar?'Agregar ciclo escolar':'No agregar ciclo escolar'}" rendered="#{!administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}"/>
+                                                    <p:message for="agregarCicloEscolar" display="tooltip" rendered="#{!administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                     <p:selectOneMenu id="anioInicio" value="#{administracionCiclosPeriodosEscolares.rol.anioInicio}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionCiclosPeriodosEscolares.cambiarCicloEscolar}" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarCicloEscolar}">
+                                                        <f:selectItems value="#{administracionCiclosPeriodosEscolares.rol.anios}" var="anio" itemValue="#{anio}" itemLabel="#{caster.anioFecha(anio)}" />
+                                                        <p:ajax update="@this @(.anioFin) @(.tabla)" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Año inicio" for="anioInicio" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarCicloEscolar}"/>
+                                                    <p:message for="anioInicio" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:inputText id="anioFin" value="#{administracionCiclosPeriodosEscolares.rol.anioFin}" disabled="true" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarCicloEscolar}"><f:convertDateTime type="date" pattern="yyyy" timeZone="America/Mexico_City"/></p:inputText>
+                                                    <p:outputLabel value="Año fin" for="anioFin" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarCicloEscolar}"/>
+                                                    <p:message for="anioFin" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarCiclo" value="Guardar" actionListener="#{administracionCiclosPeriodosEscolares.guardarCicloEscolar()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarCicloEscolar}" oncomplete="PF('frm')update();" update="@form"  process="@form"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                        <c:if test="#{administracionCiclosPeriodosEscolares.rol.pestaniaActiva eq 1}">
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarPeriodoEscolar" styleClass="form-control" value="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}" valueChangeListener="#{administracionCiclosPeriodosEscolares.cambiarAgregarPeriodoEscolar}" rendered="#{!administracionCiclosPeriodosEscolares.rol.agregarCicloEscolar}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarPeriodoEscolar" value="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar?'Agregar periodo escolar':'No agregar periodo escolar'}" rendered="#{!administracionCiclosPeriodosEscolares.rol.agregarCicloEscolar}"/>
+                                                    <p:message for="agregarPeriodoEscolar" display="tooltip" rendered="#{!administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla1}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="mesInicio" value="#{administracionCiclosPeriodosEscolares.rol.mesInicio}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionCiclosPeriodosEscolares.cambiarMesInicio}" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}">
+                                                        <f:selectItems value="#{administracionCiclosPeriodosEscolares.rol.mesesInicio}" var="mesInicio" itemValue="#{mesInicio}" itemLabel="#{mesInicio.mes}" />
+                                                        <p:ajax update="@this @(.mesFin) @(.tabla)" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Mes inicio" for="mesInicio" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}"/>
+                                                    <p:message for="mesInicio" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla1}">
+                                                <div class="ui-material">
+                                                    <p:inputText id="mesFin" value="#{administracionCiclosPeriodosEscolares.rol.mesFin.mes}" disabled="true" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}"/>
+                                                    <p:outputLabel value="Mes fin" for="mesFin" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}"/>
+                                                    <p:message for="mesFin" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:inputText id="anioPeriodo" value="#{administracionCiclosPeriodosEscolares.rol.anioPeriodoEscolar}" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}" required="true" requiredMessage="Debe ingresar el año del periodo escolar"/>
+                                                    <p:outputLabel value="Año" for="anioPeriodo" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}"/>
+                                                    <p:message for="anioPeriodo" display="display"/>
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:calendar id="fechaInicio" locale="es" value="#{administracionCiclosPeriodosEscolares.rol.fechaInicioPeriodoEscolar}" pattern="dd-MM-yyyy" mask="true" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}" required="true" requiredMessage="Debe ingresar la fecha de inicio del periodo escolar"/>
+                                                    <p:outputLabel value="Fecha inicio" for="fechaInicio" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}"/>
+                                                    <p:message for="fechaInicio" display="display"/>
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:calendar id="fechaFin" locale="es" value="#{administracionCiclosPeriodosEscolares.rol.fechaFinPeriodoEscolar}" pattern="dd-MM-yyyy" mask="true" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}" required="true" requiredMessage="Debe ingresar la fecha fin del periodo escolar"/>
+                                                    <p:outputLabel value="Fecha fin" for="fechaFin" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}"/>
+                                                    <p:message for="fechaFin" display="display"/>
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarPeriodo" value="Guardar" actionListener="#{administracionCiclosPeriodosEscolares.guardarPeriodoEscolar()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionCiclosPeriodosEscolares.rol.agregarPeriodoEscolar}" oncomplete="PF('frm')update();" update="@form"  process="@form"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                    <h:outputText value="&#160;" />
+                                    <h:outputText value="&#160;" />
+                                    <div class="row">
+                                            <center>
+                                                <p:tabView activeIndex="#{administracionCiclosPeriodosEscolares.rol.pestaniaActiva}">
+                                                    <p:ajax event="tabChange" listener="#{administracionCiclosPeriodosEscolares.cambiarPestania}" update="@form"/>
+                                                    <p:tab id="twbCicloEscolar" title="Ciclos escolares"> 
+                                                        <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaCiclosEscolares" var="cicloEscolar" value="#{administracionCiclosPeriodosEscolares.rol.ciclosEscolares}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand"
+                                                                         paginator="true" rows="20" rowsPerPageTemplate="20,40,60,80,100" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Clave" style="width: 150px;"/>
+                                                                        <p:column headerText="Año inicio" style="width: 150px;"/>
+                                                                        <p:column headerText="Año fin" style="width: 150px;"/>
+                                                                        <p:column headerText="Eliminar" style="width: 200px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{cicloEscolar.ciclo}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{cicloEscolar.inicio}"><f:convertDateTime type="date" pattern="yyyy" timeZone="America/Mexico_City"/></h:outputText>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{cicloEscolar.fin}"><f:convertDateTime type="date" pattern="yyyy" timeZone="America/Mexico_City"/></h:outputText>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <center>
+                                                                        <p:commandButton actionListener="#{administracionCiclosPeriodosEscolares.eliminarCicloEscolar(cicloEscolar)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar ciclo escolar." rendered="#{!administracionCiclosPeriodosEscolares.deshabilitarEliminacionCicloEscolar(cicloEscolar)}">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el ciclo escolar seleccionado?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </center>
+                                                                    <h:outputText value="No se puede eliminar el ciclo escolar seleccionado porque tiene registros relacionados." rendered="#{administracionCiclosPeriodosEscolares.deshabilitarEliminacionCicloEscolar(cicloEscolar)}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab id="twbTipoEstudiante" title="Periodos escolares"> 
+                                                        <div class="col-lg-10 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaPeriodosEscolares" var="periodoEscolar" value="#{administracionCiclosPeriodosEscolares.rol.periodosEscolares}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand" editable="true" editMode="cell" expandableRowGroups="true"
+                                                                         paginator="true" rows="20" rowsPerPageTemplate="20,40,60,80,100" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Clave" style="width: 150px;"/>
+                                                                        <p:column headerText="Ciclo escolar" style="width: 200px;"/>
+                                                                        <p:column headerText="Periodo" style="width: 150px;"/>
+                                                                        <p:column headerText="Fecha inicio" style="width: 150px;"/>
+                                                                        <p:column headerText="Fecha fin" style="width: 150px;"/>
+                                                                        <p:column headerText="Eliminar" style="width: 250px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:ajax event="cellEdit" listener="#{administracionCiclosPeriodosEscolares.onCellEdit}"/>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{periodoEscolar.periodoEscolar.periodo}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{periodoEscolar.periodoEscolar.ciclo.inicio}"><f:convertDateTime type="date" pattern="yyyy" timeZone="America/Mexico_City"/></h:outputText> - <h:outputText value="#{periodoEscolar.periodoEscolar.ciclo.fin}"><f:convertDateTime type="date" pattern="yyyy" timeZone="America/Mexico_City"/></h:outputText>
+                                                                   </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{periodoEscolar.periodoEscolar.mesInicio.mes} - #{periodoEscolar.periodoEscolar.mesFin.mes} #{periodoEscolar.periodoEscolar.anio}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output">
+                                                                            <h:outputText value="#{periodoEscolar.fechasPeriodoEscolar.inicio}" rendered="#{periodoEscolar.fechasPeriodoEscolar.periodo ne null}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                            <h:outputText value="No hay fecha registrada" rendered="#{periodoEscolar.fechasPeriodoEscolar.periodo eq null}"/>
+                                                                        </f:facet>
+                                                                        <f:facet name="input">
+                                                                            <p:calendar id="fechaInicio" locale="es" value="#{periodoEscolar.fechasPeriodoEscolar.inicio}" pattern="dd-MM-yyyy" mask="true"/>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:cellEditor>
+                                                                        <f:facet name="output">
+                                                                            <h:outputText value="#{periodoEscolar.fechasPeriodoEscolar.fin}" rendered="#{periodoEscolar.fechasPeriodoEscolar.periodo ne null}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                                            <h:outputText value="No hay fecha registrada" rendered="#{periodoEscolar.fechasPeriodoEscolar.periodo eq null}"/>
+                                                                        </f:facet>
+                                                                        <f:facet name="input">
+                                                                            <p:calendar id="fechaFin" locale="es" value="#{periodoEscolar.fechasPeriodoEscolar.fin}" pattern="dd-MM-yyyy" mask="true"/>
+                                                                        </f:facet>
+                                                                    </p:cellEditor>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <center>
+                                                                        <p:commandButton actionListener="#{administracionCiclosPeriodosEscolares.eliminarPeriodoEscolar(periodoEscolar)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar periodo escolar." rendered="#{!administracionCiclosPeriodosEscolares.deshabilitarEliminacionPeriodoEscolar(periodoEscolar)}">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el periodo escolar seleccionado?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </center>
+                                                                    <h:outputText value="No se puede eliminar el periodo escolar seleccionado porque tiene registros relacionados." rendered="#{administracionCiclosPeriodosEscolares.deshabilitarEliminacionPeriodoEscolar(periodoEscolar)}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty administracionCiclosPeriodosEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{administracionCiclosPeriodosEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para admininistrar tipo de aspirante y estudiante</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{administracionCiclosPeriodosEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!administracionCiclosPeriodosEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal de Servicios Escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

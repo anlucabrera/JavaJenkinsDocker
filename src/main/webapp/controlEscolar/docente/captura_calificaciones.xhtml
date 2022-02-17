@@ -250,8 +250,9 @@
                                                                     </c:if>
                                                                     <c:if test="#{unidadConfiguracion.activaPorFecha or unidadConfiguracion.activaPorAperturaExtemporanea}">
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalleAlineacion(detalle, estudiante.capturas).calificacion.calificacionEvidenciaInstrumento]}"
-                                                                                       valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}" disabled="#{!estudiante.unidadesValidadas}"
-                                                                                       inputStyle="text-align: center;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
+                                                                                       valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}" disabled="#{!estudiante.unidadesValidadas}" id="calificacion1"
+                                                                                       inputStyle="text-align: center;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="" required="true" requiredMessage="El campo no puede quedarse vacío">
+                                                                            <p:message for="calificacion1" display="tooltip" />
                                                                             <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
                                                                             <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalleAlineacion(detalle, estudiante.capturas)}" />
                                                                             <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
@@ -260,7 +261,8 @@
                                                                     <c:if test="#{capturaCalificacionesDocente.existeAperturaInd and !unidadConfiguracion.activaPorFecha and !unidadConfiguracion.activaPorAperturaExtemporanea}">
                                                                         <p:inputNumber value="#{capturaCalificacionesDocente.rol.calificacionMap[capturaCalificacionesDocente.rol.getCapturaPorDetalleAlineacion(detalle, estudiante.capturas).calificacion.calificacionEvidenciaInstrumento]}"
                                                                                        valueChangeListener="#{capturaCalificacionesDocente.guardarCalificacion}" disabled="#{!estudiante.permisoExtInd and !estudiante.unidadesValidadas}"
-                                                                                       inputStyle="text-align: center;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="" >
+                                                                                       inputStyle="text-align: center;" minValue="0" maxValue="10" decimalPlaces="2" size="3" leadingZero="" id="calificacion2" required="true" requiredMessage="El campo no puede quedarse vacío">
+                                                                            <p:message for="calificacion2" display="display" />
                                                                             <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
                                                                             <f:attribute name="captura" value="#{capturaCalificacionesDocente.rol.getCapturaPorDetalleAlineacion(detalle, estudiante.capturas)}" />
                                                                             <f:attribute name="dtoCapturaCalificacion" value="#{estudiante}" />
