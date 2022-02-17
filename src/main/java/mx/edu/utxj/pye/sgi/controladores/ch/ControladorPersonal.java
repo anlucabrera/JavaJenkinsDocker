@@ -2,6 +2,9 @@ package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -11,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
@@ -99,6 +104,9 @@ public class ControladorPersonal implements Serializable {
     @Getter    @Setter    private Integer contactoDestino=0, total = 0, tv1 = 0, tv2 = 0, tv3 = 0, tv4 = 0, tv5 = 0, tv6 = 0, tv7 = 0, tv8 = 0, tv9 = 0;
     @Getter    @Setter    private String clase = "", nombreTabla,nombreArchivo="";
     @Getter    @Setter    DecimalFormat df = new DecimalFormat("#.00");
+    List<String> filesListInDir = new ArrayList<>();
+    List<String> carpetas = new ArrayList<>();
+    List<String> archivosBD = new ArrayList<>();
 
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
     @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
@@ -520,24 +528,75 @@ public class ControladorPersonal implements Serializable {
 
     public void descargarEvidenciasCH() {
         try {
-            String nombreArchivo = "";
-            if (nuevoOBJInformacionAdicionalPersonal != null) {
-                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa() != null){
-                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
-                }
-                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp() != null){
-                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp());
-                }
-                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio() != null){
-                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio());
-                }
-                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne() != null){
-                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
-                }
-                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc() != null){
-                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc());
+            String rutaGeneral = "C:\\archivos\\evidenciasCapitalHumano\\" + nuevoOBJListaPersonal.getClave();
+            String rutaZipGeneral = "C:\\archivos\\evidenciasCapitalHumano\\" + nuevoOBJListaPersonal.getClave() + " CV " + nuevoOBJListaPersonal.getNombre()+ ".zip";
+
+            String zipDirName = rutaZipGeneral;
+            
+            
+            carpetas = new ArrayList<>();
+            carpetas.clear();
+            carpetas.add(rutaGeneral);
+            System.out.println("tamanio " + carpetas.size());
+            for (int i = 0; i < carpetas.size(); i++) {
+                System.out.println("tamanio " + carpetas.size());
+                File dir = new File(carpetas.get(i));
+                File[] files = dir.listFiles();
+                for (File file : files) {
+                    if (file.isFile()) {
+                        if (rutasEvidenciasBD.contains(file.getAbsoluteFile().toString())) {
+                            filesListInDir.add(file.getAbsolutePath());
+                        }
+                        
+                    } else if (file.isDirectory()) {
+                        carpetas.add(file.getAbsolutePath());
+                    }
                 }
             }
+
+            System.out.println("filesListInDir "+filesListInDir.size());        
+            
+            
+//            
+//            try (FileOutputStream fos = new FileOutputStream(zipDirName)) {
+//                ZipOutputStream zos = new ZipOutputStream(fos);
+//                for (String filePath : filesListInDir) {
+//                    if(filePath.contains("fotografia")){
+//                        //for ZipEntry we need to keep only relative file path, so we used substring on absolute path
+//                        ZipEntry ze = new ZipEntry(filePath.substring(dir.getAbsolutePath().length() + 1, filePath.length()));
+//                        zos.putNextEntry(ze);
+//                        //read the file and write to ZipOutputStream
+//                        FileInputStream fis = new FileInputStream(filePath);
+//                        byte[] buffer = new byte[1024];
+//                        int len;
+//                        while ((len = fis.read(buffer)) > 0) {
+//                            zos.write(buffer, 0, len);
+//                        }
+//                        zos.closeEntry();
+//                        fis.close();
+//                    }
+//                }
+//                zos.close();
+//            }
+//            
+//            String nombreArchivo = "";
+//            if (nuevoOBJInformacionAdicionalPersonal != null) {
+//                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa() != null){
+//                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
+//                }
+//                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp() != null){
+//                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp());
+//                }
+//                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio() != null){
+//                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio());
+//                }
+//                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne() != null){
+//                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
+//                }
+//                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc() != null){
+//                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc());
+//                }
+//            }
             nombreArchivo = nuevoOBJListaPersonal.getClave() + " CV " + nuevoOBJListaPersonal.getNombre();
 
             if (!rutasEvidenciasBD.isEmpty()) {
@@ -547,6 +606,17 @@ public class ControladorPersonal implements Serializable {
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(ControladorPersonal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void populateFilesList(File dir) throws IOException {
+        File[] files = dir.listFiles();
+        for (File file : files) {
+            if (file.isFile()) {
+                filesListInDir.add(file.getAbsolutePath());
+            } else {
+                populateFilesList(file);
+            }
         }
     }
     
