@@ -477,7 +477,7 @@ public class AdminPoaEvaluacion implements Serializable {
                     rutasEvidenciasBD.add(t.getRuta());
                 }
             });
-            nombreArchivo = ap.getNumeroP() + "" + ap.getNumeroS()
+            nombreArchivo = ap.getNumeroP() + "_" + ap.getNumeroS()
                     + mesNombre
                     + "_CM_ej_" + ap.getCuadroMandoInt().getEje().getEje() + "_Est_" + ap.getCuadroMandoInt().getEstrategia().getNumero() + "_Lin_" + ap.getCuadroMandoInt().getLineaAccion().getNumero()
                     + "_idA_" + ap.getActividadPoa();

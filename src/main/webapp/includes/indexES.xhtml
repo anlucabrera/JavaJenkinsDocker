@@ -416,6 +416,128 @@
                     </div>
                 </div>
             </div> 
+            
+                        <!--Gadget de Avisos-->
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h2 class="box-title">Proximos eventos</h2>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <!--Mostrar Tarjeta Avisos-->
+                    <div class="box-body">
+                        <c:forEach var="index" begin="0" end="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.size()-1}">
+                            <!--Establecimiento de parametros-->
+                            <c:set var="notificacionCe" value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe.get(index)}"/>
+                            <c:set var="porcentaje" value="#{registroNotificacionesGeneral.obtenerPorcentajeFechas(notificacionCe.horaInicio)}"/>
+                            <c:set var="diferencia" value="#{registroNotificacionesGeneral.obtenerDiferenciaDias(notificacionCe.horaInicio)}"/>
+                            <c:set var="termino" value="#{registroNotificacionesGeneral.obtenerFinEvento(notificacionCe.horaInicio)}"/>
+                            <c:if test="#{diferencia eq 0 and termino eq false}"><c:set var="color" value="bg-yellow"/></c:if>
+                            <c:if test="#{diferencia gt 0}"><c:set var="color" value="bg-green"/></c:if>
+                            <c:if test="#{diferencia lt 0}"><c:set var="color" value="bg-red"/></c:if>
+                            <c:if test="#{diferencia le 0 and termino eq true}"><c:set var="color" value="bg-red"/></c:if>
+
+                            <c:if test="#{notificacionCe.tipo eq 'Aviso'}"><c:set var="icon" value="fa-bell"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Bolsa de Trabajo'}"><c:set var="icon" value="fa-briefcase"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Campaña'}"><c:set var="icon" value="fa-book"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Difusión'}"><c:set var="icon" value="fa-bullhorn"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Participación' || notificacionCe.tipo eq 'Prestación'}"><c:set var="icon" value="fa-camera"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Actividad'}"><c:set var="icon" value="fa-child"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Evento' || notificacionCe.tipo eq 'Exposición'}"><c:set var="icon" value="fa-coffee"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Encuesta' || notificacionCe.tipo eq 'Evaluación' || notificacionCe.tipo eq 'Examen'}"><c:set var="icon" value="fa-edit"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Ciclo de Conferencias' || notificacionCe.tipo eq 'Plática' || notificacionCe.tipo eq 'Plática y/o Conferencia' || notificacionCe.tipo eq 'Curso / Conferencia' || notificacionCe.tipo eq 'Conferencia'}"><c:set var="icon" value="fa-comments-o"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Ceremonia'}"><c:set var="icon" value="fa-graduation-cap"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Curso' || notificacionCe.tipo eq 'Curso / Taller' || notificacionCe.tipo eq 'Taller'}"><c:set var="icon" value="fa-newspaper-o"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Concurso'}"><c:set var="icon" value="fa-trophy"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Concurso Institucional'}"><c:set var="icon" value="fa-university"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Reunión' || notificacionCe.tipo eq 'Sesión' || notificacionCe.tipo eq 'Congreso'}"><c:set var="icon" value="fa-users"/></c:if>
+                            <c:if test="#{notificacionCe.tipo eq 'Capacitación'}"><c:set var="icon" value="fa-user-plus"/></c:if>
+                            <!--Widget a mostrar-->
+                            <div class="col-lg-12 col-md-12 col-xs-12">
+                                <a id="abrirmodal#{index}" href="#" class="info-box-footer" data-toggle="modal" data-target="#modal-default#{index}" >
+                                    <div class="info-box #{color}">
+                                        <span class="info-box-icon">
+                                            <i class="fa #{icon}" />
+                                            <!--<i class="fas fa-frog"></i>-->
+                                        </span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo} - <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="E, dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel></span></span>
+                                            <span class="info-box-text">#{notificacionCe.tituloPrincipal}</span>
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: ${100-porcentaje}%"></div>
+                                            </div>
+                                            <span class="progress-description">
+                                                <c:if test="#{diferencia eq 0 and termino eq false}">
+                                                    El evento inicia hoy a las 
+                                                    <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel>
+                                                </c:if>
+                                                <c:if test="#{diferencia eq 0 and termino eq true}">
+                                                    Este evento ha terminado.
+                                                </c:if>
+                                                <c:if test="#{diferencia lt 0}">
+                                                    Este evento ha terminado.
+                                                </c:if>
+                                                <c:if test="#{diferencia eq 1}">
+                                                    Falta #{diferencia} día 
+                                                </c:if>
+                                                <c:if test="#{diferencia gt 1}">
+                                                    Faltan #{diferencia} días 
+                                                </c:if>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <!--Ventanas Modal-->
+                            <div class="modal fade" id="modal-default#{index}">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background-color: #374850">
+                                            <h3 class="modal-title" style="color: #ffffff">#{notificacionCe.tituloPrincipal}</h3>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            </button>
+                                        </div> 
+                                        <div class="modal-body">
+                                            <h4><p><strong>Lugar: </strong>#{notificacionCe.lugar}</p></h4>
+                                            <h4>
+                                                <p><strong>Fecha: </strong>
+                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                        <f:convertDateTime pattern="EEEE, dd 'de' MMMM 'de' yyyy" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel>
+                                                </p>
+                                            </h4>
+                                            <h4>
+                                                <p><strong>Hora: </strong>
+                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                        <f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel>
+                                                </p>
+                                            </h4>
+                                            <h4>
+                                                <p><strong>Duracion: </strong>
+                                                    <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                        <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel> horas
+                                                </p>
+                                            </h4>
+                                            <h4><p><strong>Encargado: </strong>#{notificacionCe.personaResponsable}</p></h4>
+                                        </div>
+                                        <div class="modal-footer justify-content-between">
+                                            <button style="background-color: #374850; color: #ffffff" type="button" class="btn" data-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Fin Ventana Modal-->
+                        </c:forEach> 
+                    </div>
+                    <!--Fin Tarjeta Avisos-->
+                </div>
+            </div>
+            <!--Fin gadget de avisos-->
         </p:outputPanel>
     </div>
 

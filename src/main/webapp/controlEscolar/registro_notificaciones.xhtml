@@ -219,7 +219,7 @@
                                                                                  counterTemplate="{0} caracteres en total." 
                                                                                  autoResize="true"
                                                                                  class="form-control"
-                                                                                 value="#{registroNotificacionesGeneral.rol.notificacionCe.contenido}"
+                                                                                 value="#{registroNotificacionesGeneral.rol.notificacionCe.subtitulo}"
                                                                                  />
                                                                 <h:outputText id="displayContenido" />
                                                                 <p:watermark for="rnContenido" value="Ejemplo de contenido de la notificación *" />
@@ -250,10 +250,14 @@
                                                         </p:toolbar>
                                                         <center>
                                                             <p:dataTable id="dtNotificaciones"
-                                                                         value="#{registroNotificacionesGeneral.rol.listaNotificacionesCe}"
+                                                                         value="#{registroNotificacionesGeneral.rol.listaNotificacionesCeRegistradas}"
                                                                          var="notificacionCe"
                                                                          tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                                          resizeMode="expand"
+                                                                         paginator="true"
+                                                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
+                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                         rows="10"
                                                                          emptyMessage="Aún no se han registrado notificaciones"
                                                                          >
                                                                 <p:columnGroup type="header">
@@ -318,13 +322,13 @@
                                                                 </p:column>
 
                                                                 <p:column>
-                                                                    <h:outputText value="#{notificacionCe.fechaInicioDuracion}">
+                                                                    <h:outputText value="#{notificacionCe.horaInicio}">
                                                                         <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                                                     </h:outputText>
                                                                 </p:column>
 
                                                                 <p:column>
-                                                                    <h:outputText value="#{notificacionCe.fechaFinDuracion}">
+                                                                    <h:outputText value="#{notificacionCe.horaFin}">
                                                                         <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
                                                                     </h:outputText>
                                                                 </p:column>
@@ -342,7 +346,7 @@
                                                                 </p:column>
 
                                                                 <p:column>
-                                                                    <h:outputText value="#{notificacionCe.contenido}" />
+                                                                    <h:outputText value="#{notificacionCe.subtitulo}" />
                                                                 </p:column>
 
                                                                 <p:column>
@@ -364,7 +368,7 @@
                                                                 </p:column>
 
                                                                 <f:facet name="footer">
-                                                                    Usted ha registrado un total de: #{fn:length(registroNotificacionesGeneral.rol.listaNotificacionesCe)} notificaciones.
+                                                                    Usted ha registrado un total de: #{fn:length(registroNotificacionesGeneral.rol.listaNotificacionesCeRegistradas)} notificaciones.
                                                                 </f:facet>
 
                                                             </p:dataTable>
@@ -522,9 +526,9 @@
                             <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el registro de notificaciones</h3></div>
                             <div class="box-body">
                                 <ul class="todo-list">
-                                    <c:forEach items="#{registroNotificacionesGeneral.rol.instrucciones}" var="instruccion">
-                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
-                                    </c:forEach>
+<!--                                    <c:forEach items="{registroNotificacionesGeneral.rol.instrucciones}" var="instruccion">
+                                        <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> {instruccion}</span></li>
+                                    </c:forEach>-->
                                 </ul>
                             </div>
                             <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                template="/WEB-INF/templates/template.xhtml"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+    <ui:define name="head-end">
+        <ui:param name="renderBreadCrumb" value="false"/>
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>  
+        <c:if test="#{!utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../resources/css/estilosGenerales.css" media="screen" />
+        </c:if> 
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title"/>
+
+    <ui:define name="body">
+        <c:if test="true">
+            <h:outputScript>
+                PrimeFaces.locales['es'] = {
+                closeText: 'Cerrar',
+                prevText: 'Anterior',
+                nextText: 'Siguiente',
+                monthNames: ['','Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun','Jul','Ago','Sep','Oct','Nov','Dic'],
+                dayNames: ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],
+                dayNamesShort: ['Dom','Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+                dayNamesMin: ['D','L','M','M','J','V','S'],
+                weekHeader: 'Semana',
+                firstDay: 1,
+                isRTL: false,
+                showMonthAfterYear: false,
+                yearSuffix: '',
+                timeOnlyTitle: 'Sólo hora',
+                timeText: 'Tiempo',
+                hourText: 'Hora',
+                minuteText: 'Minuto',
+                secondText: 'Segundo',
+                currentText: 'Fecha actual',
+                ampm: false,
+                month: 'Mes',
+                week: 'Semana',
+                day: 'Día',
+                allDayText : 'Todo el día'
+                };
+            </h:outputScript>
+            <p:panel id="informacion">
+                <section class="content">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="nav-tabs-custom">
+                                <h:form id="frmActividades" enctype="multipart/form-data"> 
+                                    <p:outputPanel >            
+                                        <p:autoUpdate/>
+                                        <p:panel header="Registro de Actividades/Avisos" class="box box-primary">
+                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                <div class="col-md-12">
+                                                    <div class="box box-widget widget-user-2">
+                                                        <div class="row">
+                                                            <div class="col-sm-12 border-right">
+                                                                <div class="description-block">
+                                                                    <div class="row">
+                                                                        <div class="form-group">
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <p:outputLabel for="area" style="font-size: large" value="Área" />
+                                                                                <p:selectOneMenu id="area" class="form-control" placeholder='Área Responsable' value="#{selectOneMenuView.longItemLabel}">
+                                                                                    <f:selectItem itemLabel="Centro de Emprendimiento y Desarrollo Empresarial" itemValue="Centro de Emprendimiento y Desarrollo Empresarial" />
+                                                                                    <f:selectItem itemLabel="Coordinación de Deportes" itemValue="Coordinación de Deportes" />
+                                                                                    <f:selectItem itemLabel="Extensión y Vinculación" itemValue="Extensión y Vinculación" />
+                                                                                    <f:selectItem itemLabel="Prensa, Difusión y Actividades Culturales" itemValue="Prensa, Difusión y Actividades Culturales" />
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="area" display="tooltip" />       
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <p:outputLabel for="actividad" style="font-size: large" value="Actividad"/>                                
+                                                                                <p:inputText id="actividad" class="form-control" placeholder="Nombre de la Actividad" />
+                                                                                <p:message for="actividad" display="tooltip" />       
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <p:outputLabel for="evento" style="font-size: large" value="Evento"/>                                
+                                                                                <p:selectOneMenu id="evento" class="form-control" value="#{selectOneMenuView.longItemLabel}">
+                                                                                    <f:selectItem itemLabel="Actividad" itemValue="Actividad"/>
+                                                                                    <f:selectItem itemLabel="Campaña" itemValue="Campaña"/>
+                                                                                    <f:selectItem itemLabel="Capacitación" itemValue="Capacitación"/>
+                                                                                    <f:selectItem itemLabel="Concurso" itemValue="Concurso"/>
+                                                                                    <f:selectItem itemLabel="Concurso Institucional" itemValue="Concurso Institucional"/>
+                                                                                    <f:selectItem itemLabel="Conferencia" itemValue="Conferencia"/>
+                                                                                    <f:selectItem itemLabel="Curso" itemValue="Curso"/>
+                                                                                    <f:selectItem itemLabel="Curso / Conferencia" itemValue="Curso / Conferencia"/>
+                                                                                    <f:selectItem itemLabel="Curso / Taller" itemValue="Curso / Taller"/>
+                                                                                    <f:selectItem itemLabel="Difusión" itemValue="Difusión"/>
+                                                                                    <f:selectItem itemLabel="Evento" itemValue="Evento"/>
+                                                                                    <f:selectItem itemLabel="Participación" itemValue="Participación"/>
+                                                                                    <f:selectItem itemLabel="Plática y/o Conferencia" itemValue="Plática y/o Conferencia"/>
+                                                                                    <f:selectItem itemLabel="Prestación" itemValue="Prestación"/>
+                                                                                    <f:selectItem itemLabel="Taller" itemValue="Taller"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="evento" display="tooltip" />       
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <p:outputLabel for="mes" style="font-size: large" value="Mes"/>                                
+                                                                                <p:selectOneMenu id="mes" class="form-control" value="#{selectOneMenuView.longItemLabel}">
+                                                                                    <f:selectItem itemLabel="Enero" itemValue="Enero"/>
+                                                                                    <f:selectItem itemLabel="Febrero" itemValue="Febrero"/>
+                                                                                    <f:selectItem itemLabel="Marzo" itemValue="Marzo"/>
+                                                                                    <f:selectItem itemLabel="Abril" itemValue="Abril"/>
+                                                                                    <f:selectItem itemLabel="Mayo" itemValue="Mayo"/>
+                                                                                    <f:selectItem itemLabel="Junio" itemValue="Junio"/>
+                                                                                    <f:selectItem itemLabel="Julio" itemValue="Julio"/>
+                                                                                    <f:selectItem itemLabel="Agosto" itemValue="Agosto"/>
+                                                                                    <f:selectItem itemLabel="Septiembre" itemValue="Septiembre"/>
+                                                                                    <f:selectItem itemLabel="Octubre" itemValue="Octubre"/>
+                                                                                    <f:selectItem itemLabel="Noviembre" itemValue="Noviembre"/>
+                                                                                    <f:selectItem itemLabel="Diciembre" itemValue="Diciembre"/>
+                                                                                </p:selectOneMenu>
+                                                                                <p:message for="mes" display="tooltip" />       
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio" />
+                                                                                <p:calendar locale="es" id="fechaIn" pattern="dd-MM-yyyy" mask="true" />
+                                                                                <p:message for="fechaIn" display="tooltip" />   
+                                                                            </div>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin" />
+                                                                                <p:calendar locale="es" id="fechaFin" pattern="dd-MM-yyyy" mask="true" />
+                                                                                <p:message for="fechaFin" display="tooltip" />   
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr/>
+                                                                    <p:outputPanel>
+                                                                        <p:autoUpdate/>
+                                                                        <div class="form-group"> 
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                                <p:commandButton id="btnBuscarIncapacidades" value="Guardar información" 
+                                                                                                 icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" oncomplete="PF('@form')update();"
+                                                                                                 update="@form"  process="@form" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </p:outputPanel>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>                                                   
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </p:panel>
+                                    </p:outputPanel>
+                                    <!--Filtros-->
+                                    <!--Fin filtros-->
+                                </h:form> 
+                                <!--Agregar Evidencias-->
+                                <!--Fin Agregar Evidencias-->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </p:panel>
+        </c:if>
+    </ui:define>
+    <h:outputScript library="js" name="funciones.js" />
+</ui:composition>
