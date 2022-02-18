@@ -14,16 +14,19 @@
         <meta name="mobile-web-app-capable" content="yes"/>
         <f:loadBundle var="msg" basename="starter"/>
         <h:outputStylesheet library="css" name="starter.css"/>
-        <style>
-            .ui-icon.fa{
-                text-indent: 0;
-                background-image: none;
-            }
-            .ui-icon.fas{
-                text-indent: 0;
-                background-image: none;
-            }
-        </style>
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <style>
+                /*
+                Estilo agregado para aplicar filtro de escala de grises al sitio durante la veda electoral
+                */
+                html {
+                    -moz-filter: grayscale(100%);
+                    -webkit-filter: grayscale(100%);
+                    filter: gray;
+                    filter: grayscale(100%);
+                } 
+            </style>
+        </c:if>
         <!--h:outputStylesheet library="css" name="procesoElectoral"/-->
         <!--link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous"/-->
         <script src="https://kit.fontawesome.com/9e41a3eedf.js" crossorigin="anonymous"></script>

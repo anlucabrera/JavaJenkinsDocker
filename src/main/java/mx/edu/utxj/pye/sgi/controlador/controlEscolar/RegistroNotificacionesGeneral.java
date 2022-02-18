@@ -38,12 +38,10 @@ import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.NotificacionesTipo;
 import mx.edu.utxj.pye.sgi.enums.RolNotificacion;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
-import org.primefaces.event.UnselectEvent;
 
 /**
  *
@@ -108,6 +106,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             }
 
             rol = new RegistroNotificacionRolGeneral(notifAcceso.getValor());
+            obtenerListaNotificacionesActivas(logonMB.getPersonal().getClave());
             obtenerListaNotificacionesTrabajador();
 
         } catch (Exception e) {
@@ -353,17 +352,29 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         }
         return true;
     }
+    
+    public boolean tieneVariosDias(Date horaInicio, Date horaFin) {
+        Date fechaInicio, fechaFin;
+        fechaInicio = utilidadesCH.castearLDTaD(utilidadesCH.castearDaLDT(horaInicio).with(LocalTime.MIDNIGHT));
+        fechaFin = utilidadesCH.castearLDTaD(utilidadesCH.castearDaLDT(horaFin).with(LocalTime.MIDNIGHT));
+        if (fechaInicio.equals(fechaFin)) {
+            return false;
+        }else{
+            return true;
+        }
+    }
 
-//    public boolean obtenerMes(Date fechaFin) {
-//        LocalDate mes = fechaFin.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-//        Month mesActual = LocalDate.now().getMonth();
-//        Month mesAviso = mes.getMonth();
-//        if (mesAviso == mesActual) {
-//            return true;
-//        } else {
-//            return false;
-//        }
-//    }
+    public boolean obtenerMes(Date horaInicio, Date horaFin) {
+        LocalDate fechaI = utilidadesCH.castearDaLD(horaInicio);
+        LocalDate fechaF = utilidadesCH.castearDaLD(horaFin);
+        Month mesInicio = fechaI.getMonth();
+        Month mesFin = fechaF.getMonth();
+        if (mesInicio == mesFin) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     /**
      * ********************************************* Llenado de listas
      * ********************************************************
@@ -378,13 +389,10 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         }
     }
 
-    public void obtenerListaNotificacionesActivas() {
-        LocalDate fechaActual = LocalDate.now();
-        LocalDate fechaI = fechaActual.minusDays(2);
-        LocalDate fechaF = fechaActual.plusDays(8);
-        ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesActivas(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
+    public void obtenerListaNotificacionesActivas(int clave) {
+        ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesActivas(clave);
         if (resNotificaciones.getCorrecto()) {
-            rol.setListaNotificacionesCe(resNotificaciones.getValor());
+            rol.setListaNotificacionesCeRegistradas(resNotificaciones.getValor());
             mostrarMensajeResultadoEJB(resNotificaciones);
         } else {
             inicializarListaNotificacionesCe();

@@ -23,16 +23,6 @@
         <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         <!-- Fin de estilos para campañas electorales-->
     </c:if>
-    <style>
-            .ui-icon.fa{
-                text-indent: 0;
-                background-image: none;
-            }
-            .ui-icon.fas{
-                text-indent: 0;
-                background-image: none;
-            }
-        </style>
 
     <script type="text/javascript">
         function myconfig() {
@@ -719,7 +709,7 @@
             <div class="box box-primary">
                 <div class="box box-solid">
                     <div class="box-header with-border">
-                        <h2 class="box-title">Avisos</h2>
+                        <h2 class="box-title">Proximos eventos</h2>
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                             </button>
@@ -733,6 +723,8 @@
                             <c:set var="porcentaje" value="#{registroNotificacionesGeneral.obtenerPorcentajeFechas(notificacionCe.horaInicio)}"/>
                             <c:set var="diferencia" value="#{registroNotificacionesGeneral.obtenerDiferenciaDias(notificacionCe.horaInicio)}"/>
                             <c:set var="termino" value="#{registroNotificacionesGeneral.obtenerFinEvento(notificacionCe.horaInicio)}"/>
+                            <c:set var="tieneVariosDias" value="#{registroNotificacionesGeneral.tieneVariosDias(notificacionCe.horaInicio, notificacionCe.horaFin)}"/>
+                            <c:set var="mismoMes" value="#{registroNotificacionesGeneral.obtenerMes(notificacionCe.horaInicio, notificacionCe.horaFin)}"/>
                             <c:if test="#{diferencia eq 0 and termino eq false}"><c:set var="color" value="bg-yellow"/></c:if>
                             <c:if test="#{diferencia gt 0}"><c:set var="color" value="bg-green"/></c:if>
                             <c:if test="#{diferencia lt 0}"><c:set var="color" value="bg-red"/></c:if>
@@ -815,9 +807,34 @@
                                             </h4>
                                             <h4>
                                                 <p><strong>Duracion: </strong>
-                                                    <h:outputLabel value="#{notificacionCe.duracionEvento}">
-                                                        <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
-                                                    </h:outputLabel> horas
+                                                    <c:if test="#{tieneVariosDias}">
+                                                        <c:if test="#{mismoMes}">
+                                                            <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                                <f:convertDateTime pattern="'del' dd" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                            </h:outputLabel> al 
+                                                            <h:outputLabel value="#{notificacionCe.horaFin}">
+                                                                <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                            </h:outputLabel>
+                                                        </c:if>
+                                                        <c:if test="#{!mismoMes}">
+                                                            <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                                <f:convertDateTime pattern="'del' dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                            </h:outputLabel> al 
+                                                            <h:outputLabel value="#{notificacionCe.horaFin}">
+                                                                <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                            </h:outputLabel>
+                                                        </c:if>
+                                                    </c:if>
+                                                    <c:if test="#{!tieneVariosDias}">
+                                                        <c:if test="#{notificacionCe.duracionEvento eq 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                            Todo el dia.
+                                                        </c:if>
+                                                        <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                            <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                                <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                            </h:outputLabel> horas
+                                                        </c:if>
+                                                    </c:if>
                                                 </p>
                                             </h4>
                                             <h4><p><strong>Encargado: </strong>#{notificacionCe.personaResponsable}</p></h4>
