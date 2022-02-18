@@ -46,7 +46,7 @@ public class EjbLetreroFotografias {
      */
     public ResultadoEJB<Estudiante> validarEstudianteFotografias(Integer matricula){
         try{
-            List<Integer> grados = new ArrayList<>(); grados.add(6); grados.add(11);
+            List<Integer> grados = new ArrayList<>();  grados.add(5); grados.add(6); grados.add(10); grados.add(11);
             Estudiante e = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.grupo.grado IN :grados ORDER BY e.periodo DESC",  Estudiante.class)
                     .setParameter("matricula", matricula)
                     .setParameter("grados", grados)
@@ -95,16 +95,18 @@ public class EjbLetreroFotografias {
             
             listaEventosFotografias.forEach(evento -> {
                 
-                Integer grado = 6;
+                List<Integer> grados = new ArrayList<>();   
                 
                 if(!evento.getNivel().equals("TSU")){
-                    grado = 11;
+                    grados.add(10); grados.add(11);
+                }else{
+                    grados.add(5); grados.add(6);
                 }
                
-                Estudiante estadiaEst = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula AND e.grupo.generacion =:generacion AND e.grupo.grado=:grado AND e.tipoEstudiante.idTipoEstudiante IN :tiposEst",  Estudiante.class)
+                Estudiante estadiaEst = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula=:matricula AND e.grupo.generacion =:generacion AND e.grupo.grado IN :grados AND e.tipoEstudiante.idTipoEstudiante IN :tiposEst",  Estudiante.class)
                         .setParameter("matricula", matricula)
                         .setParameter("generacion", evento.getGeneracion())
-                        .setParameter("grado", grado) 
+                        .setParameter("grados", grados) 
                         .setParameter("tiposEst", tiposEst)     
                         .getResultStream().findFirst().orElse(null);
                     
@@ -159,7 +161,7 @@ public class EjbLetreroFotografias {
      */
     public ResultadoEJB<DtoDatosEstudiante> getInformacionEstudiante(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo, Estudiante estudiante){
         try{
-            Estudiante estudianteGeneracion = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo ASC", Estudiante.class)
+            Estudiante estudianteGeneracion = em.createQuery("SELECT e FROM Estudiante e WHERE e.matricula =:matricula AND e.grupo.generacion=:generacion ORDER BY e.periodo DESC", Estudiante.class)
                     .setParameter("matricula", estudiante.getMatricula())
                     .setParameter("generacion", generacion.getGeneracion())
                     .getResultStream().findFirst().orElse(null);
