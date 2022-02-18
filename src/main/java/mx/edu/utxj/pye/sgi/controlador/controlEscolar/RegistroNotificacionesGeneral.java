@@ -344,13 +344,11 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         return (int) ((fechaFin.getTime() - fechaInicio) / (1000 * 60 * 60 * 24));
     }
 
-    public boolean obtenerFinEvento(Date horaInicio) {
-        long fechaInicio = System.currentTimeMillis();
-        int diff = (int) ((horaInicio.getTime() - fechaInicio) / (1000 * 60 * 60 * 24));
-        if (diff >= 0) {
-            return false;
-        }
-        return true;
+    public boolean obtenerFinEvento(Date horaFin) {
+        LocalDateTime horaActual = LocalDateTime.now();
+        LocalDateTime horaTermino = utilidadesCH.castearDaLDT(horaFin);
+        boolean termino = horaActual.isAfter(horaTermino);
+        return termino;
     }
     
     public boolean tieneVariosDias(Date horaInicio, Date horaFin) {
@@ -401,7 +399,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
 
     public void obtenerListaNotificacionesAlumnos() {
         LocalDate fechaActual = LocalDate.now();
-        LocalDate fechaI = fechaActual.minusDays(2);
+        LocalDate fechaI = fechaActual.minusDays(1);
         LocalDate fechaF = fechaActual.plusDays(8);
         ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesAlumnos(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
         if (resNotificaciones.getCorrecto()) {
@@ -413,7 +411,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     }
     public void obtenerListaNotificacionesTrabajador() {
         LocalDate fechaActual = LocalDate.now();
-        LocalDate fechaI = fechaActual.minusDays(2);
+        LocalDate fechaI = fechaActual.minusDays(1);
         LocalDate fechaF = fechaActual.plusDays(8);
         ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesTrabajador(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
         if (resNotificaciones.getCorrecto()) {
