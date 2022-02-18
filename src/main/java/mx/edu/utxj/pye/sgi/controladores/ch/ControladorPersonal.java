@@ -528,18 +528,17 @@ public class ControladorPersonal implements Serializable {
 
     public void descargarEvidenciasCH() {
         try {
+            nombreArchivo = "CV " + nuevoOBJListaPersonal.getClave() +" - "+ nuevoOBJListaPersonal.getNombre();            
             String rutaGeneral = "C:\\archivos\\evidenciasCapitalHumano\\" + nuevoOBJListaPersonal.getClave();
-            String rutaZipGeneral = "C:\\archivos\\evidenciasCapitalHumano\\" + nuevoOBJListaPersonal.getClave() + " CV " + nuevoOBJListaPersonal.getNombre()+ ".zip";
-
+            String rutaZipGeneral = "C:\\archivos\\evidenciasCapitalHumano\\zips\\" + nombreArchivo+ ".zip";
+            
+            File dirP = new File(rutaGeneral);
             String zipDirName = rutaZipGeneral;
-            
-            
+                        
             carpetas = new ArrayList<>();
             carpetas.clear();
             carpetas.add(rutaGeneral);
-            System.out.println("tamanio " + carpetas.size());
             for (int i = 0; i < carpetas.size(); i++) {
-                System.out.println("tamanio " + carpetas.size());
                 File dir = new File(carpetas.get(i));
                 File[] files = dir.listFiles();
                 for (File file : files) {
@@ -552,55 +551,30 @@ public class ControladorPersonal implements Serializable {
                         carpetas.add(file.getAbsolutePath());
                     }
                 }
+            }   
+                        
+            try (FileOutputStream fos = new FileOutputStream(zipDirName)) {
+                ZipOutputStream zos = new ZipOutputStream(fos);
+                for (String filePath : filesListInDir) {
+                    if(filePath.contains("evidenciasCapitalHumano")){
+                        //for ZipEntry we need to keep only relative file path, so we used substring on absolute path
+                        ZipEntry ze = new ZipEntry(filePath.substring(dirP.getAbsolutePath().length() + 1, filePath.length()));
+                        zos.putNextEntry(ze);
+                        //read the file and write to ZipOutputStream
+                        FileInputStream fis = new FileInputStream(filePath);
+                        byte[] buffer = new byte[1024];
+                        int len;
+                        while ((len = fis.read(buffer)) > 0) {
+                            zos.write(buffer, 0, len);
+                        }
+                        zos.closeEntry();
+                        fis.close();
+                    }
+                }
+                zos.close();
             }
 
-            System.out.println("filesListInDir "+filesListInDir.size());        
-            
-            
-//            
-//            try (FileOutputStream fos = new FileOutputStream(zipDirName)) {
-//                ZipOutputStream zos = new ZipOutputStream(fos);
-//                for (String filePath : filesListInDir) {
-//                    if(filePath.contains("fotografia")){
-//                        //for ZipEntry we need to keep only relative file path, so we used substring on absolute path
-//                        ZipEntry ze = new ZipEntry(filePath.substring(dir.getAbsolutePath().length() + 1, filePath.length()));
-//                        zos.putNextEntry(ze);
-//                        //read the file and write to ZipOutputStream
-//                        FileInputStream fis = new FileInputStream(filePath);
-//                        byte[] buffer = new byte[1024];
-//                        int len;
-//                        while ((len = fis.read(buffer)) > 0) {
-//                            zos.write(buffer, 0, len);
-//                        }
-//                        zos.closeEntry();
-//                        fis.close();
-//                    }
-//                }
-//                zos.close();
-//            }
-//            
-//            String nombreArchivo = "";
-//            if (nuevoOBJInformacionAdicionalPersonal != null) {
-//                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa() != null){
-//                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
-//                }
-//                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp() != null){
-//                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaCurp());
-//                }
-//                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio() != null){
-//                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaDomicilio());
-//                }
-//                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne() != null){
-//                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
-//                }
-//                if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc() != null){
-//                    rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaRfc());
-//                }
-//            }
-            nombreArchivo = nuevoOBJListaPersonal.getClave() + " CV " + nuevoOBJListaPersonal.getNombre();
-
             if (!rutasEvidenciasBD.isEmpty()) {
-                File zip = ZipWritter.generarZipPoa(rutasEvidenciasBD,nombreArchivo, Integer.parseInt(String.valueOf(contactoDestino)));
                 Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/" + nombreArchivo + ".zip" + "');");
             }
         } catch (Throwable ex) {

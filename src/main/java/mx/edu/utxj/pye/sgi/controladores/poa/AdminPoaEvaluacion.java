@@ -46,6 +46,9 @@ import org.primefaces.model.StreamedContent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.io.FileOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 @Named
@@ -468,7 +471,9 @@ public class AdminPoaEvaluacion implements Serializable {
             List<String> rutasEvidenciasBD = new ArrayList<>();
             rutasEvidenciasBD.clear();
             evidenciasesDetalles.forEach((t) -> {
-                if (t.getMes().equals(mesNombre)) {
+                if (!ejercicioFiscal.equals(controladorEmpleado.getCalendarioevaluacionpoa().getEjercicioFiscal())) {
+                    rutasEvidenciasBD.add(t.getRuta());
+                } else if (t.getMes().equals(mesNombre)) {
                     rutasEvidenciasBD.add(t.getRuta());
                 }
             });
@@ -476,9 +481,35 @@ public class AdminPoaEvaluacion implements Serializable {
                     + mesNombre
                     + "_CM_ej_" + ap.getCuadroMandoInt().getEje().getEje() + "_Est_" + ap.getCuadroMandoInt().getEstrategia().getNumero() + "_Lin_" + ap.getCuadroMandoInt().getLineaAccion().getNumero()
                     + "_idA_" + ap.getActividadPoa();
+            
+            String rutaGeneral = "C:\\archivos";
+            String rutaZipGeneral = "C:\\archivos\\evidenciasCapitalHumano\\zips\\" + nombreArchivo+ ".zip";
+            
+            File dirP = new File(rutaGeneral);
+            String zipDirName = rutaZipGeneral;
+                        
+            try (FileOutputStream fos = new FileOutputStream(zipDirName)) {
+                ZipOutputStream zos = new ZipOutputStream(fos);
+                for (String filePath : rutasEvidenciasBD) {
+                    if(filePath.contains("archivos")){
+                        //for ZipEntry we need to keep only relative file path, so we used substring on absolute path
+                        ZipEntry ze = new ZipEntry(filePath.substring(dirP.getAbsolutePath().length() + 1, filePath.length()));
+                        zos.putNextEntry(ze);
+                        //read the file and write to ZipOutputStream
+                        FileInputStream fis = new FileInputStream(filePath);
+                        byte[] buffer = new byte[1024];
+                        int len;
+                        while ((len = fis.read(buffer)) > 0) {
+                            zos.write(buffer, 0, len);
+                        }
+                        zos.closeEntry();
+                        fis.close();
+                    }
+                }
+                zos.close();
+            }
 
             if (!rutasEvidenciasBD.isEmpty()) {
-                File zip = ZipWritter.generarZipPoa(rutasEvidenciasBD, nombreArchivo, Integer.parseInt(String.valueOf(ap.getArea())));
                 Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/" + nombreArchivo + ".zip" + "');");
             }
         } catch (Throwable ex) {
