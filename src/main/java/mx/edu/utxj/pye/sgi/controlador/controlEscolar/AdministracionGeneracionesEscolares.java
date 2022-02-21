@@ -7,7 +7,6 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;

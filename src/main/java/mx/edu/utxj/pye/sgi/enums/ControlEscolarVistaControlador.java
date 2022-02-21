@@ -93,6 +93,7 @@ public enum ControlEscolarVistaControlador {
     ADMINISTRAR_CATALOGOSADMISION("/controlEscolar/se/administracionCatalogosAdmision.xhtml", AdministracionCatalogosAdmisionEscolares.class),
     ADMINISTRAR_CICLOSPERIODOSESCOLARES("/controlEscolar/se/administracionCiclosPeriodosEscolares.xhtml", AdministracionCiclosPeriodosEscolares.class),
     ADMINISTRAR_GENERACIONES("/controlEscolar/se/administracionGeneraciones.xhtml", AdministracionGeneracionesEscolares.class),
+    ADMINISTRAR_JUSTIFICACIONES_APERTURASEXTEMPORANEAS("/controlEscolar/se/administracionJustificacionesAperturaExtemporanea.xhtml", AdministracionJustificacionesAperturaEscolares.class),
 
     CARTA_NO_ADUEDO_FINANZAS("/controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml", CartaNoAdeudoFinanzas.class),
 

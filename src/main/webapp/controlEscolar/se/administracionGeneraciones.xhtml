@@ -30,7 +30,6 @@
     <ui:define name="body">
         <c:if test="#{administracionGeneracionesEscolares.cargado}">
         <adm:breadcrumb title="Administración de generaciones"/>
-        <adm:sidebar collapsed="true"/>
         <div class="contenedor">
             <c:if test="#{administracionGeneracionesEscolares.tieneAcceso}">
                 <!-- zona de importación de enums -->
@@ -62,7 +61,7 @@
                                     <c:set var="casilla3" value="#{'col-sm-12 col-md-2 col-lg-3'}" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
                                         <c:if test="#{administracionGeneracionesEscolares.rol.pestaniaActiva eq 0}">
-                                            <div class="#{casilla2}">
+                                            <div class="#{casilla3}">
                                                 <div class="ui-material">
                                                     <p:inputSwitch id="agregarGeneracion" styleClass="form-control" value="#{administracionGeneracionesEscolares.rol.agregarGeneracion}" valueChangeListener="#{administracionGeneracionesEscolares.cambiarAgregarGeneracion}" rendered="#{!administracionGeneracionesEscolares.rol.agregarCicloGeneracion}"> 
                                                         <p:ajax update="@this" process="@this" />
@@ -72,7 +71,7 @@
                                                     <p:message for="agregarGeneracion" display="tooltip" rendered="#{!administracionGeneracionesEscolares.rol.agregarCicloGeneracion}"/> 
                                                 </div>
                                             </div>
-                                            <div class="#{casilla2}">
+                                            <div class="#{casilla3}">
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="anioInicio" value="#{administracionGeneracionesEscolares.rol.anioInicio}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionGeneracionesEscolares.cambiarAnioInicio}" rendered="#{administracionGeneracionesEscolares.rol.agregarGeneracion}">
                                                         <f:selectItems value="#{administracionGeneracionesEscolares.rol.anios}" var="anio" itemValue="#{anio}" itemLabel="#{anio}" />
@@ -83,21 +82,21 @@
                                                     <p:message for="anioInicio" />
                                                 </div>
                                             </div>
-                                            <div class="#{casilla2}">
+                                            <div class="#{casilla3}">
                                                 <div class="ui-material">
                                                     <p:inputText id="anioFin" value="#{administracionGeneracionesEscolares.rol.anioFin}" disabled="true" rendered="#{administracionGeneracionesEscolares.rol.agregarGeneracion}"/>
                                                     <p:outputLabel value="Año fin" for="anioFin" rendered="#{administracionGeneracionesEscolares.rol.agregarGeneracion}"/>
                                                     <p:message for="anioFin" />
                                                 </div>
                                             </div>
-                                            <div class="#{casilla2}">
+                                            <div class="#{casilla3}">
                                                 <div class="ui-material">
                                                     <p:commandButton id="btnGuardarGeneracion" value="Guardar" actionListener="#{administracionGeneracionesEscolares.guardarGeneracion()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionGeneracionesEscolares.rol.agregarGeneracion}" oncomplete="PF('frm')update();" update="@form"  process="@form"/>
                                                 </div>
                                             </div>
                                         </c:if>
                                         <c:if test="#{administracionGeneracionesEscolares.rol.pestaniaActiva eq 1}">
-                                            <div class="#{casilla2}">
+                                            <div class="#{casilla3}">
                                                 <div class="ui-material">
                                                     <p:inputSwitch id="agregarCicloGeneracion" styleClass="form-control" value="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion}" valueChangeListener="#{administracionGeneracionesEscolares.cambiarAgregarCicloGeneracion}" rendered="#{!administracionGeneracionesEscolares.rol.agregarGeneracion}"> 
                                                         <p:ajax update="@this" process="@this" />
@@ -107,7 +106,7 @@
                                                     <p:message for="agregarCicloGeneracion" display="tooltip" rendered="#{!administracionGeneracionesEscolares.rol.agregarCicloGeneracion}"/> 
                                                 </div>
                                             </div>
-                                            <div class="#{casilla2}">
+                                            <div class="#{casilla3}">
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="ciclo" value="#{administracionGeneracionesEscolares.rol.cicloEscolar}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionGeneracionesEscolares.cambiarCicloEscolar}" rendered="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion}">
                                                         <f:selectItems value="#{administracionGeneracionesEscolares.rol.ciclosEscolares}" var="ciclo" itemValue="#{ciclo}" itemLabel="#{caster.cicloEscolarToString(ciclo)}" />
@@ -118,7 +117,7 @@
                                                     <p:message for="ciclo" />
                                                 </div>
                                             </div>
-                                            <div class="#{casilla2}">
+                                            <div class="#{casilla3}">
                                                 <div class="ui-material">
                                                     <p:selectOneMenu id="generacion" value="#{administracionGeneracionesEscolares.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionGeneracionesEscolares.cambiarGeneracion}" rendered="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion}">
                                                         <f:selectItems value="#{administracionGeneracionesEscolares.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
@@ -129,7 +128,7 @@
                                                     <p:message for="generacion" />
                                                 </div>
                                             </div>
-                                            <div class="#{casilla2}">
+                                            <div class="#{casilla3}">
                                                 <div class="ui-material">
                                                     <p:commandButton id="btnGuardarCicloGeneracion" value="Guardar" actionListener="#{administracionGeneracionesEscolares.guardarCicloGeneracion()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion}" oncomplete="PF('frm')update();" update="@form"  process="@form"/>
                                                 </div>
@@ -239,7 +238,7 @@
                           widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
                           modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
                     <div class="box box-primary">
-                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para admininistrar tipo de aspirante y estudiante</h3></div>
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para admininistrar generaciones</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
                                 <c:forEach items="#{administracionGeneracionesEscolares.rol.instrucciones}" var="instruccion">
