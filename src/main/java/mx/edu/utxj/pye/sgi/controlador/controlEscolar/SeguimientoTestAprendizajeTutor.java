@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class SeguimientoTestAprendizajeTutor extends ViewScopedRol implements De
     
     @Getter @Setter private DtoSeuimientoTestAprendizajeRolMultiple rol = new DtoSeuimientoTestAprendizajeRolMultiple();
     @Getter @Setter Boolean cargado, tieneAcceso = false;
+    @Getter @Setter SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_hhmmss");
     
     @EJB EjbPropiedades ep;
     @EJB EjbSeguimientoTestDiagnosticoAprendizaje ejbSTDA;
@@ -83,33 +85,20 @@ public class SeguimientoTestAprendizajeTutor extends ViewScopedRol implements De
             
             ResultadoEJB<Integer> periodo = ejbSTDA.obtenerPeriodoTest();
             rol.setPeriodoActivo(periodo.getValor());
+            rol.setActivar(Boolean.FALSE);
             
             rol.setNombre("plantilla_test.xlsx");
             rol.setCarpeta("resultados_test");
             rol.setNombreWord("formato_informe.docx");
             rol.setNombre2("test_completo_incompleto.xlsx");
-            
-            rol.getInstrucciones().add("Seguimiento del Test de Diagnóstico de Estilos de Aprendizaje");
-            rol.getInstrucciones().add("CONSULTA DE INFORMACIÓN:");
-            rol.getInstrucciones().add("-Seleccionar grupo a visualizar.");
-            rol.getInstrucciones().add("NOTA: En caso de contar con grupos tutorados pertenecientes a SAIIUT, se le mostrará un segundo apartado de selección, "
-                    + "el cual habilitará 2 tablas de estudiante con el Test completo e incompleto.");
-            rol.getInstrucciones().add("");
-            rol.getInstrucciones().add("DESCARGA DE INFORMACIÓN:");
-            rol.getInstrucciones().add("Para generar los resultados del Test en formato Excel así como tambien el Informe Grupal "
-                    + "del Test debe seleccionar el grupo a su cargo");
-            rol.getInstrucciones().add("Para descargar la base de información de los estudiantes con Test Completo e Incompleto, "
-                    + "en la parte superior derecha de la Tabla se encuentra un icono de descarga, en el cuál deben dar clic para iniciar dicha descarga");
-            
-            
         } catch (Exception e) {mostrarExcepcion(e);}
     }
     
     public void obtenerEstudiantesGrupoSeleccionado(){
-        //System.out.println("Grado Seleccionado:"+ rol.getIdGrupo());
+        if(rol.getIdGrupo() == null) return;
         ResultadoEJB<Grupo> resGrupo = ejbSTDA.obtenerGrupoSeleccionado(rol.getIdGrupo());
         rol.setGrupo(resGrupo.getValor());
-        
+        rol.setActivar(Boolean.TRUE);
         ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar>> lista = ejbSTDA.obtenerEstudiantes(rol.getGrupo());
         rol.setListaDtoEstudiante(lista.getValor());
         //System.out.println("Lista estudiantes encontrados");
@@ -138,16 +127,15 @@ public class SeguimientoTestAprendizajeTutor extends ViewScopedRol implements De
     
     public void generarExcelTest() throws IOException{
         gExcel.obtenerLibro(rol.getNombre());
-        rol.setExcel("Resultados_Test.xlsx");
+        rol.setExcel("Resultados_Test_"+sdf.format(new Date())+".xlsx");
+        System.out.println("Numero de hojas" + gExcel.getLibro().getNumberOfSheets());
         rol.setLibro(gExcel.getLibro().getSheetAt(0).getSheetName());
         //System.out.println("Grado Seleccionado:"+ rol.getIdGrupo());
         ResultadoEJB<Grupo> resGrupo = ejbSTDA.obtenerGrupoSeleccionado(rol.getIdGrupo());
         rol.setGrupo(resGrupo.getValor());
-        rol.setSubcarpeta("Grupo_"+rol.getGrupo().getGrado()+rol.getGrupo().getLiteral().toString()+"_"+rol.getGrupo().getPeriodo());
+        rol.setSubcarpeta("Grupo_"+ rol.getGrupo().getPlan().getIdPlanEstudio() +"_"+rol.getGrupo().getGrado()+rol.getGrupo().getLiteral().toString()+"_"+rol.getGrupo().getPeriodo());
         ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar>> lista = ejbSTDA.obtenerEstudiantes(rol.getGrupo());
         rol.setListaDtoEstudiante(lista.getValor());
-        //System.out.println("Lista estudiantes encontrados");
-        //rol.getListaDtoEstudiante().stream().forEach(System.out::println);
         List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar> dtoAECompleto = rol.getListaDtoEstudiante()
                 .stream()
                 .map(dtoEstudiante -> ejbSTDA.packEncuestasCompletas(dtoEstudiante))
@@ -160,12 +148,17 @@ public class SeguimientoTestAprendizajeTutor extends ViewScopedRol implements De
             DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar dto = dtoAECompleto.get(i);
             TestDiagnosticoAprendizaje test = ejbSTDA.obtenerTest(dto).getValor();
             //System.out.println("Index:"+i+" Estudiante:"+dto+" Test:"+test);
-            rol.setLibro(gExcel.getLibro().getSheetAt(i+1).getSheetName());
+            rol.setLibro(gExcel.getLibro().getSheetAt(i + 1).getSheetName());
             //System.out.println("Nombre:"+ rol.getLibro());
             //gExcel.eliminarLibros(rol.getLibro());
             if(test.equals(new TestDiagnosticoAprendizaje())) return;
             gExcel.escribirDatosExcel(dto, test, rol.getLibro());
         }
+        Integer noHojas = gExcel.getLibro().getNumberOfSheets();
+        Integer noLibrosOcupados = dtoAECompleto.size() + 1;
+        Integer hojasRestantes = noHojas - noLibrosOcupados;
+        gExcel.eliminarLibros(noLibrosOcupados, hojasRestantes);
+        //gExcel.eliminarLibros(1);
         gExcel.escribirLibro(rol.getCarpeta(), rol.getSubcarpeta(), rol.getExcel());
         
         String ruta = gExcel.enviarLibro();
@@ -176,11 +169,11 @@ public class SeguimientoTestAprendizajeTutor extends ViewScopedRol implements De
     public void generarInformeWord() throws IOException{
         gExcel.obtenerWord(rol.getNombreWord());
         
-        rol.setWord("Informe_Test.docx");
+        rol.setWord("Informe_Test_"+sdf.format(new Date())+".docx");
         rol.setNameWord(gExcel.getWord().toString());
         ResultadoEJB<Grupo> resGrupo = ejbSTDA.obtenerGrupoSeleccionado(rol.getIdGrupo());
         rol.setGrupo(resGrupo.getValor());
-        rol.setSubcarpeta("Grupo_"+rol.getGrupo().getGrado()+rol.getGrupo().getLiteral().toString()+"_"+rol.getGrupo().getPeriodo());
+        rol.setSubcarpeta("Grupo_"+rol.getGrupo().getPlan().getIdPlanEstudio()+"_"+rol.getGrupo().getGrado()+rol.getGrupo().getLiteral().toString()+"_"+rol.getGrupo().getPeriodo());
         ////////////Se obtiene la lista de estudiantes activos en el grupo seleccionado
         ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar>> lista = ejbSTDA.obtenerEstudiantes(rol.getGrupo());
         rol.setListaDtoEstudiante(lista.getValor());
@@ -207,10 +200,10 @@ public class SeguimientoTestAprendizajeTutor extends ViewScopedRol implements De
     
     public void generateResultadosTestCompleto()throws IOException{
         gExcel.obtenerLibro(rol.getNombre2());
-        rol.setExcel("Test_Completo_Incompleto.xlsx");
+        rol.setExcel("Test_Completo_Incompleto_"+ sdf.format(new Date()) +".xlsx");
         ResultadoEJB<Grupo> resGrupo = ejbSTDA.obtenerGrupoSeleccionado(rol.getIdGrupo());
         rol.setGrupo(resGrupo.getValor());
-        rol.setSubcarpeta("Grupo_"+rol.getGrupo().getGrado()+rol.getGrupo().getLiteral().toString()+"_"+rol.getGrupo().getPeriodo());
+        rol.setSubcarpeta("Grupo_"+ rol.getGrupo().getPlan().getIdPlanEstudio()+"_"+rol.getGrupo().getGrado()+rol.getGrupo().getLiteral().toString()+"_"+rol.getGrupo().getPeriodo());
         ResultadoEJB<List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar>> lista = ejbSTDA.obtenerEstudiantes(rol.getGrupo());
         rol.setListaDtoEstudiante(lista.getValor());
         List<DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar> dtoAECompleto = rol.getListaDtoEstudiante()

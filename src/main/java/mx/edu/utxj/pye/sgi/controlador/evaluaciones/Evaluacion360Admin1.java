@@ -42,7 +42,16 @@ import org.primefaces.component.selectonemenu.SelectOneMenu;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import javax.servlet.http.HttpServletRequest;
+import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
+import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
+import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
+import org.omnifaces.cdi.ViewScoped;
 
 
 
@@ -51,8 +60,8 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
  * @author UTXJ
  */
 @Named
-@SessionScoped
-public class Evaluacion360Admin1 implements Serializable {
+@ViewScoped
+public class Evaluacion360Admin1 extends ViewScopedRol implements Desarrollable{
     
     private static final long serialVersionUID = -2104785351397760456L;
 
@@ -60,11 +69,15 @@ public class Evaluacion360Admin1 implements Serializable {
     @Getter private Integer evaluados = 0;
     @Getter private Integer evaluando = 0;
     @Getter private Boolean cargada = false;
+    @Getter private Boolean tieneAcceso = false;
 
     @Getter private Evaluaciones360 evaluacion;
     @Getter private PeriodosEscolares periodoEscolar;
     @Getter @Setter private ListaPersonal directivoSeleccionado;
+    @Getter @Setter private Personal persona;
 
+    @Getter @Setter private NivelRol nivel;
+    
     @Getter private List<Apartado> apartados;
     @Getter private List<ListaPersonal> listaDirectivos;
     @Getter private List<ListaPersonal> listaSubordinados;
@@ -78,6 +91,7 @@ public class Evaluacion360Admin1 implements Serializable {
     @Getter @Setter List<Integer> clavesOpciones = new ArrayList<>();
 
     @EJB private EjbEvaluacion3601 ejbEvaluacion360;
+    @EJB private EjbPropiedades ep;
     @EJB private Facade f;
     @Inject private LogonMB logonMB;
     private EntityManager em;
@@ -89,72 +103,37 @@ public class Evaluacion360Admin1 implements Serializable {
     @PostConstruct
     public void init() {
         try {
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
-            em = f.getEntityManager();
+            if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+            cargada = true;
+            setVistaControlador(ControlEscolarVistaControlador.EVALUACION_360);
+            
+            ResultadoEJB<Evaluaciones360> resEvaluacion = ejbEvaluacion360.obtenerEvaluacionActiva();
+            if(!resEvaluacion.getCorrecto()) return;
+            evaluacion = resEvaluacion.getValor();
+            ResultadoEJB<ListaPersonal> resValidacion = ejbEvaluacion360.validarPersona(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
+            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
+            directivoSeleccionado = resValidacion.getValor();
+            tieneAcceso = Boolean.TRUE;
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            
+            periodoEscolar = ejbEvaluacion360.obtenerPeriodo(evaluacion.getPeriodo()).getValor();
             respuestasPosibles = ejbEvaluacion360.getRespuestasPosibles();
             apartados = ejbEvaluacion360.getApartados();
-
-            //paso 1 obtener lista de directivos
-//        listaDirectivos = evaluacionDesempenioEJB.getListaDirectivos();
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.init() ld: " + listaDirectivos);
-            //paso 2 elegir un directivo
-//        directivoSeleccionado = new ListaPersonal(30);
-//        if(listaDirectivos.contains(directivoSeleccionado)){
-//            directivoSeleccionado = listaDirectivos.get(listaDirectivos.indexOf(directivoSeleccionado));
-//        }
-            //facade.setEntityClass(ListaPersonal.class);
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.init() lucn: " + logonMB.getListaUsuarioClaveNomina());
-            directivoSeleccionado = em.find(ListaPersonal.class, Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));//(ListaPersonal) facade.find(Integer.parseInt(logonMB.getListaUsuarioClaveNomina().getNumeroNomina()));
-//        System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.init() elegido: " + directivoSeleccionado);
-
-            if (directivoSeleccionado != null) {
-                //paso 3 obtener la lista de subordnados del directivo elegido
-                listaSubordinados = ejbEvaluacion360.getListaSubordinados(directivoSeleccionado);
-//                System.err.println("");
-//                listaSubordinados.forEach(x -> {System.err.println("el personal : "+ x.getClave());});
-//                System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.init() subordinados: " + listaSubordinados.size());
-//                listaSubordinados.forEach(System.out::println);
-                //paso 4 obtener las fotos de los subordinados
-                //se convierte en paso 11 debido a que la lista de personal debe decidirse segun las opciones en pantalla
-                //paso 5 obtener la evaluacion activa
-                evaluacion = ejbEvaluacion360.evaluacionActiva();
-                //TODO: tomar acciones en casa de no encontrar una evaluación activa
-
-                if (evaluacion != null) {
-                    //paso 6 obtener periodo activo
-                    //facade.setEntityClass(PeriodosEscolares.class);
-                    periodoEscolar = em.find(PeriodosEscolares.class, evaluacion.getPeriodo());//(PeriodosEscolares) facade.find(evaluacion.getPeriodo());
-//                    System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.init() periodoEscolar:" + periodoEscolar);
-                    //paso 7 obtener respuestas
-                    ejbEvaluacion360.cargarResultadosAlmacenados(evaluacion, directivoSeleccionado, listaSubordinados);
-//        for(DesempenioEvaluacionResultados der : evaluacion.getDesempenioEvaluacionResultadosList()){
-//            System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.init(7) der: " + der);
-//        }
-
-                    //paso8 inicializar claves de opciones
-                    clavesOpciones.clear();
-                    for (int i = 0; (i < maxEvaluando && i < listaSubordinados.size()); i++) {
-                        clavesOpciones.add(listaSubordinados.get(i).getClave());
-                    }
-
-                    //paso 9 inicializar opciones
-                    initOpciones();
-
-                    //paso 10 inicializar mapeo de respuestas por clave subordinado y numero de pregunta
-                    initRespuestas();
-
-                    //paso 11 definir la lista del personal que se esta evaluando
-                    initPersonalEvaluando();
-
-                    initPersonalEvaluado();
-                    cargada = true;
-//                    System.out.println("se carga  360");
-                }
+            listaSubordinados = ejbEvaluacion360.getListaSubordinados(evaluacion, directivoSeleccionado);
+            ejbEvaluacion360.cargarResultadosAlmacenados(evaluacion, directivoSeleccionado, listaSubordinados);
+            initPersonalEvaluado();
+            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            if (!tieneAcceso) {mostrarMensajeNoAcceso();return;}
+            if (!resEvaluacion.getCorrecto()) {mostrarMensajeResultadoEJB(resEvaluacion);}
+            nivel = NivelRol.OPERATIVO;
+            clavesOpciones.clear();
+            for (int i = 0; (i < maxEvaluando && i < listaSubordinados.size()); i++) {
+                clavesOpciones.add(listaSubordinados.get(i).getClave());
             }
-
+            initOpciones();
+            initRespuestas();
+            initPersonalEvaluando();
         } catch (Exception e) {
-//            System.out.println("admini 360 e: " + e.getMessage());
             cargada = false;
         }
 
@@ -167,7 +146,7 @@ public class Evaluacion360Admin1 implements Serializable {
 //            System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.Evaluacion360Admin1.init(9) clave: " + clave);
             opciones.put(index, new ArrayList<>());
             //facade.setEntityClass(ListaPersonal.class);
-            ListaPersonal lpPrimero = em.find(ListaPersonal.class, clave);//(ListaPersonal) facade.find(clave);
+            ListaPersonal lpPrimero = ejbEvaluacion360.validarPersona(clave).getValor();//(ListaPersonal) facade.find(clave);
             opciones.get(index).add(lpPrimero);
             //opcionesSelect.get(index).add(e)
             for (ListaPersonal lp : listaSubordinados) {
@@ -177,8 +156,7 @@ public class Evaluacion360Admin1 implements Serializable {
                 }
             }
             //facade.setEntityClass(Evaluaciones360Resultados.class);
-            Evaluaciones360ResultadosPK pk = new Evaluaciones360ResultadosPK(evaluacion.getEvaluacion(), directivoSeleccionado.getClave(), clave);
-            Evaluaciones360Resultados resultado = em.find(Evaluaciones360Resultados.class, pk);//(Evaluaciones360Resultados) facade.find();
+            Evaluaciones360Resultados resultado = ejbEvaluacion360.obtenerResultados(evaluacion, directivoSeleccionado, clave).getValor();
             apartadosHabilidades.put(clave, ejbEvaluacion360.getApartadoHabilidades(resultado.getCategoria().getCategoria(),evaluacion.getEvaluacion()));
             index++;
         }
@@ -337,6 +315,14 @@ public class Evaluacion360Admin1 implements Serializable {
         Ajax.oncomplete("descargar('" + ew.enviarLibro() + "');");
 
 //        System.out.println("mx.edu.utxj.pye.sgi.controlador.evaluaciones.EvaluacionDesempenioAdmin.descargarCedulas() ruta: " + ruta);
+    }
+    
+    @Override
+    public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
+        String valor = "evaluacion 360";
+        Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
+////        map.entrySet().forEach(System.out::println);
+        return mostrar(request, map.containsValue(valor));
     }
 
 }

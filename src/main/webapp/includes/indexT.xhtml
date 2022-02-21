@@ -488,7 +488,7 @@
                     </div>
                 </div>
             </div> 
-            <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacion360Admin1.cargada || evaluacionConocimientoCodigoEtica.tieneAcceso || climaLaboral.cargada}">
+            <c:if test="#{evaluacionDesempenioAdmin.cargada || evaluacion360Admin1.cargada || evaluacionConocimientoCodigoEtica.tieneAcceso || climaLaboral.cargada}">
                 <div class="box box-primary">
                     <div class="box box-solid">
                         <div class="box-header with-border">
@@ -567,25 +567,25 @@
                                         </div>
                                     </c:if>
                                 </c:if>
-                                <c:if test="#{evaluacion360Admin1.cargada}">
+                                <c:if test="#{evaluacion360Admin1.tieneAcceso}">
                                     <div class="#{claseResumen}" style="max-height: 154px;">
                                         <div class="small-box bg-blue">
-                                            <div class="inner" style="cursor: pointer;" onclick="360_1();">
-                                                <h3>
-                                                    <h:outputLabel value="#{evaluacion360Admin1.evaluados / evaluacion360Admin1.listaPersonalEvaluado.size() * 100}">
+                                            <div class="inner" style="cursor: pointer;">
+                                                <p:link outcome="evaluaciones/evaluacion/360_1"  class="small-box-footer">
+                                                    <h3>
+                                                    <h:outputLabel value="#{evaluacion360Admin1.evaluados / evaluacion360Admin1.listaPersonalEvaluado.size() * 100}" style="cursor: pointer; color: #ffffff">
                                                         <f:convertNumber pattern="###,###.##" />
                                                     </h:outputLabel>
-                                                    <sup style="font-size: 20px">%</sup>
+                                                    <sup style="font-size: 20px; color: #ffffff">%</sup>
                                                 </h3>
-                                                <p>Evaluación de 360°<br/>Periodo: #{evaluacion360Admin1.periodoEscolar.mesInicio.mes} - #{evaluacion360Admin1.periodoEscolar.mesFin.mes} #{evaluacion360Admin1.periodoEscolar.anio}</p>
+                                                    <p style="color: #ffffff">Evaluación de 360°<br/>
+                                                        Periodo: #{evaluacion360Admin1.periodoEscolar.mesInicio.mes} - #{evaluacion360Admin1.periodoEscolar.mesFin.mes} #{evaluacion360Admin1.periodoEscolar.anio}</p>
+                                                </p:link>
                                             </div>
-                                            <div class="icon">
-                                                <i class="fa fa-users"></i>
-                                            </div>
+                                            <div class="icon"><i class="fa fa-users"></i></div>
                                             <p:link outcome="evaluaciones/evaluacion/360_1"  class="small-box-footer">
                                                 Ingresar <i class="fa fa-arrow-circle-right"></i>
                                             </p:link>
-                                            <h:form><p:remoteCommand name="evaluaciones/evaluacion/360_1" action="360_1" /></h:form>
                                         </div>
                                     </div>
                                 </c:if>

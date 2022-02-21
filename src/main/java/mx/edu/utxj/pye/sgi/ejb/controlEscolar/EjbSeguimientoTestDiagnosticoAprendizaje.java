@@ -19,6 +19,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.StoredProcedureQuery;
 import mx.edu.utxj.pye.sgi.dto.DtoAlumnosEncuesta;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
@@ -220,6 +221,18 @@ public class EjbSeguimientoTestDiagnosticoAprendizaje {
                 .getResultStream().findFirst().orElse(new VariablesProntuario());
         if(vp.equals(new VariablesProntuario())) return ResultadoEJB.crearCorrecto(0, "No hay periodo encontrado");
         return ResultadoEJB.crearCorrecto(Integer.parseInt(vp.getValor()), "Periodo encontrado");
+    }
+    
+    public ResultadoEJB<PeriodosEscolares> obtenerPeriodoActual() {
+
+        StoredProcedureQuery spq = f.getEntityManager().createStoredProcedureQuery("pye2.periodoEscolarActual", PeriodosEscolares.class);
+        List<PeriodosEscolares> l = spq.getResultList();
+
+        if (l == null || l.isEmpty()) {
+            return ResultadoEJB.crearErroneo(1, "", PeriodosEscolares.class);
+        } else {
+            return ResultadoEJB.crearCorrecto(l.get(0), "Periodo actual");
+        }
     }
     
     public ResultadoEJB<Grupo> obtenerGrupoSeleccionado(Integer cveGrupo){
@@ -438,16 +451,16 @@ public class EjbSeguimientoTestDiagnosticoAprendizaje {
                 .filter(ResultadoEJB::getCorrecto)
                 .map(ResultadoEJB::getValor)
                 .collect(Collectors.toList());
-         dtoPESA = f2.getEntityManager().createQuery("SELECT g from Grupos as g where g.gruposPK.cvePeriodo = :cvePeriodo", Grupos.class)
-                .setParameter("cvePeriodo", periodoEscolar)
-                .getResultStream()
-                .map(carrera -> packProgramaEducativo(carrera))
-                .filter(ResultadoEJB::getCorrecto)
-                .map(ResultadoEJB::getValor)
-                .collect(Collectors.toList());
-         dtoPESA1 = dtoPESA.stream().distinct().collect(Collectors.toList());
-         dtoPE = Stream.concat(dtoPECE.stream(), dtoPESA1.stream()).collect(Collectors.toList());
-        return ResultadoEJB.crearCorrecto(dtoPE, "Programas Educativos completos");
+//         dtoPESA = f2.getEntityManager().createQuery("SELECT g from Grupos as g where g.gruposPK.cvePeriodo = :cvePeriodo", Grupos.class)
+//                .setParameter("cvePeriodo", periodoEscolar)
+//                .getResultStream()
+//                .map(carrera -> packProgramaEducativo(carrera))
+//                .filter(ResultadoEJB::getCorrecto)
+//                .map(ResultadoEJB::getValor)
+//                .collect(Collectors.toList());
+//         dtoPESA1 = dtoPESA.stream().distinct().collect(Collectors.toList());
+//         dtoPE = Stream.concat(dtoPECE.stream(), dtoPESA1.stream()).collect(Collectors.toList());
+        return ResultadoEJB.crearCorrecto(dtoPECE, "Programas Educativos completos");
     }
     
     public ResultadoEJB<DtoAlumnosEncuesta.DtoProgramaEducativo> packProgramaEducativo(Grupo grupo){

@@ -200,7 +200,8 @@ public enum ControlEscolarVistaControlador {
     EVALUACION_CONOCIMIENTO_CUMPLIMIENTO("/encuestas/personal/evaluacionCodigosDeEticaConducta.xhtml", EvaluacionConocimientoCodigoEtica.class),
     CUESTIONARIO_COMPLEMENTARIO_INF_PERSONAL("/cuestionarios/cuestionarioComplemenarioInfPersonal.xhtml", CuestionarioComplementarioInfPersonal.class),
     EVALUACION_CONOCIMIENTO_CODIGO_ETICA_CONDUCTA("/evaluaciones/evaluacion/evaluacionCodigoEyConducta.xhtml", EvaluacionCodigoEticaConducta.class),
-
+    EVALUACION_360("/evaluaciones/evaluacion/360_1.xhtml", Evaluacion360Admin1.class),
+    
     EVALUACION_DESEMPENIO_AMBIENTAL("/encuestas/evaluacionDesempenioAmbiental.xhtml", EvaluacionDesempenioAmbiental.class),
 
     ENCUESTA_SERVICIOS("/encuestas/Estudiantes/servicios.xhtml", EncuestaServiciosEstudiante19.class),

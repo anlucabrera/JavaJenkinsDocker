@@ -164,12 +164,25 @@ public class GenerateExcel implements Serializable{
         }
     }
 
-    public void eliminarLibros(String nombreExcel){
-        for(int i=libro.getNumberOfSheets()-1;i>=0;i--){
-            XSSFSheet tmpSheet =libro.getSheetAt(i);
-            if(!tmpSheet.getSheetName().equals(nombreExcel)){
-                libro.removeSheetAt(i);
-            }
+    public void deleteFolder(String carpeta, String eje, String archivo) {
+        base = ServicioArchivos.carpetaRaiz
+                    .concat(carpeta).concat(File.separator)
+                    .concat(eje).concat(File.separator);
+        File file = new File(base.concat(archivo));
+        if(!file.exists()) return;
+        if(file.isFile()){
+            file.delete();
+        }
+    }
+//    
+//    public static void main(String[] args){
+//        GenerateExcel g = new GenerateExcel();
+//        g.deleteFolder("resultados_test", "Grupo_14_8A_59", "Resultados_Test.xlsx");
+//    }
+    
+    public void eliminarLibros(Integer numero, Integer hojas){
+        for(int i = 1; i <= hojas; i++){
+            libro.removeSheetAt(numero);
         }
     }
 
@@ -180,7 +193,6 @@ public class GenerateExcel implements Serializable{
         XSSFRow grupo = libro.getSheet(excel).getRow(12);     XSSFCell celdaG = grupo.getCell(10);    celdaG.setCellValue(dto.getGrado()+dto.getGrupo());
         XSSFRow fecha = libro.getSheet(excel).getRow(12);     XSSFCell celdaF = fecha.getCell(14);    celdaF.setCellValue(test.getFechaAplicacion());
         XSSFRow tutor = libro.getSheet(excel).getRow(55);     XSSFCell celdaT = tutor.getCell(3);    celdaT.setCellValue(dto.getTutor().getNombre());
-        
         Integer[] datos = {
             test.getR1().intValue(), test.getR2().intValue(), test.getR3().intValue(), test.getR4().intValue(), test.getR5().intValue(), test.getR6().intValue(),
             test.getR7().intValue(), test.getR8().intValue(), test.getR9().intValue(), test.getR10().intValue(), test.getR11().intValue(), test.getR12().intValue(),
@@ -376,7 +388,7 @@ public class GenerateExcel implements Serializable{
         List<DtoAlumnosEncuesta.DtoResultadoTestEstudiante> listDto;
         
         XSSFRow totalParticipantes = libro.getSheet(excel).getRow(0);     XSSFCell celdaTP = totalParticipantes.getCell(2);    celdaTP.setCellValue(lista.size());
-        
+        XSSFSheet hoja = libro.getSheet(excel);
         XSSFRow fila;
         
         listDto = lista.stream().map(dto -> pack(dto)).collect(Collectors.toList());

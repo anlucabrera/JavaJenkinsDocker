@@ -33,6 +33,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CordinadoresTutores;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TestDiagnosticoAprendizaje;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
@@ -92,8 +93,8 @@ public class SeguimientoTestAprendizajePsicopedagogia extends ViewScopedRol impl
             ResultadoEJB<List<DtoAlumnosEncuesta.DtoPeriodoEscolar>> dtoPeriodos = ejbSTDA.obtenerPeriodosEscolares();
             rol.setListaPeriodosEscolares(dtoPeriodos.getValor());
             
-            ResultadoEJB<Integer> periodo = ejbSTDA.obtenerPeriodoTest();
-            rol.setPeriodoActivo(periodo.getValor());
+            ResultadoEJB<PeriodosEscolares> periodo = ejbSTDA.obtenerPeriodoActual();
+            rol.setPeriodoActivo(periodo.getValor().getPeriodo());
             rol.setTest(new Evaluaciones());
             obtenerHistoricoTest();
             ResultadoEJB<VariablesProntuario> variable1 = ejbSTDA.obtenerVariable1();
@@ -315,10 +316,7 @@ public class SeguimientoTestAprendizajePsicopedagogia extends ViewScopedRol impl
             for (int i = 0; i < dtoAECompleto.size(); i++) {
                 DtoAlumnosEncuesta.DtoAlumnosEncuestaGeneralControlEscolar dto = dtoAECompleto.get(i);
                 TestDiagnosticoAprendizaje test = ejbSTDA.obtenerTest(dto).getValor();
-                //System.out.println("Index:"+i+" Estudiante:"+dto+" Test:"+test);
-                rol.setLibro(gExcel.getLibro().getSheetAt(i+1).getSheetName());
-                //System.out.println("Nombre:"+ rol.getLibro());
-                //gExcel.eliminarLibros(rol.getLibro());
+                rol.setLibro(gExcel.getLibro().getSheetAt(i + 1).getSheetName());
                 if(test.equals(new TestDiagnosticoAprendizaje())) return;
                 gExcel.escribirDatosExcel(dto, test, rol.getLibro());
             }

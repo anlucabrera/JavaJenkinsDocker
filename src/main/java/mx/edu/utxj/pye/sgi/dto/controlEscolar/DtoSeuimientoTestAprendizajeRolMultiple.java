@@ -33,6 +33,7 @@ public class DtoSeuimientoTestAprendizajeRolMultiple implements Serializable{
     @Getter @Setter @NonNull private Grupos grupos;
     
     @Getter @Setter @NonNull private Boolean esTutor;
+    @Getter @Setter @NonNull private Boolean activar;
     @Getter @Setter @NonNull private Integer periodoActivo;
     @Getter @Setter @NonNull private Integer idGrupo;
     @Getter @Setter @NonNull private String nombre;
