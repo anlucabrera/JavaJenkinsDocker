@@ -13,9 +13,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
 
     <ui:define name="head-end">
-        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
-        </c:if>
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
                 text-align: right !important;
@@ -75,9 +72,9 @@
 
         </script>
         <section>
-            <c:if test="#{seguimientoTestAprendizajeTutor.cargado or seguimientoTestAprendizajeTutorSaiiut.cargado}">
+            <c:if test="#{seguimientoTestAprendizajeTutor.cargado}">
                 <div class="contenedor">
-                    <c:if test="#{seguimientoTestAprendizajeTutor.tieneAcceso || seguimientoTestAprendizajeTutorSaiiut.tieneAcceso}">
+                    <c:if test="#{seguimientoTestAprendizajeTutor.tieneAcceso}">
                         <h:form id="frm" prependId="false" class="form-inline">
                             <div class="col-md-12">
                                 <div class="box box-primary">
@@ -87,52 +84,22 @@
                                                 <f:facet name="left">
                                                     <p:outputLabel style="font-weight: bold" rendered="#{seguimientoTestAprendizajeTutor.tieneAcceso}"
                                                                    value="Periodo activo: #{caster.clavePeriodoToString(seguimientoTestAprendizajeTutor.rol.periodoActivo)}"/>
-                                                    <p:outputLabel style="font-weight: bold" rendered="#{seguimientoTestAprendizajeTutorSaiiut.tieneAcceso}"
-                                                                   value="Periodo activo: #{caster.clavePeriodoToString(seguimientoTestAprendizajeTutorSaiiut.rol.periodoActivo)}"/>
                                                 </f:facet>
                                                 <f:facet name="right">
-                                                    <p:commandButton value="Generar Excel" actionListener="#{seguimientoTestAprendizajeTutor.generarExcelTest}" 
-                                                                     class="btn btn-primary oculto-impresion" rendered="#{seguimientoTestAprendizajeTutor.tieneAcceso}"
-                                                                     title="Generar los resultados del Test Control Escolar" icon="fa fa-file-excel-o" process="@this" 
-                                                                     styleClass="btn-primary"  update="@this"/>
-                                                    <p:commandButton value="Generar Informe" actionListener="#{seguimientoTestAprendizajeTutor.generarInformeWord}" 
-                                                                     class="btn btn-primary oculto-impresion" rendered="#{seguimientoTestAprendizajeTutor.tieneAcceso}"
-                                                                     title="Generar informe de Test Control Escolar" icon="fa fa-file-word-o" process="@this" 
-                                                                     styleClass="btn-primary"  update="@this"/>
-                                                    <p:commandButton value="Decargar Base" actionListener="#{seguimientoTestAprendizajeTutor.generateResultadosTestCompleto()}" 
-                                                                     class="btn btn-primary oculto-impresion" rendered="#{seguimientoTestAprendizajeTutor.tieneAcceso}"
-                                                                     title="Da clic para descargar la base de estudiantes con Test Completo e Incompleto de Control Escolar" icon="fa fa-download" 
-                                                                     process="@this" styleClass="btn-primary"  update="@this"/>
-                                                    
-                                                    <p:commandButton value="Generar Excel" actionListener="#{seguimientoTestAprendizajeTutorSaiiut.generarExcelTest}" 
-                                                                     class="btn btn-primary oculto-impresion" rendered="#{seguimientoTestAprendizajeTutorSaiiut.tieneAcceso}"
-                                                                     title="Generar los resultados del Test SAIIUT" icon="fa fa-file-excel-o" process="@this" 
-                                                                     styleClass="btn-primary"  update="@this"/>
-                                                    <p:commandButton value="Generar Informe" actionListener="#{seguimientoTestAprendizajeTutorSaiiut.generarInformeWord}" 
-                                                                     class="btn btn-primary oculto-impresion" rendered="#{seguimientoTestAprendizajeTutorSaiiut.tieneAcceso}"
-                                                                     title="Generar informe de Test SAIIUT" icon="fa fa-file-word-o" process="@this" 
-                                                                     styleClass="btn-primary"  update="@this"/>
-                                                    <p:commandButton value="Decargar Base" actionListener="#{seguimientoTestAprendizajeTutorSaiiut.generateResultadosTestCompleto()}" 
-                                                                     class="btn btn-primary oculto-impresion" rendered="#{seguimientoTestAprendizajeTutorSaiiut.tieneAcceso}"
-                                                                     title="Da clic para descargar la base de estudiantes con Test Completo e Incompleto SAIIUT" icon="fa fa-download" 
-                                                                     process="@this" styleClass="btn-primary"  update="@this"/>
-                                                    
-                                                    <!--p:commandLink
-                                                        class="btn btn-info"
-                                                        rendered="# {seguimientoTestAprendizajeTutor.tieneAcceso}"
-                                                        disabled="# {false}"
-                                                        onclick="PF('modalAyudaCE').show();"
-                                                        title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
-                                                            class="fa fa-question"/>
-                                                    </p:commandLink>
-                                                    <p:commandLink
-                                                        class="btn btn-info"
-                                                        rendered="# {seguimientoTestAprendizajeTutorSaiiut.tieneAcceso}"
-                                                        disabled="# {false}"
-                                                        onclick="PF('modalAyudaSaiiut').show();"
-                                                        title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
-                                                            class="fa fa-question"/>
-                                                    </p:commandLink-->
+                                                    <p:outputPanel id="optBtns" rendered="#{seguimientoTestAprendizajeTutor.rol.activar}">
+                                                        <p:commandButton value="Generar Excel" actionListener="#{seguimientoTestAprendizajeTutor.generarExcelTest}" 
+                                                                         class="btn btn-primary oculto-impresion"
+                                                                         title="Generar los resultados del Test Control Escolar" icon="fa fa-file-excel-o" process="@this" 
+                                                                         styleClass="btn-primary"  update="@this"/>
+                                                        <p:commandButton value="Generar Informe" actionListener="#{seguimientoTestAprendizajeTutor.generarInformeWord}" 
+                                                                         class="btn btn-primary oculto-impresion"
+                                                                         title="Generar informe de Test Control Escolar" icon="fa fa-file-word-o" process="@this" 
+                                                                         styleClass="btn-primary"  update="@this"/>
+                                                        <p:commandButton value="Decargar Base" actionListener="#{seguimientoTestAprendizajeTutor.generateResultadosTestCompleto()}" 
+                                                                         class="btn btn-primary oculto-impresion"
+                                                                         title="Da clic para descargar la base de estudiantes con Test Completo e Incompleto de Control Escolar" icon="fa fa-download" 
+                                                                         process="@this" styleClass="btn-primary"  update="@this"/>
+                                                    </p:outputPanel>
                                                 </f:facet>
                                             </p:toolbar>
                                         </div>
@@ -145,23 +112,12 @@
                                                 <div class="col-sm-6" >
                                                     <h:outputText value="Grupos tutorados (Control Escolar):" class=" hidden-sm hidden-xs"/>
                                                     <p:selectOneMenu id="grupo" value="#{seguimientoTestAprendizajeTutor.rol.idGrupo}">
-                                                        <f:selectItem itemLabel="Selecccionar grupo tutorado"/>
+                                                        <f:selectItem itemLabel="Selecccionar grupo tutorado" value="#{null}"/>
                                                         <f:selectItems value="#{seguimientoTestAprendizajeTutor.rol.dtoGrupos}" var="grupo" 
                                                                        itemLabel="#{grupo.grado} #{grupo.literal}° Periodo: #{grupo.periodo.mesInicio.abreviacion}-#{grupo.periodo.mesFin.abreviacion} #{grupo.periodo.anio}" 
                                                                        itemValue="#{grupo.idGrupo}"/>
-                                                        <p:ajax update="tblTestCompleto, tblTestInCompleto" process="@this" listener="#{seguimientoTestAprendizajeTutor.obtenerEstudiantesGrupoSeleccionado()}"/>
-                                                    </p:selectOneMenu>
-                                                </div>
-                                            </c:if>
-                                            <c:if test="#{seguimientoTestAprendizajeTutorSaiiut.tieneAcceso}">
-                                                <div class="col-sm-6" >
-                                                    <h:outputText value="Grupos tutorados (SAIIUT):" class=" hidden-sm hidden-xs"/>
-                                                    <p:selectOneMenu id="grupoS" value="#{seguimientoTestAprendizajeTutorSaiiut.rol.idGrupo}">
-                                                        <f:selectItem itemLabel="Selecccionar grupo tutorado"/>
-                                                        <f:selectItems value="#{seguimientoTestAprendizajeTutorSaiiut.rol.dtoGruposS}" var="grupo" 
-                                                                       itemLabel="#{grupo.grado} #{grupo.literal}° Periodo: #{grupo.periodo.mesInicio.abreviacion}-#{grupo.periodo.mesFin.abreviacion} #{grupo.periodo.anio}" 
-                                                                       itemValue="#{grupo.idGrupo}"/>
-                                                        <p:ajax update="tblTestCompletoS, tblTestInCompletoS" process="@this" listener="#{seguimientoTestAprendizajeTutorSaiiut.obtenerEstudiantesGrupoSeleccionado()}"/>
+                                                        <p:ajax update="@form" 
+                                                                process="@this" listener="#{seguimientoTestAprendizajeTutor.obtenerEstudiantesGrupoSeleccionado()}"/>
                                                     </p:selectOneMenu>
                                                 </div>
                                             </c:if>
@@ -235,106 +191,11 @@
                                                 </div>
                                             </c:if>
                                             
-                                            <c:if test="#{seguimientoTestAprendizajeTutorSaiiut.tieneAcceso}">
-                                                <div class="col-lg-6">
-                                                    <div class="box box-success direct-chat direct-chat-warning">
-                                                        <div class="box-header with-border">
-                                                            <h3 class="box-title">Encuestas completas (SAIIUT)</h3>
-
-                                                            <div class="box-tools pull-right">
-                                                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <!-- /.box-header -->
-                                                        <div class="box-body">
-                                                            <p:dataTable var="estudiante" value="#{seguimientoTestAprendizajeTutorSaiiut.rol.listaTestCompletoS}" paginator="true" rows="10"
-                                                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                                         rowsPerPageTemplate="5,10,15" id="tblTestCompletoS" lazy="true" paginatorPosition="top">
-                                                                <p:column headerText="Clave" width="20" style="font-size: small; border: 0">
-                                                                    <h:outputText value="#{estudiante.alumnos.matricula}" />
-                                                                </p:column>
-                                                                <p:column headerText="Nombre completo" width="70" style="font-size: small; border: 0">
-                                                                    <h:outputText value="#{estudiante.personas.nombre} #{estudiante.personas.apellidoPat} #{estudiante.personas.apellidoMat}" />
-                                                                </p:column>
-                                                                <p:column headerText="Cuatrimestre" width="70" style="font-size: small; border: 0">
-                                                                    <h:outputText value="#{estudiante.grado}° #{estudiante.grupo}" />
-                                                                </p:column>
-                                                                <p:column headerText="Carrera" width="70" style="font-size: small; border: 0">
-                                                                    <h:outputText value="#{estudiante.siglas}" />
-                                                                </p:column>
-                                                            </p:dataTable>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </c:if>
-                                            <c:if test="#{seguimientoTestAprendizajeTutorSaiiut.tieneAcceso}">
-                                                <div class="col-lg-6">
-                                                    <div class="box box-danger direct-chat direct-chat-warning">
-                                                        <div class="box-header with-border">
-                                                            <h3 class="box-title">Encuestas incompletas (SAIIUT)</h3>
-
-                                                            <div class="box-tools pull-right">
-                                                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <!-- /.box-header -->
-                                                        <div class="box-body">
-                                                            <p:dataTable var="estudiante" value="#{seguimientoTestAprendizajeTutorSaiiut.rol.listaTestIncompletoS}" paginator="true" rows="10"
-                                                                         paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                                                                         rowsPerPageTemplate="5,10,15" id="tblTestInCompletoS" lazy="true" paginatorPosition="top">
-                                                                <p:column headerText="Clave" width="20" style="font-size: small; border: 0">
-                                                                    <h:outputText value="#{estudiante.alumnos.matricula}" />
-                                                                </p:column>
-                                                                <p:column headerText="Nombre completo" width="70" style="font-size: small; border: 0">
-                                                                    <h:outputText value="#{estudiante.personas.nombre} #{estudiante.personas.apellidoPat} #{estudiante.personas.apellidoMat}" />
-                                                                </p:column>
-                                                                <p:column headerText="Cuatrimestre" width="70" style="font-size: small; border: 0">
-                                                                    <h:outputText value="#{estudiante.grado}° #{estudiante.grupo}" />
-                                                                </p:column>
-                                                                <p:column headerText="Carrera" width="70" style="font-size: small; border: 0">
-                                                                    <h:outputText value="#{estudiante.siglas}" />
-                                                                </p:column>
-                                                            </p:dataTable>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </c:if>
-
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </h:form>
-                        <p:dialog id="modalAyudaCE" widgetVar="modalAyudaCE" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
-                                  modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
-                            <div class="box box-primary">
-                                <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Instructivo de operación</h3></div>
-                                <div class="box-body">
-                                    <ul class="todo-list">
-                                        <c:forEach items="#{seguimientoTestAprendizajeTutor.rol.instrucciones}" var="instruccion">
-                                            <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
-                                        </c:forEach>
-                                    </ul>
-                                </div>
-                                <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyudaCE').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
-                            </div>
-                        </p:dialog>
-                        <p:dialog id="modalAyudaSaiiut" widgetVar="modalAyudaSaiiut" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
-                                  modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
-                            <div class="box box-primary">
-                                <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Instructivo de operación</h3></div>
-                                <div class="box-body">
-                                    <ul class="todo-list">
-                                        <c:forEach items="#{seguimientoTestAprendizajeTutorSaiiut.rol.instrucciones}" var="instruccion">
-                                            <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
-                                        </c:forEach>
-                                    </ul>
-                                </div>
-                                <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyudaSaiiut').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
-                            </div>
-                        </p:dialog>
                     </c:if>
                 </div>
             </c:if>

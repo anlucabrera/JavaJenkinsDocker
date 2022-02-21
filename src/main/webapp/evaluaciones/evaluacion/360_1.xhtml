@@ -38,8 +38,7 @@
     </ui:define>
 
     <ui:define name="body">
-        <c:if test="#{evaluacion360Admin1.cargado}">
-        <adm:breadcrumb title="Evaluación de 360° - Formulario"/>
+        <c:if test="#{evaluacion360Admin1.tieneAcceso}">
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
