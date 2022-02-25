@@ -1,9 +1,7 @@
 package mx.edu.utxj.pye.sgi.ejb.evaluaciones;
 
 import edu.mx.utxj.pye.seut.util.collection.SerializableArrayList;
-import edu.mx.utxj.pye.seut.util.preguntas.Abierta;
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
-import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.*;
 import mx.edu.utxj.pye.sgi.ejb.EJBAdimEstudianteBase;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
@@ -27,6 +25,8 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Stateless
 public class EjbEvaluacionDocente2 {
@@ -212,27 +212,27 @@ public class EjbEvaluacionDocente2 {
         Apartado a1 = new Apartado(1F, "ASISTENCIA", new SerializableArrayList<>());
         a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 1.0f, "¿Te brindó asesorías para fortalecer los contenidos que se te dificultan de la materia?", ""));
         Apartado a2 = new Apartado(2F, "PROGRAMA", new SerializableArrayList<>());
-        a2.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 2.0f, "¿Explica al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
+        a2.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 2.0f, 2.0f, "¿Explica al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
         Apartado a3 = new Apartado(3F, "METODOLOGÍA", new SerializableArrayList<>());
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 3.0f, "¿Explica con claridad los conceptos de cada tema?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 4.0f, "¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 8.0f, "¿Se dirige con un lenguaje que propio y respetuoso?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 3.0f, "¿Explica con claridad los conceptos de cada tema?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 4.0f, "¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 8.0f, "¿Se dirige con un lenguaje que propio y respetuoso?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
         Apartado a4 = new Apartado(4F, "EVALUACIÓN", new SerializableArrayList<>());
-        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
-        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
-        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta? ", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4.0f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4.0f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4.0f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta? ", ""));
         Apartado a5 = new Apartado(5F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 13.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 14.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 15.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclarar de dudas?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 16.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
-        Apartado a6 = new Apartado(7F, "PROYECCION SOCIAL", new SerializableArrayList<>());
-        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 17.0f, "Antes de la contingencia ¿Te involucró para conservar la disciplina, orden y limpieza en la Institución?", ""));
-        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 18.0f, "Antes de la contingencia ¿Promovió el cuidado de los recursos naturales dentro y fuera de la Institución?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 5.0f, 13.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 5.0f, 14.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 5.0f, 15.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclarar de dudas?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 5.0f, 16.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
+        Apartado a6 = new Apartado(6F, "PROYECCION SOCIAL", new SerializableArrayList<>());
+        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 6.0f, 17.0f, "Antes de la contingencia ¿Te involucró para conservar la disciplina, orden y limpieza en la Institución?", ""));
+        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 6.0f, 18.0f, "Antes de la contingencia ¿Promovió el cuidado de los recursos naturales dentro y fuera de la Institución?", ""));
         l.add(a1);
         l.add(a2);
         l.add(a3);
@@ -253,29 +253,29 @@ public class EjbEvaluacionDocente2 {
         Apartado a1 = new Apartado(1F, "ASISTENCIA", new SerializableArrayList<>());
         a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 1.0f, "¿Te brindó asesorías para fortalecer los contenidos que se te dificultan de la materia?", ""));
         Apartado a2 = new Apartado(2F, "PROGRAMA", new SerializableArrayList<>());
-        a2.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 2.0f, "¿Explicó al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
+        a2.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 2.0f, 2.0f, "¿Explicó al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
         Apartado a3 = new Apartado(3F, "METODOLOGÍA", new SerializableArrayList<>());
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 3.0f, "¿Explicó con claridad los conceptos y contenidos de cada tema?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 4.0f, " ¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 8.0f, "¿Se dirige con un lenguaje propio y respetuoso?", ""));
-        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 3.0f, "¿Explicó con claridad los conceptos y contenidos de cada tema?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 4.0f, " ¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 8.0f, "¿Se dirige con un lenguaje propio y respetuoso?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3.0f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
         Apartado a4 = new Apartado(4F, "EVALUACIÓN", new SerializableArrayList<>());
-        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
-        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
-        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta?", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4.0f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4.0f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4.0f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta?", ""));
         Apartado a5 = new Apartado(5F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 13.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 14.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 15.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclaración de dudas?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 16.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 17.0f, "En general, el desempeño del docente fue.", ""));
-        Apartado a6 = new Apartado(7F, "PROYECCION SOCIAL", new SerializableArrayList<>());
-        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 18.0f, "Antes de la contingencia ¿Te involucró para conservar la disciplina, orden y limpieza en la Institución?", ""));
-        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 19.0f, "Antes de la contingencia ¿Promovió el cuidado de los recursos naturales dentro y fuera de la Institución?", ""));
-        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 20.0f, "Comentarios hacie el docente. (Mínimo 11 caracteres)", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 5.0f, 13.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 5.0f, 14.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 5.0f, 15.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclaración de dudas?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 5.0f, 16.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
+        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 5.0f, 17.0f, "En general, el desempeño del docente fue.", ""));
+        Apartado a6 = new Apartado(6F, "PROYECCION SOCIAL", new SerializableArrayList<>());
+        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 6.0f, 18.0f, "Antes de la contingencia ¿Te involucró para conservar la disciplina, orden y limpieza en la Institución?", ""));
+        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 6.0f, 19.0f, "Antes de la contingencia ¿Promovió el cuidado de los recursos naturales dentro y fuera de la Institución?", ""));
+        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 6.0f, 20.0f, "Comentarios hacie el docente. (Mínimo 11 caracteres)", ""));
         l.add(a1);
         l.add(a2);
         l.add(a3);
@@ -294,216 +294,350 @@ public class EjbEvaluacionDocente2 {
     public List<Apartado> getApartadosContingenciaCuestionario3() {
         List<Apartado> l = new SerializableArrayList<>();
         Apartado a1 = new Apartado(1F, "METODOLOGÍA", new SerializableArrayList<>());
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 1.0f, "¿Te brindó asesorías para fortalecer los contenidos que se te dificultan de la materia?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 2.0f, "¿Explicó al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 3.0f, "¿Explicó con claridad los conceptos y contenidos de cada tema?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 4.0f, " ¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 8.0f, "¿Se dirige con un lenguaje propio y respetuoso?", ""));
-        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
-        Apartado a4 = new Apartado(3F, "EVALUACIÓN", new SerializableArrayList<>());
-        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
-        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
-        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta?", ""));
-        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 13.0f, "¿El docente te entregó y aclaró las evaluaciones antes de registrarlas en el sistema?", ""));
-        Apartado a5 = new Apartado(4F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 14.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 15.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 16.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclaración de dudas?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 17.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
-        Apartado a6 = new Apartado(5F, "PROYECCION SOCIAL", new SerializableArrayList<>());
-        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 18.0f, "¿El docente asiste puntualmente a las sesiones programadas?", ""));
-        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 19.0f, "Durante la ejecución de actividades en Aula Virtual ¿Evitó en todo momento improvisar, tener tiempo muerto y/o desorganización en las sesiones?", ""));
-        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 20.0f, "¿El docente evita prácticas de favoritismo, corrupción y/o alguna otra práctica antiética?", ""));
-        a5.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 21.0f, "En general, el desempeño del docente fue.", ""));
-        a6.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1.0f, 22.0f, "Comentarios hacie el docente. (Mínimo 11 caracteres)", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1f, 1.0f, "¿Te brindó asesorías para fortalecer los contenidos que se te dificultan de la materia?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1f, 2.0f, "¿Explicó al inicio del cuatrimestre la estructura de la materia, como: los objetivos, contenidos, metodología, evaluación y bibliografía?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1f, 3.0f, "¿Explicó con claridad los conceptos y contenidos de cada tema?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1f, 4.0f, " ¿Las instrucciones definidas en el curso en Aula Virtual fueron claras?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1f, 5.0f, "¿Te motivó para que participaras objetiva y activamente en el desarrollo de tus actividades?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1f, 6.0f, "¿Generó un clima de confianza en el que se pueden plantear distintas dudas?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1f, 7.0f, "¿Consigue en ti, motivación e interés en la materia?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1f, 8.0f, "¿Se dirige con un lenguaje propio y respetuoso?", ""));
+        a1.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 1f, 9.0f, "¿Te brindó alternativas de entrega de trabajos, en caso de presentar algún inconveniente con el Aula Virtual?", ""));
+        Apartado a2 = new Apartado(2F, "EVALUACIÓN", new SerializableArrayList<>());
+        a2.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 2f, 10.0f, "¿Acepta revisar la calificación en caso de posibles errores de evaluación?", ""));
+        a2.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 2f, 11.0f, "¿El docente te dio acompañamiento y retroalimentación de las actividades que generó en el aula virtual?", ""));
+        a2.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 2f, 12.0f, "¿Evaluó el conocimiento del saber y saber hacer a través de un examen, ejercicio práctico u otra herramienta?", ""));
+        a2.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 2f, 13.0f, "¿El docente te entregó y aclaró las evaluaciones antes de registrarlas en el sistema?", ""));
+        Apartado a3 = new Apartado(3F, "RECURSOS EDUCACIONALES", new SerializableArrayList<>());
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3f, 14.0f, "Durante el desarrollo de las actividades en el Aula Virtual ¿El docente te proporcionó algún recurso extra o puentes de comunicación para resolver dudas?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3f, 15.0f, "Durante la ejecución de actividades en Aula Virtual ¿Resolvió tus dudas a tiempo para entregar tus actividades?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3f, 16.0f, "¿Cumplió los horarios que se presentan en el Aula Virtual para encuentros virtuales y aclaración de dudas?", ""));
+        a3.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 3f, 17.0f, "¿Te motivó al uso de aplicaciones tecnológicas o diversos recursos de consulta para reforzar tus conocimientos o comprender mejor los temas?", ""));
+        Apartado a4 = new Apartado(4F, "PROYECCION SOCIAL", new SerializableArrayList<>());
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4f, 18.0f, "¿El docente asiste puntualmente a las sesiones programadas?", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4f, 19.0f, "Durante la ejecución de actividades en Aula Virtual ¿Evitó en todo momento improvisar, tener tiempo muerto y/o desorganización en las sesiones?", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4f, 20.0f, "¿El docente evita prácticas de favoritismo, corrupción y/o alguna otra práctica antiética?", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4f, 21.0f, "En general, el desempeño del docente fue.", ""));
+        a4.getPreguntas().add(new Opciones(TipoCuestionario.EDOCENTE, 4f, 22.0f, "Comentarios hacie el docente. (Mínimo 11 caracteres)", ""));
         l.add(a1);
+        l.add(a2);
+        l.add(a3);
         l.add(a4);
-        l.add(a5);
-        l.add(a6);
         return l;
 
     }
-    /**
-     * Busca los resultados de la evaluacion a docente (tipo 1) por evaluador, evaluado y evaluacion
-     * @param evaluador Estudiante evaluador
-     * @param evaluado Docente - materia evaluado
-     * @param evaluacion Evaluacion activa
-     * @return
-     */
-
-    public ResultadoEJB<EvaluacionDocentesMateriaResultados2> getResultadobyEvaluadorEvaluado(dtoEstudiantesEvalauciones evaluador, dtoEstudianteMateria evaluado, Evaluaciones evaluacion){
+    
+    public ResultadoEJB<EvaluacionDocentesMateriaResultados2> obtenerResultadoEvaluacionTipo1(dtoEstudiantesEvalauciones evaluador, dtoEstudianteMateria evaluado, Evaluaciones evaluacion, Map<String,String> respuestas){
         try {
-            EvaluacionDocentesMateriaResultados2 resultados = new EvaluacionDocentesMateriaResultados2();
-            if(evaluador ==null){return  ResultadoEJB.crearErroneo(2,resultados,"El evaluador no debe ser nulo");}
-            if(evaluado ==null){return ResultadoEJB.crearErroneo(3,resultados,"El evaluador no debe ser nulo");}
-            if(evaluacion==null){return ResultadoEJB.crearErroneo(4,resultados,"La evaluación no debe ser nula");}
-            resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados2 e where e.evaluacionDocentesMateriaResultados2PK.evaluador=:evaluador and e.evaluacionDocentesMateriaResultados2PK.evaluado=:evaluado and e.evaluacionDocentesMateriaResultados2PK.cveMateria=:cveMateria and e.evaluacionDocentesMateriaResultados2PK.evaluacion=:evaluacion",EvaluacionDocentesMateriaResultados2.class)
-                    .setParameter("evaluador",Integer.parseInt(evaluador.getMatricula()))
-                    .setParameter("evaluado",evaluado.getDocenteImparte().getClave())
-                    .setParameter("cveMateria",evaluado.getClaveMateria())
-                    .setParameter("evaluacion",evaluacion.getEvaluacion())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null)
-            ;
-            if(resultados ==null){
-                //No existen resultados, entonces los crea
-                EvaluacionDocentesMateriaResultados2PK pk = new EvaluacionDocentesMateriaResultados2PK();
-                pk.setEvaluacion(evaluacion.getEvaluacion());
-                pk.setEvaluador(Integer.parseInt(evaluador.getMatricula()));
-                pk.setEvaluado(evaluado.getDocenteImparte().getClave());
-                pk.setCveMateria(evaluado.getClaveMateria());
-                EvaluacionDocentesMateriaResultados2 resultados1 = new EvaluacionDocentesMateriaResultados2();
-                resultados1.setEvaluacionDocentesMateriaResultados2PK(pk);
-                em.persist(resultados1);
-                resultados = resultados1;
-                return ResultadoEJB.crearCorrecto(resultados,"Se crearon los resultados");
-            }else {
-                //Existen resultados ...
-                return ResultadoEJB.crearCorrecto(resultados,"Resultados");
+            EvaluacionDocentesMateriaResultados2PK tdaPK = new EvaluacionDocentesMateriaResultados2PK(
+                    evaluacion.getEvaluacion(), 
+                    Integer.parseInt(evaluador.getMatricula()), 
+                    evaluado.getClaveMateria(), 
+                    evaluado.getDocenteImparte().getClave());
+            f.setEntityClass(EvaluacionDocentesMateriaResultados2.class);
+            
+            EvaluacionDocentesMateriaResultados2 r = em.find(EvaluacionDocentesMateriaResultados2.class, tdaPK);
+            if (r == null) {
+                r = new EvaluacionDocentesMateriaResultados2(tdaPK);
+                em.persist(r);
             }
-
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados (EJBEvaluacionDocenteMteria.getResultadobyEvaluadorEvaluado)", e, null);
+            if (r.getR1() != null) {
+                respuestas.put("r1", r.getR1().toString());
+            }
+            if (r.getR2() != null) {
+                respuestas.put("r2", r.getR2().toString());
+            }
+            if (r.getR3() != null) {
+                respuestas.put("r3", r.getR3().toString());
+            }
+            if (r.getR4() != null) {
+                respuestas.put("r4", r.getR4().toString());
+            }
+            if (r.getR5() != null) {
+                respuestas.put("r5", r.getR5().toString());
+            }
+            if (r.getR6() != null) {
+                respuestas.put("r6", r.getR6().toString());
+            }
+            if (r.getR7() != null) {
+                respuestas.put("r7", r.getR7().toString());
+            }
+            if (r.getR8() != null) {
+                respuestas.put("r8", r.getR8().toString());
+            }
+            if (r.getR9() != null) {
+                respuestas.put("r9", r.getR9().toString());
+            }
+            if (r.getR10() != null) {
+                respuestas.put("r10", r.getR10().toString());
+            }
+            if (r.getR11() != null) {
+                respuestas.put("r11", r.getR11().toString());
+            }
+            if (r.getR12() != null) {
+                respuestas.put("r12", r.getR12().toString());
+            }
+            if (r.getR13() != null) {
+                respuestas.put("r13", r.getR13().toString());
+            }
+            if (r.getR14() != null) {
+                respuestas.put("r14", r.getR14().toString());
+            }
+            if (r.getR15() != null) {
+                respuestas.put("r15", r.getR15().toString());
+            }
+            if (r.getR16() != null) {
+                respuestas.put("r16", r.getR16().toString());
+            }
+            if (r.getR17() != null) {
+                respuestas.put("r17", r.getR17().toString());
+            }
+            return ResultadoEJB.crearCorrecto(r, "Agregado correctamente");
+        } catch (NullPointerException e) {
+            return null;
         }
     }
-    /**
-     * Busca los resultados de la evaluacion a docente (tipo 2) por evaluador, evaluado y evaluacion
-     * @param evaluador Estudiante evaluador
-     * @param evaluado Docente - materia evaluado
-     * @param evaluacion Evaluacion activa
-     * @return
-     */
-
-    public ResultadoEJB<EvaluacionDocentesMateriaResultados3> getResultadosTipo2byEvaluadorEvaluado(dtoEstudiantesEvalauciones evaluador, dtoEstudianteMateria evaluado, Evaluaciones evaluacion){
+    
+    public ResultadoEJB<EvaluacionDocentesMateriaResultados3> obtenerResultadoEvaluacionTipo2(dtoEstudiantesEvalauciones evaluador, dtoEstudianteMateria evaluado, Evaluaciones evaluacion, Map<String,String> respuestas){
         try {
-            EvaluacionDocentesMateriaResultados3 resultados = new EvaluacionDocentesMateriaResultados3();
-            if(evaluador ==null){return  ResultadoEJB.crearErroneo(2,resultados,"El evaluador no debe ser nulo");}
-            if(evaluado ==null){return ResultadoEJB.crearErroneo(3,resultados,"El evaluador no debe ser nulo");}
-            if(evaluacion==null){return ResultadoEJB.crearErroneo(4,resultados,"La evaluación no debe ser nula");}
-            resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados3 e where e.evaluacionDocentesMateriaResultados3PK.evaluador=:evaluador and e.evaluacionDocentesMateriaResultados3PK.evaluado=:evaluado and e.evaluacionDocentesMateriaResultados3PK.cveMateria=:cveMateria and e.evaluacionDocentesMateriaResultados3PK.evaluacion=:evaluacion",EvaluacionDocentesMateriaResultados3.class)
-                    .setParameter("evaluador",Integer.parseInt(evaluador.getMatricula()))
-                    .setParameter("evaluado",evaluado.getDocenteImparte().getClave())
-                    .setParameter("cveMateria",evaluado.getClaveMateria())
-                    .setParameter("evaluacion",evaluacion.getEvaluacion())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null)
-            ;
-            if(resultados ==null){
-                //No existen resultados, entonces los crea
-                EvaluacionDocentesMateriaResultados3PK pk = new EvaluacionDocentesMateriaResultados3PK();
-                pk.setEvaluacion(evaluacion.getEvaluacion());
-                pk.setEvaluador(Integer.parseInt(evaluador.getMatricula()));
-                pk.setEvaluado(evaluado.getDocenteImparte().getClave());
-                pk.setCveMateria(evaluado.getClaveMateria());
-                EvaluacionDocentesMateriaResultados3 resultados1 = new EvaluacionDocentesMateriaResultados3();
-                resultados1.setEvaluacionDocentesMateriaResultados3PK(pk);
-                em.persist(resultados1);
-                resultados = resultados1;
-                return ResultadoEJB.crearCorrecto(resultados,"Se crearon los resultados");
-            }else {
-                //Existen resultados ...
-                return ResultadoEJB.crearCorrecto(resultados,"Resultados");
+            EvaluacionDocentesMateriaResultados3PK tdaPK = new EvaluacionDocentesMateriaResultados3PK(
+                    evaluacion.getEvaluacion(), 
+                    Integer.parseInt(evaluador.getMatricula()), 
+                    evaluado.getClaveMateria(), 
+                    evaluado.getDocenteImparte().getClave());
+            f.setEntityClass(EvaluacionDocentesMateriaResultados3.class);
+            
+            EvaluacionDocentesMateriaResultados3 r = em.find(EvaluacionDocentesMateriaResultados3.class, tdaPK);
+            if (r == null) {
+                r = new EvaluacionDocentesMateriaResultados3(tdaPK);
+                em.persist(r);
             }
-
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados (EJBEvaluacionDocenteMteria.getResultadobyEvaluadorEvaluado)", e, null);
+            if (r.getR1() != null) {
+                respuestas.put("r1", r.getR1().toString());
+            }
+            if (r.getR2() != null) {
+                respuestas.put("r2", r.getR2().toString());
+            }
+            if (r.getR3() != null) {
+                respuestas.put("r3", r.getR3().toString());
+            }
+            if (r.getR4() != null) {
+                respuestas.put("r4", r.getR4().toString());
+            }
+            if (r.getR5() != null) {
+                respuestas.put("r5", r.getR5().toString());
+            }
+            if (r.getR6() != null) {
+                respuestas.put("r6", r.getR6().toString());
+            }
+            if (r.getR7() != null) {
+                respuestas.put("r7", r.getR7().toString());
+            }
+            if (r.getR8() != null) {
+                respuestas.put("r8", r.getR8().toString());
+            }
+            if (r.getR9() != null) {
+                respuestas.put("r9", r.getR9().toString());
+            }
+            if (r.getR10() != null) {
+                respuestas.put("r10", r.getR10().toString());
+            }
+            if (r.getR11() != null) {
+                respuestas.put("r11", r.getR11().toString());
+            }
+            if (r.getR12() != null) {
+                respuestas.put("r12", r.getR12().toString());
+            }
+            if (r.getR13() != null) {
+                respuestas.put("r13", r.getR13().toString());
+            }
+            if (r.getR14() != null) {
+                respuestas.put("r14", r.getR14().toString());
+            }
+            if (r.getR15() != null) {
+                respuestas.put("r15", r.getR15().toString());
+            }
+            if (r.getR16() != null) {
+                respuestas.put("r16", r.getR16().toString());
+            }
+            if (r.getR17() != null) {
+                respuestas.put("r17", r.getR17().toString());
+            }
+            if (r.getR18() != null) {
+                respuestas.put("r18", r.getR18().toString());
+            }
+            return ResultadoEJB.crearCorrecto(r, "Agregado correctamente");
+        } catch (NullPointerException e) {
+            return null;
         }
     }
-    /**
-     * Busca los resultados de la evaluacion a docente  por evaluador, evaluado y evaluacion
-     * Tipo -> Evaluacion Docente materia (Cuestionario 3 por contingencia)
-     * @param evaluador Estudiante evaluador
-     * @param evaluado Docente - materia evaluado
-     * @param evaluacion Evaluacion activa
-     * @return
-     */
-
-    public ResultadoEJB<EvaluacionDocentesMateriaResultados4> getResultadosTipo3byEvaluadorEvaluado(dtoEstudiantesEvalauciones evaluador, dtoEstudianteMateria evaluado, Evaluaciones evaluacion){
+    
+    public ResultadoEJB<EvaluacionDocentesMateriaResultados4> obtenerResultadoEvaluacionTipo3(dtoEstudiantesEvalauciones evaluador, dtoEstudianteMateria evaluado, Evaluaciones evaluacion, Map<String,String> respuestas){
         try {
-            EvaluacionDocentesMateriaResultados4 resultados = new EvaluacionDocentesMateriaResultados4();
-            if(evaluador ==null){return  ResultadoEJB.crearErroneo(2,resultados,"El evaluador no debe ser nulo");}
-            if(evaluado ==null){return ResultadoEJB.crearErroneo(3,resultados,"El evaluador no debe ser nulo");}
-            if(evaluacion==null){return ResultadoEJB.crearErroneo(4,resultados,"La evaluación no debe ser nula");}
-            resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados4 e where e.evaluacionDocentesMateriaResultados4PK.evaluador=:evaluador and e.evaluacionDocentesMateriaResultados4PK.evaluado=:evaluado and e.evaluacionDocentesMateriaResultados4PK.cveMateria=:cveMateria and e.evaluacionDocentesMateriaResultados4PK.evaluacion=:evaluacion",EvaluacionDocentesMateriaResultados4.class)
-                    .setParameter("evaluador",Integer.parseInt(evaluador.getMatricula()))
-                    .setParameter("evaluado",evaluado.getDocenteImparte().getClave())
-                    .setParameter("cveMateria",evaluado.getClaveMateria())
-                    .setParameter("evaluacion",evaluacion.getEvaluacion())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null)
-            ;
-            if(resultados ==null){
-                //No existen resultados, entonces los crea
-                EvaluacionDocentesMateriaResultados4PK pk = new EvaluacionDocentesMateriaResultados4PK();
-                pk.setEvaluacion(evaluacion.getEvaluacion());
-                pk.setEvaluador(Integer.parseInt(evaluador.getMatricula()));
-                pk.setEvaluado(evaluado.getDocenteImparte().getClave());
-                pk.setCveMateria(evaluado.getClaveMateria());
-                EvaluacionDocentesMateriaResultados4 resultados1 = new EvaluacionDocentesMateriaResultados4();
-                resultados1.setEvaluacionDocentesMateriaResultados4PK(pk);
-                em.persist(resultados1);
-                resultados = resultados1;
-                return ResultadoEJB.crearCorrecto(resultados,"Se crearon los resultados");
-            }else {
-                //Existen resultados ...
-                return ResultadoEJB.crearCorrecto(resultados,"Resultados");
+            EvaluacionDocentesMateriaResultados4PK tdaPK = new EvaluacionDocentesMateriaResultados4PK(
+                    evaluacion.getEvaluacion(), 
+                    Integer.parseInt(evaluador.getMatricula()), 
+                    evaluado.getClaveMateria(), 
+                    evaluado.getDocenteImparte().getClave());
+            f.setEntityClass(EvaluacionDocentesMateriaResultados4.class);
+            
+            EvaluacionDocentesMateriaResultados4 r = em.find(EvaluacionDocentesMateriaResultados4.class, tdaPK);
+            if (r == null) {
+                r = new EvaluacionDocentesMateriaResultados4(tdaPK);
+                em.persist(r);
             }
-
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados (EJBEvaluacionDocenteMteria.getResultadobyEvaluadorEvaluado)", e, null);
+            if (r.getR1() != null) {
+                respuestas.put("r1", r.getR1().toString());
+            }
+            if (r.getR2() != null) {
+                respuestas.put("r2", r.getR2().toString());
+            }
+            if (r.getR3() != null) {
+                respuestas.put("r3", r.getR3().toString());
+            }
+            if (r.getR4() != null) {
+                respuestas.put("r4", r.getR4().toString());
+            }
+            if (r.getR5() != null) {
+                respuestas.put("r5", r.getR5().toString());
+            }
+            if (r.getR6() != null) {
+                respuestas.put("r6", r.getR6().toString());
+            }
+            if (r.getR7() != null) {
+                respuestas.put("r7", r.getR7().toString());
+            }
+            if (r.getR8() != null) {
+                respuestas.put("r8", r.getR8().toString());
+            }
+            if (r.getR9() != null) {
+                respuestas.put("r9", r.getR9().toString());
+            }
+            if (r.getR10() != null) {
+                respuestas.put("r10", r.getR10().toString());
+            }
+            if (r.getR11() != null) {
+                respuestas.put("r11", r.getR11().toString());
+            }
+            if (r.getR12() != null) {
+                respuestas.put("r12", r.getR12().toString());
+            }
+            if (r.getR13() != null) {
+                respuestas.put("r13", r.getR13().toString());
+            }
+            if (r.getR14() != null) {
+                respuestas.put("r14", r.getR14().toString());
+            }
+            if (r.getR15() != null) {
+                respuestas.put("r15", r.getR15().toString());
+            }
+            if (r.getR16() != null) {
+                respuestas.put("r16", r.getR16().toString());
+            }
+            if (r.getR17() != null) {
+                respuestas.put("r17", r.getR17().toString());
+            }
+            if (r.getR18() != null) {
+                respuestas.put("r18", r.getR18().toString());
+            }
+            if (r.getR19() != null) {
+                respuestas.put("r19", r.getR19().toString());
+            }
+            if (r.getR20() != null) {
+                respuestas.put("r20", r.getR20());
+            }
+            return ResultadoEJB.crearCorrecto(r, "Agregado correctamente");
+        } catch (NullPointerException e) {
+            return null;
         }
     }
-    /**
-     * Busca los resultados de la evaluacion a docente  por evaluador, evaluado y evaluacion
-     * Tipo -> Evaluacion Docente materia (Cuestionario 4 por contingencia)
-     * @param evaluador Estudiante evaluador
-     * @param evaluado Docente - materia evaluado
-     * @param evaluacion Evaluacion activa
-     * @return
-     */
-
-    public ResultadoEJB<EvaluacionDocentesMateriaResultados5> getResultadosTipo4byEvaluadorEvaluado(dtoEstudiantesEvalauciones evaluador, dtoEstudianteMateria evaluado, Evaluaciones evaluacion){
+    
+    public ResultadoEJB<EvaluacionDocentesMateriaResultados5> obtenerResultadoEvaluacionTipo4(dtoEstudiantesEvalauciones evaluador, dtoEstudianteMateria evaluado, Evaluaciones evaluacion, Map<String,String> respuestas){
         try {
-            EvaluacionDocentesMateriaResultados5 resultados = new EvaluacionDocentesMateriaResultados5();
-            if(evaluador ==null){return  ResultadoEJB.crearErroneo(2,resultados,"El evaluador no debe ser nulo");}
-            if(evaluado ==null){return ResultadoEJB.crearErroneo(3,resultados,"El evaluador no debe ser nulo");}
-            if(evaluacion==null){return ResultadoEJB.crearErroneo(4,resultados,"La evaluación no debe ser nula");}
-            resultados = em.createQuery("select e from EvaluacionDocentesMateriaResultados5 e where e.evaluacionDocentesMateriaResultados5PK.evaluador=:evaluador and e.evaluacionDocentesMateriaResultados5PK.evaluado=:evaluado and e.evaluacionDocentesMateriaResultados5PK.cveMateria=:cveMateria and e.evaluacionDocentesMateriaResultados5PK.evaluacion=:evaluacion",EvaluacionDocentesMateriaResultados5.class)
-                    .setParameter("evaluador",Integer.parseInt(evaluador.getMatricula()))
-                    .setParameter("evaluado",evaluado.getDocenteImparte().getClave())
-                    .setParameter("cveMateria",evaluado.getClaveMateria())
-                    .setParameter("evaluacion",evaluacion.getEvaluacion())
-                    .getResultStream()
-                    .findFirst()
-                    .orElse(null)
-            ;
-            if(resultados ==null){
-                //No existen resultados, entonces los crea
-                EvaluacionDocentesMateriaResultados5PK pk = new EvaluacionDocentesMateriaResultados5PK();
-                pk.setEvaluacion(evaluacion.getEvaluacion());
-                pk.setEvaluador(Integer.parseInt(evaluador.getMatricula()));
-                pk.setEvaluado(evaluado.getDocenteImparte().getClave());
-                pk.setCveMateria(evaluado.getClaveMateria());
-                EvaluacionDocentesMateriaResultados5 resultados1 = new EvaluacionDocentesMateriaResultados5();
-                resultados1.setEvaluacionDocentesMateriaResultados5PK(pk);
-                em.persist(resultados1);
-                resultados = resultados1;
-                return ResultadoEJB.crearCorrecto(resultados,"Se crearon los resultados");
-            }else {
-                //Existen resultados ...
-                return ResultadoEJB.crearCorrecto(resultados,"Resultados");
+            EvaluacionDocentesMateriaResultados5PK tdaPK = new EvaluacionDocentesMateriaResultados5PK(
+                    evaluacion.getEvaluacion(), 
+                    Integer.parseInt(evaluador.getMatricula()), 
+                    evaluado.getClaveMateria(), 
+                    evaluado.getDocenteImparte().getClave());
+            f.setEntityClass(EvaluacionDocentesMateriaResultados5.class);
+            
+            EvaluacionDocentesMateriaResultados5 r = em.find(EvaluacionDocentesMateriaResultados5.class, tdaPK);
+            if (r == null) {
+                r = new EvaluacionDocentesMateriaResultados5(tdaPK);
+                em.persist(r);
             }
-
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener los resultados (EJBEvaluacionDocenteMteria.getResultadobyEvaluadorEvaluado)", e, null);
+            if (r.getR1() != null) {
+                respuestas.put("r1", r.getR1().toString());
+            }
+            if (r.getR2() != null) {
+                respuestas.put("r2", r.getR2().toString());
+            }
+            if (r.getR3() != null) {
+                respuestas.put("r3", r.getR3().toString());
+            }
+            if (r.getR4() != null) {
+                respuestas.put("r4", r.getR4().toString());
+            }
+            if (r.getR5() != null) {
+                respuestas.put("r5", r.getR5().toString());
+            }
+            if (r.getR6() != null) {
+                respuestas.put("r6", r.getR6().toString());
+            }
+            if (r.getR7() != null) {
+                respuestas.put("r7", r.getR7().toString());
+            }
+            if (r.getR8() != null) {
+                respuestas.put("r8", r.getR8().toString());
+            }
+            if (r.getR9() != null) {
+                respuestas.put("r9", r.getR9().toString());
+            }
+            if (r.getR10() != null) {
+                respuestas.put("r10", r.getR10().toString());
+            }
+            if (r.getR11() != null) {
+                respuestas.put("r11", r.getR11().toString());
+            }
+            if (r.getR12() != null) {
+                respuestas.put("r12", r.getR12().toString());
+            }
+            if (r.getR13() != null) {
+                respuestas.put("r13", r.getR13().toString());
+            }
+            if (r.getR14() != null) {
+                respuestas.put("r14", r.getR14().toString());
+            }
+            if (r.getR15() != null) {
+                respuestas.put("r15", r.getR15().toString());
+            }
+            if (r.getR16() != null) {
+                respuestas.put("r16", r.getR16().toString());
+            }
+            if (r.getR17() != null) {
+                respuestas.put("r17", r.getR17().toString());
+            }
+            if (r.getR18() != null) {
+                respuestas.put("r18", r.getR18().toString());
+            }
+            if (r.getR19() != null) {
+                respuestas.put("r19", r.getR19().toString());
+            }
+            if (r.getR20() != null) {
+                respuestas.put("r20", r.getR20().toString());
+            }
+            if (r.getR21() != null) {
+                respuestas.put("r21", r.getR21().toString());
+            }
+            if (r.getR22() != null) {
+                respuestas.put("r22", r.getR22());
+            }
+            return ResultadoEJB.crearCorrecto(r, "Agregado correctamente");
+        } catch (NullPointerException e) {
+            return null;
         }
     }
+        
 
     /**
      * Obtiene los resultados por evaluacion y evaluador
@@ -599,6 +733,7 @@ public class EjbEvaluacionDocente2 {
      */
     public ResultadoEJB<List<dtoEstudianteMateria>> getMateriasbyEstudiante (dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion){
         try{
+            //System.out.println("Estudiante" + estudiante.getMatricula() +" Periodo" + evaluacion.getPeriodo());
             List<dtoEstudianteMateria> materias = new ArrayList<>();
             if(estudiante==null){return  ResultadoEJB.crearErroneo(2,materias, "El estudiante no debe ser nulo");}
             if(evaluacion ==null){return  ResultadoEJB.crearErroneo(3,materias,"La evaluacion no debe ser nula");}
@@ -606,6 +741,7 @@ public class EjbEvaluacionDocente2 {
             if(estudiante.getEstudianteCE()!=null){
                 //El estudiante esta registrado en Control escolar
                 //Se obtienen las materias del estudiante
+                //System.out.println("Esta en control escolar");
                 ResultadoEJB<List<dtoEstudianteMateria>> materiasCE = getMateriasbyEstudianteCE(estudiante,evaluacion);
                 if(materiasCE.getCorrecto()==true){
                     materias = materiasCE.getValor();
@@ -615,6 +751,7 @@ public class EjbEvaluacionDocente2 {
             else if(estudiante.getEstudianteSaiiut()!=null){
                 //El estudiante esta registrado en Saiiut
                 //Se obtienen la lista de materias desde Saiiut
+                //System.out.println("Esta en saiiut");
                 ResultadoEJB<List<dtoEstudianteMateria>>materiasSaiiut= getMateriasbyEstudianteSaiiut(estudiante,evaluacion);
                 if(materiasSaiiut.getCorrecto()==true){
                     materias = materiasSaiiut.getValor();
@@ -644,8 +781,7 @@ public class EjbEvaluacionDocente2 {
             materiasSaiiut = em2.createQuery("select v from VistaEvaluacionDocenteMateriaPye v where v.matricula=:matricula and v.periodo=:periodo", VistaEvaluacionDocenteMateriaPye.class)
                     .setParameter("matricula", estudiante.getMatricula())
                     .setParameter("periodo",evaluacion.getPeriodo())
-                    .getResultList()
-            ;
+                    .getResultList();
             if(materiasSaiiut==null || materiasSaiiut.isEmpty()){return ResultadoEJB.crearErroneo(4,listMaterias,"No se encontraron materias del estudiante");}
             else {
                 // Se reccorre la lista para porder generar la lista de materias
@@ -665,13 +801,13 @@ public class EjbEvaluacionDocente2 {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias por estudiante (EJBEvaluacionDocenteMteria, getMateriasbyEstudiante)", e, null);
         }
     }
+    
     /**
      * Obtiene la lista de materias por estudiante registrado en Control Escolar
      * @param estudiante dto Estudiante
      * @param evaluacion Evaluacion activa
      * @return
      */
-
     public ResultadoEJB<List<dtoEstudianteMateria>> getMateriasbyEstudianteCE(dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion){
         try{
             List<dtoEstudianteMateria> listMaterias = new ArrayList<>();
@@ -682,328 +818,290 @@ public class EjbEvaluacionDocente2 {
             cargaAcademica = em.createQuery("select c from CargaAcademica c where c.cveGrupo.idGrupo=:idGrupo and c.cveGrupo.periodo=:periodo",CargaAcademica.class)
                     .setParameter("idGrupo",estudiante.getEstudianteCE().getGrupo().getIdGrupo())
                     .setParameter("periodo",evaluacion.getPeriodo())
-                    .getResultList()
-            ;
+                    .getResultList();
             if(cargaAcademica==null || cargaAcademica.isEmpty()){return ResultadoEJB.crearErroneo(4,listMaterias,"No se econtro carga academica"); }
             else {
                 //Se recorre la lista de carga acedemica para llenar las materias del estudiante
-                cargaAcademica.stream().forEach(c->{
-                    dtoEstudianteMateria materia = new dtoEstudianteMateria();
-                    //Se busca al docente que imparte la materia
-                    ResultadoEJB<Personal> docente = estudianteBase.getPersonalbyClave(c.getDocente());
-                    if(docente.getCorrecto()==true){materia.setDocenteImparte(docente.getValor());}
-                    materia.setClaveMateria(c.getIdPlanMateria().getClaveMateria());
-                    materia.setNombreMateria(c.getIdPlanMateria().getIdMateria().getNombre());
-                    listMaterias.add(materia);
-                });
+                listMaterias = cargaAcademica
+                        .stream()
+                        .map(carga -> pack(carga))
+                        .distinct()
+                        .filter(ResultadoEJB::getCorrecto)
+                        .map(ResultadoEJB::getValor)
+                        .collect(Collectors.toList());
                 return ResultadoEJB.crearCorrecto(listMaterias,"Lista de materias del estudiante");
             }
-
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de materias por estudiante CE (EJBEvaluacionDocenteMteria.getMateriasbyEstudianteCE)", e, null);
         }
     }
-
-    /**
-     * Actualiza respuesta por pregunta (Evaluación docente tipo 1)
-     * @param resultados Resultados
-     * @param pregunta Numero de pregunta
-     * @param valor Valor ingresado
-     * @return
-     */
-    public ResultadoEJB<EvaluacionDocentesMateriaResultados2> actualizaRespuestaPorPregunta2(EvaluacionDocentesMateriaResultados2 resultados, String pregunta, String valor){
-        try{
-            switch (pregunta.toString()) {
-                case "r1":
-                    resultados.setR1(Short.parseShort(valor));
-                    break;
-                case "r2":
-                    resultados.setR2(Short.parseShort(valor));
-                    break;
-                case "r3":
-                    resultados.setR3(Short.parseShort(valor));
-                    break;
-                case "r4":
-                    resultados.setR4(Short.parseShort(valor));
-                    break;
-                case "r5":
-                    resultados.setR5(Short.parseShort(valor));
-                    break;
-                case "r6":
-                    resultados.setR6(Short.parseShort(valor));
-                    break;
-                case "r7":
-                    resultados.setR7(Short.parseShort(valor));
-                    break;
-                case "r8":
-                    resultados.setR8(Short.parseShort(valor));
-                    break;
-                case "r9":
-                    resultados.setR9(Short.parseShort(valor));
-                    break;
-                case "r10":
-                    resultados.setR10(Short.parseShort(valor));
-                    break;
-                case "r11":
-                    resultados.setR11(Short.parseShort(valor));
-                    break;
-                case "r12":
-                    resultados.setR12(Short.parseShort(valor));
-                    break;
-                case "r13":
-                    resultados.setR13(Short.parseShort(valor));
-                    break;
-                case "r14":
-                    resultados.setR14(Short.parseShort(valor));
-                    break;
-                case "r15":
-                    resultados.setR15(Short.parseShort(valor));
-                    break;
-                case "r16":
-                    resultados.setR16(Short.parseShort(valor));
-                    break;
-                case "r17":
-                    resultados.setR17(Short.parseShort(valor));
-                    break;
-            }
-            return ResultadoEJB.crearCorrecto(resultados,"Resultados actualizados");
-
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar los resultados (EJBEvaluacionDocenteMteria.actualizaRespuestaPorPregunta2)", e, null);
-        }
-    }
-    /**
-     * Actualiza respuesta por pregunta (Evaluación docente tipo 2)
-     * @param resultados Resultados
-     * @param pregunta Numero de pregunta
-     * @param valor Valor ingresado
-     * @return
-     */
-    public ResultadoEJB<EvaluacionDocentesMateriaResultados3> actualizaRespuestaPorPregunta3(EvaluacionDocentesMateriaResultados3 resultados, String pregunta, String valor){
-        try{
-            switch (pregunta.toString()) {
-                case "r1":
-                    resultados.setR1(Short.parseShort(valor));
-                    break;
-                case "r2":
-                    resultados.setR2(Short.parseShort(valor));
-                    break;
-                case "r3":
-                    resultados.setR3(Short.parseShort(valor));
-                    break;
-                case "r4":
-                    resultados.setR4(Short.parseShort(valor));
-                    break;
-                case "r5":
-                    resultados.setR5(Short.parseShort(valor));
-                    break;
-                case "r6":
-                    resultados.setR6(Short.parseShort(valor));
-                    break;
-                case "r7":
-                    resultados.setR7(Short.parseShort(valor));
-                    break;
-                case "r8":
-                    resultados.setR8(Short.parseShort(valor));
-                    break;
-                case "r9":
-                    resultados.setR9(Short.parseShort(valor));
-                    break;
-                case "r10":
-                    resultados.setR10(Short.parseShort(valor));
-                    break;
-                case "r11":
-                    resultados.setR11(Short.parseShort(valor));
-                    break;
-                case "r12":
-                    resultados.setR12(Short.parseShort(valor));
-                    break;
-                case "r13":
-                    resultados.setR13(Short.parseShort(valor));
-                    break;
-                case "r14":
-                    resultados.setR14(Short.parseShort(valor));
-                    break;
-                case "r15":
-                    resultados.setR15(Short.parseShort(valor));
-                    break;
-                case "r16":
-                    resultados.setR16(Short.parseShort(valor));
-                    break;
-                case "r17":
-                    resultados.setR17(Short.parseShort(valor));
-                    break;
-                case "r18":
-                    resultados.setR18(Short.parseShort(valor));
-                    break;
-            }
-            return ResultadoEJB.crearCorrecto(resultados,"Resultados actualizados");
-
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar los resultados (EJBEvaluacionDocenteMteria.actualizaRespuestaPorPregunta2)", e, null);
-        }
-    }
-    /**
-     * Actualiza respuesta por pregunta (Evaluación docente tipo 2)
-     * @param resultados Resultados
-     * @param pregunta Numero de pregunta
-     * @param valor Valor ingresado
-     * @return
-     */
-    public ResultadoEJB<EvaluacionDocentesMateriaResultados4> actualizaRespuestaPorPregunta4(EvaluacionDocentesMateriaResultados4 resultados, String pregunta, String valor){
-        try{
-            switch (pregunta.toString()) {
-                case "r1":
-                    resultados.setR1(Short.parseShort(valor));
-                    break;
-                case "r2":
-                    resultados.setR2(Short.parseShort(valor));
-                    break;
-                case "r3":
-                    resultados.setR3(Short.parseShort(valor));
-                    break;
-                case "r4":
-                    resultados.setR4(Short.parseShort(valor));
-                    break;
-                case "r5":
-                    resultados.setR5(Short.parseShort(valor));
-                    break;
-                case "r6":
-                    resultados.setR6(Short.parseShort(valor));
-                    break;
-                case "r7":
-                    resultados.setR7(Short.parseShort(valor));
-                    break;
-                case "r8":
-                    resultados.setR8(Short.parseShort(valor));
-                    break;
-                case "r9":
-                    resultados.setR9(Short.parseShort(valor));
-                    break;
-                case "r10":
-                    resultados.setR10(Short.parseShort(valor));
-                    break;
-                case "r11":
-                    resultados.setR11(Short.parseShort(valor));
-                    break;
-                case "r12":
-                    resultados.setR12(Short.parseShort(valor));
-                    break;
-                case "r13":
-                    resultados.setR13(Short.parseShort(valor));
-                    break;
-                case "r14":
-                    resultados.setR14(Short.parseShort(valor));
-                    break;
-                case "r15":
-                    resultados.setR15(Short.parseShort(valor));
-                    break;
-                case "r16":
-                    resultados.setR16(Short.parseShort(valor));
-                    break;
-                case "r17":
-                    resultados.setR17(Short.parseShort(valor));
-                    break;
-                case "r18":
-                    resultados.setR18(Short.parseShort(valor));
-                    break;
-                case "r19":
-                    resultados.setR19(Short.parseShort(valor));
-                    break;
-                case "r20":
-                    resultados.setR20(valor);
-                    break;
-            }
-            return ResultadoEJB.crearCorrecto(resultados,"Resultados actualizados");
-
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar los resultados (EJBEvaluacionDocenteMteria.actualizaRespuestaPorPregunta2)", e, null);
-        }
-    }
-    /**
-     * Actualiza respuesta por pregunta (Evaluación docente tipo 3)
-     * @param resultados Resultados
-     * @param pregunta Numero de pregunta
-     * @param valor Valor ingresado
-     * @return
-     */
-    public ResultadoEJB<EvaluacionDocentesMateriaResultados5> actualizaRespuestaPorPregunta5(EvaluacionDocentesMateriaResultados5 resultados, String pregunta, String valor){
-        try{
-            switch (pregunta.toString()) {
-                case "r1":
-                    resultados.setR1(Short.parseShort(valor));
-                    break;
-                case "r2":
-                    resultados.setR2(Short.parseShort(valor));
-                    break;
-                case "r3":
-                    resultados.setR3(Short.parseShort(valor));
-                    break;
-                case "r4":
-                    resultados.setR4(Short.parseShort(valor));
-                    break;
-                case "r5":
-                    resultados.setR5(Short.parseShort(valor));
-                    break;
-                case "r6":
-                    resultados.setR6(Short.parseShort(valor));
-                    break;
-                case "r7":
-                    resultados.setR7(Short.parseShort(valor));
-                    break;
-                case "r8":
-                    resultados.setR8(Short.parseShort(valor));
-                    break;
-                case "r9":
-                    resultados.setR9(Short.parseShort(valor));
-                    break;
-                case "r10":
-                    resultados.setR10(Short.parseShort(valor));
-                    break;
-                case "r11":
-                    resultados.setR11(Short.parseShort(valor));
-                    break;
-                case "r12":
-                    resultados.setR12(Short.parseShort(valor));
-                    break;
-                case "r13":
-                    resultados.setR13(Short.parseShort(valor));
-                    break;
-                case "r14":
-                    resultados.setR14(Short.parseShort(valor));
-                    break;
-                case "r15":
-                    resultados.setR15(Short.parseShort(valor));
-                    break;
-                case "r16":
-                    resultados.setR16(Short.parseShort(valor));
-                    break;
-                case "r17":
-                    resultados.setR17(Short.parseShort(valor));
-                    break;
-                case "r18":
-                    resultados.setR18(Short.parseShort(valor));
-                    break;
-                case "r19":
-                    resultados.setR19(Short.parseShort(valor));
-                    break;
-                case "r20":
-                    resultados.setR20(Short.parseShort(valor));
-                    break;
-                case "r21":
-                    resultados.setR21(Short.parseShort(valor));
-                    break;
-                case "r22":
-                    resultados.setR22(valor);
-                    break;
-            }
-            return ResultadoEJB.crearCorrecto(resultados,"Resultados actualizados");
-
-        }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar los resultados (EJBEvaluacionDocenteMteria.actualizaRespuestaPorPregunta2)", e, null);
-        }
+    
+    public ResultadoEJB<dtoEstudianteMateria> pack(CargaAcademica carga){
+        dtoEstudianteMateria materia = new dtoEstudianteMateria();
+        if(carga.equals(new CargaAcademica())) return ResultadoEJB.crearErroneo(1, "La carga no puede ser nulo", dtoEstudianteMateria.class);
+        ResultadoEJB<Personal> docente = estudianteBase.getPersonalbyClave(carga.getDocente());
+        if(!docente.getCorrecto()) return ResultadoEJB.crearErroneo(2, "No se encontro al docente", dtoEstudianteMateria.class);
+        materia.setDocenteImparte(docente.getValor());
+        materia.setClaveMateria(carga.getIdPlanMateria().getClaveMateria());
+        materia.setNombreMateria(carga.getIdPlanMateria().getIdMateria().getNombre());
+        return ResultadoEJB.crearCorrecto(materia, "Empaquetado");
     }
 
+    public void actualizarRespuestaPregunta2(EvaluacionDocentesMateriaResultados2 resultado, String pregunta, String respuesta, Map<String,String> respuestas){
+        switch (pregunta.trim()) {
+            case "r1": 
+                resultado.setR1(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r2": 
+                resultado.setR2(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r3": 
+                resultado.setR3(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r4": 
+                resultado.setR4(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r5": 
+                resultado.setR5(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r6": 
+                resultado.setR6(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r7": 
+                resultado.setR7(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r8": 
+                resultado.setR8(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r9": 
+                resultado.setR9(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r10": 
+                resultado.setR10(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r11": 
+                resultado.setR11(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r12": 
+                resultado.setR12(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r13": 
+                resultado.setR13(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r14": 
+                resultado.setR14(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r15": 
+                resultado.setR15(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r16": 
+                resultado.setR16(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r17": 
+                resultado.setR17(respuesta == null ? null : Short.parseShort(respuesta));
+                break;         
+        }
+        respuestas.put(pregunta, respuesta);
+    }
+    
+    public void actualizarRespuestaPregunta3(EvaluacionDocentesMateriaResultados3 resultado, String pregunta, String respuesta, Map<String,String> respuestas){
+        switch (pregunta.trim()) {
+            case "r1": 
+                resultado.setR1(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r2": 
+                resultado.setR2(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r3": 
+                resultado.setR3(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r4": 
+                resultado.setR4(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r5": 
+                resultado.setR5(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r6": 
+                resultado.setR6(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r7": 
+                resultado.setR7(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r8": 
+                resultado.setR8(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r9": 
+                resultado.setR9(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r10": 
+                resultado.setR10(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r11": 
+                resultado.setR11(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r12": 
+                resultado.setR12(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r13": 
+                resultado.setR13(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r14": 
+                resultado.setR14(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r15": 
+                resultado.setR15(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r16": 
+                resultado.setR16(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r17": 
+                resultado.setR17(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r18": 
+                resultado.setR18(respuesta == null ? null : Short.parseShort(respuesta));
+                break;           
+        }
+        respuestas.put(pregunta, respuesta);
+    }
+    
+    public void actualizarRespuestaPregunta4(EvaluacionDocentesMateriaResultados4 resultado, String pregunta, String respuesta, Map<String,String> respuestas){
+        switch (pregunta.trim()) {
+            case "r1": 
+                resultado.setR1(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r2": 
+                resultado.setR2(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r3": 
+                resultado.setR3(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r4": 
+                resultado.setR4(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r5": 
+                resultado.setR5(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r6": 
+                resultado.setR6(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r7": 
+                resultado.setR7(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r8": 
+                resultado.setR8(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r9": 
+                resultado.setR9(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r10": 
+                resultado.setR10(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r11": 
+                resultado.setR11(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r12": 
+                resultado.setR12(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r13": 
+                resultado.setR13(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r14": 
+                resultado.setR14(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r15": 
+                resultado.setR15(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r16": 
+                resultado.setR16(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r17": 
+                resultado.setR17(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r18": 
+                resultado.setR18(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r19": 
+                resultado.setR19(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r20": 
+                resultado.setR20(respuesta == null ? null : respuesta);
+                break;           
+        }
+        respuestas.put(pregunta, respuesta);
+    }
+    
+    public void actualizarRespuestaPregunta5(EvaluacionDocentesMateriaResultados5 resultado, String pregunta, String respuesta, Map<String,String> respuestas){
+        switch (pregunta.trim()) {
+            case "r1": 
+                resultado.setR1(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r2": 
+                resultado.setR2(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r3": 
+                resultado.setR3(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r4": 
+                resultado.setR4(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r5": 
+                resultado.setR5(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r6": 
+                resultado.setR6(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r7": 
+                resultado.setR7(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r8": 
+                resultado.setR8(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r9": 
+                resultado.setR9(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r10": 
+                resultado.setR10(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r11": 
+                resultado.setR11(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r12": 
+                resultado.setR12(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r13": 
+                resultado.setR13(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r14": 
+                resultado.setR14(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r15": 
+                resultado.setR15(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r16": 
+                resultado.setR16(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r17": 
+                resultado.setR17(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r18": 
+                resultado.setR18(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r19": 
+                resultado.setR19(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r20": 
+                resultado.setR20(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r21": 
+                resultado.setR21(respuesta == null ? null : Short.parseShort(respuesta));
+                break;
+            case "r22": 
+                resultado.setR22(respuesta == null ? null : respuesta);
+                break;            
+        }
+        respuestas.put(pregunta, respuesta);
+    }
+    
     public String obtenerRespuestaPorPregunta(EvaluacionDocentesMateriaResultados2 resultado, Float pregunta) {
         String res = null;
         switch (pregunta.toString()) {

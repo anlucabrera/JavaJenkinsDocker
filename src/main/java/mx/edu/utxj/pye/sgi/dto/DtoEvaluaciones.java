@@ -38,7 +38,13 @@ public class DtoEvaluaciones implements Serializable{
 
     @Getter @Setter @NonNull protected NivelRol nivelRol = NivelRol.OPERATIVO;
     @Getter @Setter @NonNull private DtoEstudiante estudiante;
-
+    @Getter @Setter @NonNull private dtoEstudiantesEvalauciones dtoEstudiante;
+    
+    public Boolean tieneAcceso(dtoEstudiantesEvalauciones estudiante){
+        if(estudiante == null || estudiante.equals(new dtoEstudiantesEvalauciones())) return false;
+        return true;
+    }
+    
     public Boolean tieneAcceso(DtoEstudiante estudiante, UsuarioTipo usuarioTipo){
         if(estudiante == null) return false;
         if(!usuarioTipo.equals(UsuarioTipo.ESTUDIANTE19)) return false;
@@ -62,8 +68,8 @@ public class DtoEvaluaciones implements Serializable{
             esDeIyE,director, tutor, tutorCe,tutor2,esSecretario, planeacion,esPsicopedagogia,esRector,esFda, ESActiva, ESTsuActiva, ESIngActiva,
             ESEActiva, EEActiva,ETutorActiva,EDocenteActiva, esServEst, esServEst2, eCEActiva, encuestaTSUCompleto,evaluacionEstadiaCompleto;
     @Getter @Setter public Short grado;
-    @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor, fechaAplicacion;
-    @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina, periodo;
+    @Getter @Setter public String evaluador, valor, cveDirector, nombreCompletoTutor, fechaAplicacion, slideActivo;
+    @Getter @Setter public Integer evaluadorr,cveTrabajador,usuarioNomina, periodo, tipoEvaluacion, totalDocentes, evaluados;
     @Getter @Setter public Long total,total2;
     //////////////////////////////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     ////////////////////////General entity's\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -107,6 +113,7 @@ public class DtoEvaluaciones implements Serializable{
     @Getter @Setter public List<ListaDatosAvanceEncuestaServicio> dtoLDAES, dtoLDAES1, dtoLDAES2, dtoLDAES3;
     @Getter @Setter public List<ViewEstudianteAsesorAcademico> alumnosEncuestas;
     @Getter @Setter public List<ListaDatosAvanceEncuestaServicio.AvanceEncuestaServiciosPorGrupo> dtoAESPG, dtoAESPG1, dtoAESPG2, dtoAESPGFilter;
+    @Getter @Setter public List<dtoEstudianteMateria> listaMaterias, listaResultados;
 
 
 

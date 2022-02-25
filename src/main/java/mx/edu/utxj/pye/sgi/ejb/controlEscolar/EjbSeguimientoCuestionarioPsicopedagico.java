@@ -2,18 +2,15 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import lombok.NonNull;
-import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCuestionarioPsicopedagogicoEstudiante;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoGrupo;
 import mx.edu.utxj.pye.sgi.ejb.EjbPersonalBean;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CuestionarioPsicopedagogicoResultados;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AperturaVisualizacionEncuestas;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -25,8 +22,8 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import java.rmi.server.ExportException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +36,7 @@ class EjbSeguimientoCuestionarioPsicopedagico {
     @EJB EjbPropiedades ep;
     @EJB EjbValidacionRol ejbValidacionRol;
     @EJB   EjbPeriodoEventoRegistro   ejbPeriodoEventoRegistro;
+    @EJB EjbCuestionarioPsicopedagogico ejb;
 
     @PostConstruct
     public void init(){
@@ -262,6 +260,21 @@ class EjbSeguimientoCuestionarioPsicopedagico {
             return ResultadoEJB.crearErroneo(1, "Error al obtener al estudiante. (EjbSeguimientoCuestionarioPsicopedagico.getEstudiantePrimerGrado", e, null);
         }
     }
+    
+    public ResultadoEJB<List<Estudiante>> getListaEstudiante(Integer matricula){
+        try{
+            List<Estudiante> estudiante1 = em.createQuery("select e from Estudiante e where e.matricula=:matricula and (e.tipoEstudiante.idTipoEstudiante <> :tipo and e.tipoEstudiante.idTipoEstudiante <> :tipo2) order by e.periodo desc ",Estudiante.class)
+                    .setParameter("matricula",matricula)
+                    .setParameter("tipo", 2)
+                    .setParameter("tipo2", 3)
+                    .getResultList();
+            //System.out.println("Estudiante 1ero " + estudiante1.getIdEstudiante()+" "+ estudiante1.getGrupo().getGrado());
+            if(estudiante1.isEmpty()){return ResultadoEJB.crearErroneo(3,new ArrayList<>(),"No se encontró registro");}
+            else {return ResultadoEJB.crearCorrecto(estudiante1,"");}
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "Error al obtener al estudiante. (EjbSeguimientoCuestionarioPsicopedagico.getEstudiantePrimerGrado", e, null);
+        }
+    }
 
     /**
      * Busca resultados del cuestionario psicopedagogico por id del estudiante
@@ -378,16 +391,20 @@ class EjbSeguimientoCuestionarioPsicopedagico {
                 dto.setDirector(resDirector.getValor());
             }else {return ResultadoEJB.crearErroneo(7,dto,"Error al obtener al director del área");}
             //Se busca el primer registro del estudiante
-            ResultadoEJB<Estudiante> resEs = getEstudiantePrimerGrado(e);
+            ResultadoEJB<List<Estudiante>> resEs = getListaEstudiante(e.getMatricula());
             if(resEs.getCorrecto()==true){
                 //Busca los resultados del cuestionario
-                ResultadoEJB<CuestionarioPsicopedagogicoResultados> resEstudiante = getResultadosbyEstudiante(resEs.getValor());
-                if(resEstudiante.getCorrecto()==true){
+                CuestionarioPsicopedagogicoResultados resEstudiante = resEs.getValor().stream()
+                        .map(estu -> ejb.obtenerResultado(estu))
+                        .filter(ResultadoEJB::getCorrecto)
+                        .map(ResultadoEJB::getValor)
+                        .findFirst().orElse(new CuestionarioPsicopedagogicoResultados());
+                if(!resEstudiante.equals(new CuestionarioPsicopedagogicoResultados())){
                     dto.setIngresoAlSistema(true);
-                    dto.setCuestionario(resEstudiante.getValor());
+                    dto.setCuestionario(resEstudiante);
                     //Obtiene al personal que examino el cuestionario del estuduiante
-                    if(resEstudiante.getValor().getClave()!=null){
-                        ResultadoEJB<Personal> resPersonal = getPersonalbyClave(resEstudiante.getValor().getClave());
+                    if(resEstudiante.getClave()!=null){
+                        ResultadoEJB<Personal> resPersonal = getPersonalbyClave(resEstudiante.getClave());
                         if(resPersonal.getCorrecto()){dto.setPersonalEvaluador(resPersonal.getValor().getNombre()); }
                         else {return ResultadoEJB.crearErroneo(7,dto,"Error al obtener al personal que examinó el cuestionario del estudiante");}
                     }else {dto.setPersonalEvaluador("Sin revisión");}
@@ -426,5 +443,13 @@ class EjbSeguimientoCuestionarioPsicopedagico {
             return ResultadoEJB.crearErroneo(1, "Error al empaquetar. (EjbSeguimientoCuestionarioPsicopedagico.packCuestionarioEstudiante", e, null);
 
         }
+    }
+    
+    public ResultadoEJB<List<Evaluaciones>> obtenerListaEvaluaciones(){
+        List<Evaluaciones> lista = em.createQuery("select e from Evaluaciones as e where e.tipo = :tipo order by e.evaluacion desc", Evaluaciones.class)
+                .setParameter("tipo", "Cuestionario Psicopedagógico")
+                .getResultList();
+        if(lista.isEmpty()) return ResultadoEJB.crearCorrecto(Collections.EMPTY_LIST, "La lista esta vacia");
+        return ResultadoEJB.crearCorrecto(lista, "Lista completa");
     }
 }

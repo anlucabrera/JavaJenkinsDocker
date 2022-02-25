@@ -326,23 +326,24 @@
                             </c:if>
                             -->
                             <!-- Evaluacion a Desempeño Docente-->
-                            <c:if test="#{evaluacionDocenteEstudiante.cargada}">
+                            <c:if test="#{evaluacionDocenteEstudiante.tieneAcceso}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
-                                        <div class="inner" style="cursor: pointer;" onclick="docentes();">
-                                            <h3>
-                                                <h:outputLabel value="#{evaluacionDocenteEstudiante.porcentaje}">
+                                        <div class="inner" style="cursor: pointer;">
+                                            <p:link outcome="evaluaciones/evaluacion/evaluacionDocente"  class="small-box-footer">
+                                                <h3>
+                                                    <h:outputLabel value="#{evaluacionDocenteEstudiante.porcentaje}" style="cursor: pointer; color: #ffffff">
                                                     <f:convertNumber pattern="###,###.##" />
                                                 </h:outputLabel>
-                                                <sup style="font-size: 20px">%</sup>
+                                                <sup style="font-size: 20px; color: #ffffff">%</sup>
                                             </h3>
-                                            <p>Evaluación al desempeño docente<br/></p>
+                                            <p style="color: #ffffff">Evaluación al desempeño docente<br/></p>
+                                            </p:link>
                                         </div>
                                         <div class="icon"><i class="fa fa-book"></i></div>
                                         <p:link outcome="evaluaciones/evaluacion/evaluacionDocente"  class="small-box-footer">
                                             Mas información <i class="fa fa-arrow-circle-right"></i>
                                         </p:link>
-                                        <h:form><p:remoteCommand name="docentes" action="evaluaciones/evaluacion/evaluacionDocente" /></h:form>
                                     </div>
                                 </div>
                             </c:if>
