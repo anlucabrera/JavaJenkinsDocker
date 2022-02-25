@@ -15,11 +15,11 @@
     </properties>
 
     <dependencies>
-        <!--dependency>
+        <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>font-awesome</artifactId>
             <version>5.15.4</version>
-        </dependency-->
+        </dependency>
         <dependency>
             <groupId>org.omnifaces</groupId>
             <artifactId>omnifaces</artifactId>
