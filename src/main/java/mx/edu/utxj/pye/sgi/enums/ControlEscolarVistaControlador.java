@@ -59,6 +59,7 @@ public enum ControlEscolarVistaControlador {
     CONSULTA_S_F_COORDINADOR_AREA_ACADEMICA_ESTADIA("/controlEscolar/serviciosEstudiantiles/consulta_seguro_facultativo_caae.xhtml", ConsultaSfCoordinadorAreaAcademicaEstadias.class),
     CONSULTA_S_F_ASESOR_ACADEMICO_ESTADIA("/controlEscolar/serviciosEstudiantiles/consulta_seguro_facultativo_aae.xhtml", ConsultaSfAsesorAcademicoEstadias.class),
     CONSULTA_S_F_TRABAJADOR("/controlEscolar/serviciosEstudiantiles/consulta_seguro_facultativo_t.xhtml", ConsultaSfTrabajador.class),
+    ADMINISTRAR_BECAS("/controlEscolar/serviciosEstudiantiles/administracionBecas.xhtml", AdministracionBecasEstudiantiles.class),
     
     CARTA_NO_ADUEDO_RECURSOS_MATERIALES("/controlEscolar/recursosMateriales/cartaNoAdeudoRecursosMateriales.xhtml", CartaNoAdeudoRecursosMateriales.class),
 

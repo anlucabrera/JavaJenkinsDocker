@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de becas
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionBecasEstudiantiles.cargado}">
+        <adm:breadcrumb title="Administración de becas"/>
+        <div class="contenedor">
+            <c:if test="#{administracionBecasEstudiantiles.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(administracionBecasEstudiantiles.rol.periodoActivo.periodo)}" />
+                                        
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla1" value="#{'col-sm-12 col-md-2 col-lg-1'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-2 col-lg-3'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarTipoBeca" styleClass="form-control" value="#{administracionBecasEstudiantiles.rol.agregarTipoBeca}" valueChangeListener="#{administracionBecasEstudiantiles.cambiarAgregarTipoBeca}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarTipoBeca" value="#{administracionBecasEstudiantiles.rol.agregarTipoBeca?'Agregar tipo de beca':'No agregar tipo de beca'}"/>
+                                                    <p:message for="agregarTipoBeca" display="tooltip" rendered="#{!administracionBecasEstudiantiles.rol.agregarTipoBeca}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:inputText class="form-control" id="nuevoTipoBeca" value="#{administracionBecasEstudiantiles.rol.nuevoTipoBeca}" size="25" maxlength="50" rendered="#{administracionBecasEstudiantiles.rol.agregarTipoBeca}" required="true" requiredMessage="Debe ingresar el nombre del tipo de beca"/>
+                                                    <p:outputLabel value="Tipo de beca" for="nuevoTipoBeca" rendered="#{administracionBecasEstudiantiles.rol.agregarTipoBeca}"/>
+                                                    <p:message for="nuevoTipoBeca" display="display"/>
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarTipoBeca" value="Guardar" actionListener="#{administracionBecasEstudiantiles.guardarTipoBeca()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionBecasEstudiantiles.rol.agregarTipoBeca}" oncomplete="PF('frm')update();" update="@form"  process="@form"/>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    <h:outputText value="&#160;" />
+                                    <h:outputText value="&#160;" />
+                                    <div class="row">
+                                        <center>
+                                            <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                <p:dataTable id="tbListaTipoBeca" var="tipoBeca" value="#{administracionBecasEstudiantiles.rol.tiposBeca}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información"
+                                                             tableStyle="vertical-align: middle;" resizeMode="expand"
+                                                             paginator="true" rows="20" rowsPerPageTemplate="20,40,60,80,100" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Clave" style="width: 100px;" sortBy="#{tipoBeca.becaTipo}"/>
+                                                            <p:column headerText="Nombre" style="width: 250px;" sortBy="#{tipoBeca.nombre}" filterBy="#{tipoBeca.nombre}"/>
+                                                            <p:column headerText="Eliminar" style="width: 200px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{tipoBeca.becaTipo}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{tipoBeca.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <center>
+                                                            <p:commandButton actionListener="#{administracionBecasEstudiantiles.eliminarTipoBeca(tipoBeca)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar tipo de beca." rendered="#{!administracionBecasEstudiantiles.deshabilitarEliminacionTipoBeca(tipoBeca)}">
+                                                                <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el tipo de beca seleccionada?" icon="ui-icon-alert" />
+                                                            </p:commandButton>
+                                                        </center>
+                                                        <h:outputText value="No se puede eliminar el tipo de beca seleccionada porque tiene registros relacionados." rendered="#{administracionBecasEstudiantiles.deshabilitarEliminacionTipoBeca(tipoBeca)}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </div>
+                                        </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty administracionBecasEstudiantiles.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{administracionBecasEstudiantiles.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para admininistrar becas</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{administracionBecasEstudiantiles.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!administracionBecasEstudiantiles.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal de Servicios Escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

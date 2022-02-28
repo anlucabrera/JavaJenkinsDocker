@@ -161,7 +161,7 @@
                                                                          tableStyle="vertical-align: middle;" resizeMode="expand">
                                                                 <p:columnGroup type="header">
                                                                     <p:row class="success">
-                                                                        <p:column headerText="Clave" style="width: 100px;" sortBy="#{tipoDiscapacidad.idTipoDiscapacidad}"/>
+                                                                        <p:column headerText="Clave" style="width: 100px;" sortBy="#{tipoBaja.tipoBaja}"/>
                                                                         <p:column headerText="Descripción" style="width: 250px;" />
                                                                         <p:column headerText="Eliminar" style="width: 200px;"/>
                                                                     </p:row>
@@ -174,7 +174,7 @@
                                                                 </p:column>
                                                                 <p:column style="text-align: justify;">
                                                                     <center>
-                                                                        <p:commandButton actionListener="#{administracionBajasEscolares.eliminarTipoBaja(tipoBaja)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar discapacidad." rendered="#{!administracionBajasEscolares.deshabilitarEliminacionTipoBaja(tipoBaja)}">
+                                                                        <p:commandButton actionListener="#{administracionBajasEscolares.eliminarTipoBaja(tipoBaja)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar tipo de baja." rendered="#{!administracionBajasEscolares.deshabilitarEliminacionTipoBaja(tipoBaja)}">
                                                                             <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el tipo de baja seleccionada?" icon="ui-icon-alert" />
                                                                         </p:commandButton>
                                                                     </center>
@@ -197,6 +197,7 @@
                                                                     <p:row class="success">
                                                                         <p:column headerText="Clave" style="width: 150px;" sortBy="#{causaBaja.cveCausa}"/>
                                                                         <p:column headerText="Causa" style="width: 200px;" sortBy="#{causaBaja.causa}" filterBy="#{causaBaja.causa}" filterMatchMode="contains"/>
+                                                                        <p:column headerText="Activa/Inactiva" style="width: 200px;" sortBy="#{causaBaja.activa}" />
                                                                         <p:column headerText="Eliminar" style="width: 250px;"/>
                                                                     </p:row>
                                                                 </p:columnGroup>
@@ -206,10 +207,15 @@
                                                                 <p:column style="text-align: justify;">
                                                                     <h:outputText value="#{causaBaja.causa}"/>
                                                                 </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:commandButton actionListener="#{administracionBajasEscolares.activarDesactivarCausaBaja(causaBaja)}"
+                                                                                     class="btn btn-sm #{!causaBaja.activa?'btn-danger':'btn-success'}" icon="#{!causaBaja.activa?'fa fa-close':'fa fa-check'}"
+                                                                                     title="#{causaBaja.activa?'Desactivar causa de baja.':'Activar causa de baja.'}" update="@this @(.tabla)"/>
+                                                                </p:column>
                                                                 <p:column style="text-align: justify;">
                                                                     <center>
                                                                         <p:commandButton actionListener="#{administracionBajasEscolares.eliminarCausaBaja(causaBaja)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar causa de baja." rendered="#{!administracionBajasEscolares.deshabilitarEliminacionCausaBaja(causaBaja)}">
-                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la lengua indígena seleccionada?" icon="ui-icon-alert" />
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la causa de baja seleccionada?" icon="ui-icon-alert" />
                                                                         </p:commandButton>
                                                                     </center>
                                                                     <h:outputText value="No se puede eliminar la causa de baja seleccionada porque tiene registros relacionados." rendered="#{administracionBajasEscolares.deshabilitarEliminacionCausaBaja(causaBaja)}"/>
@@ -229,16 +235,16 @@
                                                                          paginator="true" rows="20" rowsPerPageTemplate="20,40,60,80,100" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                                 <p:columnGroup type="header">
                                                                     <p:row class="success">
-                                                                        <p:column headerText="Causa" style="width: 200px;" sortBy="#{categoriaBaja.bajasCausa.causa}" filterBy="#{categoriaBaja.bajasCausa.causa}" filterMatchMode="contains"/>
                                                                         <p:column headerText="Categoría" style="width: 200px;" sortBy="#{categoriaBaja.bajasCausaCategoriaPK.categoria}" filterBy="#{categoriaBaja.bajasCausaCategoriaPK.categoria}" filterMatchMode="contains"/>
+                                                                        <p:column headerText="Causa" style="width: 200px;" sortBy="#{categoriaBaja.bajasCausa.causa}" filterBy="#{categoriaBaja.bajasCausa.causa}" filterMatchMode="contains"/>
                                                                         <p:column headerText="Eliminar" style="width: 250px;"/>
                                                                     </p:row>
                                                                 </p:columnGroup>
-                                                                <p:column style="text-align: justify;">
-                                                                    <h:outputText value="#{categoriaBaja.bajasCausa.causa}"/>
+                                                                <p:column style="text-align: justify;" groupRow="true">
+                                                                    <h:outputText value="#{categoriaBaja.bajasCausaCategoriaPK.categoria}"/>
                                                                 </p:column>
                                                                 <p:column style="text-align: justify;">
-                                                                    <h:outputText value="#{categoriaBaja.bajasCausaCategoriaPK.categoria}"/>
+                                                                    <h:outputText value="#{categoriaBaja.bajasCausa.causa}"/>
                                                                 </p:column>
                                                                 <p:column style="text-align: justify;">
                                                                     <center>

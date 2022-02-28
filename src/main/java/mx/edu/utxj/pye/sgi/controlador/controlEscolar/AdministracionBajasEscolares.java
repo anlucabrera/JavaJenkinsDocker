@@ -7,10 +7,8 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -282,6 +280,21 @@ public class AdministracionBajasEscolares extends ViewScopedRol implements Desar
                 Messages.addGlobalWarn("La causa de baja que desea agregar ya está registrada.");
             }
         }
+    }
+    
+     /**
+     * Permite activar o desactivar la causa de baja seleccionada
+     * @param causaBaja
+     */
+    public void activarDesactivarCausaBaja(BajasCausa causaBaja){
+        ResultadoEJB<BajasCausa> res = ejb.activarDesactivarCausaBaja(causaBaja);
+        if(res.getCorrecto()){
+            causaBaja.setActiva(res.getValor().getActiva());
+            listaCausasBaja();
+            mostrarMensajeResultadoEJB(res);
+            rol.setPestaniaActiva(1);
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);
     }
     
     /**

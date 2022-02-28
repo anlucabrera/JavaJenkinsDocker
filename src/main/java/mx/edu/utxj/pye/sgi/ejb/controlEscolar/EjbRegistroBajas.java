@@ -207,7 +207,8 @@ public class EjbRegistroBajas {
      */
     public ResultadoEJB<List<BajasCausa>> getCausasBaja(){
         try{
-            List<BajasCausa> bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa NOT IN (5,11,21,23,24) ORDER BY bc.causa ASC", BajasCausa.class)
+            List<BajasCausa> bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.activa=:activa ORDER BY bc.causa ASC", BajasCausa.class)
+                    .setParameter("activa", true)
                     .getResultList();
         
             return ResultadoEJB.crearCorrecto(bajasCausas, "Lista de causas de baja para realizar el registro de baja.");
@@ -225,10 +226,12 @@ public class EjbRegistroBajas {
          Boolean eventoBajas = buscarEventoActivoBajas().getValor();
          List<BajasCausa> bajasCausas = new ArrayList<>();
             if(eventoBajas){
-                bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa NOT IN (5,11,21,23,24) ORDER BY bc.causa ASC", BajasCausa.class)
+                bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.activa=:activa ORDER BY bc.causa ASC", BajasCausa.class)
+                    .setParameter("activa", true)
                     .getResultList();
             } else{
-                bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.cveCausa IN (3) ORDER BY bc.causa ASC", BajasCausa.class)
+                bajasCausas = em.createQuery("SELECT bc FROM BajasCausa bc WHERE bc.activa=:activa AND bc.cveCausa IN (3) ORDER BY bc.causa ASC", BajasCausa.class)
+                     .setParameter("activa", true)
                     .getResultList();
             }
             return ResultadoEJB.crearCorrecto(bajasCausas, "Lista de causas de baja para realizar el registro de baja.");

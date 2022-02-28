@@ -201,6 +201,33 @@ public class EjbAdministracionBajasEscolares {
         }
     }
     
+    /**
+     * Permite activar o desactivar la causa de baja seleccionada
+     * @param causaBaja
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<BajasCausa> activarDesactivarCausaBaja(BajasCausa causaBaja){
+        try{
+           
+            Boolean valor;
+            
+            if(causaBaja.getActiva()){
+                valor = false;
+            }else{
+                valor = true;
+            }
+            
+            causaBaja.setActiva(valor);
+            em.merge(causaBaja);
+            f.flush();
+            
+            
+            return ResultadoEJB.crearCorrecto(causaBaja, "Se ha cambiado correctamente el status de la causa de baja seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo cambiar el status de la causa de baja seleccionada. (EjbAdministracionBajasEscolares.activarDesactivarCausaBaja)", e, null);
+        }
+    }
+    
      /**
      * Permite eliminar el tipo de baja seleccionada
      * @param tipoBaja
