@@ -7,10 +7,8 @@ package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -91,13 +89,13 @@ public class AdministracionBajasEscolares extends ViewScopedRol implements Desar
             rol.setPeriodoActivo(ejbAsignacionIndicadoresCriterios.getPeriodoActual());
 //            rol.setSoloLectura(true);
 
-            rol.getInstrucciones().add("REGISTRAR TIPO DE DISCAPACIDAD, LENGUA INDÍGENA, TIPO DE SANGRE Y/O MEDIO DE DIFUSIÓN.");
-            rol.getInstrucciones().add("Seleccionar la opción que corresponda dependiendo la pestaña en la que se encuentra AGREGAR DISCAPACIDAD, LENGUA INDÍGENA, TIPO DE SANGRE o MEDIO DE DIFUSIÓN.");
+            rol.getInstrucciones().add("REGISTRAR TIPO DE BAJA, CAUSA DE BAJA Y/O RELACIONAR BAJA CON UNA CATEGORÍA.");
+            rol.getInstrucciones().add("Seleccionar la opción que corresponda dependiendo la pestaña en la que se encuentra AGREGAR TIPO DE BAJA, CAUSA DE BAJA, o RELACIONAR BAJA - CATEGORÍA.");
             rol.getInstrucciones().add("Ingresar el nombre en el campo correspondiente, máximo 45 caracteres.");
             rol.getInstrucciones().add("Dar clic en GUARDAR para registrar.");
-            rol.getInstrucciones().add("ACTIVAR O DESACTIVAR TIPO DE DISCAPACIDAD O MEDIO DE DIFUSIÓN");
-            rol.getInstrucciones().add("Dar clic en el icono (X o ✓) en la columna ACTIVO/INACTIVO de la fila que corresponda.");
-            rol.getInstrucciones().add("ELIMINAR TIPO DE DISCAPACIDAD, LENGUA INDÍGENA, TIPO DE SANGRE O MEDIO DE DIFUSIÓN.");
+            rol.getInstrucciones().add("ACTIVAR O DESACTIVAR CAUSA DE BAJA");
+            rol.getInstrucciones().add("Dar clic en el icono (X o ✓) en la columna ACTIVA/INACTIVA de la fila que corresponda.");
+            rol.getInstrucciones().add("ELIMINAR TIPO DE BAJA, CAUSA DE BAJA o RELACIÓN BAJA - CATEGORÍA.");
             rol.getInstrucciones().add("Dar clic en el icono (cesto de basura) de la columna ELIMINAR de la fila que corresponda.");
 
             rol.setPestaniaActiva(0);
@@ -282,6 +280,21 @@ public class AdministracionBajasEscolares extends ViewScopedRol implements Desar
                 Messages.addGlobalWarn("La causa de baja que desea agregar ya está registrada.");
             }
         }
+    }
+    
+     /**
+     * Permite activar o desactivar la causa de baja seleccionada
+     * @param causaBaja
+     */
+    public void activarDesactivarCausaBaja(BajasCausa causaBaja){
+        ResultadoEJB<BajasCausa> res = ejb.activarDesactivarCausaBaja(causaBaja);
+        if(res.getCorrecto()){
+            causaBaja.setActiva(res.getValor().getActiva());
+            listaCausasBaja();
+            mostrarMensajeResultadoEJB(res);
+            rol.setPestaniaActiva(1);
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);
     }
     
     /**

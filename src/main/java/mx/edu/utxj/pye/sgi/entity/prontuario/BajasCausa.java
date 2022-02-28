@@ -32,7 +32,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "BajasCausa.findAll", query = "SELECT b FROM BajasCausa b")
     , @NamedQuery(name = "BajasCausa.findByCveCausa", query = "SELECT b FROM BajasCausa b WHERE b.cveCausa = :cveCausa")
-    , @NamedQuery(name = "BajasCausa.findByCausa", query = "SELECT b FROM BajasCausa b WHERE b.causa = :causa")})
+    , @NamedQuery(name = "BajasCausa.findByCausa", query = "SELECT b FROM BajasCausa b WHERE b.causa = :causa")
+    , @NamedQuery(name = "BajasCausa.findByActiva", query = "SELECT b FROM BajasCausa b WHERE b.activa = :activa")})
 public class BajasCausa implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,6 +47,10 @@ public class BajasCausa implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "causa")
     private String causa;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "activa")
+    private boolean activa;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "causaBaja", fetch = FetchType.LAZY)
     private List<DesercionPorEstudiante> desercionPorEstudianteList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "bajasCausa", fetch = FetchType.LAZY)
@@ -77,6 +82,14 @@ public class BajasCausa implements Serializable {
 
     public void setCausa(String causa) {
         this.causa = causa;
+    }
+    
+    public boolean getActiva() {
+        return activa;
+    }
+    
+    public void setActiva(boolean activa) {
+        this.activa = activa;
     }
 
     @XmlTransient

@@ -34,7 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "BecaTipos.findAll", query = "SELECT b FROM BecaTipos b")
     , @NamedQuery(name = "BecaTipos.findByBecaTipo", query = "SELECT b FROM BecaTipos b WHERE b.becaTipo = :becaTipo")
-    , @NamedQuery(name = "BecaTipos.findByNombre", query = "SELECT b FROM BecaTipos b WHERE b.nombre = :nombre")})
+    , @NamedQuery(name = "BecaTipos.findByNombre", query = "SELECT b FROM BecaTipos b WHERE b.nombre = :nombre")
+    , @NamedQuery(name = "BecaTipos.findByActiva", query = "SELECT b FROM BecaTipos b WHERE b.activa = :activa")})
 public class BecaTipos implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,6 +49,10 @@ public class BecaTipos implements Serializable {
     @Size(min = 1, max = 50)
     @Column(name = "nombre")
     private String nombre;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "activa")
+    private boolean activa;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "becaTipo", fetch = FetchType.LAZY)
     private List<Becas> becasList;
 
@@ -77,6 +82,14 @@ public class BecaTipos implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+    
+    public boolean getActiva() {
+        return activa;
+    }
+    
+    public void setActiva(boolean activa) {
+        this.activa = activa;
     }
 
     @XmlTransient
