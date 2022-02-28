@@ -351,6 +351,13 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         return termino;
     }
     
+    public boolean obtenerInicioEvento(Date horaInicio) {
+        LocalDateTime horaActual = LocalDateTime.now();
+        LocalDateTime horaComienzo = utilidadesCH.castearDaLDT(horaInicio);
+        boolean empezo = horaActual.isAfter(horaComienzo);
+        return empezo;
+    }
+    
     public boolean tieneVariosDias(Date horaInicio, Date horaFin) {
         Date fechaInicio, fechaFin;
         fechaInicio = utilidadesCH.castearLDTaD(utilidadesCH.castearDaLDT(horaInicio).with(LocalTime.MIDNIGHT));

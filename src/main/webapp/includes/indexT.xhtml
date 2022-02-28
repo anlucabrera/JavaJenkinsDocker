@@ -722,6 +722,7 @@
                             <c:set var="porcentaje" value="#{registroNotificacionesGeneral.obtenerPorcentajeFechas(notificacionCe.horaInicio)}"/>
                             <c:set var="diferencia" value="#{registroNotificacionesGeneral.obtenerDiferenciaDias(notificacionCe.horaInicio)}"/>
                             <c:set var="termino" value="#{registroNotificacionesGeneral.obtenerFinEvento(notificacionCe.horaFin)}"/>
+                            <c:set var="comenzo" value="#{registroNotificacionesGeneral.obtenerInicioEvento(notificacionCe.horaInicio)}"/>
                             <c:set var="tieneVariosDias" value="#{registroNotificacionesGeneral.tieneVariosDias(notificacionCe.horaInicio, notificacionCe.horaFin)}"/>
                             <c:set var="mismoMes" value="#{registroNotificacionesGeneral.obtenerMes(notificacionCe.horaInicio, notificacionCe.horaFin)}"/>
                             <c:if test="#{diferencia eq 0 and termino eq false}"><c:set var="color" value="bg-yellow"/></c:if>
@@ -744,12 +745,20 @@
                             <c:if test="#{notificacionCe.tipo eq 'Concurso Institucional'}"><c:set var="icon" value="fa-university"/></c:if>
                             <c:if test="#{notificacionCe.tipo eq 'Reunión' || notificacionCe.tipo eq 'Sesión' || notificacionCe.tipo eq 'Congreso'}"><c:set var="icon" value="fa-users"/></c:if>
                             <c:if test="#{notificacionCe.tipo eq 'Capacitación'}"><c:set var="icon" value="fa-user-plus"/></c:if>
+                            <c:if test="#{comenzo eq false and termino eq false}"><c:set var="efect" value=""/></c:if>
+                            <c:if test="#{comenzo eq true and termino eq false}"><c:set var="finish" value=""/></c:if>
+                            <c:if test="#{comenzo eq false and termino eq false}"><c:set var="finish" value=""/></c:if>
+                            <c:if test="#{comenzo eq true and termino eq false}"><c:set var="efect" value="fa-beat-fade"/></c:if>
+                            <c:if test="#{comenzo eq true and termino eq true}"><c:set var="finish" value="fa-slash fa-stack-1x"/></c:if>
                             <!--Widget a mostrar-->
                             <div class="col-lg-12 col-md-12 col-xs-12">
                                 <a id="abrirmodal#{index}" href="#" class="info-box-footer" data-toggle="modal" data-target="#modal-default#{index}" >
                                     <div class="info-box #{color}">
                                         <span class="info-box-icon">
-                                            <i class="fa #{icon}"/>
+                                            <span class="fa-stack " style="right: 10px; text-align: left ">
+                                                <i class="fa #{icon} fa-stack-1x #{efect}"></i>
+                                                <i class="fa #{finish} #{efect}" style="color:Tomato"></i>
+                                            </span>
                                         </span>
                                         <div class="info-box-content">
                                             <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo} - <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="E, dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel></span></span>
@@ -758,9 +767,12 @@
                                                 <div class="progress-bar" style="width: ${100-porcentaje}%"></div>
                                             </div>
                                             <span class="progress-description">
-                                                <c:if test="#{diferencia le 0 and termino eq false}">
+                                                <c:if test="#{diferencia le 0 and termino eq false and comenzo eq false}">
                                                     El evento inicia hoy a las 
                                                     <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel>
+                                                </c:if>
+                                                <c:if test="#{diferencia le 0 and termino eq false and comenzo eq true}">
+                                                    El evento ha iniciado.
                                                 </c:if>
                                                 <c:if test="#{diferencia le 0 and termino eq true}">
                                                     Este evento ha terminado.
