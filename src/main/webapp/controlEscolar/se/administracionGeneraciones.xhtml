@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de generaciones
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionGeneracionesEscolares.cargado}">
+        <adm:breadcrumb title="Administración de generaciones"/>
+        <div class="contenedor">
+            <c:if test="#{administracionGeneracionesEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(administracionGeneracionesEscolares.rol.periodoActivo.periodo)}" />
+                                        
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla1" value="#{'col-sm-12 col-md-2 col-lg-1'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-2 col-lg-3'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <c:if test="#{administracionGeneracionesEscolares.rol.pestaniaActiva eq 0}">
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarGeneracion" styleClass="form-control" value="#{administracionGeneracionesEscolares.rol.agregarGeneracion}" valueChangeListener="#{administracionGeneracionesEscolares.cambiarAgregarGeneracion}" rendered="#{!administracionGeneracionesEscolares.rol.agregarCicloGeneracion}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarGeneracion" value="#{administracionGeneracionesEscolares.rol.agregarGeneracion?'Agregar generación':'No agregar generación'}" rendered="#{!administracionGeneracionesEscolares.rol.agregarCicloGeneracion}"/>
+                                                    <p:message for="agregarGeneracion" display="tooltip" rendered="#{!administracionGeneracionesEscolares.rol.agregarCicloGeneracion}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="anioInicio" value="#{administracionGeneracionesEscolares.rol.anioInicio}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionGeneracionesEscolares.cambiarAnioInicio}" rendered="#{administracionGeneracionesEscolares.rol.agregarGeneracion}">
+                                                        <f:selectItems value="#{administracionGeneracionesEscolares.rol.anios}" var="anio" itemValue="#{anio}" itemLabel="#{anio}" />
+                                                        <p:ajax update="@this @(.anioFin) @(.tabla)" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Año inicio" for="anioInicio" rendered="#{administracionGeneracionesEscolares.rol.agregarGeneracion}"/>
+                                                    <p:message for="anioInicio" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:inputText id="anioFin" value="#{administracionGeneracionesEscolares.rol.anioFin}" disabled="true" rendered="#{administracionGeneracionesEscolares.rol.agregarGeneracion}"/>
+                                                    <p:outputLabel value="Año fin" for="anioFin" rendered="#{administracionGeneracionesEscolares.rol.agregarGeneracion}"/>
+                                                    <p:message for="anioFin" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarGeneracion" value="Guardar" actionListener="#{administracionGeneracionesEscolares.guardarGeneracion()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionGeneracionesEscolares.rol.agregarGeneracion}" oncomplete="PF('frm')update();" update="@form"  process="@form"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                        <c:if test="#{administracionGeneracionesEscolares.rol.pestaniaActiva eq 1}">
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarCicloGeneracion" styleClass="form-control" value="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion}" valueChangeListener="#{administracionGeneracionesEscolares.cambiarAgregarCicloGeneracion}" rendered="#{!administracionGeneracionesEscolares.rol.agregarGeneracion}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarCicloGeneracion" value="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion?'Relacionar ciclo a generación escolar':'No relacionar ciclo a generación'}" rendered="#{!administracionGeneracionesEscolares.rol.agregarGeneracion}"/>
+                                                    <p:message for="agregarCicloGeneracion" display="tooltip" rendered="#{!administracionGeneracionesEscolares.rol.agregarCicloGeneracion}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="ciclo" value="#{administracionGeneracionesEscolares.rol.cicloEscolar}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionGeneracionesEscolares.cambiarCicloEscolar}" rendered="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion}">
+                                                        <f:selectItems value="#{administracionGeneracionesEscolares.rol.ciclosEscolares}" var="ciclo" itemValue="#{ciclo}" itemLabel="#{caster.cicloEscolarToString(ciclo)}" />
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Ciclo escolar" for="ciclo" rendered="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion}"/>
+                                                    <p:message for="ciclo" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="generacion" value="#{administracionGeneracionesEscolares.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionGeneracionesEscolares.cambiarGeneracion}" rendered="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion}">
+                                                        <f:selectItems value="#{administracionGeneracionesEscolares.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Generación" for="generacion" rendered="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion}"/>
+                                                    <p:message for="generacion" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarCicloGeneracion" value="Guardar" actionListener="#{administracionGeneracionesEscolares.guardarCicloGeneracion()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionGeneracionesEscolares.rol.agregarCicloGeneracion}" oncomplete="PF('frm')update();" update="@form"  process="@form"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                    <h:outputText value="&#160;" />
+                                    <h:outputText value="&#160;" />
+                                    <div class="row">
+                                            <center>
+                                                <p:tabView activeIndex="#{administracionGeneracionesEscolares.rol.pestaniaActiva}">
+                                                    <p:ajax event="tabChange" listener="#{administracionGeneracionesEscolares.cambiarPestania}" update="@form"/>
+                                                    <p:tab id="twbGeneraciones" title="Generaciones"> 
+                                                        <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaGeneraciones" var="generacion" value="#{administracionGeneracionesEscolares.rol.generaciones}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand"
+                                                                         paginator="true" rows="20" rowsPerPageTemplate="20,40,60,80,100" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Clave" style="width: 150px;"/>
+                                                                        <p:column headerText="Año inicio" style="width: 150px;"/>
+                                                                        <p:column headerText="Año fin" style="width: 150px;"/>
+                                                                        <p:column headerText="Eliminar" style="width: 200px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{generacion.generacion}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{generacion.inicio}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{generacion.fin}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <center>
+                                                                        <p:commandButton actionListener="#{administracionGeneracionesEscolares.eliminarGeneracion(generacion)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar generación." rendered="#{!administracionGeneracionesEscolares.deshabilitarEliminacionGeneracion(generacion)}">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la generación seleccionada?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </center>
+                                                                    <h:outputText value="No se puede eliminar la generación seleccionada porque tiene registros relacionados." rendered="#{administracionGeneracionesEscolares.deshabilitarEliminacionGeneracion(generacion)}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab id="twbCiclosGeneraciones" title="Relación ciclos escolares con generaciones"> 
+                                                        <div class="col-lg-10 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaCiclosGeneraciones" var="cicloGeneracion" value="#{administracionGeneracionesEscolares.rol.cicloGeneraciones}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand" editable="true" editMode="cell" expandableRowGroups="true"
+                                                                         paginator="true" rows="20" rowsPerPageTemplate="20,40,60,80,100" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Clave" style="width: 150px;"/>
+                                                                        <p:column headerText="Ciclo escolar" style="width: 200px;"/>
+                                                                        <p:column headerText="Generación" style="width: 150px;"/>
+                                                                        <p:column headerText="Eliminar" style="width: 250px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{cicloGeneracion.ceg}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{cicloGeneracion.ciclo.inicio}"><f:convertDateTime type="date" pattern="yyyy" timeZone="America/Mexico_City"/></h:outputText> - <h:outputText value="#{cicloGeneracion.ciclo.fin}"><f:convertDateTime type="date" pattern="yyyy" timeZone="America/Mexico_City"/></h:outputText>
+                                                                   </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{cicloGeneracion.generacion.inicio} - #{cicloGeneracion.generacion.fin}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <center>
+                                                                        <p:commandButton actionListener="#{administracionGeneracionesEscolares.eliminarCicloGeneracion(cicloGeneracion)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar periodo escolar.">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la relación del ciclo y generación seleccionada?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </center>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty administracionGeneracionesEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{administracionGeneracionesEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para admininistrar generaciones</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{administracionGeneracionesEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!administracionGeneracionesEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal de Servicios Escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
