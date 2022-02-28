@@ -96,6 +96,7 @@
                                                         <p:row class="success">
                                                             <p:column headerText="Clave" style="width: 100px;" sortBy="#{tipoBeca.becaTipo}"/>
                                                             <p:column headerText="Nombre" style="width: 250px;" sortBy="#{tipoBeca.nombre}" filterBy="#{tipoBeca.nombre}"/>
+                                                            <p:column headerText="Activa/Inactiva" style="width: 200px;" sortBy="#{tipoBeca.activa}" />
                                                             <p:column headerText="Eliminar" style="width: 200px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
@@ -104,6 +105,11 @@
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{tipoBeca.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandButton actionListener="#{administracionBecasEstudiantiles.activarDesactivarTipoBeca(tipoBeca)}"
+                                                                         class="btn btn-sm #{!tipoBeca.activa?'btn-danger':'btn-success'}" icon="#{!tipoBeca.activa?'fa fa-close':'fa fa-check'}"
+                                                                         title="#{tipoBeca.activa?'Desactivar tipo de beca.':'Activar tipo de beca.'}" update="@this @(.tabla)"/>
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <center>

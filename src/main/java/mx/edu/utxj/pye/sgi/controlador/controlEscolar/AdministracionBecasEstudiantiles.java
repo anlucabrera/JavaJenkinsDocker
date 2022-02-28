@@ -85,8 +85,10 @@ public class AdministracionBecasEstudiantiles extends ViewScopedRol implements D
 
             rol.getInstrucciones().add("REGISTRAR TIPO DE BECA.");
             rol.getInstrucciones().add("Seleccionar AGREGAR TIPO DE BECA.");
-            rol.getInstrucciones().add("Ingresar el nombre en el campo correspondiente, máximo 45 caracteres.");
+            rol.getInstrucciones().add("Ingresar el nombre en el campo correspondiente, máximo 50 caracteres.");
             rol.getInstrucciones().add("Dar clic en GUARDAR para registrar.");
+            rol.getInstrucciones().add("ACTIVAR O DESACTIVAR TIPO DE BECA");
+            rol.getInstrucciones().add("Dar clic en el icono (X o ✓) en la columna ACTIVA/INACTIVA de la fila que corresponda.");
             rol.getInstrucciones().add("ELIMINAR TIPO DE BECA.");
             rol.getInstrucciones().add("Dar clic en el icono (cesto de basura) de la columna ELIMINAR de la fila que corresponda.");
 
@@ -146,6 +148,20 @@ public class AdministracionBecasEstudiantiles extends ViewScopedRol implements D
                 Messages.addGlobalWarn("El tipo de beca que desea agregar ya está registrada.");
             }
         }
+    }
+    
+    /**
+     * Permite activar o desactivar el tipo de beca seleccionada
+     * @param tipoBeca
+     */
+    public void activarDesactivarTipoBeca(BecaTipos tipoBeca){
+        ResultadoEJB<BecaTipos> res = ejb.activarDesactivarTipoBeca(tipoBeca);
+        if(res.getCorrecto()){
+            tipoBeca.setActiva(res.getValor().getActiva());
+            listaTipoBeca();
+            mostrarMensajeResultadoEJB(res);
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);
     }
     
      /**

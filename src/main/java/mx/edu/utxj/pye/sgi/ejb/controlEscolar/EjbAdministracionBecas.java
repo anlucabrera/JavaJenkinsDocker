@@ -92,6 +92,33 @@ public class EjbAdministracionBecas {
         }
     }
     
+    /**
+     * Permite activar o desactivar el tipo de beca seleccionada
+     * @param tipoBeca
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<BecaTipos> activarDesactivarTipoBeca(BecaTipos tipoBeca){
+        try{
+           
+            Boolean valor;
+            
+            if(tipoBeca.getActiva()){
+                valor = false;
+            }else{
+                valor = true;
+            }
+            
+            tipoBeca.setActiva(valor);
+            em.merge(tipoBeca);
+            f.flush();
+            
+            
+            return ResultadoEJB.crearCorrecto(tipoBeca, "Se ha cambiado correctamente el status del tipo de beca seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo cambiar el status del tipo de beca seleccionada. (EjbAdministracionBajasEscolares.activarDesactivarTipoBeca)", e, null);
+        }
+    }
+    
      /**
      * Permite eliminar el tipo de beca seleccionada
      * @param tipoBeca

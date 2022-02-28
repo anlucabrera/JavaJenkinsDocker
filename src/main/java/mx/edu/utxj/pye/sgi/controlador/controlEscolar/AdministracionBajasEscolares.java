@@ -89,13 +89,13 @@ public class AdministracionBajasEscolares extends ViewScopedRol implements Desar
             rol.setPeriodoActivo(ejbAsignacionIndicadoresCriterios.getPeriodoActual());
 //            rol.setSoloLectura(true);
 
-            rol.getInstrucciones().add("REGISTRAR TIPO DE DISCAPACIDAD, LENGUA INDÍGENA, TIPO DE SANGRE Y/O MEDIO DE DIFUSIÓN.");
-            rol.getInstrucciones().add("Seleccionar la opción que corresponda dependiendo la pestaña en la que se encuentra AGREGAR DISCAPACIDAD, LENGUA INDÍGENA, TIPO DE SANGRE o MEDIO DE DIFUSIÓN.");
+            rol.getInstrucciones().add("REGISTRAR TIPO DE BAJA, CAUSA DE BAJA Y/O RELACIONAR BAJA CON UNA CATEGORÍA.");
+            rol.getInstrucciones().add("Seleccionar la opción que corresponda dependiendo la pestaña en la que se encuentra AGREGAR TIPO DE BAJA, CAUSA DE BAJA, o RELACIONAR BAJA - CATEGORÍA.");
             rol.getInstrucciones().add("Ingresar el nombre en el campo correspondiente, máximo 45 caracteres.");
             rol.getInstrucciones().add("Dar clic en GUARDAR para registrar.");
-            rol.getInstrucciones().add("ACTIVAR O DESACTIVAR TIPO DE DISCAPACIDAD O MEDIO DE DIFUSIÓN");
-            rol.getInstrucciones().add("Dar clic en el icono (X o ✓) en la columna ACTIVO/INACTIVO de la fila que corresponda.");
-            rol.getInstrucciones().add("ELIMINAR TIPO DE DISCAPACIDAD, LENGUA INDÍGENA, TIPO DE SANGRE O MEDIO DE DIFUSIÓN.");
+            rol.getInstrucciones().add("ACTIVAR O DESACTIVAR CAUSA DE BAJA");
+            rol.getInstrucciones().add("Dar clic en el icono (X o ✓) en la columna ACTIVA/INACTIVA de la fila que corresponda.");
+            rol.getInstrucciones().add("ELIMINAR TIPO DE BAJA, CAUSA DE BAJA o RELACIÓN BAJA - CATEGORÍA.");
             rol.getInstrucciones().add("Dar clic en el icono (cesto de basura) de la columna ELIMINAR de la fila que corresponda.");
 
             rol.setPestaniaActiva(0);
