@@ -385,6 +385,33 @@
                                 </div>
                             </div>
                             -->
+                            
+                            <c:if test="#{validacionTutoriaGrupalEstudiante.tieneAcceso}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-blue">
+                                        <div class="inner" style="cursor: pointer;">
+                                            <p:link outcome="controlEscolar/estudiante/tutorias_grupales">
+                                                <h3>
+                                                    <c:if test="#{validacionTutoriaGrupalEstudiante.rol.firmasPendiente != null || validacionTutoriaGrupalEstudiante.rol.firmasPendiente != 0}">
+                                                        <h:outputLabel value="Tutorías Sin Firmar: #{validacionTutoriaGrupalEstudiante.rol.firmasPendiente}" style="cursor: pointer; color: #ffffff"/>
+                                                        <sup style="font-size: 20px"></sup>
+                                                    </c:if>
+                                                    <c:if test="#{validacionTutoriaGrupalEstudiante.rol.firmasPendiente == null || validacionTutoriaGrupalEstudiante.rol.firmasPendiente == 0}">
+                                                        <h:outputLabel value="Tutorías Firmadas al 100%" style="cursor: pointer; color: #ffffff" />
+                                                        <sup style="font-size: 20px"></sup>
+                                                    </c:if>
+                                                </h3>
+                                                <p style="color: #ffffff">Tutorías Grupales<br/></p>
+                                            </p:link>
+                                        </div>
+                                        <div class="icon"><i class="fa fa-slideshare"></i></div>
+                                        <p:link outcome="controlEscolar/estudiante/tutorias_grupales"  class="small-box-footer">
+                                            Firmar tutorías <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                    </div>
+                                </div>
+                            </c:if>
+                            
                             <div class="col-lg-4 col-md-6 col-xs-12">
                                 <div class="small-box bg-green">
                                     <div class="inner">

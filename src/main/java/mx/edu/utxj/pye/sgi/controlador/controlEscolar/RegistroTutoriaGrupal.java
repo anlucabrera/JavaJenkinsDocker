@@ -411,10 +411,10 @@ public class RegistroTutoriaGrupal extends ViewScopedRol implements Desarrollabl
             if (!tutoriaGrupal.getParticipantesTutoriaGrupalList().isEmpty()) {
                 List<ParticipantesTutoriaGrupal> part = tutoriaGrupal.getParticipantesTutoriaGrupalList();
                 List<ParticipantesTutoriaGrupal> partFaltantes = new ArrayList<>();
+                part.removeIf(tipoEstudiante -> tipoEstudiante.getEstudiante1().getTipoEstudiante().getIdTipoEstudiante().equals((short)2) || tipoEstudiante.getEstudiante1().getTipoEstudiante().getIdTipoEstudiante().equals((short)3));
                 part.stream().forEach((t) -> {
-                    if (!t.getAceptacionAcuerdos().equals(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel())) {
-                        if(!t.getEstudiante1().getTipoEstudiante().getIdTipoEstudiante().equals(2) || !t.getEstudiante1().getTipoEstudiante().getIdTipoEstudiante().equals(3))
-                            partFaltantes.add(t);
+                    if (!t.getAceptacionAcuerdos().equals(ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel())) {    
+                        partFaltantes.add(t);
                     }
                 });
                 double participantesDouble = part.size();
