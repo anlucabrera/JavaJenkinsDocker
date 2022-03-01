@@ -158,7 +158,7 @@
                     <c:if test="#{cartaNoAdeudoFinanzas.mostrarEnDesarrollo(request) and cartaNoAdeudoFinanzas.tieneAcceso}"><li><p:link href="#{request.contextPath}//controlEscolar/recursosFinancieros/cartaNoAdeudoFinanzas.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
 
                     <!-- Administrador -->
-                    <c:if test="#{(administracionCatalogosDocumentosProceso.mostrarEnDesarrollo(request) and administracionCatalogosDocumentosProceso.tieneAcceso) || (administracionBecasEstudiantiles.mostrarEnDesarrollo(request) and administracionBecasEstudiantiles.tieneAcceso)}">
+                    <c:if test="#{(administracionCatalogosDocumentosProceso.mostrarEnDesarrollo(request) and administracionCatalogosDocumentosProceso.tieneAcceso) || (administracionBecasEstudiantiles.mostrarEnDesarrollo(request) and administracionBecasEstudiantiles.tieneAcceso) || (administracionCiclosPeriodosEscolares.mostrarEnDesarrollo(request) and administracionCiclosPeriodosEscolares.tieneAcceso)}">
 
                         <li class="treeview">
                             <a href="#">

@@ -62,7 +62,7 @@ public class EjbAdministracionGeneraciones {
     public ResultadoEJB<List<CiclosescolaresGeneraciones>> getCicloGeneraciones(){
         try{
             
-            List<CiclosescolaresGeneraciones> cicloGeneraciones = em.createQuery("SELECT c FROM CiclosescolaresGeneraciones c ORDER BY c.ciclo.ciclo, c.generacion.generacion DESC",  CiclosescolaresGeneraciones.class)
+            List<CiclosescolaresGeneraciones> cicloGeneraciones = em.createQuery("SELECT c FROM CiclosescolaresGeneraciones c ORDER BY c.ciclo.ciclo DESC, c.generacion.generacion DESC",  CiclosescolaresGeneraciones.class)
                     .getResultList();
           
             return ResultadoEJB.crearCorrecto(cicloGeneraciones, "Ciclos y generaciones relacionados.");
