@@ -901,7 +901,7 @@ public class EjbRegistroFichaAdmision {
                         p.setApellidoPaterno(ucFirst(parts[2]).trim());
                         p.setApellidoMaterno(ucFirst(parts[3]).trim());
                         p.setNombre(ucFirst(parts[4]));
-                        String generoCaracter = String.valueOf(parts[0].charAt(11));
+                        String generoCaracter = String.valueOf(parts[0].charAt(10));
                         if(generoCaracter.equals("H"))
                             p.setGenero((short) 2);
                         if(generoCaracter.equals("M"))
