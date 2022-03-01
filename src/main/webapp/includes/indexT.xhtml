@@ -23,8 +23,8 @@
                 color: #ffffff;
 
             }
-            .ui-widget-header{
-                color: #ffffff;
+            .ui-dialog-content.ui-widget-content{
+                padding: 0px;
             }
         </style>
         <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
@@ -857,7 +857,7 @@
                                     </h4>
                                     <h4><p><strong>Encargado: </strong>#{notificacionCe.personaResponsable}</p></h4>
                                     <div class="modal-footer justify-content-between" style="background-color: #374850;">
-                                        <p:commandButton value="Cerrar" style="background-color: #374850; color: #ffffff" onclick="PF('modal#{index}').hide()" />
+                                        <p:commandButton value="Cerrar" onclick="PF('modal#{index}').hide()" />
                                         <!--<button style="background-color: #374850; color: #ffffff" type="button" class="btn" data-dismiss="modal">Cerrar</button>-->
                                     </div>
                                 </p:dialog>
