@@ -69,7 +69,7 @@ public class RegistroSeguroFacultativoEstudiante extends ViewScopedRol implement
     
     @PostConstruct
     public void init(){
-//        try {
+        try {
             if(logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19)){
                 setVistaControlador(ControlEscolarVistaControlador.REGISTRO_SEGURO_FACULTATIVO);
                 ResultadoEJB<Estudiante> resAcceso = ejb.validarEstudiante(logonMB.getCurrentUser());
@@ -83,7 +83,7 @@ public class RegistroSeguroFacultativoEstudiante extends ViewScopedRol implement
                 rol.setPeriodoEscolarActivo(ejbPeriodoEventoRegistro.getPeriodoEscolarActivo().getValor());
                 filtros();
             }
-//        } catch (Exception e) {mostrarExcepcion(e);}
+        } catch (Exception e) {mostrarExcepcion(e);}
     }
     
     /*********************************************** Inicializadores *********************************************************/

@@ -74,13 +74,16 @@ public class ValidacionTutoriaGrupalEstudiante extends ViewScopedRol implements 
                 ResultadoEJB<EventosRegistros> resEventoRegistro = ejbPeriodoEventoRegistro.getEventoRegistro();
                 ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.obtenerPeriodosEscolaresPorParticipacionTutoriaGrupal(rol.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
                 
+                rol.setPeriodoActivo(ejbPeriodoEventoRegistro.getPeriodoEscolarActivo().getValor().getPeriodo());
+                ResultadoEJB<Long> firmasPendientes = ejb.verificarTutoriasPendientesFirmas(rol.getPeriodoActivo(), rol.getDtoEstudiante().getInscripcionActiva().getInscripcion().getMatricula());
+                if(firmasPendientes.getCorrecto()) rol.setFirmasPendiente(firmasPendientes.getValor());
+                
                 if(!resPeriodos.getCorrecto()){mostrarMensajeResultadoEJB(resPeriodos); tieneAcceso = false;}
                 if(verificarInvocacionMenu()) return;
                 if(!validarIdentificacion()) return;
                 if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
                 if(!resEventoRegistro.getCorrecto()) mostrarMensajeResultadoEJB(resEventoRegistro);
                 rol.setEventoRegistroActivo(resEventoRegistro.getValor());
-                rol.setPeriodoActivo(ejbPeriodoEventoRegistro.getPeriodoEscolarActivo().getValor().getPeriodo());
                 rol.setPeriodosConTutoriasGrupales(resPeriodos.getValor());
                 initFiltros();
             }
