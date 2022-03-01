@@ -417,7 +417,7 @@
                 </div>
             </div> 
             
-            <!--Gadget de Avisos-->
+<!--Gadget de Avisos-->
             <div class="box box-primary">
                 <div class="box box-solid">
                     <div class="box-header with-border">
@@ -474,48 +474,111 @@
                             <c:if test="#{comenzo eq true and termino eq false}"><c:set var="efect" value="fa-beat-fade"/></c:if>
                             <c:if test="#{comenzo eq true and termino eq true}"><c:set var="finish" value="fa-slash fa-stack-1x"/></c:if>
                             <!--Widget a mostrar-->
-                            <div class="col-lg-12 col-md-12 col-xs-12">
-                                <a id="abrirmodal#{index}" href="#" class="info-box-footer" data-toggle="modal" data-target="#modal-default#{index}" >
-                                    <div class="info-box #{color}">
-                                        <span class="info-box-icon">
-                                            <span class="fa-stack " style="right: 10px; text-align: left ">
-                                                <i class="fa #{icon} fa-stack-1x #{efect}"></i>
-                                                <i class="fa #{finish} #{efect}" style="color:Tomato"></i>
+                            <h:form>
+                                <div class="col-lg-12 col-md-12 col-xs-12">
+                                    <a id="abrirmodal#{index}" href="#/" class="info-box-footer" onclick="PF('modal#{index}').show()" >
+                                        <div class="info-box #{color}">
+                                            <span class="info-box-icon">
+                                                <span class="fa-stack " style="right: 10px; text-align: left ">
+                                                    <i class="fa #{icon} fa-stack-1x #{efect}"></i>
+                                                    <i class="fa #{finish} #{efect}" style="color:Tomato"></i>
+                                                </span>
                                             </span>
-                                        </span>
-                                        <div class="info-box-content">
-                                            <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo} - <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="E, dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel></span></span>
-                                            <span class="info-box-text">#{notificacionCe.tituloPrincipal}</span>
-                                            <div class="progress">
-                                                <div class="progress-bar" style="width: ${100-porcentaje}%"></div>
+                                            <div class="info-box-content">
+                                                <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo} - <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="E, dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel></span></span>
+                                                <span class="info-box-text">#{notificacionCe.tituloPrincipal}</span>
+                                                <div class="progress">
+                                                    <div class="progress-bar" style="width: ${100-porcentaje}%"></div>
+                                                </div>
+                                                <span class="progress-description">
+                                                    <c:if test="#{diferencia le 0 and termino eq false and comenzo eq false}">
+                                                        El evento inicia hoy a las 
+                                                        <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel>
+                                                    </c:if>
+                                                    <c:if test="#{diferencia le 0 and termino eq false and comenzo eq true}">
+                                                        El evento ha iniciado.
+                                                    </c:if>
+                                                    <c:if test="#{diferencia le 0 and termino eq true}">
+                                                        Este evento ha terminado.
+                                                    </c:if>
+                                                    <c:if test="#{diferencia lt 0}">
+                                                        Este evento ha terminado.
+                                                    </c:if>
+                                                    <c:if test="#{diferencia eq 1}">
+                                                        Falta #{diferencia} día 
+                                                    </c:if>
+                                                    <c:if test="#{diferencia gt 1}">
+                                                        Faltan #{diferencia} días 
+                                                    </c:if>
+                                                </span>
                                             </div>
-                                            <span class="progress-description">
-                                                <c:if test="#{diferencia le 0 and termino eq false and comenzo eq false}">
-                                                    El evento inicia hoy a las 
-                                                    <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel>
-                                                </c:if>
-                                                <c:if test="#{diferencia le 0 and termino eq false and comenzo eq true}">
-                                                    El evento ha iniciado.
-                                                </c:if>
-                                                <c:if test="#{diferencia le 0 and termino eq true}">
-                                                    Este evento ha terminado.
-                                                </c:if>
-                                                <c:if test="#{diferencia lt 0}">
-                                                    Este evento ha terminado.
-                                                </c:if>
-                                                <c:if test="#{diferencia eq 1}">
-                                                    Falta #{diferencia} día 
-                                                </c:if>
-                                                <c:if test="#{diferencia gt 1}">
-                                                    Faltan #{diferencia} días 
-                                                </c:if>
-                                            </span>
                                         </div>
+                                    </a>
+                                </div>
+
+                                <!--Ventanas Modal-->
+
+                                <p:dialog appendTo="@(body)" responsive="true" fitViewport="true" modal="true" widgetVar="modal#{index}" showHeader="false" draggable="false" positionType="fixed" resizable="false" showEffect="fade" hideEffect="fade" header="#{notificacionCe.tituloPrincipal}">
+                                    <div class="modal-header" style="background-color: #374850">
+                                        <h3 class="modal-title" style="color: #ffffff">#{notificacionCe.tituloPrincipal}</h3>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        </button>
+                                    </div>    
+                                    <h4><p><strong>Lugar: </strong>#{notificacionCe.lugar}</p></h4>
+                                    <h4>
+                                        <p><strong>Fecha: </strong>
+                                            <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                <f:convertDateTime pattern="EEEE, dd 'de' MMMM 'de' yyyy" locale="es-MX" timeZone="America/Mexico_City"/>
+                                            </h:outputLabel>
+                                        </p>
+                                    </h4>
+                                    <h4>
+                                        <p><strong>Hora: </strong>
+                                            <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                <f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
+                                            </h:outputLabel>
+                                        </p>
+                                    </h4>
+                                    <h4>
+                                        <p><strong>Duracion: </strong>
+                                            <c:if test="#{tieneVariosDias}">
+                                                <c:if test="#{mismoMes}">
+                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                        <f:convertDateTime pattern="'del' dd" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel> al 
+                                                    <h:outputLabel value="#{notificacionCe.horaFin}">
+                                                        <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel>
+                                                </c:if>
+                                                <c:if test="#{!mismoMes}">
+                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                        <f:convertDateTime pattern="'del' dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel> al 
+                                                    <h:outputLabel value="#{notificacionCe.horaFin}">
+                                                        <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel>
+                                                </c:if>
+                                            </c:if>
+                                            <c:if test="#{!tieneVariosDias}">
+                                                <c:if test="#{notificacionCe.duracionEvento eq 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                    Todo el dia.
+                                                </c:if>
+                                                <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                    <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                        <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel> horas
+                                                </c:if>
+                                            </c:if>
+                                        </p>
+                                    </h4>
+                                    <h4><p><strong>Encargado: </strong>#{notificacionCe.personaResponsable}</p></h4>
+                                    <div class="modal-footer justify-content-between" style="background-color: #374850;">
+                                        <p:commandButton value="Cerrar"  onclick="PF('modal#{index}').hide()" />
+                                        <!--<button style="background-color: #374850; color: #ffffff" type="button" class="btn" data-dismiss="modal">Cerrar</button>-->
                                     </div>
-                                </a>
-                            </div>
-                            <!--Ventanas Modal-->
-                            <div class="modal fade" id="modal-default#{index}">
+                                </p:dialog>
+                            </h:form>
+<!--                            <div class="modal fade" id="modal-default#{index}">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header" style="background-color: #374850">
@@ -523,62 +586,12 @@
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             </button>
                                         </div> 
-                                        <div class="modal-body">
-                                            <h4><p><strong>Lugar: </strong>#{notificacionCe.lugar}</p></h4>
-                                            <h4>
-                                                <p><strong>Fecha: </strong>
-                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                        <f:convertDateTime pattern="EEEE, dd 'de' MMMM 'de' yyyy" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                    </h:outputLabel>
-                                                </p>
-                                            </h4>
-                                            <h4>
-                                                <p><strong>Hora: </strong>
-                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                        <f:convertDateTime pattern="hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                    </h:outputLabel>
-                                                </p>
-                                            </h4>
-                                            <h4>
-                                                <p><strong>Duracion: </strong>
-                                                    <c:if test="#{tieneVariosDias}">
-                                                        <c:if test="#{mismoMes}">
-                                                            <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                                <f:convertDateTime pattern="'del' dd" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                            </h:outputLabel> al 
-                                                            <h:outputLabel value="#{notificacionCe.horaFin}">
-                                                                <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                            </h:outputLabel>
-                                                        </c:if>
-                                                        <c:if test="#{!mismoMes}">
-                                                            <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                                <f:convertDateTime pattern="'del' dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                            </h:outputLabel> al 
-                                                            <h:outputLabel value="#{notificacionCe.horaFin}">
-                                                                <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                            </h:outputLabel>
-                                                        </c:if>
-                                                    </c:if>
-                                                    <c:if test="#{!tieneVariosDias}">
-                                                        <c:if test="#{notificacionCe.duracionEvento eq 'Thu Jan 01 00:00:00 CST 1970'}">
-                                                            Todo el dia.
-                                                        </c:if>
-                                                        <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
-                                                            <h:outputLabel value="#{notificacionCe.duracionEvento}">
-                                                                <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
-                                                            </h:outputLabel> horas
-                                                        </c:if>
-                                                    </c:if>
-                                                </p>
-                                            </h4>
-                                            <h4><p><strong>Encargado: </strong>#{notificacionCe.personaResponsable}</p></h4>
-                                        </div>
                                         <div class="modal-footer justify-content-between">
                                             <button style="background-color: #374850; color: #ffffff" type="button" class="btn" data-dismiss="modal">Cerrar</button>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div>-->
                             <!--Fin Ventana Modal-->
                         </c:forEach> 
                     </div>
