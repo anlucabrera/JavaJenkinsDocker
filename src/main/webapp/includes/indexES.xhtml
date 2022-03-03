@@ -17,33 +17,30 @@
             box-primary{
                 background:#374850 !important;
             }
-            .ui-dialog-titlebar.ui-widget-header{
-                background-color: #374850;
-                color: #ffffff;
-
-            }
-            .ui-widget-overlay{
-                padding: 0px;
-            }
-
-            .avisoModal.ui-dialog .ui-dialog-content {
-                padding: 0px !important;
-                border: 0 none;
-            }
-            .avisoModal.ui-widget .ui-widget-content {
-                padding: 0px !important;
-            }
-            .avisoModal.ui-widget-content {
-                padding: 0px !important;
-            }
         </style>
         <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
         <!-- Fin de estilos para campañas electorales-->
     </c:if>
-
+    <style>
+        .ui-dialog-titlebar.ui-widget-header{
+            background-color: #374850;
+            color: #ffffff;
+        }
+        .ui-widget-overlay{
+            padding: 0px;
+        }
+        .avisoModal.ui-dialog .ui-dialog-content {
+            padding: 0px !important;
+            border: 0 none;
+        }
+        .avisoModal.ui-widget .ui-widget-content {
+            padding: 0px !important;
+        }
+        .avisoModal.ui-widget-content {
+            padding: 0px !important;
+        }
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css"/>
-
-
     <div class="col-md-12">
         <p:outputPanel id="panelDatos">
             <p:autoUpdate/>
@@ -609,5 +606,4 @@
             <!--Fin gadget de avisos-->
         </p:outputPanel>
     </div>
-
 </ui:composition>

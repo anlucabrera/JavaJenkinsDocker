@@ -10,36 +10,28 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html">
     <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
         <!-- inicio de estilos para campañas electorales-->
-        <style>
-            .bg-aqua-active{
-                background:#374850 !important;
-            }
-            box-primary{
-                background:#374850 !important;
-            }
-            .ui-dialog-titlebar.ui-widget-header{
-                background-color: #374850;
-                color: #ffffff;
-
-            }
-            .ui-widget-overlay{
-                padding: 0px;
-            }
-
-            .avisoModal.ui-dialog .ui-dialog-content {
-                padding: 0px !important;
-                border: 0 none;
-            }
-            .avisoModal.ui-widget .ui-widget-content {
-                padding: 0px !important;
-            }
-            .avisoModal.ui-widget-content {
-                padding: 0px !important;
-            }
-        </style>
-        <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />
+        <!--<link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen" />-->
         <!-- Fin de estilos para campañas electorales-->
     </c:if>
+    <style>
+        .ui-dialog-titlebar.ui-widget-header{
+            background-color: #374850;
+            color: #ffffff;
+        }
+        .ui-widget-overlay{
+            padding: 0px;
+        }
+        .avisoModal.ui-dialog .ui-dialog-content {
+            padding: 0px !important;
+            border: 0 none;
+        }
+        .avisoModal.ui-widget .ui-widget-content {
+            padding: 0px !important;
+        }
+        .avisoModal.ui-widget-content {
+            padding: 0px !important;
+        }
+    </style>
     <script type="text/javascript">
         function myconfig() {
             this.yAxis = {
@@ -800,7 +792,7 @@
                                     </a>
                                 </div>
                                 <!--Ventanas Modal-->
-                                <p:dialog styleClass="avisoModal" appendTo="@(body)" blockScroll="true" responsive="true" modal="true" widgetVar="modal#{index}" draggable="false" resizable="false" showEffect="fade" hideEffect="fade" header="#{notificacionCe.tituloPrincipal}" showHeader="false">
+                                <p:dialog styleClass="avisoModal" width="" appendTo="@(body)" blockScroll="true" responsive="true" modal="true" widgetVar="modal#{index}" draggable="false" resizable="false" showEffect="fade" hideEffect="fade" header="#{notificacionCe.tituloPrincipal}" showHeader="false">
                                     <div class="modal-header" style="background-color: #374850">
                                         <h3 class="modal-title" style="color: #ffffff">#{notificacionCe.tituloPrincipal}</h3>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
