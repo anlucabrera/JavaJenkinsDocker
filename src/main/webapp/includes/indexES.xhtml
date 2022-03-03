@@ -477,7 +477,12 @@
                             <c:if test="#{notificacionCe.tipo eq 'Capacitación'}"><c:set var="icon" value="fa-user-plus"/></c:if>
                             <c:if test="#{comenzo eq false and termino eq false}"><c:set var="finish" value=""/></c:if>
                             <c:if test="#{comenzo eq true and termino eq false}"><c:set var="finish" value=""/></c:if>
-                            <c:if test="#{comenzo eq true and termino eq true}"><c:set var="finish" value="fa-slash fa-stack-1x"/></c:if>
+                            <c:if test="#{notificacionCe.duracionEvento eq 'Thu Jan 01 00:00:00 CST 1970'}">
+                                <c:if test="#{comenzo eq true and termino eq true}"><c:set var="finish" value=""/></c:if>
+                            </c:if>
+                            <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
+                                <c:if test="#{comenzo eq true and termino eq true}"><c:set var="finish" value="fa-slash fa-stack-1x"/></c:if>
+                            </c:if>
                             <c:if test="#{comenzo eq false and termino eq false}"><c:set var="efect" value=""/></c:if>
                             <c:if test="#{comenzo eq true and termino eq false}"><c:set var="efect" value="fa-beat-fade"/></c:if>
                             <!--Widget a mostrar-->
@@ -506,7 +511,12 @@
                                                         El evento ha iniciado.
                                                     </c:if>
                                                     <c:if test="#{diferencia le 0 and termino eq true}">
-                                                        Este evento ha terminado.
+                                                        <c:if test="#{notificacionCe.duracionEvento eq 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                            Todo el dia.
+                                                        </c:if>
+                                                        <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                            Este evento ha terminado.
+                                                        </c:if>
                                                     </c:if>
 <!--                                                    <c:if test="#{diferencia lt 0 and termino eq true}">
                                                         Este evento ha terminado.
