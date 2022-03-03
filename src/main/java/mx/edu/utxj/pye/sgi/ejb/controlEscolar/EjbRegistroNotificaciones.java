@@ -117,13 +117,27 @@ public class EjbRegistroNotificaciones {
             List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n ORDER BY n.horaInicio ASC", NotificacionesCe.class)
                     .setMaxResults(10)
                     .getResultList();
-            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "");
             else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las ultimas diez notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesUltimosDiez): ", e, null);
         }
     }
     
+    public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesTotal(){
+        try {
+            List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findAll")
+//            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.personaRegistro = :clave ORDER BY n.horaInicio ASC")
+//                    .setParameter("clave", clave)
+//                    .setParameter("fechaF", fechaF)
+//                    .setMaxResults(10)
+                    .getResultList();
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "");
+            else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las notificaciones activas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesActivas): ", e, null);
+        }
+    }
     public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesActivas(int clave){
         try {
 //            List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findAll")
@@ -132,10 +146,10 @@ public class EjbRegistroNotificaciones {
 //                    .setParameter("fechaF", fechaF)
 //                    .setMaxResults(10)
                     .getResultList();
-            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "");
             else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las ultimas diez notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesUltimosDiez): ", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las notificaciones activas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesActivas): ", e, null);
         }
     }
     public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesAlumnos(Date fechaI, Date fechaF){
@@ -146,10 +160,10 @@ public class EjbRegistroNotificaciones {
                     .setParameter("fechaF", fechaF)
 //                    .setMaxResults(10)
                     .getResultList();
-            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "");
             else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las ultimas diez notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesUltimosDiez): ", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesAlumnos): ", e, null);
         }
     }
     public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesTrabajador(Date fechaI, Date fechaF){
@@ -160,10 +174,10 @@ public class EjbRegistroNotificaciones {
                     .setParameter("fechaF", fechaF)
 //                    .setMaxResults(10)
                     .getResultList();
-            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "");
             else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");
         } catch (Exception e) {
-            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las ultimas diez notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesUltimosDiez): ", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesTrabajador): ", e, null);
         }
     }
     
@@ -172,7 +186,7 @@ public class EjbRegistroNotificaciones {
             List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n.horaInicio FROM NotificacionesCe n ORDER BY n.horaInicio ASC", NotificacionesCe.class)
                     .setMaxResults(10)
                     .getResultList();
-            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "Listado de las últimas díez notificaciones registradas.");
+            if(!listaNotificaciones.isEmpty())return ResultadoEJB.crearCorrecto(listaNotificaciones, "");
             else return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST,"Aún no se han registrado notificaciones.");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se ha podido consultar las ultimas diez notificaciones registradas, favor de verificar la siguiente información. (EjbRegistroNotificaciones.consultarNotificacionesUltimosDiez): ", e, null);
