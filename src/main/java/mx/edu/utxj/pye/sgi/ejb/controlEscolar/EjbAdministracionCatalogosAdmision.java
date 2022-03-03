@@ -12,12 +12,20 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.TutorFamiliar;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosFamiliares;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.IntegrantesFamilia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosMedicos;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EncuestaAspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DatosAcademicos;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.InstitucionAcademica;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
 /**
@@ -35,6 +43,38 @@ public class EjbAdministracionCatalogosAdmision {
     @PostConstruct
     public  void init(){
         em = f.getEntityManager();
+    }
+    
+    /**
+     * Permite obtener la lista de escolaridad registradas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Escolaridad>> getListaEscolaridad(){
+        try{
+            
+            List<Escolaridad> listaEscolaridad = em.createQuery("SELECT e FROM Escolaridad e ORDER BY e.idEscolaridad ASC",  Escolaridad.class)
+                    .getResultList();
+          
+            return ResultadoEJB.crearCorrecto(listaEscolaridad, "Lista de escolaridad registrados.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de escolaridad registrados. (EjbAdministracionCatalogosAdmision.getListaEscolaridad)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de ocupación registradas
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<Ocupacion>> getListaOcupacion(){
+        try{
+            
+            List<Ocupacion> listaOcupacion = em.createQuery("SELECT o FROM Ocupacion o ORDER BY o.idOcupacion ASC",  Ocupacion.class)
+                    .getResultList();
+          
+            return ResultadoEJB.crearCorrecto(listaOcupacion, "Lista de ocupación registradas.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de ocupación registradas. (EjbAdministracionCatalogosAdmision.getListaOcupacion)", e, null);
+        }
     }
     
     /**
@@ -98,6 +138,60 @@ public class EjbAdministracionCatalogosAdmision {
             return ResultadoEJB.crearCorrecto(listaMediosDifusion, "Lista de tipo de medios de difusión registrados.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de tipo de medios de difusión registrados. (EjbAdministracionCatalogosAdmision.getListaMediosDifusion)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener la lista de especialidad de centro
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<EspecialidadCentro>> getListaEspecialidadCentro(){
+        try{
+            
+            List<EspecialidadCentro> listaEspecialidadCentro = em.createQuery("SELECT e FROM EspecialidadCentro e ORDER BY e.idEspecialidadCentro ASC",  EspecialidadCentro.class)
+                    .getResultList();
+          
+            return ResultadoEJB.crearCorrecto(listaEspecialidadCentro, "Lista de especialidad de centro registrados.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de especialidad de centro registrados. (EjbAdministracionCatalogosAdmision.getListaEspecialidadCentro)", e, null);
+        }
+    }
+    
+     /**
+     * Permite guardar una nueva escolaridad
+     * @param nuevaEscolaridad
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Escolaridad> guardarEscolaridad(String nuevaEscolaridad){
+        try{
+            
+            Escolaridad escolaridad = new Escolaridad();
+            escolaridad.setDescripcion(nuevaEscolaridad);
+            em.persist(escolaridad);
+            em.flush();
+           
+            return ResultadoEJB.crearCorrecto(escolaridad, "Se registró correctamente una nueva escolaridad.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente una nueva escolaridad. (EjbAdministracionCatalogosAdmision.guardarEscolaridad)", e, null);
+        }
+    }
+    
+     /**
+     * Permite guardar una nueva ocupación
+     * @param nuevaOcupacion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Ocupacion> guardarOcupacion(String nuevaOcupacion){
+        try{
+            
+            Ocupacion ocupacion = new Ocupacion();
+            ocupacion.setDescripcion(nuevaOcupacion);
+            em.persist(ocupacion);
+            em.flush();
+           
+            return ResultadoEJB.crearCorrecto(ocupacion, "Se registró correctamente una nueva ocupación.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente una nueva ocupación. (EjbAdministracionCatalogosAdmision.guardarOcupacion)", e, null);
         }
     }
         
@@ -196,6 +290,27 @@ public class EjbAdministracionCatalogosAdmision {
         }
     }
     
+     /**
+     * Permite guardar una nueva especialidad centro
+     * @param nuevaEspecialidadCentro
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EspecialidadCentro> guardarEspecialidadCentro(String nuevaEspecialidadCentro){
+        try{
+            
+            EspecialidadCentro especialidadCentro = new EspecialidadCentro();
+            especialidadCentro.setNombre(nuevaEspecialidadCentro);
+            especialidadCentro.setEstatus(true);
+            em.persist(especialidadCentro);
+            em.flush();
+           
+            return ResultadoEJB.crearCorrecto(especialidadCentro, "Se registró correctamente una nueva especialidad centro.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente una nueva especialidad centro. (EjbAdministracionCatalogosAdmision.guardarEspecialidadCentro)", e, null);
+        }
+    }
+
+    
     /**
      * Permite activar o desactivar el tipo de discapacidad seleccionado
      * @param tipoDiscapacidad
@@ -247,6 +362,69 @@ public class EjbAdministracionCatalogosAdmision {
             return ResultadoEJB.crearCorrecto(medioDifusion, "Se ha cambiado correctamente el status del medio de difusión seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo cambiar el status del medio de difusión seleccionado. (EjbAdministracionCatalogosAdmision.activarDesactivarMedioDifusion)", e, null);
+        }
+    }
+    
+    /**
+     * Permite activar o desactivar la especialidad centro
+     * @param especialidadCentro
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EspecialidadCentro> activarDesactivarEspecialidadCentro(EspecialidadCentro especialidadCentro){
+        try{
+           
+            Boolean valor;
+            
+            if(especialidadCentro.getEstatus()){
+                valor = false;
+            }else{
+                valor = true;
+            }
+            
+            especialidadCentro.setEstatus(valor);
+            em.merge(especialidadCentro);
+            f.flush();
+            
+            
+            return ResultadoEJB.crearCorrecto(especialidadCentro, "Se ha cambiado correctamente el status de la especialidad centro seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo cambiar el status de la especialidad centro seleccionada. (EjbAdministracionCatalogosAdmision.activarDesactivarEspecialidadCentro)", e, null);
+        }
+    }
+    
+    /**
+     * Permite eliminar la escolaridad seleccionada
+     * @param escolaridad
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarEscolaridad(Escolaridad escolaridad){
+        try{
+            
+            Integer delete = em.createQuery("DELETE FROM Escolaridad e WHERE e.idEscolaridad=:escolaridad", Escolaridad.class)
+                .setParameter("escolaridad", escolaridad.getIdEscolaridad())
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente la escolaridad seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la escolaridad seleccionada. (EjbAdministracionCatalogosAdmision.eliminarEscolaridad)", e, null);
+        }
+    }
+    
+    /**
+     * Permite eliminar la ocupación seleccionada
+     * @param ocupacion
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarOcupacion(Ocupacion ocupacion){
+        try{
+            
+            Integer delete = em.createQuery("DELETE FROM Ocupacion o WHERE o.idOcupacion=:ocupacion", Ocupacion.class)
+                .setParameter("ocupacion", ocupacion.getIdOcupacion())
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente la ocupación seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la ocupación seleccionada. (EjbAdministracionCatalogosAdmision.eliminarOcupacion)", e, null);
         }
     }
     
@@ -319,6 +497,24 @@ public class EjbAdministracionCatalogosAdmision {
             return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente el medio de difusión seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el medio de difusión seleccionado. (EjbAdministracionCatalogosAdmision.eliminarMedioDifusion)", e, null);
+        }
+    }
+    
+     /**
+     * Permite eliminar la especialidad centro
+     * @param especialidadCentro
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Integer> eliminarEspecialidadCentro(EspecialidadCentro especialidadCentro){
+        try{
+            
+            Integer delete = em.createQuery("DELETE FROM EspecialidadCentro e WHERE e.idEspecialidadCentro=:especialidad", EspecialidadCentro.class)
+                .setParameter("especialidad", especialidadCentro.getIdEspecialidadCentro())
+                .executeUpdate();
+            
+            return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente la especialidad centro seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la especialidad centro seleccionada. (EjbAdministracionCatalogosAdmision.eliminarEspecialidadCentro)", e, null);
         }
     }
     
@@ -425,6 +621,120 @@ public class EjbAdministracionCatalogosAdmision {
             return ResultadoEJB.crearErroneo(1, "No se obtuvieron resultados de verificación del medio de difusión seleccionadoa.", e, Boolean.TYPE);
         }
     }
+    
+    /**
+     * Permite verificar si existen registros de la especialidad seleccionada
+     * @param especialidadCentro
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> verificarRegistrosEspecialidadCentro(EspecialidadCentro especialidadCentro){
+        try{
+            Long registrosDatosAcademicos = em.createQuery("SELECT d FROM DatosAcademicos d WHERE d.especialidadIems.idEspecialidadCentro=:especialidad", DatosAcademicos.class)
+                    .setParameter("especialidad", especialidadCentro.getIdEspecialidadCentro())
+                    .getResultStream()
+                    .count();
+            
+            Long registrosInstitucionesAcademicas = em.createQuery("SELECT i FROM InstitucionAcademica i WHERE i.idEspecialidad.idEspecialidadCentro=:especialidad", InstitucionAcademica.class)
+                    .setParameter("especialidad", especialidadCentro.getIdEspecialidadCentro())
+                    .getResultStream()
+                    .count();
+                  
+            Boolean valor;
+            if(registrosDatosAcademicos>0 || registrosInstitucionesAcademicas>0)
+            {
+                valor = Boolean.TRUE;
+            }else{
+                valor = Boolean.FALSE;
+            }
+            
+           return ResultadoEJB.crearCorrecto(valor, "Resultados verificación de registros de la especialidad seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se obtuvieron resultados de verificación de la especialidad seleccionada.", e, Boolean.TYPE);
+        }
+    }
+    
+    /**
+     * Permite verificar si existen registros de la escolaridad seleccionada
+     * @param escolaridad
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> verificarRegistrosEscolaridad(Escolaridad escolaridad){
+        try{
+            Long registrosTutorFamiliar = em.createQuery("SELECT t FROM TutorFamiliar t WHERE t.escolaridad.idEscolaridad=:escolaridad", TutorFamiliar.class)
+                    .setParameter("escolaridad", escolaridad.getIdEscolaridad())
+                    .getResultStream()
+                    .count();
+            
+            Long registrosDatosPadre = em.createQuery("SELECT d FROM DatosFamiliares d WHERE d.escolaridadPadre.idEscolaridad=:escolaridad", DatosFamiliares.class)
+                    .setParameter("escolaridad", escolaridad.getIdEscolaridad())
+                    .getResultStream()
+                    .count();
+            
+            Long registrosDatosMadre = em.createQuery("SELECT d FROM DatosFamiliares d WHERE d.escolaridadMadre.idEscolaridad=:escolaridad", DatosFamiliares.class)
+                    .setParameter("escolaridad", escolaridad.getIdEscolaridad())
+                    .getResultStream()
+                    .count();
+            
+            Long registrosIntegrantesFamilia= em.createQuery("SELECT i FROM IntegrantesFamilia i WHERE i.escolaridad.idEscolaridad=:escolaridad", IntegrantesFamilia.class)
+                    .setParameter("escolaridad", escolaridad.getIdEscolaridad())
+                    .getResultStream()
+                    .count();
+                  
+            Boolean valor;
+            if(registrosTutorFamiliar>0 || registrosDatosPadre>0 || registrosDatosMadre>0 || registrosIntegrantesFamilia>0)
+            {
+                valor = Boolean.TRUE;
+            }else{
+                valor = Boolean.FALSE;
+            }
+            
+           return ResultadoEJB.crearCorrecto(valor, "Resultados verificación de registros de la escolaridad seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se obtuvieron resultados de verificación de la escolaridad seleccionada.", e, Boolean.TYPE);
+        }
+    }
+    
+     /**
+     * Permite verificar si existen registros de la ocupación seleccionada
+     * @param ocupacion
+     * @return Verdadero o Falso según sea el caso
+     */
+    public ResultadoEJB<Boolean> verificarRegistrosOcupacion(Ocupacion ocupacion){
+        try{
+            Long registrosTutorFamiliar = em.createQuery("SELECT t FROM TutorFamiliar t WHERE t.ocupacion.idOcupacion=:ocupacion", TutorFamiliar.class)
+                    .setParameter("ocupacion", ocupacion.getIdOcupacion())
+                    .getResultStream()
+                    .count();
+            
+            Long registrosDatosPadre = em.createQuery("SELECT d FROM DatosFamiliares d WHERE d.ocupacionPadre.idOcupacion=:ocupacion", DatosFamiliares.class)
+                    .setParameter("ocupacion", ocupacion.getIdOcupacion())
+                    .getResultStream()
+                    .count();
+            
+            Long registrosDatosMadre = em.createQuery("SELECT d FROM DatosFamiliares d WHERE d.ocupacionPadre.idOcupacion=:ocupacion", DatosFamiliares.class)
+                    .setParameter("ocupacion", ocupacion.getIdOcupacion())
+                    .getResultStream()
+                    .count();
+            
+            Long registrosIntegrantesFamilia= em.createQuery("SELECT i FROM IntegrantesFamilia i WHERE i.ocupacion.idOcupacion=:ocupacion", IntegrantesFamilia.class)
+                    .setParameter("ocupacion", ocupacion.getIdOcupacion())
+                    .getResultStream()
+                    .count();
+                  
+            Boolean valor;
+            if(registrosTutorFamiliar>0 || registrosDatosPadre>0 || registrosDatosMadre>0 || registrosIntegrantesFamilia>0)
+            {
+                valor = Boolean.TRUE;
+            }else{
+                valor = Boolean.FALSE;
+            }
+            
+           return ResultadoEJB.crearCorrecto(valor, "Resultados verificación de registros de la ocupación seleccionada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se obtuvieron resultados de verificación de la ocupación seleccionada.", e, Boolean.TYPE);
+        }
+    }
+
     
     
 }

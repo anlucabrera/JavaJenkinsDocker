@@ -196,8 +196,8 @@ public class EjbRegistroDocumentosOficiales {
      */
     public ResultadoEJB<String> obtenerTipoEgresado(Estudiante estudiante){
         try{
-            DocumentoEstudianteProceso procesoActa = em.createQuery("select d from DocumentoEstudianteProceso d where d.estudiante.idEstudiante=:estudiante AND d.documento.documento.documento=:valor", DocumentoEstudianteProceso.class)
-                    .setParameter("estudiante", estudiante.getIdEstudiante())
+            DocumentoEstudianteProceso procesoActa = em.createQuery("select d from DocumentoEstudianteProceso d where d.estudiante.matricula=:estudiante AND d.documento.documento.documento=:valor", DocumentoEstudianteProceso.class)
+                    .setParameter("estudiante", estudiante.getMatricula())
                     .setParameter("valor", (short)42)
                     .getResultStream().findFirst().orElse(null);
             

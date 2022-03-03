@@ -11,10 +11,13 @@ import lombok.Getter;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 /**
@@ -31,6 +34,16 @@ public class AdministracionCatalogosAdmisionRolEscolares extends AbstractRol{
      * Periodo escolar seleccionado para registro
      */
     @Getter @NonNull private PeriodosEscolares periodoActivo;
+    
+     /**
+     * Habilitar o deshabilitar opciones para agregar escolaridad
+     */
+    @Getter @NonNull private Boolean agregarEscolaridad;
+    
+     /**
+     * Habilitar o deshabilitar opciones para agregar ocupación
+     */
+    @Getter @NonNull private Boolean agregarOcupacion;
     
      /**
      * Habilitar o deshabilitar opciones para agregar tipo de discapacidad
@@ -51,6 +64,21 @@ public class AdministracionCatalogosAdmisionRolEscolares extends AbstractRol{
      * Habilitar o deshabilitar opciones para agregar medio de difusión
      */
     @Getter @NonNull private Boolean agregarMedioDifusion;
+    
+     /**
+     * Habilitar o deshabilitar opciones para agregar especialidad centro
+     */
+    @Getter @NonNull private Boolean agregarEspecialidadCentro;
+    
+    /**
+     * Lista de escolaridad
+     */
+    @Getter @NonNull private List<Escolaridad> escolaridades;
+    
+    /**
+     * Lista de ocupación
+     */
+    @Getter @NonNull private List<Ocupacion> ocupaciones;
     
     /**
      * Lista de tipo de discapacidad
@@ -73,6 +101,21 @@ public class AdministracionCatalogosAdmisionRolEscolares extends AbstractRol{
     @Getter @NonNull private List<MedioDifusion> mediosDifusion; 
     
     /**
+     * Lista de especialidad centro
+     */
+    @Getter @NonNull private List<EspecialidadCentro> especialidadesCentro; 
+    
+    /**
+     * Nombre de la nueva escolaridad
+     */
+    @Getter private String nuevaEscolaridad; 
+    
+    /**
+     * Nombre de la nueva ocupación
+     */
+    @Getter private String nuevaOcupacion; 
+    
+    /**
      * Nombre de la nueva discapacidad
      */
     @Getter private String nuevaDiscapacidadNombre; 
@@ -92,11 +135,16 @@ public class AdministracionCatalogosAdmisionRolEscolares extends AbstractRol{
      */
     @Getter private String nuevoTipoSangre; 
     
-    
     /**
      * Nuevo medio de difusión
      */
     @Getter private String nuevoMedio; 
+    
+    
+    /**
+     * Nueva especialidad centro
+     */
+    @Getter private String nuevaEspecialidadCentro; 
     
      /**
      * Número de pestaña activa del tab
@@ -116,6 +164,14 @@ public class AdministracionCatalogosAdmisionRolEscolares extends AbstractRol{
         this.personal = personal;
     }
 
+    public void setAgregarEscolaridad(Boolean agregarEscolaridad) {
+        this.agregarEscolaridad = agregarEscolaridad;
+    }
+
+    public void setAgregarOcupacion(Boolean agregarOcupacion) {
+        this.agregarOcupacion = agregarOcupacion;
+    }
+    
     public void setAgregarTipoDiscapacidad(Boolean agregarTipoDiscapacidad) {
         this.agregarTipoDiscapacidad = agregarTipoDiscapacidad;
     }
@@ -132,6 +188,18 @@ public class AdministracionCatalogosAdmisionRolEscolares extends AbstractRol{
         this.agregarMedioDifusion = agregarMedioDifusion;
     }
 
+    public void setAgregarEspecialidadCentro(Boolean agregarEspecialidadCentro) {
+        this.agregarEspecialidadCentro = agregarEspecialidadCentro;
+    }
+
+    public void setEscolaridades(List<Escolaridad> escolaridades) {
+        this.escolaridades = escolaridades;
+    }
+
+    public void setOcupaciones(List<Ocupacion> ocupaciones) {
+        this.ocupaciones = ocupaciones;
+    }
+    
     public void setTiposDiscapacidad(List<TipoDiscapacidad> tiposDiscapacidad) {
         this.tiposDiscapacidad = tiposDiscapacidad;
     }
@@ -148,6 +216,24 @@ public class AdministracionCatalogosAdmisionRolEscolares extends AbstractRol{
         this.mediosDifusion = mediosDifusion;
     }
 
+    public void setEspecialidadesCentro(List<EspecialidadCentro> especialidadesCentro) {
+        this.especialidadesCentro = especialidadesCentro;
+    }
+
+    public void setNuevaEscolaridad(String nuevaEscolaridad) {
+        this.nuevaEscolaridad = nuevaEscolaridad;
+        if(nuevaEscolaridad == null){
+            this.setNuevaEscolaridad("Ingresar nombre");
+        }
+    }
+
+    public void setNuevaOcupacion(String nuevaOcupacion) {
+        this.nuevaOcupacion = nuevaOcupacion;
+        if(nuevaOcupacion == null){
+            this.setNuevaOcupacion("Ingresar nombre");
+        }
+    }
+    
     public void setNuevaDiscapacidadNombre(String nuevaDiscapacidadNombre) {
         this.nuevaDiscapacidadNombre = nuevaDiscapacidadNombre;
         if(nuevaDiscapacidadNombre == null){
@@ -183,6 +269,13 @@ public class AdministracionCatalogosAdmisionRolEscolares extends AbstractRol{
         }
     }
 
+    public void setNuevaEspecialidadCentro(String nuevaEspecialidadCentro) {
+        this.nuevaEspecialidadCentro = nuevaEspecialidadCentro;
+        if(nuevaEspecialidadCentro == null){
+            this.setNuevaEspecialidadCentro("Ingresar nombre");
+        }
+    }
+    
     public void setPestaniaActiva(Integer pestaniaActiva) {
         this.pestaniaActiva = pestaniaActiva;
     }

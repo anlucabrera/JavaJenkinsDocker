@@ -133,6 +133,14 @@
                                                                     </p>
                                                                     <hr/>
                                                                 </div>
+                                                                <c:if test="#{consultaDocumentosAspiranteEscolares.procesoEgresado eq 'SinDocumento'}">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                        <p style="color: red; text-align: center; font-size: 20px;">
+                                                                            <strong>No se puede identificar su tipo de egresado, ya que no ha entregado el documento obligatorio de copia del acta de nacimiento.</strong>
+                                                                        </p>
+                                                                        <hr/>
+                                                                    </div>
+                                                                </c:if>
                                                                 <br/><br/><br/><br/>
                                                             </div>
                                                         </div>

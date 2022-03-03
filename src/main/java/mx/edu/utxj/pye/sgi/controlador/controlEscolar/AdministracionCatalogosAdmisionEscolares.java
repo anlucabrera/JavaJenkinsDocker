@@ -26,10 +26,13 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAdministracionCatalogosAdmision
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionIndicadoresCriterios;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroBajas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Escolaridad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoDiscapacidad;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.LenguaIndigena;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoSangre;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.MedioDifusion;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EspecialidadCentro;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Ocupacion;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
@@ -100,14 +103,21 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
             rol.getInstrucciones().add("Dar clic en el icono (cesto de basura) de la columna ELIMINAR de la fila que corresponda.");
 
             rol.setPestaniaActiva(0);
+            rol.setAgregarEscolaridad(false);
+            rol.setAgregarOcupacion(false);
             rol.setAgregarTipoDiscapacidad(false);
             rol.setAgregarLenguaIndigena(false);
             rol.setAgregarTipoSangre(false);
             rol.setAgregarMedioDifusion(false);
+            rol.setAgregarEspecialidadCentro(false);
+            
+            listaEscolaridad();
+            listaOcupacion();
             listaTipoDiscapacidad();
             listaLenguaIndigena();
             listaTipoSangre();
             listaMedioDifusion();
+            listaEspecialidadCentro();
 
         }catch (Exception e){mostrarExcepcion(e); }
     }
@@ -117,6 +127,22 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
         String valor = "administración catálogos admisión";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
+    }
+    
+    public void listaEscolaridad(){
+        ResultadoEJB<List<Escolaridad>> res = ejb.getListaEscolaridad();
+        if(res.getCorrecto()){
+            rol.setEscolaridades(res.getValor());
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);  
+    }
+     
+    public void listaOcupacion(){
+        ResultadoEJB<List<Ocupacion>> res = ejb.getListaOcupacion();
+        if(res.getCorrecto()){
+            rol.setOcupaciones(res.getValor());
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);  
     }
     
     public void listaTipoDiscapacidad(){
@@ -151,6 +177,14 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
         }else mostrarMensajeResultadoEJB(res);  
     }
     
+    public void listaEspecialidadCentro(){
+        ResultadoEJB<List<EspecialidadCentro>> res = ejb.getListaEspecialidadCentro();
+        if(res.getCorrecto()){
+            rol.setEspecialidadesCentro(res.getValor());
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);  
+    }
+    
    
     /**
      * Permite que al cambiar de pestaña se muestren las opciones correspondientes
@@ -159,12 +193,45 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
     public void cambiarPestania(TabChangeEvent event){
         TabView tv = (TabView) event.getComponent();
         rol.setPestaniaActiva(tv.getActiveIndex());
+        rol.setAgregarEscolaridad(false);
+        rol.setAgregarOcupacion(false);
         rol.setAgregarTipoDiscapacidad(false);
         rol.setAgregarLenguaIndigena(false);
         rol.setAgregarTipoSangre(false);
         rol.setAgregarMedioDifusion(false);
-    }
+        rol.setAgregarEspecialidadCentro(false);
         
+    }
+      
+    /**
+     * Permite que al cambiar el valor del inputSwitch para agregar una escolaridad y se habiliten los componentes correspondientes
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarAgregarEscolaridad(ValueChangeEvent e){
+        if(e.getNewValue() instanceof Boolean){
+            Boolean valor = (Boolean)e.getNewValue();
+            rol.setAgregarEscolaridad(valor);
+            if(rol.getAgregarEscolaridad()){
+                rol.setNuevaEscolaridad("Ingresar nombre");
+            }
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+    /**
+     * Permite que al cambiar el valor del inputSwitch para agregar una ocupación y se habiliten los componentes correspondientes
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarAgregarOcupacion(ValueChangeEvent e){
+        if(e.getNewValue() instanceof Boolean){
+            Boolean valor = (Boolean)e.getNewValue();
+            rol.setAgregarOcupacion(valor);
+            if(rol.getAgregarOcupacion()){
+                rol.setNuevaOcupacion("Ingresar nombre");
+            }
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
     
     /**
      * Permite que al cambiar el valor del inputSwitch para agregar un tipo de discapacidad y se habiliten los componentes correspondientes
@@ -227,6 +294,95 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
         }else mostrarMensaje("");
     }
     
+    /**
+     * Permite que al cambiar el valor del inputSwitch para agregar una especialidad centro y se habiliten los componentes correspondientes
+     * @param e Evento del cambio de valor
+     */
+    public void cambiarAgregarEspecialidadCentro(ValueChangeEvent e){
+        if(e.getNewValue() instanceof Boolean){
+            Boolean valor = (Boolean)e.getNewValue();
+            rol.setAgregarEspecialidadCentro(valor);
+            if(rol.getAgregarEspecialidadCentro()){
+                rol.setNuevaEspecialidadCentro("Ingresar nombre");
+            }
+            Ajax.update("frm");
+        }else mostrarMensaje("");
+    }
+    
+    /**
+     * Permite guardar la nueva escolaridad
+     */
+    public void guardarEscolaridad(){
+        if (rol.getNuevaEscolaridad().equals("Ingresar nombre")) {
+            Messages.addGlobalWarn("Debe ingresar el nombre de la escolaridad.");
+        }else{
+            Integer coincidencia = (int) rol.getEscolaridades().stream().filter(p -> p.getDescripcion().equals(rol.getNuevaEscolaridad())).count();
+            if(coincidencia == 0){
+                ResultadoEJB<Escolaridad> agregar = ejb.guardarEscolaridad(rol.getNuevaEscolaridad());
+                if (agregar.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(agregar);
+                    listaEscolaridad();
+                    rol.setAgregarEscolaridad(false);
+                    Ajax.update("frm");
+                }
+            }else{
+                Messages.addGlobalWarn("La escolaridad que desea agregar ya está registrada.");
+            }
+        }
+    }
+    
+    /**
+     * Permite eliminar la escolaridad seleccionada
+     * @param escolaridad
+     */
+    public void eliminarEscolaridad(Escolaridad escolaridad){
+        ResultadoEJB<Integer> eliminar = ejb.eliminarEscolaridad(escolaridad);
+        if(eliminar.getCorrecto()){
+            mostrarMensajeResultadoEJB(eliminar);
+            listaEscolaridad();
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(eliminar);
+        
+    }
+    
+    /**
+     * Permite guardar la nueva ocupación
+     */
+    public void guardarOcupacion(){
+        if (rol.getNuevaOcupacion().equals("Ingresar nombre")) {
+            Messages.addGlobalWarn("Debe ingresar el nombre de la ocupación.");
+        }else{
+            Integer coincidencia = (int) rol.getOcupaciones().stream().filter(p -> p.getDescripcion().equals(rol.getNuevaOcupacion())).count();
+            if(coincidencia == 0){
+                ResultadoEJB<Ocupacion> agregar = ejb.guardarOcupacion(rol.getNuevaOcupacion());
+                if (agregar.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(agregar);
+                    listaOcupacion();
+                    rol.setAgregarOcupacion(false);
+                    rol.setPestaniaActiva(1);
+                    Ajax.update("frm");
+                }
+            }else{
+                Messages.addGlobalWarn("La ocupación que desea agregar ya está registrada.");
+            }
+        }
+    }
+    
+    /**
+     * Permite eliminar la ocupacion seleccionada
+     * @param ocupacion
+     */
+    public void eliminarOcupacion(Ocupacion ocupacion){
+        ResultadoEJB<Integer> eliminar = ejb.eliminarOcupacion(ocupacion);
+        if(eliminar.getCorrecto()){
+            mostrarMensajeResultadoEJB(eliminar);
+            listaOcupacion();
+            rol.setPestaniaActiva(1);
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(eliminar);
+        
+    }
+    
      /**
      * Permite guardar el nuevo tipo de discapacidad
      */
@@ -245,6 +401,7 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
                     mostrarMensajeResultadoEJB(agregar);
                     listaTipoDiscapacidad();
                     rol.setAgregarTipoDiscapacidad(false);
+                    rol.setPestaniaActiva(2);
                     Ajax.update("frm");
                 }
             }else{
@@ -262,6 +419,7 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
         if(eliminar.getCorrecto()){
             mostrarMensajeResultadoEJB(eliminar);
             listaTipoDiscapacidad();
+            rol.setPestaniaActiva(2);
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(eliminar);
         
@@ -277,7 +435,7 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
             tipoDiscapacidad.setEstatus(res.getValor().getEstatus());
             listaTipoDiscapacidad();
             mostrarMensajeResultadoEJB(res);
-            rol.setPestaniaActiva(0);
+            rol.setPestaniaActiva(2);
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
     }
@@ -296,7 +454,7 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
                     mostrarMensajeResultadoEJB(agregar);
                     listaLenguaIndigena();
                     rol.setAgregarLenguaIndigena(false);
-                    rol.setPestaniaActiva(1);
+                    rol.setPestaniaActiva(3);
                     Ajax.update("frm");
                 }
             }else{
@@ -314,7 +472,7 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
         if(eliminar.getCorrecto()){
             mostrarMensajeResultadoEJB(eliminar);
             listaLenguaIndigena();
-            rol.setPestaniaActiva(1);
+            rol.setPestaniaActiva(3);
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(eliminar);
         
@@ -334,7 +492,7 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
                     mostrarMensajeResultadoEJB(agregar);
                     listaTipoSangre();
                     rol.setAgregarTipoSangre(false);
-                    rol.setPestaniaActiva(2);
+                    rol.setPestaniaActiva(4);
                     Ajax.update("frm");
                 }
             }else{
@@ -352,7 +510,7 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
         if(eliminar.getCorrecto()){
             mostrarMensajeResultadoEJB(eliminar);
             listaTipoSangre();
-            rol.setPestaniaActiva(2);
+            rol.setPestaniaActiva(4);
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(eliminar);
         
@@ -372,7 +530,7 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
                     mostrarMensajeResultadoEJB(agregar);
                     listaMedioDifusion();
                     rol.setAgregarMedioDifusion(false);
-                    rol.setPestaniaActiva(3);
+                    rol.setPestaniaActiva(5);
                     Ajax.update("frm");
                 }
             }else{
@@ -391,7 +549,7 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
             medioDifusion.setEstatus(res.getValor().getEstatus());
             listaMedioDifusion();
             mostrarMensajeResultadoEJB(res);
-            rol.setPestaniaActiva(3);
+            rol.setPestaniaActiva(5);
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
     }
@@ -405,10 +563,91 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
         if(eliminar.getCorrecto()){
             mostrarMensajeResultadoEJB(eliminar);
             listaMedioDifusion();
-            rol.setPestaniaActiva(3);
+            rol.setPestaniaActiva(5);
             Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(eliminar);
         
+    }
+    
+     /**
+     * Permite guardar una especialidad centro
+     */
+    public void guardarEspecialidadCentro(){
+        if (rol.getNuevaEspecialidadCentro().equals("Ingresar nombre")) {
+              Messages.addGlobalWarn("Debe ingresar el nombre de la especialidad de centro.");
+        } else{
+            Integer coincidencia = (int) rol.getEspecialidadesCentro().stream().filter(p -> p.getNombre().equals(rol.getNuevaEspecialidadCentro())).count();
+            if(coincidencia == 0){
+                ResultadoEJB<EspecialidadCentro> agregar = ejb.guardarEspecialidadCentro(rol.getNuevaEspecialidadCentro());
+                if (agregar.getCorrecto()) {
+                    mostrarMensajeResultadoEJB(agregar);
+                    listaEspecialidadCentro();
+                    rol.setAgregarEspecialidadCentro(false);
+                    rol.setPestaniaActiva(6);
+                    Ajax.update("frm");
+                }
+            }else{
+                Messages.addGlobalWarn("La especialidad de centro que desea agregar ya está registrada.");
+            }
+        }
+    }
+    
+    /**
+     * Permite activar o desactivar la especialidad centro
+     * @param especialidadCentro
+     */
+    public void activarDesactivarEspecialidadCentro(EspecialidadCentro especialidadCentro){
+        ResultadoEJB<EspecialidadCentro> res = ejb.activarDesactivarEspecialidadCentro(especialidadCentro);
+        if(res.getCorrecto()){
+            especialidadCentro.setEstatus(res.getValor().getEstatus());
+            listaEspecialidadCentro();
+            mostrarMensajeResultadoEJB(res);
+            rol.setPestaniaActiva(6);
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite eliminar la especialidad centro
+     * @param especialidadCentro
+     */
+    public void eliminarEspecialidadCentro(EspecialidadCentro especialidadCentro){
+        ResultadoEJB<Integer> eliminar = ejb.eliminarEspecialidadCentro(especialidadCentro);
+        if(eliminar.getCorrecto()){
+            mostrarMensajeResultadoEJB(eliminar);
+            listaEspecialidadCentro();
+            rol.setPestaniaActiva(6);
+            Ajax.update("frm");
+        }else mostrarMensajeResultadoEJB(eliminar);
+        
+    }
+    
+     /**
+     * Método para verificar si existen registros de la escolaridad seleccionada
+     * @param escolaridad
+     * @return Verdadero o Falso, según sea el caso
+     */
+    public Boolean deshabilitarEliminacionEscolaridad(@NonNull Escolaridad escolaridad){
+        Boolean permiso= Boolean.FALSE;
+        ResultadoEJB<Boolean> res = ejb.verificarRegistrosEscolaridad(escolaridad);
+        if(res.getCorrecto()){
+            permiso=res.getValor();
+        }else mostrarMensajeResultadoEJB(res);
+        return permiso;
+    }
+    
+     /**
+     * Método para verificar si existen registros de la ocupacion seleccionada
+     * @param ocupacion
+     * @return Verdadero o Falso, según sea el caso
+     */
+    public Boolean deshabilitarEliminacionOcupacion(@NonNull Ocupacion ocupacion){
+        Boolean permiso= Boolean.FALSE;
+        ResultadoEJB<Boolean> res = ejb.verificarRegistrosOcupacion(ocupacion);
+        if(res.getCorrecto()){
+            permiso=res.getValor();
+        }else mostrarMensajeResultadoEJB(res);
+        return permiso;
     }
     
     /**
@@ -452,6 +691,7 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
         }else mostrarMensajeResultadoEJB(res);
         return permiso;
     }
+    
     /**
      * Método para verificar si existen registros del tipo de sangre seleccionado
      * @param tipoSangre
@@ -466,4 +706,17 @@ public class AdministracionCatalogosAdmisionEscolares extends ViewScopedRol impl
         return permiso;
     }
     
+     /**
+     * Método para verificar si existen registros de la especialidad centro seleccionada
+     * @param especialidadCentro
+     * @return Verdadero o Falso, según sea el caso
+     */
+    public Boolean deshabilitarEliminacionEspecialidadCentro(@NonNull EspecialidadCentro especialidadCentro){
+        Boolean permiso= Boolean.FALSE;
+        ResultadoEJB<Boolean> res = ejb.verificarRegistrosEspecialidadCentro(especialidadCentro);
+        if(res.getCorrecto()){
+            permiso=res.getValor();
+        }else mostrarMensajeResultadoEJB(res);
+        return permiso;
+    }
 }
