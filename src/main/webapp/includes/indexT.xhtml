@@ -799,6 +799,9 @@
                                         </button>
                                     </div>    
                                     <div class="modal-body" style="padding-left: 2em;padding-right: 2em;">
+                                        <c:if test="#{notificacionCe.subtitulo ne 0}" >
+                                            <h4><p><strong>Tema: </strong>#{notificacionCe.subtitulo}</p></h4>
+                                        </c:if>
                                         <h4><p><strong>Lugar: </strong>#{notificacionCe.lugar}</p></h4>
                                         <h4>
                                             <p><strong>Fecha: </strong>

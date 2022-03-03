@@ -433,7 +433,6 @@
                     </div>
                 </div>
             </div> 
-
             <!--Gadget de Avisos-->
             <div class="box box-primary">
                 <div class="box box-solid">
@@ -524,13 +523,16 @@
                                     </a>
                                 </div>
                                 <!--Ventanas Modal-->
-                                <p:dialog styleClass="avisoModal" appendTo="@(body)" blockScroll="true" responsive="true" modal="true" widgetVar="modal#{index}" draggable="false" resizable="false" showEffect="fade" hideEffect="fade" header="#{notificacionCe.tituloPrincipal}" showHeader="false">
+                                <p:dialog styleClass="avisoModal" width="" appendTo="@(body)" blockScroll="true" responsive="true" modal="true" widgetVar="modal#{index}" draggable="false" resizable="false" showEffect="fade" hideEffect="fade" header="#{notificacionCe.tituloPrincipal}" showHeader="false">
                                     <div class="modal-header" style="background-color: #374850">
                                         <h3 class="modal-title" style="color: #ffffff">#{notificacionCe.tituloPrincipal}</h3>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         </button>
                                     </div>    
                                     <div class="modal-body" style="padding-left: 2em;padding-right: 2em;">
+                                        <c:if test="#{notificacionCe.subtitulo ne 0}" >
+                                            <h4><p><strong>Tema: </strong>#{notificacionCe.subtitulo}</p></h4>
+                                        </c:if>
                                         <h4><p><strong>Lugar: </strong>#{notificacionCe.lugar}</p></h4>
                                         <h4>
                                             <p><strong>Fecha: </strong>
