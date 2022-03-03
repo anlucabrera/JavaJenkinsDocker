@@ -50,7 +50,7 @@ public class EjbAdministracionDocumentosProceso {
         try{
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
-            if (p.getPersonal().getAreaOperativa() == 9 && p.getPersonal().getStatus()!='B') {
+            if (p.getPersonal().getClave()== 349 || p.getPersonal().getClave()==511) {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
