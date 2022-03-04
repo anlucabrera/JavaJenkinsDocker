@@ -42,26 +42,30 @@
             <div class="contenedor">
                 <c:if test="#{credencializacionSE.tieneAcceso}">
                     <h:form id="frm" prependId="false" class="form-inline">
-                        <div class="box box-primary">
-                            <div class="box-header with-border">
-                                <div id="main-buttons" class="hidden-sm hidden-xs">
-                                    <p:toolbar id="tb">
-                                        <f:facet name="right">
-                                            <p:commandButton id="imprimeCredencial" icon="fa fa-print" class="btn-primary btn-block" onclick="target = '_blank'"
-                                                             process="@form" update="@form" actionListener="#{credencializacionSE.generarCredencial()}" ajax="false" />
-                                            <p:commandLink
-                                                class="btn btn-info"
-                                                rendered="#{true}"
-                                                disabled="#{false}"
-                                                onclick="PF('modalAyuda').show();"
-                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
-                                                    class="fa fa-question"/>
-                                            </p:commandLink>
-                                        </f:facet>
-                                    </p:toolbar>
+                        <p:outputPanel>
+
+                            <div class="box box-primary">
+                                <div class="box-header with-border">
+                                    <div id="main-buttons" class="hidden-sm hidden-xs">
+                                        <p:toolbar id="tb">
+                                            <f:facet name="right">
+                                                <p:commandButton id="imprimeCredencial" icon="fa fa-print" disabled="#{!credencializacionSE.existenFotos()}" class="btn-primary btn-block" onclick="target = '_blank'"
+                                                                 process="@form" update="@form" actionListener="#{credencializacionSE.generarCredencial()}" ajax="false" />
+                                                <p:commandLink
+                                                    class="btn btn-info"
+                                                    rendered="#{true}"
+                                                    disabled="#{false}"
+                                                    onclick="PF('modalAyuda').show();"
+                                                    title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                        class="fa fa-question"/>
+                                                </p:commandLink>
+                                            </f:facet>
+                                        </p:toolbar>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                            <p:autoUpdate/>
+                        </p:outputPanel>
                     </h:form>
                     <p:tabView id="tabw1">
                         <p:tab title="Datos del estudiante">
@@ -77,6 +81,7 @@
                                                                 <div class="form-group">
                                                                     <div class="col-sm-3 col-md-3 col-lg-3">
                                                                         <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/fotos/#{credencializacionSE.rol.matricula}.jpg"  style="width: 150px; height: 220px;" class="img-circle"/>
+                                                                        <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/control_escolar/firmas/#{credencializacionSE.rol.matricula}.png"  style="width: 150px; height: 70px;" class="img-circle"/>
                                                                     </div>
                                                                     <div class="col-sm-1 col-md-1 col-lg-1">
                                                                         <p:outputLabel for="matricula" style="font-size: inherit;text-align: left;" value="Matricula:" />

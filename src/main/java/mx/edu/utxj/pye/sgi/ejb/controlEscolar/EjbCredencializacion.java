@@ -144,6 +144,33 @@ public class EjbCredencializacion {
             }
         }catch (Exception e){return ResultadoEJB.crearErroneo(1, "Error al buscar al pago de credencial (EjbCredencializacion.getPagoCredencialbyMatricula)", e, null);}
     }
+    
+    public ResultadoEJB getFotoAlumno(CredencializacionRolServiciosE rol){
+        try{
+            Image imageEstudiante = Image.getInstance("C://archivos//control_escolar//fotos//" + rol.getMatricula() + ".jpg");
+            //Comprobar que la matricula no venga nula
+            if (imageEstudiante != null) {
+                return ResultadoEJB.crearCorrecto(imageEstudiante, "Estudiante localizado con éxito");
+            } else {
+                return ResultadoEJB.crearErroneo(3, imageEstudiante, "No se ha encontrado la foto");
+            }
+        }catch (BadElementException | IOException e){ return ResultadoEJB.crearErroneo(3, "No se ha encontrado la foto (EjbCredencializacion.getEstudiantebyMatricula)", e, null); }
+    }
+    
+    public ResultadoEJB getFirmaAlumno(CredencializacionRolServiciosE rol){
+        try{
+            Image imageFirma = Image.getInstance("C://archivos//control_escolar//firmas//" + rol.getMatricula() + ".png");
+
+            //Comprobar que la matricula no venga nula
+            if (imageFirma != null) {
+                return ResultadoEJB.crearCorrecto(imageFirma, "Firma localizado con éxito");
+            } else {
+                return ResultadoEJB.crearErroneo(3, imageFirma, "No se ha encontrado la firma");
+            }
+
+        }catch (BadElementException | IOException e){ return ResultadoEJB.crearErroneo(3, "No se ha encontrado la firma (EjbCredencializacion.getEstudiantebyMatricula)", e, null); }
+    }
+    
     /**
      * Identifica mensajes de alerta, en este caso sólo para identificar si el estudiante ha pagado la credencial
      * @param rol
@@ -155,10 +182,34 @@ public class EjbCredencializacion {
                 List<DtoAlerta> alertas = new ArrayList<>();
                 String  matricula = String.valueOf(rol.getEstudiante().getMatricula());
                 ResultadoEJB<Registro> resPago = getPagoCredencialbyMatricula(matricula);
-                if(resPago.getCorrecto()==true){
-                   alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " ha realizado el pago de credencial", AlertaTipo.CORRECTO)); 
-                }else{
-                    alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " no ha realizado el pago de credencial", AlertaTipo.SUGERENCIA));           
+                ResultadoEJB resFoto = getFotoAlumno(rol);
+                ResultadoEJB resFirma = getFirmaAlumno(rol);
+                
+                
+                if (resPago.getCorrecto() == true && resFoto.getCorrecto() == true && resFirma.getCorrecto() == true) {
+                    alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " ha realizado el pago de credencial y puede imprimir su credencial", AlertaTipo.CORRECTO));
+                    alertas.add(new DtoAlerta("Corroborar que la firma y foto correspondan con el estudiante", AlertaTipo.SUGERENCIA));
+                } else {
+                    if (resPago.getCorrecto() == true) {
+                        alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " ha realizado el pago de credencial", AlertaTipo.CORRECTO));
+                    } else {
+                        alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " no ha realizado el pago de credencial", AlertaTipo.SUGERENCIA));
+                    }
+
+                    if (resFoto.getCorrecto() == true) {
+                        if (resFirma.getCorrecto() == true) {
+                            alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " ha registrado su foto y firma", AlertaTipo.CORRECTO));
+                        } else {
+                            alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " no ha registrado su firma", AlertaTipo.SUGERENCIA));
+                        }
+                    } else {
+                        if (resFirma.getCorrecto() == true) {
+                            alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " ha registrado su firma", AlertaTipo.CORRECTO));
+                            alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " no ha registrado su foto", AlertaTipo.SUGERENCIA));
+                        } else {
+                            alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " no ha registrado su foto ni su firma", AlertaTipo.SUGERENCIA));
+                        }
+                    }
                 }
                 return ResultadoEJB.crearCorrecto(alertas, "Lista de mensajes");
             }
@@ -242,4 +293,4 @@ public class EjbCredencializacion {
             Logger.getLogger(ServiceProcesoInscripcion.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-}
+            }
