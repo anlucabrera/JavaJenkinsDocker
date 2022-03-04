@@ -815,9 +815,29 @@
                                         <h4><p><strong>Lugar: </strong>#{notificacionCe.lugar}</p></h4>
                                         <h4>
                                             <p><strong>Fecha: </strong>
-                                                <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                    <f:convertDateTime pattern="EEEE, dd 'de' MMMM 'de' yyyy" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                </h:outputLabel>
+                                                <c:if test="#{tieneVariosDias}">
+                                                    <c:if test="#{mismoMes}">
+                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                            <f:convertDateTime pattern="'del' dd" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel> al 
+                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
+                                                            <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel>
+                                                    </c:if>
+                                                    <c:if test="#{!mismoMes}">
+                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                            <f:convertDateTime pattern="'del' dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel> al 
+                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
+                                                            <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel>
+                                                    </c:if>
+                                                </c:if>
+                                                <c:if test="#{!tieneVariosDias}">
+                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                        <f:convertDateTime pattern="EEEE, dd 'de' MMMM 'de' yyyy" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel>
+                                                </c:if>
                                             </p>
                                         </h4>
                                         <h4>
@@ -831,32 +851,14 @@
                                             <p><strong>Duracion: </strong>
                                                 <c:if test="#{tieneVariosDias}">
                                                     <c:if test="#{mismoMes}">
-                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                            <f:convertDateTime pattern="'del' dd" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> al 
-                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
-                                                            <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> de 
-                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                            <f:convertDateTime pattern="' ' hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> a 
-                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
-                                                            <f:convertDateTime pattern=" hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel>
+                                                        <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                            <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel> horas
                                                     </c:if>
                                                     <c:if test="#{!mismoMes}">
-                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                            <f:convertDateTime pattern="'del' dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> al 
-                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
-                                                            <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> de 
-                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                            <f:convertDateTime pattern="' ' hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> a 
-                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
-                                                            <f:convertDateTime pattern=" hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel>
+                                                        <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                            <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel> horas
                                                     </c:if>
                                                 </c:if>
                                                 <c:if test="#{!tieneVariosDias}">
