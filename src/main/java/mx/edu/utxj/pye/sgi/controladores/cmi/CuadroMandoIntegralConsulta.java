@@ -263,15 +263,17 @@ public class CuadroMandoIntegralConsulta implements Serializable {
             mostrar = Boolean.TRUE;
             if (numeroCuatrimestre == 1 || numeroCuatrimestre == 0) {
                 cumplimientoMensual = promediosMensuales(0);
-            cumplimientoAcumuladol = promediosAcumulados(0);
+                cumplimientoAcumuladol = promediosAcumulados(0);
             } else if (numeroCuatrimestre == 2) {
                 cumplimientoMensual = promediosMensuales(4);
-            cumplimientoAcumuladol = promediosAcumulados(4);
+                cumplimientoAcumuladol = promediosAcumulados(4);
             } else {
                 cumplimientoMensual = promediosMensuales(8);
-            cumplimientoAcumuladol = promediosAcumulados(8);
-            }            
-            cmiGeneral = new DtoCmi.ResultadosCMI(poau.obtenerAreaNombre(controladorEmpleado.getProcesopoa().getArea()), programadas.intValue(), alcanzadas.intValue(), noalcanzadas.intValue(), promedioCP, promedioSp, extender, resumen, cumplimientoMensual.get(0), cumplimientoMensual.get(1), cumplimientoAcumuladol.get(0), cumplimientoAcumuladol.get(1), generaGraficaResumen(promedioSp), Boolean.TRUE);
+                cumplimientoAcumuladol = promediosAcumulados(8);
+            }
+//            cmiGeneral = new DtoCmi.ResultadosCMI(poau.obtenerAreaNombre(controladorEmpleado.getProcesopoa().getArea()), programadas.intValue(), alcanzadas.intValue(), noalcanzadas.intValue(), promedioCP, promedioSp, extender, resumen, cumplimientoMensual.get(0), cumplimientoMensual.get(1), cumplimientoAcumuladol.get(0), cumplimientoAcumuladol.get(1), generaGraficaResumen(promedioSp), Boolean.TRUE);
+            Double alc=programadasAcumuladas - alcanzadasAcumuladas;
+            cmiGeneral = new DtoCmi.ResultadosCMI(poau.obtenerAreaNombre(controladorEmpleado.getProcesopoa().getArea()), programadasAcumuladas.intValue(), alcanzadasAcumuladas.intValue(), alc.intValue(), promedioCP, promedioSp, extender, resumen, cumplimientoMensual.get(0), cumplimientoMensual.get(1), cumplimientoAcumuladol.get(0), cumplimientoAcumuladol.get(1), generaGraficaResumen(promedioSp), Boolean.TRUE);
         } else {
             mostrar = Boolean.FALSE;
         }
@@ -290,16 +292,20 @@ public class CuadroMandoIntegralConsulta implements Serializable {
             mostrar = Boolean.TRUE;
             if (numeroCuatrimestre == 1 || numeroCuatrimestre == 0) {
                 cumplimientoMensual = promediosMensuales(0);
-            cumplimientoAcumuladol = promediosAcumulados(0);
+                cumplimientoAcumuladol = promediosAcumulados(0);
             } else if (numeroCuatrimestre == 2) {
                 cumplimientoMensual = promediosMensuales(4);
-            cumplimientoAcumuladol = promediosAcumulados(4);
+                cumplimientoAcumuladol = promediosAcumulados(4);
             } else {
                 cumplimientoMensual = promediosMensuales(8);
-            cumplimientoAcumuladol = promediosAcumulados(8);
-            }     
-            cmiGeneral = new DtoCmi.ResultadosCMI(eje.getNombre(), programadas.intValue(), alcanzadas.intValue(), noalcanzadas.intValue(), promedioCP, promedioSp, extender,resumen, cumplimientoMensual.get(0), cumplimientoMensual.get(1),cumplimientoAcumuladol.get(0),cumplimientoAcumuladol.get(1), generaGraficaResumen(promedioSp), Boolean.TRUE);
-        }else {
+                cumplimientoAcumuladol = promediosAcumulados(8);
+            }
+//            cmiGeneral = new DtoCmi.ResultadosCMI(eje.getNombre(), programadas.intValue(), alcanzadas.intValue(), noalcanzadas.intValue(), promedioCP, promedioSp, extender,resumen, cumplimientoMensual.get(0), cumplimientoMensual.get(1),cumplimientoAcumuladol.get(0),cumplimientoAcumuladol.get(1), generaGraficaResumen(promedioSp), Boolean.TRUE);
+            System.out.println("programadasAcumuladas" + programadasAcumuladas);
+            System.out.println("alcanzadasAcumuladas" + alcanzadasAcumuladas);            
+            Double alc=programadasAcumuladas - alcanzadasAcumuladas;
+            cmiGeneral = new DtoCmi.ResultadosCMI(eje.getNombre(), programadasAcumuladas.intValue(), alcanzadasAcumuladas.intValue(), alc.intValue(), promedioCP, promedioSp, extender, resumen, cumplimientoMensual.get(0), cumplimientoMensual.get(1), cumplimientoAcumuladol.get(0), cumplimientoAcumuladol.get(1), generaGraficaResumen(promedioSp), Boolean.TRUE);
+        } else {
             mostrar = Boolean.FALSE;
         }
         return cmiEje;
@@ -334,17 +340,26 @@ public class CuadroMandoIntegralConsulta implements Serializable {
                 case 0:actividadesPoas.forEach((t) -> {conteo(t.getNPEnero(), t.getNAEnero(), t.getActividadPoa());});break;
             }
             promediosAcumuladosRm(i);
-            resumenCacumuladasProgramadas= programadasAcumuladas;
-            resumenCacumuladasAlcanzadas= alcanzadasAcumuladas;
-            if (programadas == 0) {
-                promedioSp = (alcanzadas * 100D);
+            resumenCacumuladasProgramadas = programadasAcumuladas;
+            resumenCacumuladasAlcanzadas = alcanzadasAcumuladas;
+//            if (programadas == 0) {
+//                promedioSp = (alcanzadas * 100D);
+//            } else {
+//                promedioSp = (alcanzadas * 100D) / programadas;
+//            }
+//            promedioCP = promedioPenalizado(promedioSp);
+            
+            if (programadasAcumuladas == 0) {
+                promedioSp = (alcanzadasAcumuladas * 100D);
             } else {
-                promedioSp = (alcanzadas * 100D) / programadas;
+                promedioSp = (alcanzadasAcumuladas * 100D) / programadasAcumuladas;
             }
             promedioCP = promedioPenalizado(promedioSp);
             resumen.add(new DtoCmi.ConcentradoDatos(poau.obtenerMesNombre(i), programadas.intValue(), alcanzadas.intValue(), noalcanzadas.intValue(), promedioSp, promedioCP, poau.obtenerSemaforo(promedioSp), poau.obtenerSemaforo(promedioCP),resumenCacumuladasProgramadas.intValue(),resumenCacumuladasAlcanzadas.intValue(), Boolean.FALSE));
-            cp.add(new DtoCmi.Grafica(poau.obtenerMesNombre(i), promedioCP, promedioCP));
-            sp.add(new DtoCmi.Grafica(poau.obtenerMesNombre(i), promedioSp, promedioSp));
+//            cp.add(new DtoCmi.Grafica(poau.obtenerMesNombre(i), promedioCP, promedioCP));
+//            sp.add(new DtoCmi.Grafica(poau.obtenerMesNombre(i), promedioSp, promedioSp));
+            cp.add(new DtoCmi.Grafica(poau.obtenerMesNombre(i), alcanzadasAcumuladas, alcanzadasAcumuladas));
+            sp.add(new DtoCmi.Grafica(poau.obtenerMesNombre(i), programadasAcumuladas, programadasAcumuladas));
             agregaInformeC(i);
             
         }
@@ -356,7 +371,7 @@ public class CuadroMandoIntegralConsulta implements Serializable {
     public void conteo(Short programado, Short alcanzado, Integer claveActividad) {
         if (programado != 0 && !actividadesYaContadas.contains(claveActividad)) {
             programadas = programadas + 1D;
-            actividadesYaContadas.add(claveActividad);
+//            actividadesYaContadas.add(claveActividad);
             if (alcanzado == 0) {
                 noalcanzadas = noalcanzadas + 1D;
             }

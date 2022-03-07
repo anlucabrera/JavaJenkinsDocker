@@ -79,13 +79,16 @@ public class ControladorSubordinados implements Serializable {
     @Getter    @Setter    private List<Funciones> listaFuncioneSubordinado = new ArrayList<>();
 
 ////////////////////////////////////////////////////////////////////////////////Justificacion de Asistemcias
-    @Getter    @Setter    private List<Actividadesremotas> actividadesremotas = new ArrayList<>();
-    @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
-    @Getter    @Setter    private List<Incidencias> listaIncidenciasReporteImpresion = new ArrayList<>();
     @Getter    @Setter    private List<Incidencias> listaIncidenciasIndividuales = new ArrayList<>();
+    @Getter    @Setter    private List<Incidencias> listaIncidencias = new ArrayList<>();
     @Getter    @Setter    private List<Incapacidad> listaIncapacidads = new ArrayList<>();
-    @Getter    @Setter    private List<Incapacidad> listaIncapacidadsReporteImpresion = new ArrayList<>();
     @Getter    @Setter    private List<Cuidados> listaCuidados = new ArrayList<>();
+    @Getter    @Setter    private List<Actividadesremotas> actividadesremotas = new ArrayList<>();
+     
+    @Getter    @Setter    private List<Incidencias> listaIncidenciasReporteImpresion = new ArrayList<>();
+    @Getter    @Setter    private List<Incapacidad> listaIncapacidadesReporteImpresion = new ArrayList<>();
+    @Getter    @Setter    private List<Cuidados> listaCuidadosReporteImpresion = new ArrayList<>();
+    @Getter    @Setter    private List<Actividadesremotas> listaActividadesremotasReporteImpresion = new ArrayList<>();
 
 ////////////////////////////////////////////////////////////////////////////////Perfil Subordinados
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
@@ -153,85 +156,85 @@ public class ControladorSubordinados implements Serializable {
 
     public void reportesJustificacionAsistencias() {
         try {
+            listaIncidenciasReporteImpresion = new ArrayList<>();
+            listaIncapacidadesReporteImpresion = new ArrayList<>();
+            listaCuidadosReporteImpresion = new ArrayList<>();
+            listaActividadesremotasReporteImpresion = new ArrayList<>();
+                        
             fechaActual=LocalDateTime.now();
             fechaReportesActiva = false;
-            List<Incidencias> incidenciases = new ArrayList<>();
-            incidenciases.clear();
-            List<Incapacidad> incapacidads = new ArrayList<>();
-            incapacidads.clear();
-            List<Actividadesremotas> remotas = new ArrayList<>();
-            remotas.clear();
             
-            listaIncidenciasReporteImpresion = new ArrayList<>();
+            List<Incidencias> incidenciases = new ArrayList<>(); incidenciases.clear();
+            List<Incapacidad> incapacidads = new ArrayList<>(); incapacidads.clear();
+            List<Cuidados> cuidadoses = new ArrayList<>(); cuidadoses.clear();
+            List<Actividadesremotas> remotas = new ArrayList<>(); remotas.clear();
+            
             modulosRegistro = ejbDatosUsuarioLogeado.mostrarModuloregistro("Incidencia");
             if (modulosRegistro == null) {
                 return;
             }
+            
             LocalDateTime fechaMi = utilidadesCH.castearDaLDT(modulosRegistro.getFechaInicio());
             LocalDateTime fechaMF = utilidadesCH.castearDaLDT(modulosRegistro.getFechaFin());
-            
-            if ((fechaActual.isAfter(fechaMi) || fechaActual.equals(fechaMi)) && (fechaActual.isBefore(fechaMF) || fechaActual.equals(fechaMF))) {
-                fechaReportesActiva = true;
-                if (fechaMF.getMonthValue() == fechaMi.getMonthValue()) {
-                    if (fechaMF.getDayOfMonth() > 15) {
-                        fechaIR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 01);
-                        fechaFR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 15);
-                    } else {
-                        if (fechaMF.getMonthValue() == 1) {
-                            fechaIR = LocalDate.of((fechaMF.getYear() - 1), 12, 16);
-                            fechaFR = LocalDate.of((fechaMF.getYear() - 1), 12, 31);
-                        } else {
-                            fechaIR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), 16);
-                            fechaFR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), LocalDate.of(anioNumero, (fechaMF.getMonthValue() - 1), 01).lengthOfMonth());
-                        }
-                    }
-                } else {
-                    if (fechaMi.getDayOfMonth() > 15) {
-                        fechaIR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue() - 1, 01);
-                        fechaFR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue() - 1, 15);
-                    } else {
-                        if (fechaMi.getMonthValue() == 1) {
-                            fechaIR = LocalDate.of((fechaMi.getYear() - 1), 12, 16);
-                            fechaFR = LocalDate.of((fechaMi.getYear() - 1), 12, 31);
-                        } else {
-                            if (fechaMi.getDayOfMonth() == 01) {
-                                fechaIR = LocalDate.of(fechaMi.getYear(), (fechaMi.getMonthValue()), 01);
-                            } else {
-                                fechaIR = LocalDate.of(fechaMi.getYear(), (fechaMi.getMonthValue()), 16);
-                            }
-                            fechaFR = LocalDate.of(fechaMi.getYear(), (fechaMi.getMonthValue()), LocalDate.of(anioNumero, (fechaMi.getMonthValue() - 1), 01).lengthOfMonth());
-                        }
-                    }
-                }
 
-                incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
-                if (!incidenciases.isEmpty()) {
-                    incidenciases.forEach((Incidencias t) -> {
-                        if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
-                            listaIncidenciasReporteImpresion.add(t);
-                        }
-                    });
-                }
-                listaIncapacidadsReporteImpresion = new ArrayList<>();
-                listaIncapacidadsReporteImpresion.clear();
-                incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
-                if (!incapacidads.isEmpty()) {
-                    incapacidads.forEach((t) -> {
-                        if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
-                            listaIncapacidadsReporteImpresion.add(t);
-                        }
-                    });
-                }
-                
-                remotas= ejbNotificacionesIncidencias.mostrarActividadesremotasReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
-                if (!remotas.isEmpty()) {
-                    remotas.forEach((t) -> {
-                        if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
-                            actividadesremotas.add(t);
-                        }
-                    });
+            if (fechaMF.getDayOfMonth() > 15) {
+                fechaIR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 01);
+                fechaFR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 15);
+            } else {
+                if (fechaMF.getMonthValue() == 1) {
+                    fechaIR = LocalDate.of(fechaMF.getYear() - 1, 12, 01);
+                    fechaFR = LocalDate.of(fechaMF.getYear() - 1, 12, 31);
+                } else {
+                    fechaIR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), 16);
+                    fechaFR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), LocalDate.of(anioNumero, (fechaMF.getMonthValue() - 1), 01).lengthOfMonth());
                 }
             }
+            fechaReportesActiva = true;
+
+            listaIncidenciasReporteImpresion = new ArrayList<>();
+            listaIncidenciasReporteImpresion.clear();
+            incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
+            if (!incidenciases.isEmpty()) {
+                incidenciases.forEach((Incidencias t) -> {
+                    if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        listaIncidenciasReporteImpresion.add(t);
+                    }
+                });
+            }
+
+            listaIncapacidadesReporteImpresion = new ArrayList<>();
+            listaIncapacidadesReporteImpresion.clear();
+            incapacidads = ejbNotificacionesIncidencias.mostrarIncapacidadReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
+            if (!incapacidads.isEmpty()) {
+                incapacidads.forEach((t) -> {
+                    if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        listaIncapacidadesReporteImpresion.add(t);
+                    }
+                });
+            }
+
+            listaCuidadosReporteImpresion = new ArrayList<>();
+            listaCuidadosReporteImpresion.clear();
+            cuidadoses = ejbNotificacionesIncidencias.mostrarCuidadosReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
+            if (!cuidadoses.isEmpty()) {
+                cuidadoses.forEach((t) -> {
+                    if ((t.getPersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getPersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getPersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        listaCuidadosReporteImpresion.add(t);
+                    }
+                });
+            }
+
+            listaActividadesremotasReporteImpresion = new ArrayList<>();
+            listaActividadesremotasReporteImpresion.clear();
+            remotas = ejbNotificacionesIncidencias.mostrarActividadesremotasReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));
+            if (!remotas.isEmpty()) {
+                remotas.forEach((t) -> {
+                    if ((t.getClavePersonal().getAreaOperativa() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa() || t.getClavePersonal().getAreaSuperior() == controladorEmpleado.getNuevoOBJListaPersonal().getAreaOperativa()) && !Objects.equals(t.getClavePersonal().getClave(), controladorEmpleado.getNuevoOBJListaPersonal().getClave())) {
+                        listaActividadesremotasReporteImpresion.add(t);
+                    }
+                });
+            }
+
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorSubordinados.class.getName()).log(Level.SEVERE, null, ex);
@@ -240,8 +243,6 @@ public class ControladorSubordinados implements Serializable {
 
     public void mostrarIncidencias(String mActual) {
         try {
-            listaIncidencias = new ArrayList<>();
-            listaIncidencias.clear();
             List<Incidencias> incidenciases = new ArrayList<>();
             incidenciases.clear();
             List<Incapacidad> incapacidads = new ArrayList<>();
@@ -252,6 +253,10 @@ public class ControladorSubordinados implements Serializable {
             remotas.clear();
             fechaI = LocalDate.of(anioNumero, Integer.parseInt(mActual), 01);
             fechaF = LocalDate.of(anioNumero, Integer.parseInt(mActual), LocalDate.of(anioNumero, Integer.parseInt(mActual), 01).lengthOfMonth());
+            
+            
+            listaIncidencias = new ArrayList<>();
+            listaIncidencias.clear();
             incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
             if (!incidenciases.isEmpty()) {
                 incidenciases.forEach((t) -> {
