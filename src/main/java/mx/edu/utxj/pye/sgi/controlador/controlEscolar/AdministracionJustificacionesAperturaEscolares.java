@@ -85,12 +85,13 @@ public class AdministracionJustificacionesAperturaEscolares extends ViewScopedRo
             rol.setPeriodoActivo(ejbAsignacionIndicadoresCriterios.getPeriodoActual());
 //            rol.setSoloLectura(true);
 
-            rol.getInstrucciones().add("REGISTRAR GENERACIÓN Y/O RELACIONAR CICLOS ESCOLARES CON GENERACIONES.");
-            rol.getInstrucciones().add("Seleccionar la opción que corresponda dependiendo la pestaña en la que se encuentra AGREGAR GENERACIÓN o RELACIONAR CICLO A GENERACIÓN.");
-            rol.getInstrucciones().add("GENERACIÓN: Seleccionar año de inicio y fin de la generación.");
-            rol.getInstrucciones().add("RELACIONAR CICLO A GENERACIÓN: Seleccionar ciclo escolar y generación, los ciclos escolares que se deben relacionar son los comprendidos durante la generación seleccionada.");
+            rol.getInstrucciones().add("REGISTRAR JUSTIFICACIÓN DE APERTURA EXTEMPORÁNEA.");
+            rol.getInstrucciones().add("Seleccionar la opción AGREGAR JUSTIFICACIÓN.");
+            rol.getInstrucciones().add("Ingresar la descripción en el campo correspondiente, máximo 500 caracteres.");
             rol.getInstrucciones().add("Dar clic en GUARDAR para registrar.");
-            rol.getInstrucciones().add("ELIMINAR GENERACIÓN o RELACIÓN CICLO Y GENERACIÓN.");
+            rol.getInstrucciones().add("ACTIVAR O DESACTIVAR JUSTIFICACIÓN.");
+            rol.getInstrucciones().add("Dar clic en el icono (X o ✓) en la columna ACTIVA/INACTIVA de la fila que corresponda.");
+            rol.getInstrucciones().add("ELIMINAR JUSTIFICACIÓN.");
             rol.getInstrucciones().add("Dar clic en el icono (cesto de basura) de la columna ELIMINAR de la fila que corresponda.");
 
             rol.setAgregarJustificacion(false);
@@ -115,7 +116,7 @@ public class AdministracionJustificacionesAperturaEscolares extends ViewScopedRo
     }
    
     /**
-     * Permite que al cambiar el valor del inputSwitch para agregar una generación y se habiliten los componentes correspondientes
+     * Permite que al cambiar el valor del inputSwitch para agregar una justificación y se habiliten los componentes correspondientes
      * @param e Evento del cambio de valor
      */
     public void cambiarAgregarJustificacion(ValueChangeEvent e){
