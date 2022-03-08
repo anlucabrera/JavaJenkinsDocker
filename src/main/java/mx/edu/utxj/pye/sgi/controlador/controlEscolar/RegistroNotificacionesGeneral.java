@@ -107,6 +107,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
 
             rol = new RegistroNotificacionRolGeneral(notifAcceso.getValor());
             obtenerListaNotificacionesActivas(logonMB.getPersonal().getClave());
+//            obtenerListaNotificacionesTotal();
             obtenerListaNotificacionesTrabajador();
 
         } catch (Exception e) {
@@ -344,18 +345,18 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         return (int) ((fechaFin.getTime() - fechaInicio) / (1000 * 60 * 60 * 24));
     }
 
-    public boolean obtenerFinEvento(Date horaFin) {
-        LocalDateTime horaActual = LocalDateTime.now();
-        LocalDateTime horaTermino = utilidadesCH.castearDaLDT(horaFin);
-        boolean termino = horaActual.isAfter(horaTermino);
-        return termino;
-    }
-    
     public boolean obtenerInicioEvento(Date horaInicio) {
         LocalDateTime horaActual = LocalDateTime.now();
         LocalDateTime horaComienzo = utilidadesCH.castearDaLDT(horaInicio);
         boolean empezo = horaActual.isAfter(horaComienzo);
         return empezo;
+    }
+    
+    public boolean obtenerFinEvento(Date horaFin) {
+        LocalDateTime horaActual = LocalDateTime.now();
+        LocalDateTime horaTermino = utilidadesCH.castearDaLDT(horaFin);
+        boolean termino = horaActual.isAfter(horaTermino);
+        return termino;
     }
     
     public boolean tieneVariosDias(Date horaInicio, Date horaFin) {
@@ -380,6 +381,21 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             return false;
         }
     }
+    
+    public boolean mostrarNotificacion(int index, Date horaInicio, Date horaFin){
+        LocalDateTime horaActual = LocalDateTime.now();
+        LocalDateTime horaComienzo = utilidadesCH.castearDaLDT(horaInicio);
+        LocalDateTime horaTermino = utilidadesCH.castearDaLDT(horaFin);
+        if(horaActual.isAfter(horaComienzo.minusDays(7)) == true){
+            if(horaActual.isBefore(horaTermino.plusDays(2)) == true){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
     /**
      * ********************************************* Llenado de listas
      * ********************************************************
@@ -394,6 +410,15 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         }
     }
 
+    public void obtenerListaNotificacionesTotal() {
+        ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesTotal();
+        if (resNotificaciones.getCorrecto()) {
+            rol.setListaNotificacionesCe(resNotificaciones.getValor());
+            mostrarMensajeResultadoEJB(resNotificaciones);
+        } else {
+            inicializarListaNotificacionesCe();
+        }
+    }
     public void obtenerListaNotificacionesActivas(int clave) {
         ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesActivas(clave);
         if (resNotificaciones.getCorrecto()) {
@@ -406,8 +431,8 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
 
     public void obtenerListaNotificacionesAlumnos() {
         LocalDate fechaActual = LocalDate.now();
-        LocalDate fechaI = fechaActual.minusDays(1);
-        LocalDate fechaF = fechaActual.plusDays(8);
+        LocalDate fechaI = fechaActual.minusMonths(1);
+        LocalDate fechaF = fechaActual.plusMonths(1);
         ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesAlumnos(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
         if (resNotificaciones.getCorrecto()) {
             rol.setListaNotificacionesCe(resNotificaciones.getValor());
@@ -418,8 +443,8 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     }
     public void obtenerListaNotificacionesTrabajador() {
         LocalDate fechaActual = LocalDate.now();
-        LocalDate fechaI = fechaActual.minusDays(1);
-        LocalDate fechaF = fechaActual.plusDays(8);
+        LocalDate fechaI = fechaActual.minusMonths(1);
+        LocalDate fechaF = fechaActual.plusMonths(1);
         ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesTrabajador(utilidadesCH.castearLDaD(fechaI), utilidadesCH.castearLDaD(fechaF));
         if (resNotificaciones.getCorrecto()) {
             rol.setListaNotificacionesCe(resNotificaciones.getValor());
