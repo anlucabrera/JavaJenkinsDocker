@@ -754,6 +754,7 @@
                             </c:if>
                             <c:if test="#{comenzo eq false and termino eq false}"><c:set var="efect" value=""/></c:if>
                             <c:if test="#{comenzo eq true and termino eq false}"><c:set var="efect" value="fa-beat-fade"/></c:if>
+                            <c:if test="#{comenzo eq true and termino eq true}"><c:set var="efect" value=""/></c:if>
                             <!--Widget a mostrar-->
                             <h:form rendered="#{mostrar}">
                                 <div class="col-lg-12 col-md-12 col-xs-12">
@@ -896,9 +897,9 @@
                                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                                 </button>
                             </div>
-                        </div>       
-                        <div class="box-body">  
-                            <div class="row">        
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
                                 <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
