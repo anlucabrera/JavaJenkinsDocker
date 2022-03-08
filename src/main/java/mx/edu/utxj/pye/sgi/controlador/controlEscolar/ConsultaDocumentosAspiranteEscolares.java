@@ -76,9 +76,7 @@ public class ConsultaDocumentosAspiranteEscolares implements Serializable{
        estudianteIL = estudiante;
        aspiranteB = estudiante.getAspirante();
        procesoEgresado = ejbRegistroDocumentosOficiales.obtenerTipoEgresado(estudianteIL).getValor();
-       if(procesoEgresado.equals("SinDocumento")){
-            Messages.addGlobalInfo("No se puede identificar su tipo de egresado, ya que no ha entregado el documento obligatorio de copia del acta de nacimiento.");
-       }else{
+       if(!procesoEgresado.equals("SinDocumento")){
             listaDocumentosInscripcion = ejbRegistroDocumentosOficiales.getConsultaDocumentosInscripcionIngLic(aspiranteB, procesoEgresado).getValor();
             setForzarAperturaDialogo(Boolean.FALSE); 
             Ajax.update("frmDocsAsp");

@@ -408,8 +408,6 @@ public class PermisoAperturaExtemporaneaAdministrador extends ViewScopedRol impl
             ResultadoEJB<PermisosCapturaExtemporaneaEstudiante> resGuardar = ejb.guardarPermisoCapturaOrdinariaEstudiante(rol.getCarga(), rol.getEstudiante().getEstudiante(), rol.getUnidadMateria(), rol.getTipoEvaluacion(), rol.getFechaInicio(), rol.getFechaFin(), rol.getJustificacionPermisosExtemporaneos(), rol.getAdministrador());
             if (resGuardar.getCorrecto()) {
                 actualizarListaEstudiantes();
-                rol.setFechaInicio(null);
-                rol.setFechaFin(null);
                 Ajax.update("frm");
             }
             mostrarMensajeResultadoEJB(resGuardar);

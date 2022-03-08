@@ -188,19 +188,19 @@
                                                                 <p:columnGroup type="header">
                                                                     <p:row class="success">
                                                                         <p:column headerText="Clave" style="width: 150px;"/>
-                                                                        <p:column headerText="Ciclo escolar" style="width: 200px;"/>
-                                                                        <p:column headerText="Generación" style="width: 150px;"/>
+                                                                        <p:column headerText="Generación" style="width: 200px;"/>
+                                                                        <p:column headerText="Ciclo escolar" style="width: 150px;"/>
                                                                         <p:column headerText="Eliminar" style="width: 250px;"/>
                                                                     </p:row>
                                                                 </p:columnGroup>
                                                                 <p:column style="text-align: center;">
                                                                     <h:outputText value="#{cicloGeneracion.ceg}"/>
                                                                 </p:column>
+                                                                <p:column style="text-align: center;" groupRow="true">
+                                                                    <h:outputText value="#{cicloGeneracion.generacion.inicio} - #{cicloGeneracion.generacion.fin}"/>
+                                                                </p:column>
                                                                 <p:column style="text-align: center;">
                                                                     <h:outputText value="#{cicloGeneracion.ciclo.inicio}"><f:convertDateTime type="date" pattern="yyyy" timeZone="America/Mexico_City"/></h:outputText> - <h:outputText value="#{cicloGeneracion.ciclo.fin}"><f:convertDateTime type="date" pattern="yyyy" timeZone="America/Mexico_City"/></h:outputText>
-                                                                   </p:column>
-                                                                <p:column style="text-align: justify;">
-                                                                    <h:outputText value="#{cicloGeneracion.generacion.inicio} - #{cicloGeneracion.generacion.fin}"/>
                                                                 </p:column>
                                                                 <p:column style="text-align: justify;">
                                                                     <center>

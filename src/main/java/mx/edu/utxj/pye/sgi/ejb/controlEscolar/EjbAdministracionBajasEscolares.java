@@ -170,6 +170,7 @@ public class EjbAdministracionBajasEscolares {
             BajasCausa bajaCausa = new BajasCausa();
             bajaCausa.setCveCausa(consecutivo);
             bajaCausa.setCausa(causaBaja);
+            bajaCausa.setActiva(true);
             em.persist(bajaCausa);
             em.flush();
            

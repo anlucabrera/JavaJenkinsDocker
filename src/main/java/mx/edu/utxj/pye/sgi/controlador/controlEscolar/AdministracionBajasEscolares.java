@@ -327,7 +327,7 @@ public class AdministracionBajasEscolares extends ViewScopedRol implements Desar
     }
     
     /**
-     * Permite eliminar el tipo de sangre seleccionado
+     * Permite eliminar la relación de la causa de baja con una categoría
      * @param bajaCategoria
      */
     public void eliminarBajaCategoria(BajasCausaCategoria bajaCategoria){

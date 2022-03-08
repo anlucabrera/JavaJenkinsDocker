@@ -63,9 +63,9 @@ public class EjbAdministracionJustificacionesApertura {
             em.persist(justificacion);
             em.flush();
             
-            return ResultadoEJB.crearCorrecto(justificacion, "Se registró correctamente la generación.");
+            return ResultadoEJB.crearCorrecto(justificacion, "Se registró correctamente la justificación de apertura extemporánea.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la generación. (EjbAdministracionJustificacionesApertura.guardarJustificacion)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la justificación de apertura extemporánea. (EjbAdministracionJustificacionesApertura.guardarJustificacion)", e, null);
         }
     }
     

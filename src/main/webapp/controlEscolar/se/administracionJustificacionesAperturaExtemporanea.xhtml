@@ -108,7 +108,7 @@
                                                         </p:column>
                                                         <p:column style="text-align: center;">
                                                             <p:commandButton actionListener="#{administracionJustificacionesAperturaEscolares.activarDesactivarJustificacion(justificacion)}"
-                                                                                     class="btn btn-sm #{!justificacion.activo?'btn-danger':'btn-success'}" icon="#{!justificacion.activo?'fa fa-close':'fa-check'}"
+                                                                                     class="btn btn-sm #{!justificacion.activo?'btn-danger':'btn-success'}" icon="#{!justificacion.activo?'fa fa-close':'fa fa-check'}"
                                                                                      title="#{justificacion.activo?'Desactivar justificación.':'Activar justificación.'}" update="@this @(.tabla)"/>
                                                        </p:column>
                                                         <p:column style="text-align: justify;">
