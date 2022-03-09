@@ -187,7 +187,7 @@
                                                                     </div>
                                                                 </div>
                                                             </p:outputPanel>    
-                                                            <p:dataTable id="tblActividades"  value="#{controladorSubordinados.actividadesremotas}"  var="remotas"
+                                                            <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaActividadesremotasReporteImpresion}"  var="remotas"
                                                                          style="margin-bottom:20px"
                                                                          emptyMessage="No se encontraron Registros." rendered="true">
 
@@ -255,7 +255,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </p:outputPanel>    
-                                                                <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaIncapacidadsReporteImpresion}"  var="incapacidad"
+                                                                <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaIncapacidadesReporteImpresion}"  var="incapacidad"
                                                                              style="margin-bottom:20px"
                                                                              emptyMessage="No se encontraron Registros." rendered="true">
 
@@ -299,8 +299,84 @@
                                                         </p:outputPanel>    
                                                     </h:form>
                                                 </p:tab>
-                                            </p:tabView>
+                                                <p:tab title="Cuidados" >
+                                                    <h:form id="frmcuidGeneralReporte"> 
+                                                        <div class="row">
+                                                            <div class="col-sm-4 border-right">
+                                                                <p:commandButton value="Imprimir reporte" icon="fa fa-print" class="btn-success">                                        
+                                                                    <p:printer target="incidenciasReporte" />
+                                                                </p:commandButton>
+                                                            </div>
+                                                        </div>
+                                                        <hr/>
+                                                        <p:outputPanel>
+                                                            <p:outputPanel id="incidenciasReporte">
+                                                                <p:outputPanel>            
+                                                                    <p:autoUpdate/>
+                                                                    <div class="row">
+                                                                        <div id="tituloCV" class="col-sm-12">
+                                                                            <div class="description-block" style="text-align: center">
+                                                                                <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                                <h3>#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativaNombre}</h3>
+                                                                                <h:outputLabel value="Consulta:" style="font-weight: bold"/> <p:spacer width="10px"/> <h:outputLabel value="#{controladorSubordinados.fechaNow}"/><p:spacer width="30px"/>
+                                                                                <h:outputLabel value="Periodo:" style="font-weight: bold"/> <p:spacer width="10px"/> <h:outputLabel value="#{controladorSubordinados.fechaIR}"/><p:spacer width="10px"/><h:outputLabel value="a" style="font-weight: bold"/> <p:spacer width="10px"/><h:outputLabel value="#{controladorSubordinados.fechaFR}"/>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr/>
+                                                                    <div class="row">
+                                                                        <div class="col-sm-12 border-right">
+                                                                            <div class="description-block" style="text-align: center">
+                                                                                <h3><strong>cuidados</strong></h3>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </p:outputPanel>    
+                                                                <p:dataTable id="tblActividades"  value="#{controladorSubordinados.listaCuidadosReporteImpresion}"  var="cuidado"
+                                                                             style="margin-bottom:20px"
+                                                                             emptyMessage="No se encontraron Registros." rendered="true">
 
+                                                                    <p:column headerText="Nomina" style="width: 10%;text-align: center;">
+                                                                        <h:outputText value="#{cuidado.personal.clave}" />
+                                                                    </p:column>
+                                                                    <p:column headerText="Nombre" style="width: 15%;text-align: justify;">
+                                                                        <h:outputText value="#{cuidado.personal.nombre}" />
+                                                                    </p:column> 
+                                                                    <p:column headerText="Tipo" style="width: 10%;text-align: justify;">
+                                                                        <h:outputText value="#{cuidado.tipo}" />
+                                                                    </p:column>        
+                                                                    <p:column headerText="Fecha inicio"  style="width: 12%;text-align: center;">
+                                                                        <h:outputLabel value="#{cuidado.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                    </p:column>  
+                                                                    <p:column headerText="Fecha fin" style="width: 12%">
+                                                                        <h:outputLabel value="#{cuidado.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
+                                                                    </p:column>                                                
+                                                                    <p:column headerText="Evidencia(s)" style="width:85px;text-align: center">
+                                                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(cuidado.evidencia)}" target="_blank">
+                                                                            <i class="fa fa-search"></i>
+                                                                            <span>Ver</span>
+                                                                        </p:link>
+                                                                    </p:column>
+
+                                                                </p:dataTable>                                                  
+                                                                <div class="row">
+                                                                    <div class="col-sm-4"/>
+                                                                    <div class="col-sm-4">
+                                                                        <br/>
+                                                                        <br/>
+                                                                        <br/>
+                                                                        <div class="description-block" style="text-align: center">
+                                                                            <hr/>
+                                                                            <h4>#{controladorEmpleado.nuevoOBJListaPersonal.nombre}</h4>
+                                                                            <h4>#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativaNombre}</h4>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </p:outputPanel>   
+                                                        </p:outputPanel>    
+                                                    </h:form>
+                                                </p:tab>
+                                            </p:tabView>
                                         </p:tab>
                                         <p:tab title="Incidencias">
                                             <h:form id="frmInciGeneral"> 

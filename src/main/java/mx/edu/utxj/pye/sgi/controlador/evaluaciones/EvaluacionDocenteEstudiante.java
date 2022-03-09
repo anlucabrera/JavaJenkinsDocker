@@ -15,7 +15,6 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
 import mx.edu.utxj.pye.sgi.enums.EvaluacionesTipo;
 import org.omnifaces.cdi.ViewScoped;
-import org.omnifaces.util.Ajax;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -25,346 +24,281 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import javax.el.ELException;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+import mx.edu.utxj.pye.sgi.dto.DtoEvaluaciones;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
+import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 
 /**
  * @author  Taatisz :P
  */
 @Named
 @ViewScoped
-public class EvaluacionDocenteEstudiante extends ViewScopedRol {
-
+public class EvaluacionDocenteEstudiante extends ViewScopedRol implements Desarrollable{
+    @Getter @Setter private DtoEvaluaciones rol = new DtoEvaluaciones();
     @Getter private Boolean cargada = false;
     @Getter private Boolean finalizado = false;
-    @Getter private Evaluaciones evaluacion;
+    @Getter @Setter private Boolean tieneAcceso = false;
+    @Getter @Setter Boolean estudianteSauiit, estudianteCE;
+    
     @Getter private PeriodosEscolares periodoEscolar;
-    @Getter @Setter dtoEstudiantesEvalauciones estudianteEvaluacion;
     @Getter @Setter int totalDocentes, evaluados2;
-    @Getter @Setter int tipoEvaluacion;
     @Getter @Setter double porcentaje;
     @Getter @Setter dtoEstudianteMateria dtoDocenteEvaluando;
-    @Getter @Setter EvaluacionDocentesMateriaResultados resultadosEvaluando;
-    @Getter @Setter Boolean estudianteSauiit, estudianteCE;
-    @Getter @Setter List<dtoEstudianteMateria> listaMaterias,listaResultados;
-    @Getter private List<Apartado> preguntas;
-    @Getter private List<SelectItem> respuestasPosibles;
-    @Getter private String valor;
+    
     @Inject LogonMB logonMB;
     @EJB EjbEvaluacionDocente2 ejbEvaluacionDocente2;
     @EJB EJBAdimEstudianteBase ejbAdminEstudiante;
+    @EJB EjbPropiedades ep;
 
     @PostConstruct
     public  void  init(){
-        cargada =false;
-        //System.out.println("EvaluacionDocenteEstudiante.init" +logonMB.getCurrentUser());
-        setVistaControlador(ControlEscolarVistaControlador.EVALUACION_DOCENTE2);
-        //Se busca evaluacion activa
-        ResultadoEJB<Evaluaciones> resEvaluacion = ejbEvaluacionDocente2.getEvDocenteActiva();
-        if(resEvaluacion.getCorrecto()==true){
-            evaluacion = resEvaluacion.getValor();
-            //Se obtiene al estudiante
-            ResultadoEJB<dtoEstudiantesEvalauciones> resEstudiante = ejbAdminEstudiante.getClaveEstudiante(logonMB.getCurrentUser(), evaluacion.getPeriodo());
-            if(resEstudiante.getCorrecto()==true){
-                //Obtuvo al estudiante, sólo hay que obetener sus materias identificando en que base estan registrados y quitar a estudiantes de 6to y 11vo
-                estudianteEvaluacion = resEstudiante.getValor();
-                if(estudianteEvaluacion.getEstudianteCE() !=null){
-                    estudianteCE = true;
-                }
-                if(estudianteEvaluacion.getEstudianteSaiiut() !=null){
-                    estudianteSauiit =true;
-                }
-                if(estudianteEvaluacion.getGrado()==6 || estudianteEvaluacion.getGrado() ==11){cargada=false; }
-                else {
-                    ResultadoEJB<List<dtoEstudianteMateria>> resMaterias = ejbEvaluacionDocente2.getMateriasbyEstudiante(estudianteEvaluacion,evaluacion);
-                    if(resMaterias.getCorrecto()==true){
-                        listaMaterias= resMaterias.getValor();
-                        //Se verifica que tipo de evaluación se va a realizar (tipo 1= evaluación normal tipo 2= evaluacion por contingencia, aulas virtuales)
-                        if(evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE.getLabel())){
-                            //Carga apartados de cuestionario tipo 1
-                            preguntas = ejbEvaluacionDocente2.getApartados();
-                            getResultados();
-                            tipoEvaluacion=1;
-                            cargada=true;
-                        }
-                        else if(evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_2.getLabel())){
-                            //Carga el cuestionario de evaluacion docentes tipo 2 por contingencia
-                            preguntas = ejbEvaluacionDocente2.getApartadosContingencia();
-                            getResultadosTipo2();
-                            tipoEvaluacion =2;
-                            cargada =true;
-                        }
-                        else if (evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_3.getLabel())){
-                            //Carga el cuestionario de evaluacion a docente tipo 3 por contingencia
-                            preguntas = ejbEvaluacionDocente2.getApartadosContingenciaCuestionario2();
-                            getResultadosTipo3();
-                            tipoEvaluacion =3;
-                            cargada=true;
-                        }
-                        else if (evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_4.getLabel())){
-                            //Carga el cuestionario de evaluacion a docente tipo 3 por contingencia
-                            preguntas = ejbEvaluacionDocente2.getApartadosContingenciaCuestionario3();
-                            getResultadosTipo4();
-                            tipoEvaluacion =4;
-                            cargada=true;
-                        }
-                        respuestasPosibles = ejbEvaluacionDocente2.getRespuestasPosibles();
-                    }else {mostrarMensajeResultadoEJB(resMaterias);}
-                    dtoDocenteEvaluando= listaResultados.get(0);
-
-                }
+        try {
+            if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE19) && !logonMB.getUsuarioTipo().equals(UsuarioTipo.ESTUDIANTE)) return;
+            cargada = true;
+            setVistaControlador(ControlEscolarVistaControlador.EVALUACION_DOCENTE2);
+            //Se busca evaluacion activa
+            ResultadoEJB<Evaluaciones> resEvaluacion = ejbEvaluacionDocente2.getEvDocenteActiva();
+            if(!resEvaluacion.getCorrecto()) return;
+            rol.evaluacion = resEvaluacion.getValor();
+            ResultadoEJB<dtoEstudiantesEvalauciones> resValidacion = ejbAdminEstudiante.getClaveEstudiante(logonMB.getCurrentUser(), rol.evaluacion.getPeriodo());
+            //System.out.println("Resultado EJB" + resValidacion.getValor().getMatricula());
+            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
+            rol.setDtoEstudiante(resValidacion.getValor());
+            //System.out.println("Dto Estudiante:" + rol.getDtoEstudiante().getMatricula());
+            if(rol.getDtoEstudiante().getGrado() == 6 || rol.getDtoEstudiante().getGrado() == 11) return;
+            tieneAcceso = rol.tieneAcceso(rol.getDtoEstudiante());
+            if(rol.getDtoEstudiante().getEstudianteCE() != null) {
+                estudianteCE = true;
             }
-        }else {mostrarMensajeResultadoEJB(resEvaluacion); cargada =false;}
+            if (rol.getDtoEstudiante().getEstudianteSaiiut() != null) {
+                estudianteSauiit = true;
+            }
+            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            //if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            rol.setNivelRol(NivelRol.OPERATIVO);
+            ResultadoEJB<List<dtoEstudianteMateria>> resMaterias = ejbEvaluacionDocente2.getMateriasbyEstudiante(rol.getDtoEstudiante(), rol.getEvaluacion());
+            if(!resMaterias.getCorrecto()) return;
+            rol.setListaMaterias(resMaterias.getValor());
+            rol.setRespuestas(new HashMap<>());
+            dtoDocenteEvaluando = new dtoEstudianteMateria();
+            if(rol.evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE.getLabel())){
+                rol.tipoEvaluacion = 1;
+                rol.listaResultados = obtenerResultados(rol.tipoEvaluacion, rol.getDtoEstudiante(), rol.getEvaluacion(), rol.getRespuestas());
+                porcentaje = obtenerAvance(rol.listaResultados);
+                dtoDocenteEvaluando = rol.listaResultados.get(0);
+                ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo1(rol.getDtoEstudiante(), dtoDocenteEvaluando, rol.getEvaluacion(), rol.getRespuestas());
+            }
+            if(rol.evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_2.getLabel())){
+                rol.tipoEvaluacion = 2;
+                rol.listaResultados = obtenerResultados(rol.tipoEvaluacion, rol.getDtoEstudiante(), rol.getEvaluacion(), rol.getRespuestas());
+                porcentaje = obtenerAvance(rol.listaResultados);
+                dtoDocenteEvaluando = rol.listaResultados.get(0);
+                ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo2(rol.getDtoEstudiante(), dtoDocenteEvaluando, rol.getEvaluacion(), rol.getRespuestas());
+            }
+            if(rol.evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_3.getLabel())){
+                rol.tipoEvaluacion = 3;
+                rol.listaResultados = obtenerResultados(rol.tipoEvaluacion, rol.getDtoEstudiante(), rol.getEvaluacion(), rol.getRespuestas());
+                porcentaje = obtenerAvance(rol.listaResultados);
+                dtoDocenteEvaluando = rol.listaResultados.get(0);
+                ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo3(rol.getDtoEstudiante(), dtoDocenteEvaluando, rol.getEvaluacion(), rol.getRespuestas());
+            }
+            if(rol.evaluacion.getTipo().equals(EvaluacionesTipo.DOCENTE_4.getLabel())){
+                rol.tipoEvaluacion = 4;
+                rol.listaResultados = obtenerResultados(rol.tipoEvaluacion, rol.getDtoEstudiante(), rol.getEvaluacion(), rol.getRespuestas());
+                porcentaje = obtenerAvance(rol.listaResultados);
+                dtoDocenteEvaluando = rol.listaResultados.get(0);
+                ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo4(rol.getDtoEstudiante(), dtoDocenteEvaluando, rol.getEvaluacion(), rol.getRespuestas());
+            }
+            
+        } catch (Exception e) {mostrarExcepcion(e);}
     }
-
-    /**
-     * Obtiene los resultados del estudiante logueado (Evaluación tipo1)
-     */
-    public void getResultados(){
-        listaResultados = new ArrayList<>();
-        //Se recorre la lista de materias que cursa el estudiante (Esta lista ya tiene quien imparte la materia
-        listaMaterias.stream().forEach(m->{
-            EvaluacionDocentesMateriaResultados2 resultados = new EvaluacionDocentesMateriaResultados2();
-            dtoEstudianteMateria materia = new dtoEstudianteMateria();
-            //Obtienen los datos ---> Aqui si no existen los crea dentro del metodo que se llama en el ejb
-            ResultadoEJB<EvaluacionDocentesMateriaResultados2> resResultados = ejbEvaluacionDocente2.getResultadobyEvaluadorEvaluado(estudianteEvaluacion,m,evaluacion);
-            if(resResultados.getCorrecto()==true){
-                //Se le asigna el valor
-                resultados = resResultados.getValor();
-                //Se agrega a la lista de resultados
-                materia.setResultados2(resultados);
-                // System.out.println("Resultados "+ materia.getResultados().getR1());
-                materia.setNombreMateria(m.getNombreMateria());
-                materia.setClaveMateria(m.getClaveMateria());
-                materia.setDocenteImparte(m.getDocenteImparte());
-                //  System.out.println("Materia " + materia);
-                listaResultados.add(materia);
-                //System.out.println("EvaluacionDocenteEstudiante.getResultados");
-            }else {mostrarMensajeResultadoEJB(resResultados);}
-        });
-        totalDocentes = listaResultados.size();
-        //System.out.println("EvaluacionDocenteEstudiante.getResultados "+ listaResultados);
-        evaluados2 = listaResultados.stream().filter(docente -> docente.getResultados2().getCompleto()).collect(Collectors.toList()).size();
-        Double dte = new Double(totalDocentes);
-        Double dc= new Double(evaluados2);
-        porcentaje = (dc * 100) / dte;
-        if(totalDocentes==evaluados2){finalizado =true;}
-        else {finalizado =false;}
-        //  System.out.println("Evaluados" + evaluados2 + " Porcentaje  " + porcentaje);
-        //  System.out.println("Resultados" + listaResultados);
-        //Una vez obtenida la lista de resultados, filtramos por las que ya estan completas y las que no
-        // System.out.println("Resultados filtrados " + listaDocentesEvaluados + "  " + listaDocentesEvaluando);
+    
+    public List<dtoEstudianteMateria> obtenerResultadosTipo4(){
+        dtoEstudiantesEvalauciones estudiante = rol.getDtoEstudiante();
+        Evaluaciones evaluacion = rol.getEvaluacion();
+        List<dtoEstudianteMateria> resultados = rol.getListaMaterias()
+                .stream()
+                .map(dto -> pack(dto, 4, estudiante, evaluacion, rol.getRespuestas()))
+                .distinct()
+                .collect(Collectors.toList());
+        return resultados;
     }
-    /**
-     * Obtiene los resultados del estudiante logueado (Evaluación tipo 2)
-     */
-    public void getResultadosTipo2(){
-        listaResultados = new ArrayList<>();
-        //Se recorre la lista de materias que cursa el estudiante (Esta lista ya tiene quien imparte la materia
-        listaMaterias.stream().forEach(m->{
-            EvaluacionDocentesMateriaResultados3 resultados = new EvaluacionDocentesMateriaResultados3();
-            dtoEstudianteMateria materia = new dtoEstudianteMateria();
-            //Obtienen los datos ---> Aqui si no existen los crea dentro del metodo que se llama en el ejb
-            ResultadoEJB<EvaluacionDocentesMateriaResultados3> resResultados = ejbEvaluacionDocente2.getResultadosTipo2byEvaluadorEvaluado(estudianteEvaluacion,m,evaluacion);
-            if(resResultados.getCorrecto()==true){
-                //Se le asigna el valor
-                resultados = resResultados.getValor();
-                //Se agrega a la lista de resultados
-                materia.setResultadosTipo2(resultados);
-                // System.out.println("Resultados "+ materia.getResultados().getR1());
-                materia.setNombreMateria(m.getNombreMateria());
-                materia.setClaveMateria(m.getClaveMateria());
-                materia.setDocenteImparte(m.getDocenteImparte());
-                //  System.out.println("Materia " + materia);
-                listaResultados.add(materia);
-                //System.out.println("EvaluacionDocenteEstudiante.getResultados");
-            }else {mostrarMensajeResultadoEJB(resResultados);}
-        });
-        totalDocentes = listaResultados.size();
-        //System.out.println("EvaluacionDocenteEstudiante.getResultados "+ listaResultados);
-        evaluados2 = listaResultados.stream().filter(docente -> docente.getResultadosTipo2().getCompleto()).collect(Collectors.toList()).size();
-        Double dte = new Double(totalDocentes);
-        Double dc= new Double(evaluados2);
-        porcentaje = (dc * 100) / dte;
-        if(totalDocentes==evaluados2){finalizado =true;}
-        else {finalizado =false;}
-        //  System.out.println("Evaluados" + evaluados2 + " Porcentaje  " + porcentaje);
-        //  System.out.println("Resultados" + listaResultados);
-        //Una vez obtenida la lista de resultados, filtramos por las que ya estan completas y las que no
-        // System.out.println("Resultados filtrados " + listaDocentesEvaluados + "  " + listaDocentesEvaluando);
+    
+    public List<dtoEstudianteMateria> obtenerResultados(Integer tipo, dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion, Map<String, String> respuestas){
+        List<dtoEstudianteMateria> resultados;
+        resultados = rol.getListaMaterias()
+                .stream()
+                .map(dto -> pack(dto, tipo, estudiante, evaluacion, respuestas))
+                .distinct()
+                .collect(Collectors.toList());
+        return resultados;
     }
-    /**
-     * Obtiene los resultados del estudiante logueado (Evaluación Docente materia (Cuestionario 3 por contingencia))
-     */
-    public void getResultadosTipo3(){
-        listaResultados = new ArrayList<>();
-        //Se recorre la lista de materias que cursa el estudiante (Esta lista ya tiene quien imparte la materia
-        listaMaterias.stream().forEach(m->{
-            EvaluacionDocentesMateriaResultados4 resultados = new EvaluacionDocentesMateriaResultados4();
-            dtoEstudianteMateria materia = new dtoEstudianteMateria();
-            //Obtienen los datos ---> Aqui si no existen los crea dentro del metodo que se llama en el ejb
-            ResultadoEJB<EvaluacionDocentesMateriaResultados4> resResultados = ejbEvaluacionDocente2.getResultadosTipo3byEvaluadorEvaluado(estudianteEvaluacion,m,evaluacion);
-            if(resResultados.getCorrecto()==true){
-                //Se le asigna el valor
-                resultados = resResultados.getValor();
-                //Se agrega a la lista de resultados
-                materia.setResultadosTipo4(resultados);
-                // System.out.println("Resultados "+ materia.getResultados().getR1());
-                materia.setNombreMateria(m.getNombreMateria());
-                materia.setClaveMateria(m.getClaveMateria());
-                materia.setDocenteImparte(m.getDocenteImparte());
-                //  System.out.println("Materia " + materia);
-                listaResultados.add(materia);
-                //System.out.println("EvaluacionDocenteEstudiante.getResultados");
-            }else {mostrarMensajeResultadoEJB(resResultados);}
-        });
-        totalDocentes = listaResultados.size();
-        //System.out.println("EvaluacionDocenteEstudiante.getResultados "+ listaResultados);
-        evaluados2 = listaResultados.stream().filter(docente -> docente.getResultadosTipo4().getCompleto()).collect(Collectors.toList()).size();
-        Double dte = new Double(totalDocentes);
-        Double dc= new Double(evaluados2);
-        porcentaje = (dc * 100) / dte;
-        if(totalDocentes==evaluados2){finalizado =true;}
-        else {finalizado =false;}
-        //  System.out.println("Evaluados" + evaluados2 + " Porcentaje  " + porcentaje);
-        //  System.out.println("Resultados" + listaResultados);
-        //Una vez obtenida la lista de resultados, filtramos por las que ya estan completas y las que no
-        // System.out.println("Resultados filtrados " + listaDocentesEvaluados + "  " + listaDocentesEvaluando);
+    
+    public dtoEstudianteMateria pack(dtoEstudianteMateria m, Integer tipo, dtoEstudiantesEvalauciones estudiante, Evaluaciones evaluacion, Map<String, String> respuestas){
+        dtoEstudianteMateria dto = new dtoEstudianteMateria();
+        if(tipo.equals(1)){
+            EvaluacionDocentesMateriaResultados2 resultados2;
+            ResultadoEJB<EvaluacionDocentesMateriaResultados2> resResultados = ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo1(estudiante, m, evaluacion, respuestas);
+            if(!resResultados.getCorrecto()) return new dtoEstudianteMateria();
+            resultados2 = resResultados.getValor();
+            dto.setResultados2(resultados2);
+        }
+        if(tipo.equals(2)){
+            EvaluacionDocentesMateriaResultados3 resultados2;
+            ResultadoEJB<EvaluacionDocentesMateriaResultados3> resResultados = ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo2(estudiante, m, evaluacion, respuestas);
+            if(!resResultados.getCorrecto()) return new dtoEstudianteMateria();
+            resultados2 = resResultados.getValor();
+            dto.setResultadosTipo2(resultados2);
+        }
+        if(tipo.equals(3)){
+            EvaluacionDocentesMateriaResultados4 resultados3;
+            ResultadoEJB<EvaluacionDocentesMateriaResultados4> resResultados = ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo3(estudiante, m, evaluacion, respuestas);
+            if(!resResultados.getCorrecto()) return new dtoEstudianteMateria();
+            resultados3 = resResultados.getValor();
+            dto.setResultadosTipo4(resultados3);
+        }
+        if(tipo.equals(4)){
+            EvaluacionDocentesMateriaResultados5 resultado5;
+            ResultadoEJB<EvaluacionDocentesMateriaResultados5> resResultado = ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo4(estudiante, m, evaluacion, respuestas);
+            if (!resResultado.getCorrecto()) return new dtoEstudianteMateria();
+            resultado5 = resResultado.getValor();
+            dto.setResultadosTipo5(resultado5);
+        }
+        
+        dto.setNombreMateria(m.getNombreMateria());
+        dto.setClaveMateria(m.getClaveMateria());
+        dto.setDocenteImparte(m.getDocenteImparte());
+        return dto;
     }
-    /**
-     * Obtiene los resultados del estudiante logueado (Evaluación Docente materia (Cuestionario 4 por contingencia))
-     */
-    public void getResultadosTipo4(){
-        listaResultados = new ArrayList<>();
-        //Se recorre la lista de materias que cursa el estudiante (Esta lista ya tiene quien imparte la materia
-        listaMaterias.stream().forEach(m->{
-            EvaluacionDocentesMateriaResultados5 resultados = new EvaluacionDocentesMateriaResultados5();
-            dtoEstudianteMateria materia = new dtoEstudianteMateria();
-            //Obtienen los datos ---> Aqui si no existen los crea dentro del metodo que se llama en el ejb
-            ResultadoEJB<EvaluacionDocentesMateriaResultados5> resResultados = ejbEvaluacionDocente2.getResultadosTipo4byEvaluadorEvaluado(estudianteEvaluacion,m,evaluacion);
-            if(resResultados.getCorrecto()==true){
-                //Se le asigna el valor
-                resultados = resResultados.getValor();
-                //Se agrega a la lista de resultados
-                materia.setResultadosTipo5(resultados);
-                // System.out.println("Resultados "+ materia.getResultados().getR1());
-                materia.setNombreMateria(m.getNombreMateria());
-                materia.setClaveMateria(m.getClaveMateria());
-                materia.setDocenteImparte(m.getDocenteImparte());
-                //  System.out.println("Materia " + materia);
-                listaResultados.add(materia);
-                //System.out.println("EvaluacionDocenteEstudiante.getResultados");
-            }else {mostrarMensajeResultadoEJB(resResultados);}
-        });
-        totalDocentes = listaResultados.size();
-        //System.out.println("EvaluacionDocenteEstudiante.getResultados "+ listaResultados);
-        evaluados2 = listaResultados.stream().filter(docente -> docente.getResultadosTipo5().getCompleto()).collect(Collectors.toList()).size();
-        Double dte = new Double(totalDocentes);
-        Double dc= new Double(evaluados2);
-        porcentaje = (dc * 100) / dte;
-        if(totalDocentes==evaluados2){finalizado =true;}
-        else {finalizado =false;}
-        //  System.out.println("Evaluados" + evaluados2 + " Porcentaje  " + porcentaje);
-        //  System.out.println("Resultados" + listaResultados);
-        //Una vez obtenida la lista de resultados, filtramos por las que ya estan completas y las que no
-        // System.out.println("Resultados filtrados " + listaDocentesEvaluados + "  " + listaDocentesEvaluando);
+    
+    public List<Apartado> obtenerApartados(){
+        List<Apartado> apartados = new ArrayList<>();
+        if(rol.tipoEvaluacion.equals(1)){
+            apartados = ejbEvaluacionDocente2.getApartados();
+        }
+        if(rol.tipoEvaluacion.equals(2)){
+            apartados = ejbEvaluacionDocente2.getApartadosContingencia();
+        }
+        if(rol.tipoEvaluacion.equals(3)){
+            apartados = ejbEvaluacionDocente2.getApartadosContingenciaCuestionario2();
+        }
+        if(rol.tipoEvaluacion.equals(4)){
+            apartados = ejbEvaluacionDocente2.getApartadosContingenciaCuestionario3();
+        }
+        return apartados;
     }
-    /*
-    Guarda la respuesta (Evaluacion docente tipo 1)
-     */
-    public void saveRespueta(ValueChangeEvent e){
-        UIComponent id = (UIComponent)e.getSource();
-
-        if(e.getNewValue() != null){
-            valor = e.getNewValue().toString();
+    
+    public List<SelectItem> obtenerItems(){
+        return ejbEvaluacionDocente2.getRespuestasPosibles();
+    }
+    
+    public Boolean completo(dtoEstudianteMateria evaluado){
+        Boolean completo = false;
+        if(rol.tipoEvaluacion.equals(1)){
+            completo = evaluado.getResultados2().getCompleto();
+        }
+        if(rol.tipoEvaluacion.equals(2)){
+            completo = evaluado.getResultadosTipo2().getCompleto();
+        }
+        if(rol.tipoEvaluacion.equals(3)){
+            completo = evaluado.getResultadosTipo4().getCompleto();
+        }
+        if(rol.tipoEvaluacion.equals(4)){
+            completo = evaluado.getResultadosTipo5().getCompleto();
+        }
+        return completo;
+    }
+    
+    public void guardarRespuesta(ValueChangeEvent cve) throws ELException{
+        UIComponent origen = (UIComponent) cve.getSource();
+        if(cve.getNewValue() != null){
+            rol.setValor(cve.getNewValue().toString());
         }else{
-            valor = e.getOldValue().toString();
+            rol.setValor(null);
         }
-        ResultadoEJB<EvaluacionDocentesMateriaResultados2> resActualiza = ejbEvaluacionDocente2.actualizaRespuestaPorPregunta2(dtoDocenteEvaluando.getResultados2(),id.getId(),valor);
-        if(resActualiza.getCorrecto()==true){
-            //System.out.println("Pregunta: "+ id.getId()+"Valor ----------->" +valor);
-            EvaluacionDocentesMateriaResultados2 resultados = new EvaluacionDocentesMateriaResultados2();
-            resultados = resActualiza.getValor();
-            // System.out.println("Valoooor"+resultados.getR1());
-            ejbEvaluacionDocente2.comprobarResultado(resultados);
-            getResultados();
+        if(rol.getTipoEvaluacion().equals(1)){
+            ejbEvaluacionDocente2.actualizarRespuestaPregunta2(dtoDocenteEvaluando.getResultados2(), origen.getId(), rol.getValor(), rol.getRespuestas());
+            ejbEvaluacionDocente2.comprobarResultado(dtoDocenteEvaluando.getResultados2());
         }
+        if(rol.getTipoEvaluacion().equals(2)){
+            ejbEvaluacionDocente2.actualizarRespuestaPregunta3(dtoDocenteEvaluando.getResultadosTipo2(), origen.getId(), rol.getValor(), rol.getRespuestas());
+            ejbEvaluacionDocente2.comprobarResultado2(dtoDocenteEvaluando.getResultadosTipo2());
+        }
+        if(rol.getTipoEvaluacion().equals(3)){
+            ejbEvaluacionDocente2.actualizarRespuestaPregunta4(dtoDocenteEvaluando.getResultadosTipo4(), origen.getId(), rol.getValor(), rol.getRespuestas());
+            ejbEvaluacionDocente2.comprobarResultado3(dtoDocenteEvaluando.getResultadosTipo4());
+        }
+        if(rol.getTipoEvaluacion().equals(4)){
+            ejbEvaluacionDocente2.actualizarRespuestaPregunta5(dtoDocenteEvaluando.getResultadosTipo5(), origen.getId(), rol.getValor(), rol.getRespuestas());
+            ejbEvaluacionDocente2.comprobarResultado4(dtoDocenteEvaluando.getResultadosTipo5());
+        }
+        porcentaje = obtenerAvance(rol.listaResultados);
     }
-    /*
-    Guarda respuesta evaluacion tipo 2
-     */
-    public void saveRespuetaTipo2(ValueChangeEvent e){
-        UIComponent id = (UIComponent)e.getSource();
-
-
-        if(e.getNewValue() != null){
-            valor = e.getNewValue().toString();
-        }else{
-            valor = e.getOldValue().toString();
-        }
-        ResultadoEJB<EvaluacionDocentesMateriaResultados3> resActualiza = ejbEvaluacionDocente2.actualizaRespuestaPorPregunta3(dtoDocenteEvaluando.getResultadosTipo2(),id.getId(),valor);
-        if(resActualiza.getCorrecto()==true){
-            //System.out.println("Pregunta: "+ id.getId()+"Valor ----------->" +valor);
-            EvaluacionDocentesMateriaResultados3 resultados = new EvaluacionDocentesMateriaResultados3();
-            resultados = resActualiza.getValor();
-            // System.out.println("Valoooor"+resultados.getR1());
-            ejbEvaluacionDocente2.comprobarResultado2(resultados);
-            getResultadosTipo2();
-            //System.out.println("Id que recibe -> "+ id.getId() + " valor ->" + valor);
-        }
-    }
-    /*
-    Guarda respuesta evaluacion tipo 3
-     */
-    public void saveRespuetaTipo3(ValueChangeEvent e){
-        UIComponent id = (UIComponent)e.getSource();
-        if(e.getNewValue() != null){
-            valor = e.getNewValue().toString();
-        }else{
-            valor = e.getOldValue().toString();
-        }
-        ResultadoEJB<EvaluacionDocentesMateriaResultados4> resActualiza = ejbEvaluacionDocente2.actualizaRespuestaPorPregunta4(dtoDocenteEvaluando.getResultadosTipo4(),id.getId(),valor);
-        if(resActualiza.getCorrecto()==true){
-            //System.out.println("Pregunta: "+ id.getId()+"Valor ----------->" +valor);
-            EvaluacionDocentesMateriaResultados4 resultados = new EvaluacionDocentesMateriaResultados4();
-            resultados = resActualiza.getValor();
-            // System.out.println("Valoooor"+resultados.getR1());
-            ejbEvaluacionDocente2.comprobarResultado3(resultados);
-            getResultadosTipo3();
-            //System.out.println("Id que recibe -> "+ id.getId() + " valor ->" + valor);
-        }
-    }
-    /*
-  Guarda respuesta evaluacion tipo 4
-   */
-    public void saveRespuetaTipo4(ValueChangeEvent e){
-        UIComponent id = (UIComponent)e.getSource();
-        if(e.getNewValue() != null){
-            valor = e.getNewValue().toString();
-        }else{
-            valor = e.getOldValue().toString();
-        }
-        ResultadoEJB<EvaluacionDocentesMateriaResultados5> resActualiza = ejbEvaluacionDocente2.actualizaRespuestaPorPregunta5(dtoDocenteEvaluando.getResultadosTipo5(),id.getId(),valor);
-        if(resActualiza.getCorrecto()==true){
-            //System.out.println("Pregunta: "+ id.getId()+"Valor ----------->" +valor);
-            EvaluacionDocentesMateriaResultados5 resultados = new EvaluacionDocentesMateriaResultados5();
-            resultados = resActualiza.getValor();
-            // System.out.println("Valoooor"+resultados.getR1());
-            ejbEvaluacionDocente2.comprobarResultado4(resultados);
-            getResultadosTipo4();
-            //System.out.println("Id que recibe -> "+ id.getId() + " valor ->" + valor);
-        }
-    }
+    
     public void  getdocenteEvaluando(dtoEstudianteMateria evaluando){
+        rol.setRespuestas(new HashMap<>());
         dtoDocenteEvaluando = new dtoEstudianteMateria();
         dtoDocenteEvaluando = evaluando;
-        Ajax.update("frmEv");
-        //System.out.println("Evaluado" + dtoDocenteEvaluando);
+        if(rol.getTipoEvaluacion().equals(1)){
+            ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo1(rol.getDtoEstudiante(), dtoDocenteEvaluando, rol.getEvaluacion(), rol.getRespuestas());
+        }
+        if(rol.getTipoEvaluacion().equals(2)){
+            ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo2(rol.getDtoEstudiante(), dtoDocenteEvaluando, rol.getEvaluacion(), rol.getRespuestas());
+        }
+        if(rol.getTipoEvaluacion().equals(3)){
+            ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo3(rol.getDtoEstudiante(), dtoDocenteEvaluando, rol.getEvaluacion(), rol.getRespuestas());
+        }
+        if(rol.getTipoEvaluacion().equals(4)){
+            ejbEvaluacionDocente2.obtenerResultadoEvaluacionTipo4(rol.getDtoEstudiante(), dtoDocenteEvaluando, rol.getEvaluacion(), rol.getRespuestas());
+        }
+        
     }
-    public void actualizaDocente(){
-        dtoDocenteEvaluando = new dtoEstudianteMateria();
-        Ajax.update("frmEvaluacion");
-        Ajax.update("frm");
+    
+    public Double obtenerAvance(List<dtoEstudianteMateria> lista){
+        if(rol.tipoEvaluacion.equals(1)){
+            rol.evaluados = lista.stream().filter(docente -> docente.getResultados2().getCompleto()).collect(Collectors.toList()).size();
+        }
+        if(rol.tipoEvaluacion.equals(2)){
+            rol.evaluados = lista.stream().filter(docente -> docente.getResultadosTipo2().getCompleto()).collect(Collectors.toList()).size();
+        }
+        if(rol.tipoEvaluacion.equals(3)){
+            rol.evaluados = lista.stream().filter(docente -> docente.getResultadosTipo4().getCompleto()).collect(Collectors.toList()).size();
+        }
+        if(rol.tipoEvaluacion.equals(4)){
+            rol.evaluados = lista.stream().filter(docente -> docente.getResultadosTipo5().getCompleto()).collect(Collectors.toList()).size();
+        }
+        rol.totalDocentes = lista.size();
+        Double dte = new Double(rol.totalDocentes);
+        Double dc= new Double(rol.evaluados);
+        if(rol.totalDocentes.equals(rol.evaluados)){finalizado =true;}
+        else {finalizado =false;}
+        return (dc * 100) / dte;
     }
-
+    
+    public void ObtenerElNumeroSlide() throws InterruptedException {
+        rol.setSlideActivo(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("model"));
+        //System.out.println("Slide activo:" + dto.slideActivo);
+        try {
+            //renderizarTabla(dto.getSlideActivo());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
+    public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
+        String valor = "evaluacion docente materia";
+        Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
+////        map.entrySet().forEach(System.out::println);
+        return mostrar(request, map.containsValue(valor));
+    }
 }

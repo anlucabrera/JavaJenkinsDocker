@@ -23,6 +23,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.ParticipantesTutoriaGrupal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.pye2.EventosRegistros;
+import mx.edu.utxj.pye.sgi.enums.ParticipanteTutoriaGrupalAcuerdos;
 import mx.edu.utxj.pye.sgi.exception.PeriodoEscolarNecesarioNoRegistradoException;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -134,6 +135,30 @@ public class EjbAsistenciaTutoriaGrupalEstudiante {
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la participación de la tutoría grupal (EjbAsistenciaTutoriaGrupalEstudiante.validarAsistenciaTutoriaGrupal)", e, null);
+        }
+    }
+    
+    /**
+     * Método que permite consultar el número de firmas pendientes en tutorías grupales
+     * @param periodoEscolar
+     * @param matricula
+     * @return 
+     */
+    public ResultadoEJB<Long> verificarTutoriasPendientesFirmas(Integer periodoEscolar, Integer matricula){
+        try {
+            Object faltantes = em.createQuery("SELECT COUNT(ptg.asistencia) FROM ParticipantesTutoriaGrupal ptg WHERE ptg.estudiante1.periodo = :periodoEscolar AND ptg.estudiante1.matricula = :matricula AND ptg.aceptacionAcuerdos = :aceptacionAcuerdos GROUP BY ptg.asistencia", Integer.class)
+                    .setParameter("periodoEscolar", periodoEscolar)
+                    .setParameter("matricula", matricula)
+                    .setParameter("aceptacionAcuerdos", ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel())
+                    .getSingleResult();
+            Long numeroFaltantes = (Long) faltantes;
+            if(numeroFaltantes == null || numeroFaltantes == 0){
+                return ResultadoEJB.crearCorrecto(numeroFaltantes, "El estudiante no cuenta con firmas de tutorías grupales pendientes");
+            }else{
+                return ResultadoEJB.crearCorrecto(numeroFaltantes, "El estudiante aún cuenta con firmas de tutorías grupales pendientes");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la cantidad de firmas pendientes en tutorías grupales", e, null);
         }
     }
     

@@ -896,17 +896,17 @@ public class EjbRegistroFichaAdmision {
                 //System.out.println("per" + p);
 
             }else{
-                if((parts != null && (parts.length == 8 || parts.length == 9))) {
-                    if(parts.length == 9){
+                if((parts != null && (parts.length == 7 || parts.length == 8))) {
                         p.setCurp(parts[0]);
                         p.setApellidoPaterno(ucFirst(parts[2]).trim());
                         p.setApellidoMaterno(ucFirst(parts[3]).trim());
                         p.setNombre(ucFirst(parts[4]));
-                        if(parts[5].equals("HOMBRE"))
+                        String generoCaracter = String.valueOf(parts[0].charAt(10));
+                        if(generoCaracter.equals("H"))
                             p.setGenero((short) 2);
-                        if(parts[5].equals("MUJER"))
+                        if(generoCaracter.equals("M"))
                             p.setGenero((short) 1);
-                        fecha_nacimiento = parts[6].replace("/","-");
+                        fecha_nacimiento = parts[5].replace("/","-");
                         p.setFechaNacimiento(sm.parse(fecha_nacimiento));
                         String claveEstado = parts[0].substring(11, 13);
                         if(claveEstado.equals("NE")){
@@ -922,23 +922,9 @@ public class EjbRegistroFichaAdmision {
                             p.setEstado(estado.getIdestado());
                         }
                         p.setUrlCurp(rutaRelativa);
-                    }else if(parts.length == 8){
-                        p.setCurp(parts[0]);
-                        p.setApellidoPaterno(ucFirst(parts[2]));
-                        p.setApellidoMaterno(ucFirst(parts[3]));
-                        p.setNombre(ucFirst(parts[4]));
-                        p.setGenero((short) 1);
-                        if(parts[5].equals("HOMBRE"))
-                            p.setGenero((short) 2);
-                        if(parts[5].equals("MUJER"))
-                            p.setGenero((short) 1);
-                        fecha_nacimiento = parts[6].replace("/","-");
-                        p.setFechaNacimiento(sm.parse(fecha_nacimiento));
-                        p.setUrlCurp(rutaRelativa);
-                    }else{
+                }else{
                         ServicioArchivos.eliminarArchivo(rutaRelativa);
-                        p = new Persona();
-                    }
+                        p = new Persona();    
                 }
             }
         }catch (IOException ex){

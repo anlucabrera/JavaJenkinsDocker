@@ -186,6 +186,7 @@ public class AdministracionTipoAspiranteEstudianteEscolares extends ViewScopedRo
                 if (agregar.getCorrecto()) {
                     mostrarMensajeResultadoEJB(agregar);
                     listaTipoAspirante();
+                    rol.setAgregarTipoAspirante(false);
                     Ajax.update("frm");
                 }
             }else{
@@ -237,6 +238,7 @@ public class AdministracionTipoAspiranteEstudianteEscolares extends ViewScopedRo
                 if (agregar.getCorrecto()) {
                     mostrarMensajeResultadoEJB(agregar);
                     listaTipoEstudiante();
+                    rol.setAgregarTipoEstudiante(false);
                     rol.setPestaniaActiva(1);
                     Ajax.update("frm");
                 }

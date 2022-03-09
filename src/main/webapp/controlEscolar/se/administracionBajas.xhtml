@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Administración de bajas
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{administracionBajasEscolares.cargado}">
+        <adm:breadcrumb title="Administración de bajas"/>
+        <div class="contenedor">
+            <c:if test="#{administracionBajasEscolares.tieneAcceso}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:outputLabel value="Periodo activo: #{caster.clavePeriodoToString(administracionBajasEscolares.rol.periodoActivo.periodo)}" />
+                                        
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla1" value="#{'col-sm-12 col-md-2 col-lg-1'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-2 col-lg-2'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-2 col-lg-3'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <c:if test="#{administracionBajasEscolares.rol.pestaniaActiva eq 0}">
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarTipoBaja" styleClass="form-control" value="#{administracionBajasEscolares.rol.agregarTipoBaja}" valueChangeListener="#{administracionBajasEscolares.cambiarAgregarTipoBaja}" rendered="#{!administracionBajasEscolares.rol.agregarCausaBaja and !administracionBajasEscolares.rol.agregarBajaCategoria}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarTipoBaja" value="#{administracionBajasEscolares.rol.agregarTipoBaja?'Agregar tipo de baja':'No agregar tipo de baja'}" rendered="#{!administracionBajasEscolares.rol.agregarCausaBaja and !administracionBajasEscolares.rol.agregarBajaCategoria}"/>
+                                                    <p:message for="agregarTipoBaja" display="tooltip" rendered="#{!administracionBajasEscolares.rol.agregarTipoBaja}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:inputText class="form-control" id="nuevoTipoBaja" value="#{administracionBajasEscolares.rol.nuevoTipoBaja}" size="25" maxlength="45" rendered="#{administracionBajasEscolares.rol.agregarTipoBaja}" required="true" requiredMessage="Debe ingresar el nombre del tipo de baja"/>
+                                                    <p:outputLabel value="Tipo de baja" for="nuevoTipoBaja" rendered="#{administracionBajasEscolares.rol.agregarTipoBaja}"/>
+                                                    <p:message for="nuevoTipoBaja" display="display"/>
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarTipoBaja" value="Guardar" actionListener="#{administracionBajasEscolares.guardarTipoBaja()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionBajasEscolares.rol.agregarTipoBaja}" oncomplete="PF('frm')update();" update="@form"  process="@form"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                        <c:if test="#{administracionBajasEscolares.rol.pestaniaActiva eq 1}">
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarCausaBaja" styleClass="form-control" value="#{administracionBajasEscolares.rol.agregarCausaBaja}" valueChangeListener="#{administracionBajasEscolares.cambiarAgregarCausaBaja}" rendered="#{!administracionBajasEscolares.rol.agregarTipoBaja and !administracionBajasEscolares.rol.agregarBajaCategoria}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarCausaBaja" value="#{administracionBajasEscolares.rol.agregarCausaBaja?'Agregar causa baja':'No agregar causa baja'}" rendered="#{!administracionBajasEscolares.rol.agregarTipoBaja and !administracionBajasEscolares.rol.agregarBajaCategoria}"/>
+                                                    <p:message for="agregarCausaBaja" display="tooltip" rendered="#{!administracionBajasEscolares.rol.agregarCausaBaja}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:inputText id="nuevaCausaBaja" value="#{administracionBajasEscolares.rol.nuevaCausaBaja}" size="15" maxlength="45" rendered="#{administracionBajasEscolares.rol.agregarCausaBaja}" required="true" requiredMessage="Debe ingresar el nombre de la causa de baja"/>
+                                                    <p:outputLabel value="Causa baja" for="nuevaCausaBaja" rendered="#{administracionBajasEscolares.rol.agregarCausaBaja}"/>
+                                                    <p:message for="nuevaCausaBaja" display="display"/>
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarCausaBaja" value="Guardar" actionListener="#{administracionBajasEscolares.guardarCausaBaja()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionBajasEscolares.rol.agregarCausaBaja}" oncomplete="PF('frm')update();" update="@form"  process="@form"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                        <c:if test="#{administracionBajasEscolares.rol.pestaniaActiva eq 2}">
+                                            <div class="#{casilla2}">
+                                                <div class="ui-material">
+                                                    <p:inputSwitch id="agregarBajaCategoria" styleClass="form-control" value="#{administracionBajasEscolares.rol.agregarBajaCategoria}" valueChangeListener="#{administracionBajasEscolares.cambiarAgregarBajaCategoria}" rendered="#{!administracionBajasEscolares.rol.agregarTipoBaja and !administracionBajasEscolares.rol.agregarCausaBaja}"> 
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:inputSwitch>
+                                                    <p:outputLabel for="agregarBajaCategoria" value="#{administracionBajasEscolares.rol.agregarBajaCategoria?'Agregar baja a categoría':'No agregar baja a categoría'}" rendered="#{!administracionBajasEscolares.rol.agregarTipoBaja and !administracionBajasEscolares.rol.agregarCausaBaja}"/>
+                                                    <p:message for="agregarBajaCategoria" display="tooltip" rendered="#{!administracionBajasEscolares.rol.agregarBajaCategoria}"/> 
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="causaBaja" value="#{administracionBajasEscolares.rol.causaBaja}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionBajasEscolares.cambiarCausaBaja}" rendered="#{administracionBajasEscolares.rol.agregarBajaCategoria}">
+                                                        <f:selectItems value="#{administracionBajasEscolares.rol.causasBajaDisponibles}" var="causaBaja" itemValue="#{causaBaja}" itemLabel="#{causaBaja.causa}" />
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Causa baja" for="causaBaja" rendered="#{administracionBajasEscolares.rol.agregarBajaCategoria}"/>
+                                                    <p:message for="causaBaja" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="categoria" value="#{administracionBajasEscolares.rol.categoria}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{administracionBajasEscolares.cambiarCategoria}" rendered="#{administracionBajasEscolares.rol.agregarBajaCategoria}">
+                                                        <f:selectItems value="#{administracionBajasEscolares.rol.categorias}" var="categoria" itemValue="#{categoria}" itemLabel="#{categoria}" />
+                                                        <p:ajax update="@this" process="@this" />
+                                                        <p:autoUpdate />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Categoría" for="categoria" rendered="#{administracionBajasEscolares.rol.agregarBajaCategoria}"/>
+                                                    <p:message for="categoria" />
+                                                </div>
+                                            </div>
+                                            <div class="#{casilla3}">
+                                                <div class="ui-material">
+                                                    <p:commandButton id="btnGuardarBajaCategoria" value="Guardar" actionListener="#{administracionBajasEscolares.guardarBajaCategoria()}" icon="fa fa-pencil-square-o" class="btn-primary" rendered="#{administracionBajasEscolares.rol.agregarBajaCategoria}" oncomplete="PF('frm')update();" update="@form"  process="@form"/>
+                                                </div>
+                                            </div>
+                                        </c:if>
+                                    </div>
+                                    <h:outputText value="&#160;" />
+                                    <h:outputText value="&#160;" />
+                                    <div class="row">
+                                            <center>
+                                                <p:tabView activeIndex="#{administracionBajasEscolares.rol.pestaniaActiva}">
+                                                    <p:ajax event="tabChange" listener="#{administracionBajasEscolares.cambiarPestania}" update="@form"/>
+                                                    <p:tab id="twbTiposBaja" title="Lista de tipos de baja"> 
+                                                        <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaTipoBaja" var="tipoBaja" value="#{administracionBajasEscolares.rol.tiposBaja}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Clave" style="width: 100px;" sortBy="#{tipoBaja.tipoBaja}"/>
+                                                                        <p:column headerText="Descripción" style="width: 250px;" />
+                                                                        <p:column headerText="Eliminar" style="width: 200px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{tipoBaja.tipoBaja}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{tipoBaja.descripcion}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <center>
+                                                                        <p:commandButton actionListener="#{administracionBajasEscolares.eliminarTipoBaja(tipoBaja)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar tipo de baja." rendered="#{!administracionBajasEscolares.deshabilitarEliminacionTipoBaja(tipoBaja)}">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar el tipo de baja seleccionada?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </center>
+                                                                    <h:outputText value="No se puede eliminar el tipo de baja seleccionada porque tiene registros relacionados." rendered="#{administracionBajasEscolares.deshabilitarEliminacionTipoBaja(tipoBaja)}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab id="twbCausasBaja" title="Lista de causas de baja"> 
+                                                        <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaCausasBaja" var="causaBaja" value="#{administracionBajasEscolares.rol.causasBaja}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand"
+                                                                         paginator="true" rows="20" rowsPerPageTemplate="20,40,60,80,100" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Clave" style="width: 150px;" sortBy="#{causaBaja.cveCausa}"/>
+                                                                        <p:column headerText="Causa" style="width: 200px;" sortBy="#{causaBaja.causa}" filterBy="#{causaBaja.causa}" filterMatchMode="contains"/>
+                                                                        <p:column headerText="Activa/Inactiva" style="width: 200px;" sortBy="#{causaBaja.activa}" />
+                                                                        <p:column headerText="Eliminar" style="width: 250px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column style="text-align: center;">
+                                                                    <h:outputText value="#{causaBaja.cveCausa}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{causaBaja.causa}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: center;">
+                                                                    <p:commandButton actionListener="#{administracionBajasEscolares.activarDesactivarCausaBaja(causaBaja)}"
+                                                                                     class="btn btn-sm #{!causaBaja.activa?'btn-danger':'btn-success'}" icon="#{!causaBaja.activa?'fa fa-close':'fa fa-check'}"
+                                                                                     title="#{causaBaja.activa?'Desactivar causa de baja.':'Activar causa de baja.'}" update="@this @(.tabla)"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <center>
+                                                                        <p:commandButton actionListener="#{administracionBajasEscolares.eliminarCausaBaja(causaBaja)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar causa de baja." rendered="#{!administracionBajasEscolares.deshabilitarEliminacionCausaBaja(causaBaja)}">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la causa de baja seleccionada?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </center>
+                                                                    <h:outputText value="No se puede eliminar la causa de baja seleccionada porque tiene registros relacionados." rendered="#{administracionBajasEscolares.deshabilitarEliminacionCausaBaja(causaBaja)}"/>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab id="twbBajasCategoria" title="Lista de bajas por categoría"> 
+                                                        <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                            <p:dataTable id="tbListaBajasCategoria" var="categoriaBaja" value="#{administracionBajasEscolares.rol.categoriasCausaBaja}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No se ha registrado información"
+                                                                         tableStyle="vertical-align: middle;" resizeMode="expand"
+                                                                         paginator="true" rows="20" rowsPerPageTemplate="20,40,60,80,100" paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="success">
+                                                                        <p:column headerText="Categoría" style="width: 200px;" sortBy="#{categoriaBaja.bajasCausaCategoriaPK.categoria}" filterBy="#{categoriaBaja.bajasCausaCategoriaPK.categoria}" filterMatchMode="contains"/>
+                                                                        <p:column headerText="Causa" style="width: 200px;" sortBy="#{categoriaBaja.bajasCausa.causa}" filterBy="#{categoriaBaja.bajasCausa.causa}" filterMatchMode="contains"/>
+                                                                        <p:column headerText="Eliminar" style="width: 250px;"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+                                                                <p:column style="text-align: justify;" groupRow="true">
+                                                                    <h:outputText value="#{categoriaBaja.bajasCausaCategoriaPK.categoria}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <h:outputText value="#{categoriaBaja.bajasCausa.causa}"/>
+                                                                </p:column>
+                                                                <p:column style="text-align: justify;">
+                                                                    <center>
+                                                                        <p:commandButton actionListener="#{administracionBajasEscolares.eliminarBajaCategoria(categoriaBaja)}" class="btn btn-sm btn-danger" icon="fa fa-trash" title="Eliminar relación baja y categoría.">
+                                                                            <p:confirm header="Eliminar registro" message="¿Está seguro de eliminar la relación de la baja y categoría seleccionada?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </center>
+                                                                </p:column>
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog> 
+                                                        </div>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty administracionBajasEscolares.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{administracionBajasEscolares.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para admininistrar bajas</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{administracionBajasEscolares.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+            </c:if>
+            <c:if test="#{!administracionBajasEscolares.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para personal de Servicios Escolares."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>

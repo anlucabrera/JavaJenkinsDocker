@@ -1,8 +1,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import edu.mx.utxj.pye.seut.util.preguntas.Opciones;
-import lombok.NonNull;
-import mx.edu.utxj.pye.sgi.controlador.Evaluacion;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.CedulaIdentificacionRolPsicopedagogia;
@@ -40,20 +38,70 @@ public class EjbCuestionarioPsicopedagogico {
      * @param matricula
      * @return
      */
-    public ResultadoEJB<Estudiante> validaEstudiante(Integer matricula){
+    public ResultadoEJB<Estudiante> validaEstudiante(Integer matricula, Integer periodo){
         try{
-            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula = :matricula and (e.tipoEstudiante.idTipoEstudiante=:tipo or e.tipoEstudiante.idTipoEstudiante=:tipo2 or e.tipoEstudiante.idTipoEstudiante=:tipo3) order by  e.periodo desc", Estudiante.class).setParameter("matricula", matricula)
+            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula = :matricula and e.periodo = :periodo and (e.tipoEstudiante.idTipoEstudiante=:tipo or e.tipoEstudiante.idTipoEstudiante=:tipo2 or e.tipoEstudiante.idTipoEstudiante=:tipo3) order by  e.periodo desc", Estudiante.class)
+                    .setParameter("matricula", matricula)
+                    .setParameter("periodo",periodo)
                     .setParameter("tipo",1)
                     .setParameter("tipo2",5)
                     .setParameter("tipo3",6)
                     .getResultStream().findFirst().orElse(new Estudiante());
-            //System.out.println("EjbCuestionarioPsicopedagogico.validaEstudiante "+ e);
             return ResultadoEJB.crearCorrecto(e, "El usuario ha sido comprobado como estudiante.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El estudiante docente no se pudo validar. (EjbConsultaCalificacion.validadEstudiante)", e, null);
         }
     }
-
+    
+    public ResultadoEJB<Boolean> verificarCuestionario(Integer matricula){
+        try{
+            CuestionarioPsicopedagogicoResultados lista = em.createQuery("select e from Estudiante as e where e.matricula = :matricula and (e.tipoEstudiante.idTipoEstudiante <> :tipo AND e.tipoEstudiante.idTipoEstudiante <> :tipo2) ORDER BY e.periodo desc", Estudiante.class)
+                    .setParameter("matricula", matricula)
+                    .setParameter("tipo", 2)
+                    .setParameter("tipo2", 3)
+                    .getResultStream()
+                    .map(estudiante -> packResultado(estudiante))
+                    .distinct()
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .findFirst().orElse(new CuestionarioPsicopedagogicoResultados());
+            if(lista.equals(new CuestionarioPsicopedagogicoResultados())) return ResultadoEJB.crearCorrecto(Boolean.FALSE, "No se encontraron registros");
+            if(!lista.getCompleto()) return ResultadoEJB.crearCorrecto(Boolean.FALSE, "No se encontraron registros");
+            return ResultadoEJB.crearCorrecto(Boolean.TRUE, "Se verifico correctamente");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "El estudiante docente no se pudo validar. (EjbConsultaCalificacion.validadEstudiante)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<CuestionarioPsicopedagogicoResultados> packResultado(Estudiante estudiante){
+        if(estudiante.equals(new Estudiante())) return ResultadoEJB.crearErroneo(1, "No puede ser nulo", CuestionarioPsicopedagogicoResultados.class);
+        CuestionarioPsicopedagogicoResultados resultado = em.createQuery("select c from CuestionarioPsicopedagogicoResultados as c "
+                + "where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante = :idEstudiante "
+                + "and c.completo = :completo order by c.cuestionarioPsicopedagogicoResultadosPK.evaluacion desc", CuestionarioPsicopedagogicoResultados.class)
+                .setParameter("idEstudiante", estudiante.getIdEstudiante())
+                .setParameter("completo", Boolean.TRUE)
+                .getResultStream().findFirst().orElse(new CuestionarioPsicopedagogicoResultados());
+        if(resultado.equals(new CuestionarioPsicopedagogicoResultados())) return ResultadoEJB.crearErroneo(2,"", CuestionarioPsicopedagogicoResultados.class);
+        Comparador<CuestionarioPsicopedagogicoResultados> comparador = new ComparadorCuestionarioPsicopedagogicoEstudiante();
+        Boolean finalizo = comparador.isCompleto(resultado);
+        if(finalizo == true){
+            ResultadoEJB<CuestionarioPsicopedagogicoResultados> resActualiza = actualizarCompleto(resultado);
+            if(resActualiza.getCorrecto()){resultado = resActualiza.getValor();}
+            else {resultado = new CuestionarioPsicopedagogicoResultados();}
+        }
+        return ResultadoEJB.crearCorrecto(resultado, "Se empaqueto con exito");
+    }
+    
+    public ResultadoEJB<CuestionarioPsicopedagogicoResultados> obtenerResultado(Estudiante estudiante){
+        if(estudiante.equals(new Estudiante())) return ResultadoEJB.crearErroneo(1, "No puede ser nulo", CuestionarioPsicopedagogicoResultados.class);
+        CuestionarioPsicopedagogicoResultados resultado = em.createQuery("select c from CuestionarioPsicopedagogicoResultados as c "
+                + "where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante = :idEstudiante order by c.cuestionarioPsicopedagogicoResultadosPK.evaluacion desc", CuestionarioPsicopedagogicoResultados.class)
+                .setParameter("idEstudiante", estudiante.getIdEstudiante())
+                .getResultStream().findFirst().orElse(new CuestionarioPsicopedagogicoResultados());
+        if(resultado.equals(new CuestionarioPsicopedagogicoResultados())) return ResultadoEJB.crearErroneo(2,"", CuestionarioPsicopedagogicoResultados.class);
+        return ResultadoEJB.crearCorrecto(resultado, "Se empaqueto con exito");
+    }
+    
     /**
      * Valida que haya una encuesta psicopedagogica activa
      * @return Resultado del Preceso
@@ -67,12 +115,10 @@ public class EjbCuestionarioPsicopedagogico {
             .setParameter("fecha",new Date())
             .getResultStream()
             .findFirst()
-            .orElse(null)
-            ;
-
-            //System.out.println("Evaluacion" + encuestaActiva);
+            .orElse(null);
+            
             if(encuestaActiva !=null){return ResultadoEJB.crearCorrecto(encuestaActiva,"Se encontró una encuesta activa");}
-            else {return ResultadoEJB.crearErroneo(3,encuestaActiva,"No hay encuesta psicopedagógica activa");}
+            else {return ResultadoEJB.crearErroneo(3,"No hay encuesta psicopedagógica activa", Evaluaciones.class);}
 
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El estudiante no se pudo validar. (EjbCuestionarioPsicopedagogico.validaEstudiante)", e, null);
@@ -86,33 +132,22 @@ public class EjbCuestionarioPsicopedagogico {
      */
     public ResultadoEJB<CuestionarioPsicopedagogicoResultados> getResultadosEstudiante(Estudiante estudiante, Evaluaciones evaluacion){
         try{
-            CuestionarioPsicopedagogicoResultados resultados = new CuestionarioPsicopedagogicoResultados();
-            if(estudiante==null){return ResultadoEJB.crearErroneo(2,resultados,"El estudiante no debe ser nulo");}
-            if(evaluacion==null){return ResultadoEJB.crearErroneo(3,resultados,"La evaluación no debe ser nula");}
-            // Busca el primer registro del estudiante
-
-            Estudiante e = em.createQuery("select e from Estudiante as e where e.matricula = :matricula and (e.tipoEstudiante.idTipoEstudiante=:tipo or e.tipoEstudiante.idTipoEstudiante=:tipo2 or e.tipoEstudiante.idTipoEstudiante=:tipo3) order by  e.periodo asc", Estudiante.class)
+            CuestionarioPsicopedagogicoResultados resultados =  em.createQuery("select e from Estudiante as e where e.matricula = :matricula and (e.tipoEstudiante.idTipoEstudiante <> :tipo and e.tipoEstudiante.idTipoEstudiante <> :tipo2) order by e.periodo desc", Estudiante.class)
                     .setParameter("matricula", estudiante.getMatricula())
-                    .setParameter("tipo",1)
-                    .setParameter("tipo2",5)
-                    .setParameter("tipo3",6)
-                    .getResultStream().findFirst().orElse(new Estudiante());
-
-            //System.out.println("EjbCuestionarioPsicopedagogico.validaEstudiante "+ e);
-            // Busca resultados por el id del estudiante
-            resultados = em.createQuery("select c from CuestionarioPsicopedagogicoResultados c where c.cuestionarioPsicopedagogicoResultadosPK.idEstudiante=:idEstudiante order by c.cuestionarioPsicopedagogicoResultadosPK.evaluacion ",CuestionarioPsicopedagogicoResultados.class)
-                    .setParameter("idEstudiante",e.getIdEstudiante())
+                    .setParameter("tipo", 2)
+                    .setParameter("tipo2", 3)
                     .getResultStream()
-                    .findFirst()
-                    .orElse(null)
-            ;
-            //System.out.println("Resultados" + resultados);
+                    .map(e -> obtenerResultado(e))
+                    .distinct()
+                    .filter(ResultadoEJB::getCorrecto)
+                    .map(ResultadoEJB::getValor)
+                    .findFirst().orElse(new CuestionarioPsicopedagogicoResultados());
             //Comprueba si hay resultados, si no los crea
             if(resultados==null){
                 CuestionarioPsicopedagogicoResultados resultados2 = new CuestionarioPsicopedagogicoResultados();
                 CuestionarioPsicopedagogicoResultadosPK pk = new CuestionarioPsicopedagogicoResultadosPK();
                 pk.setEvaluacion(evaluacion.getEvaluacion());
-                pk.setIdEstudiante(e.getIdEstudiante());
+                pk.setIdEstudiante(estudiante.getIdEstudiante());
                 resultados2.setCuestionarioPsicopedagogicoResultadosPK(pk);
                 em.persist(resultados2);
                 em.flush();

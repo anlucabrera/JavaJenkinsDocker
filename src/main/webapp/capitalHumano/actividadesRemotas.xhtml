@@ -118,13 +118,17 @@
                                         <p:outputPanel>
                                             <p:remoteCommand name="actualizarTabla" actionListener="#{regisroActividadesRemotas.metodoBase()}" update="tblActividades" />
                                             <p:dataTable id="tblActividades"  value="#{regisroActividadesRemotas.actividadesremotas}"  var="incidencia"
-                                                         paginator="true" rows="10" editable="true" style="margin-bottom:20px"
+                                                         paginator="true" rows="10" editable="true" style="margin-bottom:20px" expandableRowGroups="true"
                                                          paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                          rowsPerPageTemplate="5,10,15,20,25,30" rowStyleClass="#{incidencia.validado?'actividad':'subactiviades'}"
+                                                         sortBy="#{incidencia.fecha.month}" sortOrder="Descending"
                                                          emptyMessage="No se encontraron Registros." rendered="true">
-                                                <f:facet name="header">
-
-                                                </f:facet>
+                                                 
+                                                <p:headerRow>
+                                                    <p:column colspan="5">
+                                                        <h:outputLabel value="#{incidencia.fecha}"><f:convertDateTime locale="es" pattern="MMMM - yyyy" timeZone="America/Mexico_City"/></h:outputLabel>
+                                                    </p:column>
+                                                </p:headerRow>
 
                                                 <p:ajax event="rowEdit" listener="#{regisroActividadesRemotas.onRowEdit}" update="tblActividades" />
                                                 <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblActividades" />

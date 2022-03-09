@@ -64,33 +64,33 @@
                                     <div class="col-lg-12 col-md-12 col-xs-12">
                                         <p:panelGrid style="margin-top:20px; width: 80% !important;" rendered="#{cuadroMandoIntegralConsulta.mostrar}">
                                             <p:row>
-                                                <p:column colspan="15" style="font-weight: bold; text-align: center !important;" styleClass="eje">#{cuadroMandoIntegralConsulta.mes}</p:column>
+                                                <p:column colspan="#{cuadroMandoIntegralConsulta.imprimir ?'15':'12'}" style="font-weight: bold; text-align: center !important;" styleClass="eje">#{cuadroMandoIntegralConsulta.mes}</p:column>
                                             </p:row>
                                             <p:row>
-                                                <p:column colspan="3" styleClass="lac" style="font-weight: bold !important;">Actividades Programadas</p:column>
-                                                <p:column colspan="3" styleClass="lac" style="font-weight: bold !important;">Actividades Alcanzadas</p:column>
-                                                <p:column colspan="3" styleClass="lac" style="font-weight: bold !important;">Actividades No Alcanzadas</p:column>
+                                                <p:column colspan="#{cuadroMandoIntegralConsulta.imprimir ?'3':'2'}" styleClass="lac" style="font-weight: bold !important;">Actividades Programadas</p:column>
+                                                <p:column colspan="#{cuadroMandoIntegralConsulta.imprimir ?'3':'2'}" styleClass="lac" style="font-weight: bold !important;">Actividades Alcanzadas</p:column>
+                                                <p:column colspan="#{cuadroMandoIntegralConsulta.imprimir ?'3':'2'}" styleClass="lac" style="font-weight: bold !important;">Actividades No Alcanzadas</p:column>
                                                 <p:column colspan="3" styleClass="lac" style="font-weight: bold !important;">Cumplimiento Sin Penalización </p:column>
                                                 <p:column colspan="3" styleClass="lac" style="font-weight: bold !important;">Cumplimiento con Penalización </p:column>
                                             </p:row>
                                             <p:row>
-                                                <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.cmiGeneral.programadas}</p:column>
-                                                <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.cmiGeneral.alcanzadas}</p:column>
-                                                <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.cmiGeneral.noAlcanzadas}</p:column>
+                                                <p:column colspan="#{cuadroMandoIntegralConsulta.imprimir ?'3':'2'}" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.cmiGeneral.programadas}</p:column>
+                                                <p:column colspan="#{cuadroMandoIntegralConsulta.imprimir ?'3':'2'}" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.cmiGeneral.alcanzadas}</p:column>
+                                                <p:column colspan="#{cuadroMandoIntegralConsulta.imprimir ?'3':'2'}" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.cmiGeneral.noAlcanzadas}</p:column>
                                                 <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiGeneral.avanceSP)}%</p:column>
                                                 <p:column colspan="3" style="font-weight: bold; text-align: center !important;">#{cuadroMandoIntegralConsulta.df.format(cuadroMandoIntegralConsulta.cmiGeneral.avanceCP)}%</p:column>
                                             </p:row>
                                             <p:row>
-                                                <p:column colspan="8" style="font-weight: bold;" styleClass="noprint">
-                                                    <hf:chart type="line" height="400px" extender="#{cuadroMandoIntegralConsulta.cmiGeneral.extender}" render="true" updateMethod="true"
-                                                              xaxisLabel="Mes" yaxisLabel="% avance" colors="gray,mediumspringgreen,gray,mediumspringgreen">
-                                                        <hf:chartSerie type="column" name="Avance Mensual Sin Penalización" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoMensualSp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
-                                                        <hf:chartSerie type="column" name="Avance Mensual Con Penalización" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoMensualCp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
-                                                        <hf:chartSerie type="line" name="Avance Acumulado Sin Penalización" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoAcumuladoSp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
-                                                        <hf:chartSerie type="line" name="Avance Acumulado Con Penalización" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoAcumuladoCp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.valor}"  />
+                                                <p:column colspan="#{cuadroMandoIntegralConsulta.imprimir ?'8':'6'}" style="font-weight: bold;" styleClass="noprint">
+                                                    <hf:chart type="line" height="400px"  render="true" updateMethod="true"
+                                                              xaxisLabel="Mes" yaxisLabel="avance" colors="gray,mediumspringgreen,gray,mediumspringgreen">
+                                                        <hf:chartSerie type="column" name="Actividades Programadas" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoMensualSp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                        <hf:chartSerie type="column" name="Actividades Alcanzadas" value="#{cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoMensualCp}" var="point" point="#{cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="#{point.mes}" dataLabel="#{point.avanceOF}"  />
+                                                        <!--hf:chartSerie type="line" name="Avance Acumulado Sin Penalización" value="# {cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoAcumuladoSp}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.valor}"  />
+                                                        <hf:chartSerie type="line" name="Avance Acumulado Con Penalización" value="# {cuadroMandoIntegralConsulta.cmiGeneral.cumplimientoAcumuladoCp}" var="point" point="# {cuadroMandoIntegralConsulta.df.format(point.avance)}" tickLabel="# {point.mes}" dataLabel="# {point.valor}"  /-->
                                                     </hf:chart>
                                                 </p:column>
-                                                <p:column colspan="7" style="font-weight: bold;" styleClass="noprint">
+                                                <p:column colspan="#{cuadroMandoIntegralConsulta.imprimir ?'7':'6'}" style="font-weight: bold;" styleClass="noprint">
                                                     <p:chart type="metergauge"  model="#{cuadroMandoIntegralConsulta.cmiGeneral.gaugeChartModel}" responsive="true" />                                      
                                                 </p:column>
                                             </p:row>
@@ -754,6 +754,7 @@
                             </c:if>
                             <c:if test="#{comenzo eq false and termino eq false}"><c:set var="efect" value=""/></c:if>
                             <c:if test="#{comenzo eq true and termino eq false}"><c:set var="efect" value="fa-beat-fade"/></c:if>
+                            <c:if test="#{comenzo eq true and termino eq true}"><c:set var="efect" value=""/></c:if>
                             <!--Widget a mostrar-->
                             <h:form rendered="#{mostrar}">
                                 <div class="col-lg-12 col-md-12 col-xs-12">
@@ -815,9 +816,29 @@
                                         <h4><p><strong>Lugar: </strong>#{notificacionCe.lugar}</p></h4>
                                         <h4>
                                             <p><strong>Fecha: </strong>
-                                                <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                    <f:convertDateTime pattern="EEEE, dd 'de' MMMM 'de' yyyy" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                </h:outputLabel>
+                                                <c:if test="#{tieneVariosDias}">
+                                                    <c:if test="#{mismoMes}">
+                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                            <f:convertDateTime pattern="'del' dd" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel> al 
+                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
+                                                            <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel>
+                                                    </c:if>
+                                                    <c:if test="#{!mismoMes}">
+                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                            <f:convertDateTime pattern="'del' dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel> al 
+                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
+                                                            <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel>
+                                                    </c:if>
+                                                </c:if>
+                                                <c:if test="#{!tieneVariosDias}">
+                                                    <h:outputLabel value="#{notificacionCe.horaInicio}">
+                                                        <f:convertDateTime pattern="EEEE, dd 'de' MMMM 'de' yyyy" locale="es-MX" timeZone="America/Mexico_City"/>
+                                                    </h:outputLabel>
+                                                </c:if>
                                             </p>
                                         </h4>
                                         <h4>
@@ -831,32 +852,14 @@
                                             <p><strong>Duracion: </strong>
                                                 <c:if test="#{tieneVariosDias}">
                                                     <c:if test="#{mismoMes}">
-                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                            <f:convertDateTime pattern="'del' dd" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> al 
-                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
-                                                            <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> de 
-                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                            <f:convertDateTime pattern="' ' hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> a 
-                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
-                                                            <f:convertDateTime pattern=" hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel>
+                                                        <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                            <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel> horas
                                                     </c:if>
                                                     <c:if test="#{!mismoMes}">
-                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                            <f:convertDateTime pattern="'del' dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> al 
-                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
-                                                            <f:convertDateTime pattern=" dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> de 
-                                                        <h:outputLabel value="#{notificacionCe.horaInicio}">
-                                                            <f:convertDateTime pattern="' ' hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> a 
-                                                        <h:outputLabel value="#{notificacionCe.horaFin}">
-                                                            <f:convertDateTime pattern=" hh:mm aa" locale="es-MX" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel>
+                                                        <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                            <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                        </h:outputLabel> horas
                                                     </c:if>
                                                 </c:if>
                                                 <c:if test="#{!tieneVariosDias}">
@@ -894,9 +897,9 @@
                                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
                                 </button>
                             </div>
-                        </div>       
-                        <div class="box-body">  
-                            <div class="row">        
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
                                 <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">

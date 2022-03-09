@@ -269,15 +269,9 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
     
     @Override
     public List<PeriodosEscolares> mostrarPeriodosEscolaresEvaluaciones360() throws Throwable{
-        TypedQuery<Evaluaciones360> q = em.createQuery("SELECT p FROM Evaluaciones360 p", Evaluaciones360.class);
-        List<Evaluaciones360> pr = q.getResultList();
-        List<Integer> peridoso= new ArrayList<>();
         List<PeriodosEscolares> escolareses = new ArrayList<>();
-        if(!pr.isEmpty()){pr.forEach((t) -> {peridoso.add(t.getPeriodo());});
-        TypedQuery<PeriodosEscolares> pe = em.createQuery("SELECT p FROM PeriodosEscolares p where p.periodo IN :periodos order by p.periodo desc", PeriodosEscolares.class);
-        pe.setParameter("periodos", peridoso);
+        TypedQuery<PeriodosEscolares> pe = em.createQuery("SELECT p FROM PeriodosEscolares p ORDER BY p.periodo desc", PeriodosEscolares.class);
         escolareses = pe.getResultList();
-        }
         return escolareses;
     }
     

@@ -38,6 +38,8 @@ public class ValidacionTutoriaGrupalRolEstudiante {
 
     @Getter     @Setter     private                             Boolean                                         comentarioPendiente;
     
+    @Getter     @Setter     private                             Long                                            firmasPendiente;
+    
     public ValidacionTutoriaGrupalRolEstudiante(@NonNull DtoEstudiante dtoEstudiante) {
         this.dtoEstudiante = dtoEstudiante;
     }

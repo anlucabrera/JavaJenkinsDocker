@@ -90,10 +90,10 @@
                             <div class="box box-solid">
                                 <div class="box-header with-border">
                                     <h3 class="box-title">
-                                        <c:if test="#{!cuestionarioPsicopedagogicoEstudiante.rol.cargada}">
+                                        <c:if test="#{!cuestionarioPsicopedagogicoEstudiante.cargada}">
                                             El cuestionario no se encuentra activo
                                         </c:if>
-                                        <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.cargada}">
+                                        <c:if test="#{cuestionarioPsicopedagogicoEstudiante.cargada}">
                                             <div class="col-md-12">
                                                 <p>
                                                     <b>Estimada(o) estudiante:</b> de nuevo ingreso, con el objetivo de reunir la información necesaria para poder proporcionarte orientación
@@ -113,7 +113,7 @@
                             </div>
                         </div>
                         <div class="box-body">
-                            <c:if test="#{cuestionarioPsicopedagogicoEstudiante.rol.cargada}">
+                            <c:if test="#{cuestionarioPsicopedagogicoEstudiante.cargada}">
                                 <div jsf:id="filaHeader" class="row hidden-sm hidden-md hidden-sm hidden-xs" style="background-color: white;margin: auto">
                                     <div class="col-lg-4 col-md-6 col-lg-offset-2 text-center text-info" style="height: 230px; vertical-align: middle;">
                                         <p:outputPanel >
@@ -166,8 +166,10 @@
                                                     <td class="text-center" style="min-width: 600px;">
                                                         <f:ajax execute="r#{1}" >
                                                             <p:selectOneButton  id="r#{1}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r1}"
-                                                                                valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
-                                                                <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                                valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}" 
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}">
+                                                                <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}"  />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -180,10 +182,11 @@
                                                     <td style="text-align: justify;">#{pregunta.titulo} <strong style="color : red; font-size: small">(25 caracteres mínimo)</strong></td>
                                                     <td class="text-center" style="min-width: 300px;">
                                                         <f:ajax execute="r#{2}">
-                                                            <p:inputTextarea  id="r#{2}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r2}"
-                                                                              valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}" onkeyup="contarcaracteres(25, 'r2', 'res2')"
-                                                                              style="margin-top: 0">
-
+                                                            <p:inputTextarea  id="r#{2}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r2}" 
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
+                                                                              valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}" 
+                                                                              onkeyup="contarcaracteres(25, 'r2', 'res2')" style="margin-top: 0">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res2"></div>
                                                         </f:ajax>
@@ -198,8 +201,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{3}">
                                                             <p:inputTextarea  id="r#{3}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r3}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(25, 'r3', 'res3')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res3"></div>
                                                         </f:ajax>
@@ -214,8 +219,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{4}">
                                                             <p:inputTextarea  id="r#{4}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r4}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(25, 'r4', 'res4')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res4"></div>
                                                         </f:ajax>
@@ -230,8 +237,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{5}">
                                                             <p:inputTextarea  id="r#{5}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r5}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(15, 'r5', 'res5')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res5"></div>
                                                         </f:ajax>
@@ -246,8 +255,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{6}">
                                                             <p:inputTextarea  id="r#{6}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r6}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(25, 'r6', 'res6')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res6"></div>
                                                         </f:ajax>
@@ -262,8 +273,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{7}">
                                                             <p:inputTextarea  id="r#{7}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r7}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(15, 'r7', 'res7')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res7"></div>
                                                         </f:ajax>
@@ -278,8 +291,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{8}">
                                                             <p:selectOneButton  id="r#{8}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r8}"
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                 valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                 <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -293,8 +308,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{9}">
                                                             <p:selectOneButton  id="r#{9}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r9}"
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                 valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                 <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -308,8 +325,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{10}">
                                                             <p:inputTextarea  id="r#{10}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r10}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(20, 'r10', 'res10')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res10"></div>
                                                         </f:ajax>
@@ -324,8 +343,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{11}">
                                                             <p:inputTextarea  id="r#{11}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r11}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(20, 'r11', 'res11')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res11"></div>
                                                         </f:ajax>
@@ -340,8 +361,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{12}">
                                                             <p:inputTextarea  id="r#{12}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r12}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(20, 'r12', 'res12')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res12"></div>
                                                         </f:ajax>
@@ -356,8 +379,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{13}">
                                                             <p:inputTextarea  id="r#{13}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r13}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(20, 'r13', 'res13')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res13"></div>
                                                         </f:ajax>
@@ -372,8 +397,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{14}">
                                                             <p:inputTextarea  id="r#{14}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r14}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(20, 'r14', 'res14')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res14"></div>
                                                         </f:ajax>
@@ -388,8 +415,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{54}">
                                                             <p:selectOneButton  id="r#{54}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r54}"
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                 valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                 <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -404,7 +433,9 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{55}">
                                                                 <p:inputTextarea  id="r#{55}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r55}"
+                                                                                  disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                   valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:inputTextarea>
                                                             </f:ajax>
                                                             <c:set var="index" value="#{16}" />
@@ -421,8 +452,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{15}">
                                                             <p:inputTextarea  id="r#{15}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r15}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(20, 'r15', 'res15')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res15"></div>
                                                         </f:ajax>
@@ -437,8 +470,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{16}">
                                                             <p:selectOneButton  id="r#{16}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r16}"
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                 valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                 <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.estadoCivilPadres}" />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -454,8 +489,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{17}">
                                                                 <p:selectOneButton  id="r#{17}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r17}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.famFinado}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                             <c:set var="index" value="#{19}" />
@@ -471,8 +508,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{18}">
                                                             <p:inputTextarea  id="r#{18}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r18}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(20, 'r18', 'res18')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res18"></div>
                                                         </f:ajax>
@@ -487,8 +526,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{56}">
                                                             <p:inputTextarea  id="r#{56}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r56}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(5, 'r56', 'res56')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res56"></div>
                                                         </f:ajax>
@@ -503,8 +544,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{57}">
                                                             <p:selectOneButton  id="r#{57}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r57}"
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                 valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                 <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -519,7 +562,9 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{58}">
                                                                 <p:inputTextarea  id="r#{58}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r58}"
+                                                                                  disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                   valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:inputTextarea>
                                                             </f:ajax>
                                                             <c:set var="index" value="#{23}" />
@@ -535,8 +580,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{19}">
                                                             <p:selectOneButton  id="r#{19}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r19}"
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                 valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                 <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -551,8 +598,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{20}">
                                                                 <p:selectOneButton  id="r#{20}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r20}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tipoProblemaFam}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                             <c:set var="index" value="#{25}" />
@@ -568,8 +617,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{21}">
                                                             <p:selectOneButton  id="r#{21}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r21}"
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                 valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                 <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -583,8 +634,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{59}">
                                                             <p:inputTextarea  id="r#{59}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r59}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(20, 'r59', 'res59')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res59"></div>
                                                         </f:ajax>
@@ -599,8 +652,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{22}">
                                                             <p:inputTextarea  id="r#{22}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r22}"
+                                                                              disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                               onkeyup="contarcaracteres(10, 'r22', 'res22')"
                                                                               valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:inputTextarea>
                                                             <div id="res22"></div>
                                                         </f:ajax>
@@ -615,8 +670,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{23}">
                                                             <p:selectOneButton  id="r#{23}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r23}"
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                 valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                 <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -631,8 +688,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{24}">
                                                                 <p:inputTextarea  id="r#{24}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r24}"
+                                                                                  disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                   onkeyup="contarcaracteres(10, 'r24', 'res24')"
                                                                                   valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:inputTextarea>
                                                                 <div id="res24"></div>
                                                             </f:ajax>
@@ -649,8 +708,10 @@
                                                     <td class="text-center" style="min-width: 120px;">
                                                         <f:ajax execute="r#{25}">
                                                             <p:selectOneButton  id="r#{25}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r25}"
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                 valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                 <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -683,8 +744,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{26}">
                                                                 <p:selectOneButton  id="r#{26}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r26}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -697,8 +760,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{27}">
                                                                 <p:selectOneButton  id="r#{27}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r27}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -711,8 +776,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{28}">
                                                                 <p:selectOneButton  id="r#{28}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r28}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -725,8 +792,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{29}">
                                                                 <p:selectOneButton  id="r#{29}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r29}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -739,8 +808,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{30}">
                                                                 <p:selectOneButton  id="r#{30}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r30}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -753,8 +824,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{31}">
                                                                 <p:selectOneButton  id="r#{31}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r31}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -767,8 +840,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{32}">
                                                                 <p:selectOneButton  id="r#{32}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r32}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -781,8 +856,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{33}">
                                                                 <p:selectOneButton  id="r#{33}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r33}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -795,8 +872,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{34}">
                                                                 <p:selectOneButton  id="r#{34}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r34}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -809,8 +888,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{35}">
                                                                 <p:selectOneButton  id="r#{35}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r35}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -823,8 +904,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{36}">
                                                                 <p:selectOneButton  id="r#{36}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r36}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -837,8 +920,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{37}">
                                                                 <p:selectOneButton  id="r#{37}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r37}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -851,8 +936,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{38}">
                                                                 <p:selectOneButton  id="r#{38}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r38}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -865,8 +952,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{39}">
                                                                 <p:selectOneButton  id="r#{39}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r39}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -879,8 +968,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{40}">
                                                                 <p:selectOneButton  id="r#{40}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r40}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -893,8 +984,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{41}">
                                                                 <p:selectOneButton  id="r#{41}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r41}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -907,8 +1000,10 @@
                                                         <td class="text-center" style="min-width: 120px;">
                                                             <f:ajax execute="r#{42}">
                                                                 <p:selectOneButton  id="r#{42}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r42}"
+                                                                                    disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                     valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.tecnicasEstudio}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:selectOneButton>
                                                             </f:ajax>
                                                         </td>
@@ -936,8 +1031,10 @@
                                                     <td class="text-center" style="min-width: 200px;">
                                                         <f:ajax execute="r#{43}">
                                                             <p:selectOneButton  id="r#{43}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r43}"
+                                                                                disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                 valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                 <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                <p:ajax update="frmCuestionario"/>
                                                             </p:selectOneButton>
                                                         </f:ajax>
                                                         <c:set var="index" value="#{index+1}" />
@@ -951,9 +1048,11 @@
                                                         <td class="text-center" style="min-width: 200px;">
                                                             <f:ajax execute="r#{44}">
                                                                 <p:inputTextarea  id="r#{44}" value="#{cuestionarioPsicopedagogicoEstudiante.rol.resultados.r44}"
+                                                                                  disabled="#{cuestionarioPsicopedagogicoEstudiante.rol.finalizado}"
                                                                                   onkeyup="contarcaracteres(10, 'r44', 'res44')"
                                                                                   valueChangeListener="#{cuestionarioPsicopedagogicoEstudiante.guardar}">
                                                                     <f:selectItems class="btn-primary" value="#{cuestionarioPsicopedagogicoEstudiante.rol.sino}" />
+                                                                    <p:ajax update="frmCuestionario"/>
                                                                 </p:inputTextarea>
                                                                 <div id="res44"></div>
                                                             </f:ajax>

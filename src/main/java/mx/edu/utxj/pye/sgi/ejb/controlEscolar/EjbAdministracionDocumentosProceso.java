@@ -50,18 +50,19 @@ public class EjbAdministracionDocumentosProceso {
         try{
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
-            if (p.getPersonal().getAreaOperativa() == 10 && p.getPersonal().getStatus()!='B') {
+            if (p.getPersonal().getClave()== 349 || p.getPersonal().getClave()==511) {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
-            else if (p.getPersonal().getAreaOperativa() == 60 && p.getPersonal().getStatus()!='B') {
-                filtro.setEntity(p);
-                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
-            }
-            else if (p.getPersonal().getAreaOperativa() == 9 && p.getPersonal().getStatus()!='B') {
-                filtro.setEntity(p);
-                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
-            }
+//            else if (p.getPersonal().getAreaOperativa() == 10 && p.getPersonal().getStatus()!='B') {
+//                filtro.setEntity(p);
+//                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+//            }
+//            else if (p.getPersonal().getAreaOperativa() == 60 && p.getPersonal().getStatus()!='B') {
+//                filtro.setEntity(p);
+//                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+//            }
+            
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal para administración del catálogo de documentos proceso.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbAdministracionDocumentosProceso.validarRolesCatalogoDocumentosProceso)", e, null);
