@@ -71,6 +71,8 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     UtilidadesCH utilidadesCH;
     @Getter
     private Boolean cargado = false;
+    @Getter
+    protected List<String> instrucciones = new ArrayList<>();
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
@@ -107,7 +109,9 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
 
             rol = new RegistroNotificacionRolGeneral(notifAcceso.getValor());
             obtenerListaNotificacionesActivas(logonMB.getPersonal().getClave());
-//            obtenerListaNotificacionesTotal();
+            instrucciones.add("Prueba 1");
+            instrucciones.add("Prueba 2");
+            instrucciones.add("Prueba 3");
             obtenerListaNotificacionesTrabajador();
 
         } catch (Exception e) {
@@ -299,6 +303,10 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             }
         }
     }
+    
+    public void actualizarNotificacion(){}
+    
+    public void eliminarNotificacion(){}
 
 //    public void editaFechaInicioDuracion(ValueChangeEvent event){
 //        
@@ -496,5 +504,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     public void mostrarImagenesPorNotificacion() {
         rol.setListaNotificacionesCeImagenes(rol.getNotificacionCe().getNotificacionesCeImagenesList());
     }
-
+    
+    public void metodoBase(){}
 }

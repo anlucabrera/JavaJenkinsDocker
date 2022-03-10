@@ -248,108 +248,193 @@
                                                                              />
                                                         </div>
                                                     </div>
-
-                                                    <div class="row margin-bottom">
-                                                        <p:toolbar>
-                                                            <f:facet name="left">
-                                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                                <p:outputLabel value="Listado de notificaciones registradas en sistema." style="padding-top: 5px;" />
-                                                            </f:facet>
-                                                        </p:toolbar>
-                                                        <center>
-                                                            <p:dataTable id="dtNotificaciones"
-                                                                         value="#{registroNotificacionesGeneral.rol.listaNotificacionesCeRegistradas}"
-                                                                         var="notificacionCe"
-                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
-                                                                         resizeMode="expand"
-                                                                         paginator="true"
-                                                                         currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} registros"
-                                                                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                                         rows="10"
-                                                                         emptyMessage="Aún no se han registrado notificaciones"
-                                                                         >
-                                                                <p:columnGroup type="header">
-                                                                    <p:row class="sucess">
-                                                                        <p:column headerText="Título Principal" width="200" sortBy="#{notificacionCe.tituloPrincipal}" filterBy="#{notificacionCe.tituloPrincipal}" filterMatchMode="contains" />
-                                                                        <p:column headerText="Subtítulo" width="400" sortBy="#{notificacionCe.subtitulo}" filterBy="#{notificacionCe.subtitulo}" filterMatchMode="contains"/>
-                                                                        <p:column headerText="Tipo de notificación" width="100" sortBy="#{notificacionCe.tipo}" filterBy="#{notificacionCe.tipo}" filterMatchMode="contains"/>
-                                                                        <p:column headerText="Fecha de inicio" width="150" sortBy="#{notificacionCe.horaInicio}"/>
-                                                                        <p:column headerText="Fecha de fin" width="150" sortBy="#{notificacionCe.horaFin}"/>
-                                                                        <p:column headerText="Persona que registra" width="100"/>
-                                                                        <p:column headerText="Alcance de la notificación" width="100"/>
-                                                                        <p:column headerText="Fecha de registro" width="100"/>
-                                                                    </p:row>
-                                                                </p:columnGroup>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{notificacionCe.tituloPrincipal}" />
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{notificacionCe.subtitulo}"/>
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <p:cellEditor>
-                                                                        <f:facet name="output"><h:outputText value="#{notificacionCe.tipo}" /></f:facet>
-                                                                        <f:facet name="input">
-                                                                            <p:selectOneMenu id="option" value="#{notificacionCe.tipo}">
-                                                                                <f:selectItem itemLabel="Todos" itemValue="Todos"/>
-                                                                                <f:selectItem itemLabel="Personal" itemValue="Personal"/>
-                                                                            </p:selectOneMenu>
-                                                                        </f:facet>
-                                                                    </p:cellEditor>
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{notificacionCe.horaInicio}">
-                                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd hh:mm:ss"/>
-                                                                    </h:outputText>
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{notificacionCe.horaFin}">
-                                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd hh:mm:ss"/>
-                                                                    </h:outputText>
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{notificacionCe.personaRegistro}" />
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{notificacionCe.alcance}" />
-                                                                </p:column>
-
-                                                                <p:column>
-                                                                    <h:outputText value="#{notificacionCe.fechaRegistro}">
-                                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
-                                                                    </h:outputText>
-                                                                </p:column>
-
-                                                                <f:facet name="footer">
-                                                                    Usted ha registrado un total de: #{fn:length(registroNotificacionesGeneral.rol.listaNotificacionesCeRegistradas)} notificaciones.
-                                                                </f:facet>
-
-                                                            </p:dataTable>
-                                                            <p:confirmDialog global="true" 
-                                                                             showEffect="fade" 
-                                                                             hideEffect="fade" 
-                                                                             styleClass="panel panel-primary" 
-                                                                             width="500"
-                                                                             closeOnEscape="true">
-                                                                <p:commandButton value="Si" 
-                                                                                 type="button" 
-                                                                                 styleClass="ui-confirmdialog-yes btn btn-primary" 
-                                                                                 icon="ui-icon-check" />
-                                                                <p:commandButton value="No" 
-                                                                                 type="button" 
-                                                                                 styleClass="ui-confirmdialog-no btn btn-primary" 
-                                                                                 icon="ui-icon-close" />
-                                                            </p:confirmDialog>
-                                                        </center>
-                                                    </div>
                                                 </p:outputPanel>
+
+                                                <div class="row margin-bottom">
+                                                    <p:toolbar>
+                                                        <f:facet name="left">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:outputLabel value="Listado de notificaciones registradas en sistema." style="padding-top: 5px;" />
+                                                        </f:facet>
+                                                    </p:toolbar>
+                                                    <p:outputPanel >
+                                                        <p:remoteCommand name="actualizarTabla" actionListener="#{registroNotificacionesGeneral.metodoBase()}" update="dtNotificaciones" />
+                                                        <p:dataTable id="dtNotificaciones" value="#{registroNotificacionesGeneral.rol.listaNotificacionesCeRegistradas}" var="notificacion" 
+                                                                     emptyMessage="No premios registrados"
+                                                                     paginator="true"
+                                                                     rows="10"
+                                                                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                                     rowsPerPageTemplate="5,10,15,20,25,30"
+                                                                     editable="true"
+                                                                     reflow="true"
+                                                                     >
+                                                            <p:columnGroup type="header">
+                                                                <p:row class="success">
+                                                                    <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:80px"/>
+                                                                    <p:column rowspan="2" headerText="Titulo" style="width: 150px;" />
+                                                                    <p:column rowspan="2" headerText="Subtitulo" style="width: 150px;"/>
+                                                                    <p:column rowspan="2" headerText="Tipo" style="width: 70px;"/>
+                                                                    <p:column rowspan="2" headerText="Lugar" style="width: 100px;"/> 
+                                                                    <p:column rowspan="2" headerText="Hora Inicio" style="width: 80px;"/> 
+                                                                    <p:column rowspan="2" headerText="Hora Fin" style="width: 80px;" />
+                                                                    <p:column rowspan="2" headerText="Duracion Evento" style="width: 60px;"/>
+                                                                    <p:column rowspan="2" headerText="Persona Responsable" style="width: 80px;"/>
+                                                                    <p:column rowspan="2" headerText="Expositor" style="width: 80px;"/> 
+                                                                    <p:column rowspan="2" headerText="Alcance" style="width: 80px;"/> 
+                                                                    <p:column rowspan="2" headerText="Fecha Registro" style="width: 80px;"/> 
+                                                                </p:row>
+                                                            </p:columnGroup>
+
+                                                            <p:ajax event="rowEdit" listener="#{registroNotificacionesGeneral.actualizarNotificacion()}" update="@this" oncomplete="actualizarTabla()"/>
+                                                            <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
+
+                                                            <p:column >
+                                                                <p:commandButton actionListener="#{registroNotificacionesGeneral.eliminarNotificacion()}" update="dtNotificaciones" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                                    <p:confirm header="Confirmación" message="¿Confirma la eliminación de la notificacion #{notificacion.tituloPrincipal}?" icon="ui-icon-alert" />
+                                                                </p:commandButton>
+                                                            </p:column>
+
+                                                            <p:column >
+                                                                <p:rowEditor/>
+                                                            </p:column>
+
+                                                            <p:column >
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output">
+                                                                        <h:outputText value="#{notificacion.tituloPrincipal}" />
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:inputTextarea value="#{notificacion.tituloPrincipal}" rows="6" cols="33"/>
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column>      
+                                                            <p:column >
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output">
+                                                                        <h:outputText value="#{notificacion.subtitulo}" />
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:inputTextarea value="#{notificacion.subtitulo}" rows="6" cols="33"/>
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column>      
+                                                            <p:column>
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output">
+                                                                        <h:outputText value="#{notificacion.tipo}" />
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:selectOneMenu id="rnTipo"
+                                                                                         value="#{notificacion.tipo}" 
+                                                                                         label="Alcance de notificación" 
+                                                                                         filter="true" 
+                                                                                         filterMatchMode="startsWith" 
+                                                                                         panelStyle="width:400px"
+                                                                                         style="width: 35em"
+                                                                                         >
+                                                                            <f:selectItems value="#{registroNotificacionesGeneral.listaNotificacionesTipos}"
+                                                                                           var="rnTipo"
+                                                                                           itemDescription="#{rnTipo.label}"
+                                                                                           itemValue="#{rnTipo.label}"
+                                                                                           itemLabel="#{rnTipo.label}"/>
+                                                                        </p:selectOneMenu>
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column>
+                                                            <p:column >
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output">
+                                                                        <h:outputText value="#{notificacion.lugar}"  />
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:inputText value="#{notificacion.lugar}" />
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column> 
+                                                            <p:column >
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output">
+                                                                        <h:outputText value="#{notificacion.horaInicio}" ><f:convertDateTime pattern="dd-MM-yyyy hh:mm:ss a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <!--<p:inputMask value="#{notificacion.horaInicio}" mask="99-99-9999 99:99:99"/>-->
+                                                                        <p:calendar value="#{notificacion.horaInicio}" pattern="dd-MM-yyyy hh:mm:ss a" />
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column> 
+                                                            <p:column >
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output">
+                                                                        <h:outputText value="#{notificacion.horaFin}" ><f:convertDateTime pattern="dd-MM-yyyy hh:mm:ss a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <!--<p:inputMask value="#{notificacion.horaFin}" mask="99-99-9999 99:99:99"/>-->
+                                                                        <p:calendar value="#{notificacion.horaFin}" pattern="dd-MM-yyyy hh:mm:ss a" />
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column> 
+                                                            <p:column >
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output">
+                                                                        <h:outputText value="#{notificacion.duracionEvento}" ><f:convertDateTime pattern="HH:mm:ss" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <!--<p:inputMask value="#{notificacion.duracionEvento}" mask="99-99-9999 99:99:99"/>-->
+                                                                        <p:calendar value="#{notificacion.duracionEvento}" pattern="HH:mm" timeInput="true" timeOnly="true" timeControlType="select"/>
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column>
+                                                            <p:column >
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output">
+                                                                        <h:outputText value="#{notificacion.personaResponsable}"  />
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:inputText value="#{notificacion.personaResponsable}" />
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column>
+                                                            <p:column >
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output">
+                                                                        <h:outputText value="#{notificacion.expositor}"  />
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:inputText value="#{notificacion.expositor}" />
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column>
+                                                            <p:column >
+                                                                <p:cellEditor>
+                                                                    <f:facet name="output">
+                                                                        <h:outputText value="#{notificacion.alcance}"  />
+                                                                    </f:facet>
+                                                                    <f:facet name="input">
+                                                                        <p:selectOneMenu id="rnAlcance"
+                                                                                         value="#{notificacion.alcance}" 
+                                                                                         label="Alcance de notificación" 
+                                                                                         panelStyle="width:400px"
+                                                                                         style="width: 35em"
+                                                                                         >
+                                                                            <f:selectItems value="#{registroNotificacionesGeneral.listaNotificacionRol}"
+                                                                                           var="rnAlcance"
+                                                                                           itemDescription="#{rnAlcance.label}"
+                                                                                           itemValue="#{rnAlcance.label}"
+                                                                                           itemLabel="#{rnAlcance.label}"/>
+                                                                        </p:selectOneMenu>
+                                                                    </f:facet>
+                                                                </p:cellEditor>
+                                                            </p:column>
+                                                            <p:column >
+                                                                <h:outputText value="#{notificacion.fechaRegistro}" ><f:convertDateTime pattern="dd-MM-yyyy" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </p:outputPanel>  
+                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                    </p:confirmDialog>   
+                                                </div>
                                             </div>
                                         </div>
                                     </h:form>
@@ -358,6 +443,23 @@
                         </div>
                     </div>
                 </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el registro de notificaciones</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{registroNotificacionesGeneral.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+
                 <c:if test="#{!registroNotificacionesGeneral.tieneAcceso}">
                     <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
                         <h:panelGrid columns="2" cellpadding="10">
