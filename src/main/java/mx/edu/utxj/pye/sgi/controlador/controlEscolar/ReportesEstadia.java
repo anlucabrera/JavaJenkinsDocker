@@ -149,12 +149,14 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
         List<String> listaReportes = new ArrayList<>();
         
         if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+            listaReportes.add("Cumplimiento estudiante documentos");
             listaReportes.add("Eficiencia estadía técnica");
             listaReportes.add("Listado estudiantes con promedios");
             rol.setReportes(listaReportes);
             rol.setReporte(rol.getReportes().get(0));
             generarReportesDireccionAcademica();
         }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15){
+            listaReportes.add("Cumplimiento estudiante documentos");
             listaReportes.add("Eficiencia estadía técnica");
             listaReportes.add("Listado estudiantes con promedios");
             listaReportes.add("Zona influencia institucional");
@@ -262,11 +264,26 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
      * Permite generar el listado de cumplimiento de carga por documento y programa educativo
      */
     public void generarCumpDocumentoPrograma(){
-        ResultadoEJB<List<DtoCumplimientoEstDocEstadia>> res = ejb.getCumplimientoDocumentoPE(rol.getGeneracion(), rol.getNivelEducativo());
-        if(res.getCorrecto()){
-             rol.setListaCumplimientoEstudiante(res.getValor());
-             Ajax.update("tbCumpDocEstPE");
-         }else mostrarMensajeResultadoEJB(res);
+        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15){
+            ResultadoEJB<List<DtoCumplimientoEstDocEstadia>> res = ejb.getCumplimientoDocumentoVinculacionPE(rol.getGeneracion(), rol.getNivelEducativo());
+            if(res.getCorrecto()){
+                rol.setListaCumplimientoEstudiante(res.getValor());
+                Ajax.update("tbCumpDocEstPE");
+            }else mostrarMensajeResultadoEJB(res);
+        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+            ResultadoEJB<List<DtoCumplimientoEstDocEstadia>> res = ejb.getCumplimientoDocumentoPE(rol.getGeneracion(), rol.getNivelEducativo());
+            if(res.getCorrecto()){
+                rol.setListaCumplimientoEstudiante(res.getValor().stream().filter(p->p.getProgramaEducativo().getAreaSuperior().equals(rol.getUsuario().getAreaOficial().getArea())).collect(Collectors.toList()));
+                Ajax.update("tbCumpDocEstPE");
+            }else mostrarMensajeResultadoEJB(res);
+        }else{
+            ResultadoEJB<List<DtoCumplimientoEstDocEstadia>> res = ejb.getCumplimientoDocumentoPE(rol.getGeneracion(), rol.getNivelEducativo());
+            if(res.getCorrecto()){
+                rol.setListaCumplimientoEstudiante(res.getValor());
+                Ajax.update("tbCumpDocEstPE");
+            }else mostrarMensajeResultadoEJB(res);
+        }
+       
     }
     
     

@@ -413,6 +413,126 @@ public class EjbReportesEstadia {
     }
     
     /**
+     * Permite obtener la lista de cumplimiento de carga de documento por documento y programa educativo
+     * @param generacion
+     * @param nivelEducativo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoCumplimientoEstDocEstadia>> getCumplimientoDocumentoVinculacionPE(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
+        try{
+            String proceso;
+            if(nivelEducativo.getNivel().equals("TSU")){
+                proceso="EstadiaTSU";
+            }else{
+                proceso="EstadiaIngLic";
+            }
+            
+            EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
+            
+            List<Short> listaProgramasNivel = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.nivelEducativo.nivel=:nivel", AreasUniversidad.class)
+                    .setParameter("nivel", nivelEducativo.getNivel())
+                    .getResultStream()
+                    .map(p -> p.getArea())
+                    .collect(Collectors.toList());
+            
+            List<Short> listaProgramasGeneracion= em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.idPe IN :lista",  Grupo.class)
+                    .setParameter("generacion",  generacion.getGeneracion())
+                    .setParameter("lista",  listaProgramasNivel)
+                    .getResultStream()
+                    .map(p -> p.getIdPe())
+                    .distinct()
+                    .collect(Collectors.toList());
+            
+            List<DtoCumplimientoEstDocEstadia> listaCumplimientoDocumentos = new ArrayList<>();
+            
+                if (!listaProgramasGeneracion.isEmpty()) {
+                    
+                listaProgramasGeneracion.forEach(programa -> {
+                        AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, programa);
+                        
+                        List<Integer> grados = new ArrayList<>();
+                        grados.add(6);
+                        grados.add(11);
+
+                    List<Estudiante> listaEstudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.idPe=:programa AND g.grado IN :grados AND g.generacion=:generacion", Estudiante.class)
+                            .setParameter("programa", programaEducativo.getArea())
+                            .setParameter("grados", grados)
+                            .setParameter("generacion", eventoSeleccionado.getGeneracion())
+                            .getResultStream()
+                            .collect(Collectors.toList());
+                   
+                    List<Estudiante> listaActivos = listaEstudiantes.stream().filter(p -> p.getTipoEstudiante().getIdTipoEstudiante() != 2 && p.getTipoEstudiante().getIdTipoEstudiante() != 3).collect(Collectors.toList());
+                    
+                        List<SeguimientoEstadiaEstudiante> listaSeguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento AND s.estudiante.grupo.idPe=:programa", SeguimientoEstadiaEstudiante.class)
+                                .setParameter("evento", eventoSeleccionado.getEvento())
+                                .setParameter("programa", programa)
+                                .getResultStream()
+                                .collect(Collectors.toList());
+                        
+                        List<Integer> listaSeg = listaSeguimientoEstadia.stream().map(p->p.getSeguimiento()).collect(Collectors.toList());
+                        
+                        List<Integer> documentosVinculacion = new ArrayList<>(); documentosVinculacion.add(33); documentosVinculacion.add(34); documentosVinculacion.add(39); documentosVinculacion.add(40); documentosVinculacion.add(41);
+                            
+                        List<DocumentoProceso> listaDocumentoProceso = em.createQuery("SELECT d FROM DocumentoProceso d WHERE d.proceso=:proceso AND d.documento.activo=:valor AND d.documento.documento IN :lista", DocumentoProceso.class)
+                                .setParameter("proceso", proceso)
+                                .setParameter("valor", Boolean.TRUE)
+                                .setParameter("lista", documentosVinculacion)
+                                .getResultStream()
+                                .collect(Collectors.toList());
+                        
+                            listaDocumentoProceso.forEach(documento -> {
+                                RelacionDocumentoEstadiaEvento relacionDocumentoEstadiaEvento = em.find(RelacionDocumentoEstadiaEvento.class, documento.getDocumento().getDocumento());
+                                
+                                EventoEstadia eventoDocumento = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, relacionDocumentoEstadiaEvento.getActividad()).getValor();
+                                
+                                List<DocumentoSeguimientoEstadia> listaDocumento = new ArrayList<>();
+                                
+                                Integer conDocumento = 0, sinDocumento = 0, docValidado = 0;
+                                
+                                if (!listaSeguimientoEstadia.isEmpty()) {
+                                    
+                                    listaDocumento = em.createQuery("SELECT d FROM DocumentoSeguimientoEstadia d INNER JOIN d.seguimientoEstadia s WHERE d.evento.evento=:evento AND s.seguimiento IN :lista", DocumentoSeguimientoEstadia.class)
+                                        .setParameter("evento", eventoDocumento.getEvento())
+                                        .setParameter("lista", listaSeg)
+                                        .getResultStream()
+                                        .collect(Collectors.toList());
+                                    
+                                    conDocumento = listaDocumento.size();
+                                }
+                                
+                                
+                                    sinDocumento = listaEstudiantes.size()-listaDocumento.size();
+                                    docValidado = (int) (long) listaDocumento.stream().filter(d->d.getValidado()).count();
+                                 
+                                Double div1 = (double)listaDocumento.size()/listaEstudiantes.size();
+                                Double porcentajeCumplimiento = div1 * 100;
+                                Double div2 = (double)docValidado/listaEstudiantes.size();
+                                Double procentajeValidacion = div2 * 100;
+
+                                DtoCumplimientoEstDocEstadia  dtoCumplimientoEstDocEstadia = new DtoCumplimientoEstDocEstadia();
+                                dtoCumplimientoEstDocEstadia.setProgramaEducativo(programaEducativo);
+                                dtoCumplimientoEstDocEstadia.setDocumentoProceso(documento);
+                                dtoCumplimientoEstDocEstadia.setEstudiantesIniciaron(listaEstudiantes.size());
+                                dtoCumplimientoEstDocEstadia.setEstudiantesActivos(listaActivos.size());
+                                dtoCumplimientoEstDocEstadia.setConDocumento(conDocumento);
+                                dtoCumplimientoEstDocEstadia.setSinDocumento(sinDocumento);
+                                dtoCumplimientoEstDocEstadia.setDocumentoValidado(docValidado);
+                                dtoCumplimientoEstDocEstadia.setPorcentajeCumplimiento(porcentajeCumplimiento);
+                                dtoCumplimientoEstDocEstadia.setPorcentajeValidacion(procentajeValidacion);
+                                listaCumplimientoDocumentos.add(dtoCumplimientoEstDocEstadia);
+                        });
+                    });
+                }
+                
+                List<DtoCumplimientoEstDocEstadia> listaCumplimientoDocumentosOrdenada = listaCumplimientoDocumentos.stream().sorted(DtoCumplimientoEstDocEstadia::compareTo).collect(Collectors.toList());
+                       
+            return ResultadoEJB.crearCorrecto(listaCumplimientoDocumentosOrdenada, "Lista de seguimiento de actividades de estadía por programa educativo.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de seguimiento de actividades de estadía por programa educativo. (EjbReportesEstadia.getSeguimientoActividadesEstadia)", e, null);
+        }
+    }
+    
+    /**
      * Permite obtener la lista de eficiencia de estadía (validación por vinculación) por programa educativo dependiendo del nivel educativo seleccionado
      * @param generacion
      * @param nivelEducativo
