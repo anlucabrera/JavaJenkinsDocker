@@ -25,6 +25,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteFotografiasTitulacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteEstadisticoTitulacion;
@@ -37,6 +38,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoExpedienteTitulacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -55,6 +57,8 @@ public class EjbReportesExpedientesTitulacion {
     
     public static final String ACTUALIZADOConcentrado = "reporteEstadistico.xlsx";
     public static final String ACTUALIZADOListado = "listadoFotografia.xlsx";
+    public static final String ACTUALIZADOListadoActivos = "listadoEstudiantesActivos.xlsx";
+    public static final String ACTUALIZADOListadoConcluyeron = "listadoConcluyeronEstadia.xlsx";
     
     List<String> filesListInDir = new ArrayList<>();
     
@@ -416,6 +420,94 @@ public class EjbReportesExpedientesTitulacion {
         }
     }
     
+     /**
+     * Permite obtener el listado de estudiantes activos de la generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivel
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoDatosEstudiante>> getListadoEstudiantesActivos(Generaciones generacion, ProgramasEducativosNiveles nivel){
+        try{
+            Integer gradoMaximo = 0;
+            
+            if (nivel.getNivel().equals("TSU")) {
+                gradoMaximo = em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.grado<=:grado ORDER BY g.grado DESC", Grupo.class)
+                        .setParameter("generacion", generacion.getGeneracion())
+                        .setParameter("grado", (int)6)
+                        .getResultStream()
+                        .map(p->p.getGrado())
+                        .distinct()
+                        .findFirst().orElse(0);
+            } else {
+                gradoMaximo = em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.grado>=:gradoMin AND g.grado<=:gradoMax ORDER BY g.grado DESC", Grupo.class)
+                        .setParameter("generacion", generacion.getGeneracion())
+                        .setParameter("gradoMin", (int)6)
+                        .setParameter("gradoMax", (int)11)
+                        .getResultStream()
+                        .map(p->p.getGrado())
+                        .distinct()
+                        .findFirst().orElse(0);
+            }
+            List<DtoDatosEstudiante> listaEstudiantesActivos = new ArrayList<>();
+            
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.generacion=:generacion AND e.tipoEstudiante.idTipoEstudiante=:tipoEstudiante AND g.grado=:grado", Estudiante.class)
+                        .setParameter("generacion", generacion.getGeneracion())
+                        .setParameter("tipoEstudiante", (int)1)
+                        .setParameter("grado", gradoMaximo)
+                        .getResultStream()
+                        .collect(Collectors.toList());
+            
+            estudiantes.forEach(estudiante -> {
+                AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
+                PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+                
+                DtoDatosEstudiante  dtoDatosEstudiante = new DtoDatosEstudiante(estudiante, estudiante.getAspirante(), programa, periodoEscolar);
+                listaEstudiantesActivos.add(dtoDatosEstudiante);
+            });
+            return ResultadoEJB.crearCorrecto(listaEstudiantesActivos.stream().sorted(DtoDatosEstudiante::compareTo).collect(Collectors.toList()), "Listado de estudiantes activos de la generación y nivel educativo seleccionado se obtuvo correctamente.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el listado de estudiantes activos de la generación y nivel educativo seleccionado. (EjbReportesExpedientesTitulacion.getListadoEstudiantesActivos)", e, null);
+        }
+    }
+    
+    /**
+     * Permite obtener el listado de estudiantes que concluyeron estadía de la generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivel
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoDatosEstudiante>> getListadoConcluyeronEstadia(Generaciones generacion, ProgramasEducativosNiveles nivel){
+        try{
+            Integer grado = 0;
+            
+            if (nivel.getNivel().equals("TSU")) {
+                grado = 6;
+            } else {
+                grado = 11;
+            }
+            List<DtoDatosEstudiante> listaEstudiantesActivos = new ArrayList<>();
+            
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e INNER JOIN e.grupo g WHERE g.generacion=:generacion AND e.tipoEstudiante.idTipoEstudiante=:tipoEstudiante AND g.grado=:grado", Estudiante.class)
+                        .setParameter("generacion", generacion.getGeneracion())
+                        .setParameter("tipoEstudiante", (int)4)
+                        .setParameter("grado", grado)
+                        .getResultStream()
+                        .collect(Collectors.toList());
+            
+            estudiantes.forEach(estudiante -> {
+                
+                AreasUniversidad programa = em.find(AreasUniversidad.class, estudiante.getGrupo().getIdPe());
+                PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+                
+                DtoDatosEstudiante  dtoDatosEstudiante = new DtoDatosEstudiante(estudiante, estudiante.getAspirante(), programa, periodoEscolar);
+                listaEstudiantesActivos.add(dtoDatosEstudiante);
+            });
+            return ResultadoEJB.crearCorrecto(listaEstudiantesActivos.stream().sorted(DtoDatosEstudiante::compareTo).collect(Collectors.toList()), "Listado de estudiantes activos de la generación y nivel educativo seleccionado se obtuvo correctamente.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el listado de estudiantes activos de la generación y nivel educativo seleccionado. (EjbReportesExpedientesTitulacion.getListadoEstudiantesActivos)", e, null);
+        }
+    }
+    
     /**
      * Permite descargar un archivo que contiene el reporte estadístico de titulación por generación y nivel educativo seleccionado
      * @param generacion
@@ -455,6 +547,54 @@ public class EjbReportesExpedientesTitulacion {
         
         Map beans = new HashMap();
         beans.put("repFot", getReporteFotografiaTitulacion(generacion, nivel, programas).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+    /**
+     * Permite descargar un archivo que contiene el reporte estadístico de titulación por generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivel
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    public String getDescargarListadoEstudiantesActivos(Generaciones generacion, ProgramasEducativosNiveles nivel) throws Throwable {
+        String gen = generacion.getInicio() + "-" + generacion.getFin();
+        String rutaPlantilla = "C:\\archivos\\formatosTitulacion\\listadoEstudiantes.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompletoTit(gen);
+
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADOListadoActivos);
+        
+        Map beans = new HashMap();
+        beans.put("tipoLista", "activos");
+        beans.put("generacion", gen);
+        beans.put("est", getListadoEstudiantesActivos(generacion, nivel).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+    /**
+     * Permite descargar un archivo que contiene el reporte estadístico de titulación por generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivel
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    public String getDescargarListadoConcluyeronEstadia(Generaciones generacion, ProgramasEducativosNiveles nivel) throws Throwable {
+        String gen = generacion.getInicio() + "-" + generacion.getFin();
+        String rutaPlantilla = "C:\\archivos\\formatosTitulacion\\listadoEstudiantes.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReporteCompletoTit(gen);
+
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADOListadoConcluyeron);
+        
+        Map beans = new HashMap();
+        beans.put("tipoLista", "que concluyeron estadía");
+        beans.put("generacion", gen);
+        beans.put("est", getListadoConcluyeronEstadia(generacion, nivel).getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 

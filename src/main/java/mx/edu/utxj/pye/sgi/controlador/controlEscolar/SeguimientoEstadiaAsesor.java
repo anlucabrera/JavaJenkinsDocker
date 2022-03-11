@@ -119,6 +119,8 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
             rol.getInstrucciones().add("Dar clic en el campo del comentario para capturar, si no puede editar el comentario es porque el periodo vención o aún no se encuentra activo.");
             rol.getInstrucciones().add("El botón para generar la cédula evaluación y acreditación de estadía se habilita cuando el estudiante acreditó sus evaluaciones, de lo contrario no podrá generar el formato.");
             
+            rol.setOcultarColumnas(false);
+            
             generacionesEventosRegistrados();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -663,5 +665,18 @@ public class SeguimientoEstadiaAsesor extends ViewScopedRol implements Desarroll
             permiso=res.getValor();
         }else mostrarMensajeResultadoEJB(res);
         return permiso;
+    }
+    
+      /**
+     * Método que cambia el tipo de visualización de la información (todos los seguimientos o solo los que están validados por dirección de carrera)
+     * @param event Evento al tipo de visualización
+     */
+    public void cambiarOcultarColumnas(ValueChangeEvent event){
+        if(rol.getOcultarColumnas()){
+            rol.setOcultarColumnas(false);
+        }else{
+            rol.setOcultarColumnas(true);
+        }
+        Ajax.update("frm");
     }
 }

@@ -128,6 +128,11 @@ public class SeguimientoEstadiaRolAsesor extends AbstractRol{
      */
     @Getter @NonNull private Boolean evaluacionRegistrada;
     
+    /**
+     * Indica si se visualiza todas las columnas
+     */
+    @Getter @NonNull private Boolean ocultarColumnas;
+    
     public SeguimientoEstadiaRolAsesor(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
         this.docente = docente;
@@ -215,6 +220,10 @@ public class SeguimientoEstadiaRolAsesor extends AbstractRol{
 
     public void setEvaluacionRegistrada(Boolean evaluacionRegistrada) {
         this.evaluacionRegistrada = evaluacionRegistrada;
+    }
+    
+    public void setOcultarColumnas(Boolean ocultarColumnas) {
+        this.ocultarColumnas = ocultarColumnas;
     }
     
 }
