@@ -20,131 +20,579 @@
     </ui:define>
 
     <ui:define name="title">
-       Genera combinaciones 360
+        Administración Evaluación 360
     </ui:define>
     <ui:define name="description">
 
     </ui:define>
     <ui:define name="body">
         <c:if test="#{adminEvaluacion360.cargado}">
-        <adm:breadcrumb title="Admin 360"/>
-        <h:form id="frm" prependId="false" class="form-inline">
-            <div class="box box-primary">
-                <div class="box-header with-border">
-                    <div id="main-buttons" class="hidden-sm hidden-xs" >
-                        <p:outputPanel >
-                            <p:autoUpdate/>
-                            <p:toolbar id="tb">
-                                <f:facet name="right">
-                                    <h:panelGrid columns="12">
-                                        <p:commandButton value="Generar combinaciones" actionListener="#{adminEvaluacion360.generaEvaluacion360}" styleClass="ui-button" update="tblEvaluaciones"/>
-                                        <!--
-                                        <p:selectOneMenu value="#{adminEvaluacion360.nivelOperacion}" id="som1" >
-                                            <f:selectItem itemLabel="Seleccione una opcion" />
-                                            <f:selectItem itemValue="2" itemDescription="Visualiza y administra las combinaciones de evaluaciones"  itemLabel="Combinaciones" />
-                                            <f:selectItem itemValue="1" itemDescription="Agrega una nueva evaluación" itemLabel="Nueva Evaluacion" />
-                                            <f:selectItem itemValue="3" itemDescription="Listado de evaluaciones" itemLabel="Lista de Evaluaciones" />
-                                            <p:ajax process="som1" update="pnl1" />
-                                        </p:selectOneMenu>
-                                        <p:spacer width="15px"/>
+            <adm:breadcrumb title="Admin 360"/>
 
-                                        <p:outputPanel id="pnl1" >
-                                            <p:autoUpdate/>
-                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq(2)}" style="margin-top: 4px; margin-bottom: -3px;">
-                                                <p:spacer width="15px"/>
-                                                <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}">
-                                                    <p:ajax process="@this" update="@form:tb"/>
-                                                </p:selectBooleanButton>
-                                                <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.edesempenio}">
-                                                    <p:ajax process="@this" update="@form:tb"/>
-                                                </p:selectBooleanButton>
+
+            <p:panel id="informacion" class="hidden-xs hidden-sm">
+                <section class="content">
+                    <div class="row">
+                        <ui:include src="/includes/plantillaPerfilEmpleado.xhtml"/>
+                        <div class="col-md-10">
+                            <div class="nav-tabs-custom">
+                                <p:tabView activeIndex="#{adminEvaluacion360.pestaniaActiva}">
+                                    <p:tab title="Evaluaciones">
+                                        <h:form id="frmev"> 
+                                            <p:outputPanel id="registro">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                    <p:outputLabel for="anio" value="Proceso" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                    <p:selectOneMenu  id="anio" value="#{adminEvaluacion360.periodoEv}">
+                                                                        <f:selectItems value="#{adminEvaluacion360.periodosEscolareses}" var="anio" itemValue="#{anio.periodo}" itemLabel="#{anio.periodo}: #{anio.mesInicio.mes} - #{anio.mesFin.mes} -- #{anio.anio}" />
+                                                                        <p:ajax update="@form" listener="#{adminEvaluacion360.imprimirValores()}"/>
+                                                                    </p:selectOneMenu >
+                                                                    <hr/>
+                                                                </div><div class="col-sm-3 col-md-3 col-lg-3">                                                                              
+                                                                    <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio"/>
+                                                                    <p:calendar locale="es" id="fechaIn" value="#{adminEvaluacion360.fechaI}" pattern="dd-MM-yyyy" mask="true"/>
+                                                                    <p:message for="fechaIn" display="tooltip"/>   
+                                                                </div>
+                                                                <div class="col-sm-3 col-md-3 col-lg-3">                                                                              
+                                                                    <p:outputLabel for="fechaFin" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de fin"/>
+                                                                    <p:calendar locale="es" id="fechaFin" value="#{adminEvaluacion360.fechaF}" pattern="dd-MM-yyyy" mask="true"/>
+                                                                    <p:message for="fechaFin" display="tooltip"/>   
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="row">
+                                                                <p:outputPanel>       
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                            <p:commandButton id="btnAgrgaActividadesMultiples" value="Agregar Evaluación" disabled="#{adminEvaluacion360.otroPeriodo}" 
+                                                                                             actionListener="#{adminEvaluacion360.crearEvluacion360()}" 
+                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form"/> 
+                                                                        </div>
+                                                                    </div>
+                                                                </p:outputPanel>
+                                                            </div>                                                     
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>
+                                            <p:outputPanel>
+                                                <p:remoteCommand name="actualizarTabla" actionListener="#{adminEvaluacion360.imprimirValores()}" update="tblEv" />                                                    
+                                                <p:dataTable id="tblEv" value="#{adminEvaluacion360.evaluaciones360s}"  var="evaluacion"
+                                                             editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                    <p:ajax event="rowEdit" listener="#{adminEvaluacion360.onRowEditEvaluacion}" update="tblEv" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblEv" />
+
+                                                    <p:column headerText="Periodo">
+                                                        <h:outputText value="#{adminEvaluacion360.datosperido(evaluacion.periodo)}" />
+                                                    </p:column>                                                         
+                                                    <p:column headerText="Fecha Inicio">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputLabel value="#{evaluacion.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{evaluacion.fechaInicio}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>      
+                                                    <p:column headerText="Fecha Fin">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputLabel value="#{evaluacion.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:calendar locale="es" value="#{evaluacion.fechaFin}" pattern="dd-MM-yyyy HH:mm:ss" timeZone="America/Mexico_City" mask="true" />
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>      
+                                                    <p:column class="noprint">
+                                                        <p:rowEditor rendered="#{adminEvaluacion360.periodoActivo eq evaluacion.periodo?true:false}"/>
+                                                    </p:column>
+                                                </p:dataTable>  
+                                            </p:outputPanel>
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Categorías 360">
+                                        <h:form id="frmCat"> 
+                                            <p:outputPanel id="registro">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                        <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre" />
+                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre de la Categoría"
+                                                                                     value="#{adminEvaluacion360.categorias.nombre}">
+                                                                        </p:inputText>
+                                                                        <p:message for="nombre" display="tooltip" />
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>  
+                                                            <div class="row">
+                                                                <p:outputPanel>       
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                            <p:commandButton id="btnAgrgaActividadesMultiples" value="Agregar Categoria" actionListener="#{adminEvaluacion360.crearCategoria()}" 
+                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form"/> 
+                                                                        </div>
+                                                                    </div>
+                                                                </p:outputPanel>
+                                                            </div>                                                       
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>
+                                        </h:form>
+                                        <h:form id="frmListacat">
+                                            <p:outputPanel>
+                                                <p:remoteCommand name="actualizarTabla" actionListener="#{adminEvaluacion360.imprimirValores()}" update="tblCat" />                                                    
+                                                <p:dataTable id="tblCat" value="#{adminEvaluacion360.categorias360}"  var="cat" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                    <p:ajax event="rowEdit" listener="#{adminEvaluacion360.onRowEditCategorias}" update="tblCat" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblCat" />
+
+                                                    <p:column headerText="Clave">
+                                                        <h:outputText value="#{cat.categoria}" />
+                                                    </p:column>                                                         
+                                                    <p:column headerText="Nombre" style="width: 50%"                                                              
+                                                              filterBy="#{cat.nombre}" 
+                                                              sortBy="#{cat.nombre}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputLabel value="#{cat.nombre}"/>
+                                                    </p:column>      
+                                                    <p:column headerText="Activo">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputLabel value="#{cat.activo?'SI':'NO'}"/></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{cat.activo}" style="width:100%" filter="true" filterMatchMode="contains">
+                                                                    <f:selectItems value="#{adminEvaluacion360.estatus}" var="estatus"  itemLabel="#{estatus eq true?'SI':'NO'}" itemValue="#{estatus}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>      
+                                                    <p:column class="noprint">
+                                                        <p:rowEditor />
+                                                    </p:column>
+                                                </p:dataTable>  
+
                                             </p:outputPanel>
 
-                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq (1)}">
-                                                <p:spacer width="15px"/>
-                                                <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}">
-                                                    <p:ajax process="@this" update="@form:tb"/>
-                                                </p:selectBooleanButton>
-                                                <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño" value="#{adminEvaluacion360.edesempenio}" >
-                                                    <p:ajax process="@this" update="@form:tb"/>
-                                                </p:selectBooleanButton>
-                                                <p:commandButton class="btn btn-primary" value="Agregar" icon="fa fa-plus" oncomplete="PF('modalNEvaluacion').show()" actionListener="#{adminEvaluacion360.validarNuevaEvaluacion()}"/>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Habilidades">
+                                        <h:form id="frmHab"> 
+                                            <p:outputPanel id="registro">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                        <p:outputLabel for="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Nombre" />
+                                                                        <p:inputText required="true" requiredMessage="No puede tener un campo vacío" id="nombre" style="height:100%; width: 100%; object-fit: contain; font-size: large" placeholder="Nombre de la Habilidad"
+                                                                                     value="#{adminEvaluacion360.habilidades.nombre}"/>
+                                                                        <p:message for="nombre" display="tooltip" />
+                                                                        <hr/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>  
+                                                            <div class="row">
+                                                                <p:outputPanel>       
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                            <p:commandButton id="btnAgrgaActividadesMultiples" value="Agregar Habilidad" actionListener="#{adminEvaluacion360.crearHabilidad()}" 
+                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form"/> 
+                                                                        </div>
+                                                                    </div>
+                                                                </p:outputPanel>
+                                                            </div>                                                        
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </p:outputPanel>
+                                        </h:form>
+                                        <h:form id="frmListaHab">
+                                            <p:outputPanel>
+                                                <p:remoteCommand name="actualizarTabla" actionListener="#{adminEvaluacion360.imprimirValores()}" update="tblHab" />                                                    
+                                                <p:dataTable id="tblHab" value="#{adminEvaluacion360.habilidadeses}"  var="hab" paginator="true" rows="10"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                    <p:ajax event="rowEdit" listener="#{adminEvaluacion360.onRowEditHabilidades}" update="tblHab" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblHab" />
+
+                                                    <p:column headerText="Clave">
+                                                        <h:outputText value="#{hab.habilidad}" />
+                                                    </p:column>                                                         
+                                                    <p:column headerText="Nombre" style="width: 50%"                                                             
+                                                              filterBy="#{hab.nombre}" 
+                                                              sortBy="#{hab.nombre}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputLabel value="#{hab.nombre}"/>
+                                                    </p:column>      
+                                                    <p:column headerText="Activo">
+                                                        <p:cellEditor>
+                                                            <f:facet name="output"> <h:outputLabel value="#{hab.activo?'SI':'NO'}"/></f:facet>
+                                                            <f:facet name="input">
+                                                                <p:selectOneMenu value="#{hab.activo}" style="width:100%" filter="true" filterMatchMode="contains">
+                                                                    <f:selectItems value="#{adminEvaluacion360.estatus}" var="estatus"  itemLabel="#{estatus eq true?'SI':'NO'}" itemValue="#{estatus}" />
+                                                                </p:selectOneMenu>
+                                                            </f:facet>
+                                                        </p:cellEditor>
+                                                    </p:column>      
+                                                    <p:column class="noprint">
+                                                        <p:rowEditor />
+                                                    </p:column>
+                                                </p:dataTable>  
+
                                             </p:outputPanel>
 
-                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq (3)}" id="nivel3">
-                                                <p:spacer width="15px"/>
-                                                <f:ajax execute="nivel3">
-                                                    <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}" >
-                                                        <p:ajax process="@this" update="@form:tb"/>
-                                                    </p:selectBooleanButton>
-                                                    <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.edesempenio}" >
-                                                        <p:ajax process="@this" update="@form:tb"/>
-                                                    </p:selectBooleanButton>
-                                                    <p:commandButton class="btn btn-primary" value="Ver" icon="fa fa-eye"  actionListener="#{adminEvaluacion360.verListaEvaluaciones()}" process="@this" update="tblEvaluaciones"/>
-                                                </f:ajax>
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Categorias - Habilidades">
+                                        <h:form id="frmCatHab"> 
+                                            <p:outputPanel id="registro">
+                                                <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
+                                                    <div class="col-md-12">
+                                                        <div class="box box-widget widget-user-2">
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-sm-12 col-md-4 col-lg-4">
+                                                                        <p:outputLabel for="anio" value="Proceso" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
+                                                                        <p:selectOneMenu  id="anio" value="#{adminEvaluacion360.periodoEv}" valueChangeListener="#{adminEvaluacion360.numeroProcesoAsiganado}">
+                                                                            <f:selectItems value="#{adminEvaluacion360.periodosEscolareses}" var="anio" itemValue="#{anio.periodo}" itemLabel="#{anio.periodo}: #{anio.mesInicio.mes}-#{anio.mesFin.mes} -- #{anio.anio}" />
+                                                                            <p:ajax update="@form" listener="#{adminEvaluacion360.imprimirValores()}"/>
+                                                                        </p:selectOneMenu >
+                                                                    </div>
+                                                                    <div class="col-sm-12 col-md-8 col-lg-8">
+                                                                        <p:commandButton id="btnAgrgaActividadesMultiples" value="Importar alineación de categorías y habilidades de la evaluación anterior" actionListener="#{adminEvaluacion360.agregaCategoriasHabilidadesEvAnterior()}" 
+                                                                                         icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form" rendered="#{adminEvaluacion360.categoriasHabilidadeses.size() eq 0?true:false}"/> 
+                                                                    </div>
+                                                                </div>
+                                                            </div>  
+                                                            <hr/>
+                                                            <div class="row">
+                                                                <div class="form-group">
+                                                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                        <p:outputLabel for="tn1"  value="Categoría" />
+                                                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="tn1" value="#{adminEvaluacion360.cvlCat}" disabled="#{adminEvaluacion360.categoriasHabilidadeses.size() eq 0?true:false}" >
+                                                                            <f:selectItem itemValue="0" itemLabel="Nuevo"/>
+                                                                            <f:selectItems value="#{adminEvaluacion360.categorias360}" var="ti1" itemValue="#{ti1.categoria}" itemLabel="#{ti1.nombre}" itemDisabled="#{!ti1.activo}"/>
+                                                                            <p:ajax update="@this" global="false"/>
+                                                                        </p:selectOneMenu> 
+                                                                        <p:message for="tn1" display="tooltip" />
+                                                                    </div> 
+                                                                    <p:outputPanel >
+                                                                        <p:autoUpdate/>
+                                                                        <div class="col-sm-6 col-md-6 col-lg-6" style="#{adminEvaluacion360.cvlCat eq 0? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                         
+                                                                            <p:outputLabel for="tn1N"  value="Nombre de nueva Categoría" />
+                                                                            <p:inputText id="tn1N" class="form-control" value="#{adminEvaluacion360.nombCat}" style="height:100%; width: 100%;" disabled="#{adminEvaluacion360.categoriasHabilidadeses.size() eq 0?true:false}" >
+                                                                                <p:ajax update="tn1N" global="false"/>
+                                                                            </p:inputText>
+                                                                            <p:message for="tn1N" display="tooltip" />
+                                                                            <hr/>
+                                                                        </div>
+                                                                    </p:outputPanel>
+                                                                </div>
+                                                                <div class="form-group">                                                                    
+                                                                    <div class="col-sm-6 col-md-6 col-lg-6">
+                                                                        <p:outputLabel for="tn2"  value="Habilidad" />
+                                                                        <p:selectOneMenu filter="true" filterMatchMode="contains" id="tn2" value="#{adminEvaluacion360.cvlHab}" disabled="#{adminEvaluacion360.categoriasHabilidadeses.size() eq 0?true:false}" >
+                                                                            <f:selectItem itemValue="0" itemLabel="Nuevo"/>
+                                                                            <f:selectItems value="#{adminEvaluacion360.habilidadeses}" var="ti2" itemValue="#{ti2.habilidad}" itemLabel="#{ti2.nombre}" itemDisabled="#{!ti2.activo}"/>
+                                                                            <p:ajax update="@this" global="false"/>
+                                                                        </p:selectOneMenu> 
+                                                                        <p:message for="tn2" display="tooltip" />
+                                                                    </div> 
+                                                                    <p:outputPanel >
+                                                                        <p:autoUpdate/>
+                                                                        <div class="col-sm-6 col-md-6 col-lg-6" style="#{adminEvaluacion360.cvlHab eq 0? 'visibility:visible;display:block':'visibility:collapse;display:none;'}">                                        
+                                                                            <p:outputLabel for="tn2N"  value="Nombre de nueva Habilidad" />
+                                                                            <p:inputText id="tn2N" class="form-control" value="#{adminEvaluacion360.nombHab}" style="height:100%; width: 100%;" disabled="#{adminEvaluacion360.categoriasHabilidadeses.size() eq 0?true:false}" >
+                                                                                <p:ajax update="tn2N" global="false"/>
+                                                                            </p:inputText>
+                                                                            <p:message for="tn2N" display="tooltip" />
+                                                                            <hr/>
+                                                                        </div>
+                                                                    </p:outputPanel>
+                                                                </div>
+                                                            </div>  
+                                                            <div class="row">
+                                                                <p:outputPanel>       
+                                                                    <div class="form-group">
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4"/>
+                                                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                                                            <p:commandButton id="btnAgrgaalineacionUnica" value="Agregar Habilidad" actionListener="#{adminEvaluacion360.agregaCategoriasHabilidades()}" 
+                                                                                             icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" 
+                                                                                             disabled="#{adminEvaluacion360.categoriasHabilidadeses.size() eq 0?true:false}" update="@form" process="@form"/> 
+                                                                        </div>
+                                                                    </div>
+                                                                </p:outputPanel>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </p:outputPanel>
-                                        </p:outputPanel>
-                                        -->
-                                    </h:panelGrid>
-                                </f:facet>
-                            </p:toolbar>
-                            <p:sticky target="tb" />
-                        </p:outputPanel>
-                    </div>
-                    <div class="box box-solid">
-                        <div class="box-body">
-                            <p:panel id="panelTblCombinaciones">
-                                <p:dataTable id="tblEvaluaciones" lazy="false" value="#{adminEvaluacion360.combinacionesDto}"   var="listaEncuesta" filterDelay="700"
-                                             paginator="true" rows="5"
-                                             rowsPerPageTemplate="10,20,30,40,50"
-                                             emptyMessage="No se encontrarono registros"  >
-                                    <f:facet name="header">
+                                            <p:outputPanel>
+                                                <p:remoteCommand name="actualizarTabla" actionListener="#{adminEvaluacion360.imprimirValores()}" update="tblcatHab" />    
+                                                <p:dataTable id="tblcatHab" value="#{adminEvaluacion360.categoriasHabilidadeses}"  var="cathab" paginator="true" rows="15"
+                                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                             rowsPerPageTemplate="5,10,15,20,25,30" editable="true" style="margin-bottom:20px" emptyMessage="No se encontraron Registros." 
+                                                             rendered="true" sortBy="#{cathab.personalCategorias.categoria}" expandableRowGroups="true">
 
-                                        <p:commandLink  ajax="false">
-                                            <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
-                                            <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvaluaciones"
-                                                            fileName="combinaciones"/>
-                                        </p:commandLink>
-                                    </f:facet>
-                                    <p:column headerText="Clave Evaluador" filterBy="#{listaEncuesta.evaluador.clave}" filterMatchMode="contains" sortBy="#{listaEncuesta.evaluador.clave}"   >
-                                        <h:outputText value="#{listaEncuesta.evaluador.clave}" />
-                                    </p:column>
+                                                    <p:ajax event="rowEdit" listener="#{adminEvaluacion360.onRowEditEvaluacion}" update="tblcatHab" process="@this"/>
+                                                    <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="tblcatHab" />
 
-                                    <p:column headerText="Evaluador" filterBy="#{listaEncuesta.evaluador.nombre}" filterMatchMode="contains" sortBy="#{listaEncuesta.evaluador.nombre}"   >
-                                        <h:outputText value="#{listaEncuesta.evaluador.nombre}" />
-                                    </p:column>
-                                    <p:column headerText="Clave Evaluado" filterBy="#{listaEncuesta.evaluado.clave}" filterMatchMode="contains" sortBy="#{listaEncuesta.evaluado.clave}"   >
-                                        <h:outputText value="#{listaEncuesta.evaluado.clave}" />
-                                    </p:column>
-                                    <p:column headerText="Evaluado"  filterBy="#{listaEncuesta.evaluado.nombre}" filterMatchMode="contains" sortBy="#{listaEncuesta.evaluado.nombre}"  >
-                                        <h:outputText value="#{listaEncuesta.evaluado.nombre}" >
-                                        </h:outputText>
-                                    </p:column>
+                                                    <p:headerRow>
+                                                        <p:column colspan="2" styleClass="est">
+                                                            <h:outputText value="#{cathab.personalCategorias.nombre}"/>
+                                                        </p:column>
+                                                    </p:headerRow>   
 
-                                    <p:column headerText="Clave categoria" filterBy="#{listaEncuesta.categoria.categoria}" filterMatchMode="contains" sortBy="#{listaEncuesta.categoria.categoria}"  >
-                                        <h:outputText value="#{listaEncuesta.categoria.categoria}" >
-                                        </h:outputText>
-                                    </p:column>
-                                    <p:column headerText="Categoria" filterBy="#{listaEncuesta.categoria.nombre}" filterMatchMode="contains" sortBy="#{listaEncuesta.categoria.nombre}"  >
-                                        <h:outputText value="#{listaEncuesta.categoria.nombre}" >
-                                        </h:outputText>
-                                    </p:column>
+                                                    <p:column style="width: 10%">
+                                                        <p:commandButton actionListener="#{adminEvaluacion360.eliminaAineacion(cathab)}" update="tblcatHab" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar alineación">
+                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación de la asignación de la habilidad: #{cathab.habilidades.nombre} para la categoría #{cathab.personalCategorias.nombre}?" icon="ui-icon-alert" />
+                                                        </p:commandButton>
+                                                    </p:column>
+                                                    <p:column headerText="Habilidad"                                                            
+                                                              filterBy="#{cathab.habilidades.nombre}" 
+                                                              sortBy="#{cathab.habilidades.nombre}" 
+                                                              filterMatchMode="contains">
+                                                        <h:outputText value="#{cathab.habilidades.nombre}" />
+                                                    </p:column>         
+                                                </p:dataTable>  
 
-                                    <p:column headerText="Tipo" filterBy="#{listaEncuesta.tipo}" filterMatchMode="contains"    sortBy="#{listaEncuesta.tipo}"  >
+                                            </p:outputPanel>
 
-                                        <h:outputText value="#{listaEncuesta.tipo}" title="#{listaEncuesta.tipo}" />
+                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                            </p:confirmDialog>   
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Personal 360">  
+                                        <h:form id="frmListaper360">
+                                            <p:remoteCommand name="actualizarTabla2" actionListener="#{adminPoaValidacionPresupuestacion.imprimirValores()}" update="tblcat360" />
+                                            <p:dataTable id="tblcat360" var="perosnalCategorias" value="#{controladorPersonalconfiguracion.listPersonal}"
+                                                         rows="10" paginator="true" editable="true" 
+                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                         rowsPerPageTemplate="10,20,30" sortBy="#{perosnalCategorias.areaSuperior}" expandableRowGroups="true">
 
-                                    </p:column>
+                                                <p:headerRow>
+                                                    <p:column colspan="7" styleClass="est">
+                                                        <h:outputText value="#{controladorIncidenciasGeneral.buscarArea(perosnalCategorias.actividad.actividad eq 1?perosnalCategorias.areaOperativa:perosnalCategorias.areaSuperior)}" />
+                                                    </p:column>
+                                                </p:headerRow>       
 
-                                </p:dataTable>
-                            </p:panel>
-                            <!--# {adminEvaluacion360.resultados}-->
+
+                                                <f:facet name="header">
+                                                    Plantilla Perosnal
+                                                </f:facet>
+
+                                                <p:ajax event="rowEdit" listener="#{controladorPersonalconfiguracion.onRowEdit}" update="@this" oncomplete="actualizarTabla2()"/>
+                                                <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla2()"/>
+
+                                                <p:columnGroup type="header">
+                                                    <p:row class="success">
+                                                        <p:column rowspan="2" style="width:50px" styleClass="hederTablesTitle"/>
+                                                        <p:column headerText="No." style="width: 4%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.clave}" />
+                                                        <p:column headerText="Foto" style="width: 10%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.clave}" />
+                                                        <p:column headerText="Nombre." style="width: 15%; background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.nombre}" />
+                                                        <p:column headerText="Área" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.areaOperativa}" />
+                                                        <p:column headerText="Cat. OP" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.categoriaOperativa.categoria}" />
+                                                        <p:column headerText="Cat. 360°" style="background-color: #cccccc; color: #000000;" sortBy="#{perosnalCategorias.categoria360.categoria}" />
+                                                        <p:column class="noprint" style="width: 5%; background-color: #cccccc; color: #000000;"/>
+                                                    </p:row>
+                                                </p:columnGroup>
+                                                <p:column rendered="#{perosnalCategorias.categoria360.habilidadesList.size() eq 0?false:true}">
+                                                    <p:rowToggler />
+                                                </p:column>
+                                                <p:column rendered="#{perosnalCategorias.categoria360.habilidadesList.size() eq 0?true:false}"/>
+                                                <p:column> 
+                                                    <h:outputText value="#{perosnalCategorias.clave}" />
+                                                </p:column>
+                                                <p:column> 
+                                                    <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{perosnalCategorias.clave}.jpg" alt="#{perosnalCategorias.clave}" class="img-circle" title="Personal #{perosnalCategorias.clave}" style="width: 80px; height: 80px; align-content: center;"/>
+                                                </p:column>
+                                                <p:column> 
+                                                    <h:outputText value="#{perosnalCategorias.nombre}" />
+                                                </p:column>
+                                                <p:column> 
+                                                    <h:outputText value="#{controladorPersonalconfiguracion.nombreArea(perosnalCategorias.areaOperativa)}" />
+                                                </p:column>
+                                                <p:column> 
+                                                    <h:outputText value="#{perosnalCategorias.categoriaOperativa.nombre}" />
+                                                </p:column>
+                                                <p:column> 
+                                                    <p:cellEditor>
+                                                        <f:facet name="output"><h:outputText value="#{perosnalCategorias.categoria360.nombre}" /></f:facet>
+                                                        <f:facet name="input">
+                                                            <p:selectOneMenu value="#{perosnalCategorias.categoria360.categoria}" style="width:100%" filter="true" filterMatchMode="contains">
+                                                                <f:selectItems value="#{controladorPersonalconfiguracion.nuevaListaPersonalCategoriases360}" var="cat" itemLabel="#{cat.nombre}" itemValue="#{cat.categoria}" />
+                                                            </p:selectOneMenu>
+                                                        </f:facet>
+                                                    </p:cellEditor>
+                                                </p:column>
+                                                <p:column class="noprint">
+                                                    <p:rowEditor />
+                                                </p:column>
+                                                <p:rowExpansion rendered="#{poa.recursosActividad.size() eq 0?false:true}">
+                                                    <p:panelGrid id="pnlRecurso" style="text-align:justify;" columns="1">
+                                                        <p:dataTable id="hibilidades" var="hb" style="background:  #cccccc"                                                                        
+                                                                     sortBy="#{hb.habilidades.nombre}" expandableRowGroups="true" value="#{perosnalCategorias.categoria360.categoriasHabilidadesList}">
+                                                            <p:column headerText="Habilidad" rendered="#{hb.evaluaciones360.evaluacion eq 15}">
+                                                                <h:outputText value="#{hb.habilidades.nombre}"/>
+                                                            </p:column>
+                                                        </p:dataTable>
+                                                    </p:panelGrid>
+                                                </p:rowExpansion>
+                                            </p:dataTable>
+                                        </h:form>
+                                    </p:tab>
+                                    <p:tab title="Conbinaciones">
+                                        <h:form id="frm" prependId="false" class="form-inline">
+                                            <div class="box box-primary">
+                                                <div class="box-header with-border">
+                                                    <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                                        <p:outputPanel >
+                                                            <p:autoUpdate/>
+                                                            <p:toolbar id="tb">
+                                                                <f:facet name="right">
+                                                                    <h:panelGrid columns="12">
+                                                                        <p:commandButton value="Generar combinaciones" actionListener="#{adminEvaluacion360.generaEvaluacion360}" styleClass="ui-button" update="tblEvaluaciones"/>
+                                                                        <!--
+                                                                        <p:selectOneMenu value="#{adminEvaluacion360.nivelOperacion}" id="som1" >
+                                                                            <f:selectItem itemLabel="Seleccione una opcion" />
+                                                                            <f:selectItem itemValue="2" itemDescription="Visualiza y administra las combinaciones de evaluaciones"  itemLabel="Combinaciones" />
+                                                                            <f:selectItem itemValue="1" itemDescription="Agrega una nueva evaluación" itemLabel="Nueva Evaluacion" />
+                                                                            <f:selectItem itemValue="3" itemDescription="Listado de evaluaciones" itemLabel="Lista de Evaluaciones" />
+                                                                            <p:ajax process="som1" update="pnl1" />
+                                                                        </p:selectOneMenu>
+                                                                        <p:spacer width="15px"/>
+                                
+                                                                        <p:outputPanel id="pnl1" >
+                                                                            <p:autoUpdate/>
+                                                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq(2)}" style="margin-top: 4px; margin-bottom: -3px;">
+                                                                                <p:spacer width="15px"/>
+                                                                                <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}">
+                                                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                                                </p:selectBooleanButton>
+                                                                                <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.edesempenio}">
+                                                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                                                </p:selectBooleanButton>
+                                                                            </p:outputPanel>
+                                
+                                                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq (1)}">
+                                                                                <p:spacer width="15px"/>
+                                                                                <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}">
+                                                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                                                </p:selectBooleanButton>
+                                                                                <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño" value="#{adminEvaluacion360.edesempenio}" >
+                                                                                    <p:ajax process="@this" update="@form:tb"/>
+                                                                                </p:selectBooleanButton>
+                                                                                <p:commandButton class="btn btn-primary" value="Agregar" icon="fa fa-plus" oncomplete="PF('modalNEvaluacion').show()" actionListener="#{adminEvaluacion360.validarNuevaEvaluacion()}"/>
+                                                                            </p:outputPanel>
+                                
+                                                                            <p:outputPanel rendered="#{adminEvaluacion360.nivelOperacion eq (3)}" id="nivel3">
+                                                                                <p:spacer width="15px"/>
+                                                                                <f:ajax execute="nivel3">
+                                                                                    <p:selectBooleanButton onLabel="360°" offLabel="360°" value="#{adminEvaluacion360.e360b}" >
+                                                                                        <p:ajax process="@this" update="@form:tb"/>
+                                                                                    </p:selectBooleanButton>
+                                                                                    <p:selectBooleanButton onLabel="Desempeño" offLabel="Desempeño°" value="#{adminEvaluacion360.edesempenio}" >
+                                                                                        <p:ajax process="@this" update="@form:tb"/>
+                                                                                    </p:selectBooleanButton>
+                                                                                    <p:commandButton class="btn btn-primary" value="Ver" icon="fa fa-eye"  actionListener="#{adminEvaluacion360.verListaEvaluaciones()}" process="@this" update="tblEvaluaciones"/>
+                                                                                </f:ajax>
+                                                                            </p:outputPanel>
+                                                                        </p:outputPanel>
+                                                                        -->
+                                                                    </h:panelGrid>
+                                                                </f:facet>
+                                                            </p:toolbar>
+                                                            <p:sticky target="tb" />
+                                                        </p:outputPanel>
+                                                    </div>
+                                                    <div class="box box-solid">
+                                                        <div class="box-body">
+                                                            <p:panel id="panelTblCombinaciones">
+                                                                <p:dataTable id="tblEvaluaciones" lazy="false" value="#{adminEvaluacion360.combinacionesDto}"   var="listaEncuesta" filterDelay="700"
+                                                                             paginator="true" rows="5"
+                                                                             rowsPerPageTemplate="10,20,30,40,50"
+                                                                             emptyMessage="No se encontrarono registros"  >
+                                                                    <f:facet name="header">
+
+                                                                        <p:commandLink  ajax="false">
+                                                                            <p:graphicImage library="img" name="iconoExcel.png" width="37" height="35" />
+                                                                            <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="xls" target="tblEvaluaciones"
+                                                                                            fileName="combinaciones"/>
+                                                                        </p:commandLink>
+                                                                    </f:facet>
+                                                                    <p:column headerText="Clave Evaluador" filterBy="#{listaEncuesta.evaluador.clave}" filterMatchMode="contains" sortBy="#{listaEncuesta.evaluador.clave}"   >
+                                                                        <h:outputText value="#{listaEncuesta.evaluador.clave}" />
+                                                                    </p:column>
+
+                                                                    <p:column headerText="Evaluador" filterBy="#{listaEncuesta.evaluador.nombre}" filterMatchMode="contains" sortBy="#{listaEncuesta.evaluador.nombre}"   >
+                                                                        <h:outputText value="#{listaEncuesta.evaluador.nombre}" />
+                                                                    </p:column>
+                                                                    <p:column headerText="Clave Evaluado" filterBy="#{listaEncuesta.evaluado.clave}" filterMatchMode="contains" sortBy="#{listaEncuesta.evaluado.clave}"   >
+                                                                        <h:outputText value="#{listaEncuesta.evaluado.clave}" />
+                                                                    </p:column>
+                                                                    <p:column headerText="Evaluado"  filterBy="#{listaEncuesta.evaluado.nombre}" filterMatchMode="contains" sortBy="#{listaEncuesta.evaluado.nombre}"  >
+                                                                        <h:outputText value="#{listaEncuesta.evaluado.nombre}" >
+                                                                        </h:outputText>
+                                                                    </p:column>
+
+                                                                    <p:column headerText="Clave categoria" filterBy="#{listaEncuesta.categoria.categoria}" filterMatchMode="contains" sortBy="#{listaEncuesta.categoria.categoria}"  >
+                                                                        <h:outputText value="#{listaEncuesta.categoria.categoria}" >
+                                                                        </h:outputText>
+                                                                    </p:column>
+                                                                    <p:column headerText="Categoria" filterBy="#{listaEncuesta.categoria.nombre}" filterMatchMode="contains" sortBy="#{listaEncuesta.categoria.nombre}"  >
+                                                                        <h:outputText value="#{listaEncuesta.categoria.nombre}" >
+                                                                        </h:outputText>
+                                                                    </p:column>
+
+                                                                    <p:column headerText="Tipo" filterBy="#{listaEncuesta.tipo}" filterMatchMode="contains"    sortBy="#{listaEncuesta.tipo}"  >
+
+                                                                        <h:outputText value="#{listaEncuesta.tipo}" title="#{listaEncuesta.tipo}" />
+
+                                                                    </p:column>
+
+                                                                </p:dataTable>
+                                                            </p:panel>
+                                                            <!--# {adminEvaluacion360.resultados}-->
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </h:form>
+                                    </p:tab>
+                                    <p:blockUI block="informacion" widgetVar="bloqueoCargaFile">
+                                        Cargando archivo espere por favor.<br />
+                                    </p:blockUI>
+                                </p:tabView>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </h:form>
-
+                </section>
+            </p:panel> 
         </c:if>
     </ui:define>
 </ui:composition>

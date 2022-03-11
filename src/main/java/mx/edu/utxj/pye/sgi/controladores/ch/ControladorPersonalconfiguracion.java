@@ -201,49 +201,6 @@ public class ControladorPersonalconfiguracion implements Serializable {
         }
     }
 
-    public void agregaCategoriasHabilidadesEvAnterior() {
-        try {
-            pestaniaActica = 4;
-            categoriasHabilidadeses = new ArrayList<>();
-            categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
-            Evaluaciones360 e = ejbUtilidadesCH.muestraEvaluaciones360();
-            if (categoriasHabilidadeses.isEmpty()) {
-                categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades((periodoEv - 1));
-                categoriasHabilidadeses = new ArrayList<>();
-                if (!categoriasHabilidadeses.isEmpty()) {
-                    categoriasHabilidadeses.forEach((t) -> {
-                        CategoriasHabilidades ch = new CategoriasHabilidades();
-                        CategoriasHabilidadesPK chpk = new CategoriasHabilidadesPK();
-
-                        chpk.setCategoria(t.getPersonalCategorias().getCategoria());
-                        chpk.setHabilidad(t.getHabilidades().getHabilidad());
-                        chpk.setEvaluacion(e.getEvaluacion());
-
-                        ch.setCategoriasHabilidadesPK(new CategoriasHabilidadesPK());
-                        ch.setCategoriasHabilidadesPK(chpk);
-                        ch.setEvaluaciones360(new Evaluaciones360());
-                        ch.setHabilidades(new Habilidades());
-                        ch.setPersonalCategorias(new PersonalCategorias());
-
-                        ch.setEvaluaciones360(e);
-                        ch.setHabilidades(t.getHabilidades());
-                        ch.setPersonalCategorias(t.getPersonalCategorias());
-
-                        try {
-                            ejbUtilidadesCH.crearCategoriasHabilidades(ch);
-                        } catch (Throwable ex) {
-                            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-                            Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    });
-                }
-            }
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     public void crearNuevasAreaUnivercidad() {
         try {
             nuevoOBJAreasUniversidad.setCategoria(new Categorias(claveCatagoria));
@@ -272,51 +229,6 @@ public class ControladorPersonalconfiguracion implements Serializable {
             nuevoOBJPersonalCategorias = ejbUtilidadesCH.crearNuevoPersonalCategorias(nuevoOBJPersonalCategorias);
             Messages.addGlobalInfo("¡Operación exitosa!!");
             generarListas();
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public void crearNuevaAsignacionHabilidad() {
-        try {
-            pestaniaActica = 4;
-            if (cvlHab == 0) {
-                habilidades.setActivo(Boolean.TRUE);
-                habilidades = ejbUtilidadesCH.crearNuevoHabilidades(habilidades);
-            }else{
-                habilidades=habilidadeses.stream().filter(t-> Objects.equals(t.getHabilidad(), cvlHab)).collect(Collectors.toList()).get(0);
-            }
-
-            Evaluaciones360 e = ejbUtilidadesCH.muestraEvaluaciones360();
-//            System.out.println("Evaluaciones360" + e);
-            CategoriasHabilidades ch = new CategoriasHabilidades();
-            CategoriasHabilidadesPK chpk = new CategoriasHabilidadesPK();
-                        
-//            System.out.println("habilidades" + habilidades);
-//            System.out.println("personalCategoriasSeleccionada" + personalCategoriasSeleccionada);
-            
-            chpk.setCategoria(personalCategoriasSeleccionada.getCategoria());
-            chpk.setHabilidad(habilidades.getHabilidad());
-            chpk.setEvaluacion(e.getEvaluacion());
-            
-//            System.out.println("CategoriasHabilidadesPK" + chpk);
-            
-            ch.setCategoriasHabilidadesPK(new CategoriasHabilidadesPK());
-            ch.setCategoriasHabilidadesPK(chpk);
-            ch.setEvaluaciones360(new Evaluaciones360());
-            ch.setHabilidades(new Habilidades());
-            ch.setPersonalCategorias(new PersonalCategorias());
-
-            ch.setEvaluaciones360(e);
-            ch.setHabilidades(habilidades);
-            ch.setPersonalCategorias(personalCategoriasSeleccionada);
-
-//            System.out.println("ch: " + ch);
-//            ejbUtilidadesCH.crearCategoriasHabilidades(ch);
-
-            Messages.addGlobalInfo("¡Operación exitosa!!");
-            consultaCategoriasHabilidades(1);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorPersonalconfiguracion.class.getName()).log(Level.SEVERE, null, ex);

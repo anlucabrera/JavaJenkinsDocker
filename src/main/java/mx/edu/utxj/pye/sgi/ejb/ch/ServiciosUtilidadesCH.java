@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
 import mx.edu.utxj.pye.sgi.entity.ch.CategoriasHabilidades;
+import mx.edu.utxj.pye.sgi.entity.ch.CategoriasHabilidadesPK;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.Eventos;
 import mx.edu.utxj.pye.sgi.entity.ch.EventosAreas;
@@ -36,7 +37,7 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
 
     @PersistenceContext(unitName = "mx.edu.utxj.pye_sgi-ejb_ejb_1.0PU")
     private EntityManager em;
-    
+
     List<Calendarioevaluacionpoa> calendarioevaluacionpoas = new ArrayList<>();
 
     @EJB
@@ -81,12 +82,12 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
     public List<Procesopoa> mostrarProcesopoa() throws Throwable {
         TypedQuery<Procesopoa> q = em.createQuery("SELECT p FROM Procesopoa p", Procesopoa.class);
         List<Procesopoa> pr = q.getResultList();
-        List<Procesopoa> pr2=new ArrayList<>();
+        List<Procesopoa> pr2 = new ArrayList<>();
         pr.forEach((t) -> {
-            if(t.getResponsable()!=null){
+            if (t.getResponsable() != null) {
                 pr2.add(t);
             }
-        });        
+        });
         return pr2;
     }
 
@@ -131,9 +132,9 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
             return es;
         }
     }
-    
+
     @Override
-    public List<Permisosevaluacionpoaex> mostrarPermisosEvaluacionExtemporaneaPOA(Date fecha,Procesopoa idP) throws Throwable {
+    public List<Permisosevaluacionpoaex> mostrarPermisosEvaluacionExtemporaneaPOA(Date fecha, Procesopoa idP) throws Throwable {
         TypedQuery<Permisosevaluacionpoaex> q = em.createQuery("SELECT cp FROM Permisosevaluacionpoaex cp WHERE cp.procesoPOA.procesoPOA=:idProceso AND (:fecha BETWEEN cp.fechaApertura AND cp.fechaCierre)", Permisosevaluacionpoaex.class);
         q.setParameter("fecha", fecha);
         q.setParameter("idProceso", idP.getProcesoPOA());
@@ -144,20 +145,21 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
             return pr;
         }
     }
+
     @Override
     public List<Calendarioevaluacionpoa> mostrarCalendaiosActivosAreaPOA(Date fecha, Procesopoa idP, Short area) {
         try {
-            
+
             calendarioevaluacionpoas = new ArrayList<>();
             List<Calendarioevaluacionpoa> calendarios = new ArrayList<>();
             calendarios = mostrarCalendarioevaluacionpoas();
             calendarios.forEach((t) -> {
-                if((fecha.after(t.getFechaInicio()) && fecha.before(t.getFechaFin())) || (fecha.equals(t.getFechaInicio()) || fecha.equals(t.getFechaFin()))){
+                if ((fecha.after(t.getFechaInicio()) && fecha.before(t.getFechaFin())) || (fecha.equals(t.getFechaInicio()) || fecha.equals(t.getFechaFin()))) {
                     calendarioevaluacionpoas.add(t);
                 }
             });
-            List<Permisosevaluacionpoaex> ps= new ArrayList<>();
-            ps=mostrarPermisosEvaluacionExtemporaneaPOA(fecha, idP);
+            List<Permisosevaluacionpoaex> ps = new ArrayList<>();
+            ps = mostrarPermisosEvaluacionExtemporaneaPOA(fecha, idP);
             if (!ps.isEmpty()) {
                 ps.forEach((t) -> {
                     Calendarioevaluacionpoa c = new Calendarioevaluacionpoa();
@@ -166,10 +168,10 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
                     c.setFechaInicio(t.getFechaCierre());
                     calendarioevaluacionpoas.add(c);
                 });
-            }     
+            }
             return calendarioevaluacionpoas;
         } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());            
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             return new ArrayList<>();
         }
     }
@@ -184,9 +186,8 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         } else {
             return pr.get(0);
         }
-    }  
-    
-        
+    }
+
     @Override
     public List<Calendarioevaluacionpoa> mostrarCalendariosEvaluacionActivos(Date fecha) throws Throwable {
         TypedQuery<Calendarioevaluacionpoa> q = em.createQuery("SELECT cp FROM Calendarioevaluacionpoa cp WHERE :fecha BETWEEN cp.fechaInicio AND cp.fechaFin", Calendarioevaluacionpoa.class);
@@ -197,8 +198,8 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         } else {
             return pr;
         }
-    }  
-    
+    }
+
     ////////////////////////////////////////////////////////////////////////////////Eventos Áreas
     @Override
     public List<EventosAreas> mostrarEventosesAreases() throws Throwable {
@@ -246,6 +247,14 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         List<PersonalCategorias> pr = q.getResultList();
         return pr;
     }
+    
+    @Override
+    public List<PersonalCategorias> mostrarListaPersonalCategorias360() throws Throwable {
+        TypedQuery<PersonalCategorias> q = em.createQuery("SELECT p FROM PersonalCategorias p WHERE p.tipo=:tipo ORDER BY p.nombre", PersonalCategorias.class);
+        q.setParameter("tipo", "Específica");
+        List<PersonalCategorias> pr = q.getResultList();
+        return pr;
+    }
 
     @Override
     public List<PersonalCategorias> mostrarListaPersonalCategoriasArea(Short area) throws Throwable {
@@ -261,34 +270,40 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
 
     @Override
     public PersonalCategorias crearNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable {
-        facade.setEntityClass(PersonalCategorias.class);
-        facade.create(nuevoPersonalCategorias);
-        facade.flush();
+        em.persist(nuevoPersonalCategorias);
+        em.flush();
         return nuevoPersonalCategorias;
-    }
+    }    
     
     @Override
-    public List<PeriodosEscolares> mostrarPeriodosEscolaresEvaluaciones360() throws Throwable{
+    public PersonalCategorias actualizarNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable {
+        em.merge(nuevoPersonalCategorias);
+        em.flush();
+        return nuevoPersonalCategorias;
+    }
+
+    @Override
+    public List<PeriodosEscolares> mostrarPeriodosEscolaresEvaluaciones360() throws Throwable {
         List<PeriodosEscolares> escolareses = new ArrayList<>();
         TypedQuery<PeriodosEscolares> pe = em.createQuery("SELECT p FROM PeriodosEscolares p ORDER BY p.periodo desc", PeriodosEscolares.class);
         escolareses = pe.getResultList();
         return escolareses;
     }
-    
+
     @Override
-    public Evaluaciones360 muestraEvaluaciones360() throws Throwable{
+    public Evaluaciones360 muestraEvaluaciones360() throws Throwable {
         TypedQuery<Evaluaciones360> q = em.createQuery("SELECT p FROM Evaluaciones360 p", Evaluaciones360.class);
         List<Evaluaciones360> pr = q.getResultList();
-        return pr.get(pr.size()-1);
+        return pr.get(pr.size() - 1);
     }
-    
+
     @Override
     public List<Habilidades> mostrarListaHabilidades() throws Throwable {
-        TypedQuery<Habilidades> q = em.createQuery("SELECT p FROM Habilidades p", Habilidades.class);
+        TypedQuery<Habilidades> q = em.createQuery("SELECT p FROM Habilidades p ORDER BY p.nombre", Habilidades.class);
         List<Habilidades> pr = q.getResultList();
         return pr;
     }
-    
+
     @Override
     public Habilidades crearNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable {
         em.persist(nuevoHabilidades);
@@ -302,27 +317,57 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         em.flush();
         return nuevoHabilidades;
     }
-    
+
     @Override
-    public List<CategoriasHabilidades> mostrarCategoriasHabilidades(Integer periodo) throws Throwable{
+    public List<CategoriasHabilidades> mostrarCategoriasHabilidades(Integer periodo) throws Throwable {
         TypedQuery<CategoriasHabilidades> q = em.createQuery("SELECT p FROM CategoriasHabilidades p INNER JOIN p.evaluaciones360 ev WHERE ev.periodo=:periodo", CategoriasHabilidades.class);
         q.setParameter("periodo", periodo);
         List<CategoriasHabilidades> pr = q.getResultList();
         return pr;
     }
-    
+
     @Override
     public CategoriasHabilidades crearCategoriasHabilidades(CategoriasHabilidades categoriasHabilidades) throws Throwable {
         em.persist(categoriasHabilidades);
         em.flush();
         return categoriasHabilidades;
     }
-    
+
     @Override
     public CategoriasHabilidades eliminarCategoriasHabilidades(CategoriasHabilidades categoriasHabilidades) throws Throwable {
-        em.persist(categoriasHabilidades);
+//        CategoriasHabilidadesPK ch = em.find(categoriasHabilidades.getCategoriasHabilidadesPK(), CategoriasHabilidadesPK.class);
+        em.remove(em.merge(categoriasHabilidades));
         em.flush();
         return categoriasHabilidades;
+    }
+    
+    @Override
+    public List<Evaluaciones360> getEvaluaciones360() throws Throwable {
+        TypedQuery<Evaluaciones360> q = em.createQuery("SELECT p FROM Evaluaciones360 p ORDER BY p.periodo DESC", Evaluaciones360.class);
+        List<Evaluaciones360> pr = q.getResultList();
+        return pr;
+    }
+    
+    @Override
+    public Evaluaciones360 getEvaluaciones360Periodo(Integer cvlPeriodo) throws Throwable {
+        TypedQuery<Evaluaciones360> q = em.createQuery("SELECT p FROM Evaluaciones360 p WHERE p.periodo=:periodo", Evaluaciones360.class);
+        q.setParameter("periodo", cvlPeriodo);
+        List<Evaluaciones360> pr = q.getResultList();
+        return pr.get(0);
+    }
+
+    @Override
+    public Evaluaciones360 crearNuevaEvaluaciones360(Evaluaciones360 e360) throws Throwable {
+        em.persist(e360);
+        em.flush();
+        return e360;
+    }
+
+    @Override
+    public Evaluaciones360 actualizarEvaluaciones360(Evaluaciones360 e360) throws Throwable {
+        em.merge(e360);
+        em.flush();
+        return e360;
     }
 
 ////////////////////////////////////////////////////////////////////////////////Bitacora Accesos
@@ -438,7 +483,7 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         if (nivel != 0) {
             q.setParameter("titulo", titulo);
         }
-        
+
         List<MenuDinamico> pr = q.getResultList();
         if (pr.isEmpty()) {
             return new ArrayList<>();
@@ -446,8 +491,8 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
             return pr;
         }
     }
-    
-     @Override
+
+    @Override
     public List<MenuDinamico> mostrarListaTitulosMenu(ListaPersonal personal, Integer nivel, String titulo, String tipoUsuario) {
         TypedQuery<MenuDinamico> q = em.createQuery("SELECT m FROM MenuDinamico m WHERE  (m.personas LIKE CONCAT('%-',:personas,'-%' ) OR m.areas LIKE CONCAT('%',:areas,'%' ) OR m.categorias LIKE CONCAT('%',:categorias,'%' ) OR m.actividades LIKE CONCAT('%',:actividades,'%' )) AND m.activo=:activo AND m.tipoUsuario=:tipoUsuario AND m.tituloNivel1 !='' GROUP BY m.encabezado ORDER BY m.modulo", MenuDinamico.class);
         switch (nivel) {
@@ -476,7 +521,7 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
         if (nivel != 0) {
             q.setParameter("titulo", titulo);
         }
-        
+
         List<MenuDinamico> pr = q.getResultList();
         if (pr.isEmpty()) {
             return new ArrayList<>();
@@ -484,9 +529,9 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
             return pr;
         }
     }
-    
+
     @Override
-    public List<MenuDinamico> mostrarListaMenuDocumentacion(){
+    public List<MenuDinamico> mostrarListaMenuDocumentacion() {
         TypedQuery<MenuDinamico> q = em.createQuery("SELECT m FROM MenuDinamico m WHERE m.activo=:activo AND m.tipoUsuario=:tipoUsuario AND m.tipoenlace=:tipoenlace ORDER BY m.modulo", MenuDinamico.class);
         q.setParameter("activo", true);
         q.setParameter("tipoUsuario", "Trabajador");
@@ -498,7 +543,7 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
             return pr;
         }
     }
-    
+
     @Override
     public MenuDinamico agregarMenuDocumentacion(MenuDinamico md) {
         facade.setEntityClass(MenuDinamico.class);
@@ -516,10 +561,10 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
 
         return md;
     }
-    
+
 ////////////////////////////////////////////////////////////////////////////////Errores
     @Override
-    public List<Reporteerrores> mostrarListaReporteerroreses(){
+    public List<Reporteerrores> mostrarListaReporteerroreses() {
         facade.setEntityClass(Reporteerrores.class);
         List<Reporteerrores> es = facade.findAll();
         if (es.isEmpty()) {
@@ -530,21 +575,21 @@ public class ServiciosUtilidadesCH implements EjbUtilidadesCH {
     }
 
     @Override
-    public Reporteerrores agregarReporteerroreses(Reporteerrores r){
+    public Reporteerrores agregarReporteerroreses(Reporteerrores r) {
         facade.setEntityClass(Reporteerrores.class);
         facade.create(r);
         return r;
     }
 
     @Override
-    public Reporteerrores actualizarReporteerroreses(Reporteerrores r){
+    public Reporteerrores actualizarReporteerroreses(Reporteerrores r) {
         facade.setEntityClass(Reporteerrores.class);
         facade.edit(r);
         return r;
     }
 
     @Override
-    public Reporteerrores eliminarReporteerroreses(Reporteerrores r){
+    public Reporteerrores eliminarReporteerroreses(Reporteerrores r) {
         facade.setEntityClass(Reporteerrores.class);
         facade.remove(r);
         return r;
