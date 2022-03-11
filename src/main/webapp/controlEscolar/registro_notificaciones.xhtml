@@ -275,14 +275,13 @@
                                                                     <p:column rowspan="2" headerText="Titulo" filterBy="#{notificacion.tituloPrincipal}" filterMatchMode="contains" style="width: 150px;" />
                                                                     <p:column rowspan="2" headerText="Subtitulo" filterBy="#{notificacion.subtitulo}" filterMatchMode="contains" style="width: 150px;"/>
                                                                     <p:column rowspan="2" headerText="Tipo" filterBy="#{notificacion.tipo}" filterMatchMode="contains" style="width: 70px;"/>
-                                                                    <p:column rowspan="2" headerText="Lugar" style="width: 100px;"/> 
-                                                                    <p:column rowspan="2" headerText="Hora Inicio" style="width: 80px;"/> 
+                                                                    <p:column rowspan="2" headerText="Lugar" style="width: 100px;"/>
+                                                                    <p:column rowspan="2" headerText="Hora Inicio" style="width: 80px;"/>
                                                                     <p:column rowspan="2" headerText="Hora Fin" style="width: 80px;" />
                                                                     <p:column rowspan="2" headerText="Duracion Evento" style="width: 60px;"/>
                                                                     <p:column rowspan="2" headerText="Persona Responsable" style="width: 80px;"/>
-                                                                    <p:column rowspan="2" headerText="Expositor" style="width: 80px;"/> 
-                                                                    <p:column rowspan="2" headerText="Alcance" style="width: 80px;"/> 
-                                                                    <p:column rowspan="2" headerText="Fecha Registro" style="width: 80px;"/> 
+                                                                    <p:column rowspan="2" headerText="Expositor" style="width: 80px;"/>
+                                                                    <p:column rowspan="2" headerText="Alcance" style="width: 80px;"/>
                                                                 </p:row>
                                                             </p:columnGroup>
                                                             <p:ajax event="rowEdit" listener="#{registroNotificacionesGeneral.actualizarNotificacion(notificacion)}" update="@this" />
@@ -327,7 +326,7 @@
                                                                                          value="#{notificacion.tipo}" 
                                                                                          label="Alcance de notificación" 
                                                                                          filter="true" 
-                                                                                         filterMatchMode="startsWith" 
+                                                                                         filterMatchMode="contains" 
                                                                                          panelStyle="width:400px"
                                                                                          style="width: 35em"
                                                                                          >
@@ -353,32 +352,31 @@
                                                             <p:column >
                                                                 <p:cellEditor>
                                                                     <f:facet name="output">
-                                                                        <h:outputText value="#{notificacion.horaInicio}" ><f:convertDateTime pattern="dd-MM-yyyy hh:mm:ss a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
+                                                                        <h:outputText value="#{notificacion.horaInicio}" ><f:convertDateTime pattern="dd 'de' MMMM 'a las' hh:mm a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
                                                                     </f:facet>
                                                                     <f:facet name="input">
-                                                                        <p:calendar value="#{notificacion.horaInicio}" pattern="dd-MM-yyyy hh:mm:ss a" />
+                                                                        <p:calendar value="#{notificacion.horaInicio}" stepMinute="15" pattern="dd-MM-yyyy hh:mm:ss a" defaultHour="#{registroNotificacionesGeneral.obtenerHora(notificacion.horaInicio)}" defaultMinute="#{registroNotificacionesGeneral.obtenerMinuto(notificacion.horaInicio)}" showSecond="false" locale="es" timeZone="America/Mexico_City" timeControlType="select"/>
                                                                     </f:facet>
                                                                 </p:cellEditor>
                                                             </p:column> 
                                                             <p:column >
                                                                 <p:cellEditor>
                                                                     <f:facet name="output">
-                                                                        <h:outputText value="#{notificacion.horaFin}" ><f:convertDateTime pattern="dd-MM-yyyy hh:mm:ss a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
+                                                                        <h:outputText value="#{notificacion.horaFin}" ><f:convertDateTime pattern="dd 'de' MMMM 'a las' hh:mm a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
                                                                     </f:facet>
                                                                     <f:facet name="input">
-                                                                        <!--<p:inputMask value="#{notificacion.horaFin}" mask="99-99-9999 99:99:99"/>-->
-                                                                        <p:calendar value="#{notificacion.horaFin}" pattern="dd-MM-yyyy hh:mm:ss a" />
+                                                                        <p:calendar value="#{notificacion.horaFin}" stepMinute="15" defaultHour="#{registroNotificacionesGeneral.obtenerHora(notificacion.horaFin)}" defaultMinute="#{registroNotificacionesGeneral.obtenerMinuto(notificacion.horaFin)}"  pattern="dd-MM-yyyy hh:mm:ss a" showSecond="false" locale="es" timeZone="America/Mexico_City" timeControlType="select"/>
                                                                     </f:facet>
                                                                 </p:cellEditor>
                                                             </p:column> 
                                                             <p:column >
                                                                 <p:cellEditor>
+
                                                                     <f:facet name="output">
-                                                                        <h:outputText value="#{notificacion.duracionEvento}" ><f:convertDateTime pattern="HH:mm:ss" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
+                                                                        <h:outputText value="#{notificacion.duracionEvento}" ><f:convertDateTime pattern="HH:mm 'hora(s)'" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
                                                                     </f:facet>
                                                                     <f:facet name="input">
-                                                                        <!--<p:inputMask value="#{notificacion.duracionEvento}" mask="99-99-9999 99:99:99"/>-->
-                                                                        <p:calendar value="#{notificacion.duracionEvento}" pattern="HH:mm" timeInput="true" timeOnly="true" timeControlType="select"/>
+                                                                        <p:calendar value="#{notificacion.duracionEvento}" stepMinute="15" pattern="HH:mm" defaultHour="#{registroNotificacionesGeneral.obtenerHora(notificacion.duracionEvento)}" defaultMinute="#{registroNotificacionesGeneral.obtenerMinuto(notificacion.duracionEvento)}" timeInput="true" timeOnly="true" locale="es" timeZone="America/Mexico_City"  timeControlType="select"/>
                                                                     </f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
@@ -423,15 +421,12 @@
                                                                     </f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>
-                                                            <p:column >
-                                                                <h:outputText value="#{notificacion.fechaRegistro}" ><f:convertDateTime pattern="dd-MM-yyyy" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
-                                                            </p:column>
                                                         </p:dataTable>
                                                     </p:outputPanel>  
-                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                                        </p:confirmDialog>   
+                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                    </p:confirmDialog>   
                                                 </h:form>
                                             </div>
                                         </div>

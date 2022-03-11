@@ -425,7 +425,20 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             return false;
         }
     }
-
+    public Integer obtenerHora(Date fecha) {
+        int hora;
+        LocalDateTime horasFecha = utilidadesCH.castearDaLDT(fecha);
+        hora = horasFecha.getHour();
+        return hora;
+    }
+    
+    public Integer obtenerMinuto(Date fecha) {
+        int minuto;
+        LocalDateTime horasFecha = utilidadesCH.castearDaLDT(fecha);
+        minuto = horasFecha.getMinute();
+        return minuto;
+    }
+    
     public boolean mostrarNotificacion(int index, Date horaInicio, Date horaFin) {
         LocalDateTime horaActual = LocalDateTime.now();
         LocalDateTime horaComienzo = utilidadesCH.castearDaLDT(horaInicio);
