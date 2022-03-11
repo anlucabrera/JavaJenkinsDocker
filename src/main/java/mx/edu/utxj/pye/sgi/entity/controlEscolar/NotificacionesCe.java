@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "notificaciones_ce", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "NotificacionesCe.findAll", query = "SELECT n FROM NotificacionesCe n"),
+    @NamedQuery(name = "NotificacionesCe.findAll", query = "SELECT n FROM NotificacionesCe n ORDER BY n.horaInicio ASC "),
     @NamedQuery(name = "NotificacionesCe.findByNotificacion", query = "SELECT n FROM NotificacionesCe n WHERE n.notificacion = :notificacion"),
     @NamedQuery(name = "NotificacionesCe.findByAreaResponsable", query = "SELECT n FROM NotificacionesCe n WHERE n.areaResponsable = :areaResponsable"),
     @NamedQuery(name = "NotificacionesCe.findByTituloPrincipal", query = "SELECT n FROM NotificacionesCe n WHERE n.tituloPrincipal = :tituloPrincipal"),
@@ -126,18 +126,44 @@ public class NotificacionesCe implements Serializable {
         this.notificacion = notificacion;
     }
 
-    public NotificacionesCe(Integer notificacion, String tituloPrincipal, String subtitulo, String tipo, String lugar, int personaRegistro, String alcance, boolean general, Date fechaRegistro) {
+    public NotificacionesCe(Integer notificacion, String areaResponsable, String tituloPrincipal, String subtitulo, String tipo, String lugar, Date horaInicio, Date horaFin, Date duracionEvento, String personaResponsable, String expositor, Integer participantesEstudiantes, Integer participantesPersonal, Integer participantesOtros, Integer personaRegistro, String alcance, Boolean general, Date fechaRegistro) {
         this.notificacion = notificacion;
+        this.areaResponsable = areaResponsable;
         this.tituloPrincipal = tituloPrincipal;
         this.subtitulo = subtitulo;
         this.tipo = tipo;
         this.lugar = lugar;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+        this.duracionEvento = duracionEvento;
+        this.personaResponsable = personaResponsable;
+        this.expositor = expositor;
+        this.participantesEstudiantes = participantesEstudiantes;
+        this.participantesPersonal = participantesPersonal;
+        this.participantesOtros = participantesOtros;
         this.personaRegistro = personaRegistro;
         this.alcance = alcance;
         this.general = general;
         this.fechaRegistro = fechaRegistro;
     }
 
+    public NotificacionesCe(String areaResponsable, String tituloPrincipal, String subtitulo, String tipo, String lugar, Date horaInicio, Date horaFin, Date duracionEvento, String personaResponsable, String expositor, Integer personaRegistro, String alcance, Date fechaRegistro) {
+        this.areaResponsable = areaResponsable;
+        this.tituloPrincipal = tituloPrincipal;
+        this.subtitulo = subtitulo;
+        this.tipo = tipo;
+        this.lugar = lugar;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+        this.duracionEvento = duracionEvento;
+        this.personaResponsable = personaResponsable;
+        this.expositor = expositor;
+        this.personaRegistro = personaRegistro;
+        this.alcance = alcance;
+        this.fechaRegistro = fechaRegistro;
+    }
+
+    
     public Integer getNotificacion() {
         return notificacion;
     }

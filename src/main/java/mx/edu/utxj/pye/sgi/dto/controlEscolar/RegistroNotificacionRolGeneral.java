@@ -34,7 +34,6 @@ public class RegistroNotificacionRolGeneral {
     @Getter             @Setter                 private                                     Date                                        fechaFinFiltro;
     
     @Getter             @Setter                 private                                     List<String>                                alcance;
-    
     @Getter             private                 String                                      pistaTituloPrincipal; //Considerar en el resultado mostrar el tipo y subtítulo de la notificación
     
     @Getter             private                 NotificacionesCe                            notificacionCe;

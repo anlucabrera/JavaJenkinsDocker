@@ -24,14 +24,14 @@
             <link rel="stylesheet" type="text/css" href="../resources/css/procesoElectoral.css" media="screen"/>
         </c:if>
         <!-- Fin estilos par proceso electoral -->
-        <style>
-            body {
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                -ms-user-select: none;
-                user-select: none;
-            }
-        </style>
+        <!--        <style>
+                    body {
+                        -webkit-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+                        user-select: none;
+                    }
+                </style>-->
     </ui:define>
 
     <ui:define name="title">
@@ -52,7 +52,7 @@
 
                     <div class="box box-primary">
                         <div class="box-header with-border">
-                            <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                            <h:form id="frmEncabezado"  prependId="false" class="form-inline">
                                 <div id="main-buttons" class="hidden-sm hidden-xs">
                                     <p:toolbar id="tb">
                                         <f:facet name="left">
@@ -85,7 +85,7 @@
                                             <!--Verificar si aplican filtros en este apartado-->
                                         </div>
                                     </h:form>
-                                    <h:form id="frmRegistro" prependId="false" class="form-inline">
+                                    <h:form id="frmRegistro" rendered="#{registroNotificacionesGeneral.admin}" prependId="false" class="form-inline">
                                         <p:remoteCommand id="actualizarRegistroNotificaciones" name="actualizarRegistroNotificaciones" actionListener="#{registroNotificacionesGeneral.actualizar}" process="@this" update="contenedor" /><!-- TODO: Falta incluir modales de enlace, áreas e imágenes -->
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 text-info">
@@ -249,31 +249,32 @@
                                                         </div>
                                                     </div>
                                                 </p:outputPanel>
-
-                                                <div class="row margin-bottom">
-                                                    <p:toolbar>
-                                                        <f:facet name="left">
-                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
-                                                            <p:outputLabel value="Listado de notificaciones registradas en sistema." style="padding-top: 5px;" />
-                                                        </f:facet>
-                                                    </p:toolbar>
+                                            </div>
+                                        </div>
+                                    </h:form>
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info">
+                                            <div class="row margin-bottom">
+                                                <p:toolbar>
+                                                    <f:facet name="left">
+                                                        <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                        <p:outputLabel value="Listado de notificaciones registradas en sistema." style="padding-top: 5px;" />
+                                                    </f:facet>
+                                                </p:toolbar>
+                                                <h:form id="frmTable">
                                                     <p:outputPanel >
-                                                        <p:remoteCommand name="actualizarTabla" actionListener="#{registroNotificacionesGeneral.metodoBase()}" update="dtNotificaciones" />
-                                                        <p:dataTable id="dtNotificaciones" value="#{registroNotificacionesGeneral.rol.listaNotificacionesCeRegistradas}" var="notificacion" 
-                                                                     emptyMessage="No premios registrados"
-                                                                     paginator="true"
-                                                                     rows="10"
+                                                        <p:remoteCommand name="actualizarTabla" actionListener="#{registroNotificacionesGeneral.metodoBase()}" update="tbNotificaciones" />
+                                                        <p:dataTable id="tbNotificaciones" value="#{registroNotificacionesGeneral.rol.listaNotificacionesCeRegistradas}" var="notificacion" 
                                                                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                                     rowsPerPageTemplate="5,10,15,20,25,30"
-                                                                     editable="true"
-                                                                     reflow="true"
-                                                                     >
+                                                                     paginator="true" editable="true" rows="10" reflow="true"
+                                                                     emptyMessage="Sin notificaciones registradas"
+                                                                     rowsPerPageTemplate="5,10,15,20,25,30">
                                                             <p:columnGroup type="header">
                                                                 <p:row class="success">
                                                                     <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:80px"/>
-                                                                    <p:column rowspan="2" headerText="Titulo" style="width: 150px;" />
-                                                                    <p:column rowspan="2" headerText="Subtitulo" style="width: 150px;"/>
-                                                                    <p:column rowspan="2" headerText="Tipo" style="width: 70px;"/>
+                                                                    <p:column rowspan="2" headerText="Titulo" filterBy="#{notificacion.tituloPrincipal}" filterMatchMode="contains" style="width: 150px;" />
+                                                                    <p:column rowspan="2" headerText="Subtitulo" filterBy="#{notificacion.subtitulo}" filterMatchMode="contains" style="width: 150px;"/>
+                                                                    <p:column rowspan="2" headerText="Tipo" filterBy="#{notificacion.tipo}" filterMatchMode="contains" style="width: 70px;"/>
                                                                     <p:column rowspan="2" headerText="Lugar" style="width: 100px;"/> 
                                                                     <p:column rowspan="2" headerText="Hora Inicio" style="width: 80px;"/> 
                                                                     <p:column rowspan="2" headerText="Hora Fin" style="width: 80px;" />
@@ -284,27 +285,25 @@
                                                                     <p:column rowspan="2" headerText="Fecha Registro" style="width: 80px;"/> 
                                                                 </p:row>
                                                             </p:columnGroup>
-
-                                                            <p:ajax event="rowEdit" listener="#{registroNotificacionesGeneral.actualizarNotificacion()}" update="@this" oncomplete="actualizarTabla()"/>
-                                                            <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla()"/>
-
+                                                            <p:ajax event="rowEdit" listener="#{registroNotificacionesGeneral.actualizarNotificacion(notificacion)}" update="@this" />
+                                                            <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" />
+                                                            <p:autoUpdate/>
                                                             <p:column >
-                                                                <p:commandButton actionListener="#{registroNotificacionesGeneral.eliminarNotificacion()}" update="dtNotificaciones" oncomplete="actualizarTabla()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
-                                                                    <p:confirm header="Confirmación" message="¿Confirma la eliminación de la notificacion #{notificacion.tituloPrincipal}?" icon="ui-icon-alert" />
+                                                                <p:commandButton actionListener="#{registroNotificacionesGeneral.eliminarNotificacion(notificacion)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash"
+                                                                                 styleClass="btn-primary" title="Eliminar aviso" disabled="#{!registroNotificacionesGeneral.admin}" >
+                                                                    <p:confirm header="Confirmación" message="¿Confirma la eliminación de la notificacion: #{notificacion.tituloPrincipal}?" icon="ui-icon-alert" />
                                                                 </p:commandButton>
                                                             </p:column>
-
                                                             <p:column >
                                                                 <p:rowEditor/>
                                                             </p:column>
-
                                                             <p:column >
                                                                 <p:cellEditor>
                                                                     <f:facet name="output">
                                                                         <h:outputText value="#{notificacion.tituloPrincipal}" />
                                                                     </f:facet>
                                                                     <f:facet name="input">
-                                                                        <p:inputTextarea value="#{notificacion.tituloPrincipal}" rows="6" cols="33"/>
+                                                                        <p:inputTextarea value="#{notificacion.tituloPrincipal}" rows="4" cols="33"/>
                                                                     </f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>      
@@ -314,7 +313,7 @@
                                                                         <h:outputText value="#{notificacion.subtitulo}" />
                                                                     </f:facet>
                                                                     <f:facet name="input">
-                                                                        <p:inputTextarea value="#{notificacion.subtitulo}" rows="6" cols="33"/>
+                                                                        <p:inputTextarea value="#{notificacion.subtitulo}" rows="4" cols="33"/>
                                                                     </f:facet>
                                                                 </p:cellEditor>
                                                             </p:column>      
@@ -357,7 +356,6 @@
                                                                         <h:outputText value="#{notificacion.horaInicio}" ><f:convertDateTime pattern="dd-MM-yyyy hh:mm:ss a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
                                                                     </f:facet>
                                                                     <f:facet name="input">
-                                                                        <!--<p:inputMask value="#{notificacion.horaInicio}" mask="99-99-9999 99:99:99"/>-->
                                                                         <p:calendar value="#{notificacion.horaInicio}" pattern="dd-MM-yyyy hh:mm:ss a" />
                                                                     </f:facet>
                                                                 </p:cellEditor>
@@ -430,14 +428,14 @@
                                                             </p:column>
                                                         </p:dataTable>
                                                     </p:outputPanel>  
-                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                        <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                                    </p:confirmDialog>   
-                                                </div>
+                                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                        </p:confirmDialog>   
+                                                </h:form>
                                             </div>
                                         </div>
-                                    </h:form>
+                                    </div>
                                 </div>
                             </div>
                         </div>

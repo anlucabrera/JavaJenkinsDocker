@@ -18,14 +18,30 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 public enum NotificacionesTipo {
-    REGISTRO("Registro",1d),
-    CONVOCATORIA("Convocatoria",1d),
-    RESULTADOS("Resultados",1d),
-    EVALUACION("Evaluación",1d),
-    ENCUESTA("Encuesta",1d),
-    AVISO("Aviso",1d),
-    BOLSA_TRABAJO("Bolsa de Trabajo",0d),
-    EXAMEN("Examen",1d);
+    AVISO("Aviso", 1d),
+    ACTIVIDAD("Actividad", 1d),
+    CAMPANA("Campaña", 1d),
+    CAPACITACION("Capacitación", 1d),
+    CEREMONIA("Ceremonia", 1d),
+    CICLO_CONFERENCIAS("Ciclo de conferencias", 1d),
+    CONCURSO("Concurso", 1d),
+    CONCURSO_INSTITUCIONAL("Concurso Institucional", 1d),
+    CONFERENCIA("Conferencia", 1d),
+    CONGRESO("Congreso", 1d),
+    CURSO("Curso", 1d),
+    CURSO_CONFERENCIA("Curso / Conferencia", 1d),
+    CURSO_TALLER("Curso / Taller", 1d),
+    DIFUSION("Difusión", 1d),
+    EVENTO("Evento", 1d),
+    EVENTO_NACIONAL("Evento nacional", 1d),
+    EXPOSICION("Exposición", 1d),
+    PARTICIPACION("Participación", 1d),
+    PLATICA("Plática", 1d),
+    PLATICA_CONFERENCIA("Plática y/o Conferencia", 1d),
+    PRESTACION("Prestación", 1d),
+    REUNION("Reunión", 1d),
+    SESION("Sesión", 1d),
+    TALLER("Taller", 1d);
     @Getter @NonNull private String label;
     @Getter @NonNull private Double nivel;
 
