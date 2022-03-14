@@ -51,7 +51,8 @@
                                                                         <p:ajax update="@form" listener="#{adminEvaluacion360.imprimirValores()}"/>
                                                                     </p:selectOneMenu >
                                                                     <hr/>
-                                                                </div><div class="col-sm-3 col-md-3 col-lg-3">                                                                              
+                                                                </div>
+                                                                <div class="col-sm-3 col-md-3 col-lg-3">                                                                              
                                                                     <p:outputLabel for="fechaIn" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Fecha de inicio"/>
                                                                     <p:calendar locale="es" id="fechaIn" value="#{adminEvaluacion360.fechaI}" pattern="dd-MM-yyyy" mask="true"/>
                                                                     <p:message for="fechaIn" display="tooltip"/>   
@@ -65,11 +66,12 @@
                                                             </div>
 
                                                             <div class="row">
-                                                                <p:outputPanel>       
+                                                                <p:outputPanel>  
+                                                                    <p:autoUpdate/>
                                                                     <div class="form-group">
                                                                         <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                                         <div class="col-sm-4 col-md-4 col-lg-4">
-                                                                            <p:commandButton id="btnAgrgaActividadesMultiples" value="Agregar Evaluación" disabled="#{adminEvaluacion360.otroPeriodo}" 
+                                                                            <p:commandButton id="btnAgrgaActividadesMultiples" value="Agregar Evaluación"
                                                                                              actionListener="#{adminEvaluacion360.crearEvluacion360()}" 
                                                                                              icon="fa fa-pencil-square-o" class="btn-primary btn-block col-md-3" update="@form" process="@form"/> 
                                                                         </div>

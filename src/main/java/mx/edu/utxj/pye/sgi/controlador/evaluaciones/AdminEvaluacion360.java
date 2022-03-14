@@ -386,25 +386,10 @@ public class AdminEvaluacion360 implements Serializable {
             periodoEv = periodosEscolareses.get(0).getPeriodo();
             periodoActivo = periodoEv;
             categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
-            pemitircrearEvaluacion();
             estatus.add(Boolean.TRUE);
             estatus.add(Boolean.FALSE);
             categorias = new PersonalCategorias();
             habilidades = new Habilidades();
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void pemitircrearEvaluacion() {
-        try {
-            if (periodoEv != evaluaciones360s.get(evaluaciones360s.size() - 1).getPeriodo()) {
-                otroPeriodo = Boolean.TRUE;
-            } else {
-                otroPeriodo = Boolean.FALSE;
-            }
-
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
@@ -485,6 +470,12 @@ public class AdminEvaluacion360 implements Serializable {
 
     public void crearEvluacion360() {
         try {
+            List<Evaluaciones360> es = new ArrayList<>();
+            es = evaluaciones360s.stream().filter(t -> t.getPeriodo() == periodoEv).collect(Collectors.toList());
+            if (!es.isEmpty()) {
+                Messages.addGlobalWarn("¡Ya cuenta con una evaluación para este periodo!");
+                return;
+            }
             evaluaciones360s = new ArrayList<>();
             evaluaciones360s.clear();
             Evaluaciones360 e360 = new Evaluaciones360();
@@ -494,7 +485,6 @@ public class AdminEvaluacion360 implements Serializable {
             ejbUtilidadesCH.crearNuevaEvaluaciones360(e360);
             evaluaciones360s = ejbUtilidadesCH.getEvaluaciones360();
             pestaniaActiva = 0;
-            pemitircrearEvaluacion();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
@@ -538,6 +528,10 @@ public class AdminEvaluacion360 implements Serializable {
             categoriasHabilidadeses = new ArrayList<>();
             categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
             Evaluaciones360 e = ejbUtilidadesCH.muestraEvaluaciones360();
+            if(!periodoEv.equals(e.getPeriodo())){
+                Messages.addGlobalError("¡Aún no cuenta con una evaluación para este periodo!");
+                return;
+            }
             if (categoriasHabilidadeses.isEmpty()) {
                 categoriasHabilidadeses = new ArrayList<>();
                 categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades((periodoEv - 1));

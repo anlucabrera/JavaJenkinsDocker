@@ -53,7 +53,7 @@ public class DTOreportePoa {
         @Getter @Setter @NonNull EjesRegistro ejesRegistro;
         @Getter @Setter @NonNull List<Estrategias> estrategiases;
     }
-    
+
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class ProgramacionActividades {
         @Getter @Setter @NonNull EjesRegistro ejesRegistro;
@@ -70,7 +70,7 @@ public class DTOreportePoa {
     public static class ActividadRecurso {
         @Getter @Setter @NonNull ActividadesPoa actividadesPoa;
         @Getter @Setter @NonNull UnidadMedidas medidas;
-        @Getter @Setter @NonNull List<RecursoActividad> recursosActividad;    
+        @Getter @Setter @NonNull List<RecursoActividad> recursosActividad;
     }
 
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
@@ -81,16 +81,40 @@ public class DTOreportePoa {
         @Getter @Setter @NonNull Partidas partidas;
         @Getter @Setter @NonNull CapitulosTipos capitulosTipos;
     }
-    
+
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class CapitulosLista {
         @Getter @Setter @NonNull Partidas partidas1;
         @Getter @Setter @NonNull Double total;
     }
-    
+
     @RequiredArgsConstructor @ToString @EqualsAndHashCode
     public static class ListaEjeEstrategia {
         @Getter @Setter @NonNull private EjesRegistro ejess;
         @Getter @Setter @NonNull private List<Estrategias> estrategiases;
+    }
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class ListaEjesEsLaAp {
+        @Getter @Setter @NonNull private EjesRegistro ejeA;
+        @Getter @Setter @NonNull private List<ListaEstrategiaActividades> listalistaEstrategiaLaAp;
+    }
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class ListaEstrategiaActividades {
+        @Getter @Setter @NonNull private Estrategias estrategias;
+        @Getter @Setter @NonNull private List<Actividad> actividadesPoas;
+    }
+
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class Actividad {
+        @Getter @Setter @NonNull private ActividadesPoa actividadesPoa;
+        @Getter @Setter @NonNull private Double totalPCuatrimestre;
+        @Getter @Setter @NonNull private Double totalACuatrimestre;
+        @Getter @Setter @NonNull private Double totalPCorte;
+        @Getter @Setter @NonNull private Double totalACorte;
+        @Getter @Setter @NonNull private Double porcentajeCuatrimestre, porcentejeAlCorte;
+        @Getter @Setter @NonNull private String semaforoC;
+        @Getter @Setter @NonNull private String semaforoG;
     }
 }
