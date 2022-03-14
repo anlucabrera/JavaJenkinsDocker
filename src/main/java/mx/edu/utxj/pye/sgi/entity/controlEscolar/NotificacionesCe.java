@@ -35,24 +35,25 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "notificaciones_ce", catalog = "control_escolar", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "NotificacionesCe.findAll", query = "SELECT n FROM NotificacionesCe n")
-    , @NamedQuery(name = "NotificacionesCe.findByNotificacion", query = "SELECT n FROM NotificacionesCe n WHERE n.notificacion = :notificacion")
-    , @NamedQuery(name = "NotificacionesCe.findByTituloPrincipal", query = "SELECT n FROM NotificacionesCe n WHERE n.tituloPrincipal = :tituloPrincipal")
-    , @NamedQuery(name = "NotificacionesCe.findBySubtitulo", query = "SELECT n FROM NotificacionesCe n WHERE n.subtitulo = :subtitulo")
-    , @NamedQuery(name = "NotificacionesCe.findByTipo", query = "SELECT n FROM NotificacionesCe n WHERE n.tipo = :tipo")
-    , @NamedQuery(name = "NotificacionesCe.findByLugar", query = "SELECT n FROM NotificacionesCe n WHERE n.lugar = :lugar")
-    , @NamedQuery(name = "NotificacionesCe.findByHoraInicio", query = "SELECT n FROM NotificacionesCe n WHERE n.horaInicio = :horaInicio")
-    , @NamedQuery(name = "NotificacionesCe.findByHoraFin", query = "SELECT n FROM NotificacionesCe n WHERE n.horaFin = :horaFin")
-    , @NamedQuery(name = "NotificacionesCe.findByDuracionEvento", query = "SELECT n FROM NotificacionesCe n WHERE n.duracionEvento = :duracionEvento")
-    , @NamedQuery(name = "NotificacionesCe.findByPersonaResponsable", query = "SELECT n FROM NotificacionesCe n WHERE n.personaResponsable = :personaResponsable")
-    , @NamedQuery(name = "NotificacionesCe.findByExpositor", query = "SELECT n FROM NotificacionesCe n WHERE n.expositor = :expositor")
-    , @NamedQuery(name = "NotificacionesCe.findByParticipantesEstudiantes", query = "SELECT n FROM NotificacionesCe n WHERE n.participantesEstudiantes = :participantesEstudiantes")
-    , @NamedQuery(name = "NotificacionesCe.findByParticipantesPersonal", query = "SELECT n FROM NotificacionesCe n WHERE n.participantesPersonal = :participantesPersonal")
-    , @NamedQuery(name = "NotificacionesCe.findByParticipantesOtros", query = "SELECT n FROM NotificacionesCe n WHERE n.participantesOtros = :participantesOtros")
-    , @NamedQuery(name = "NotificacionesCe.findByPersonaRegistro", query = "SELECT n FROM NotificacionesCe n WHERE n.personaRegistro = :personaRegistro")
-    , @NamedQuery(name = "NotificacionesCe.findByAlcance", query = "SELECT n FROM NotificacionesCe n WHERE n.alcance = :alcance")
-    , @NamedQuery(name = "NotificacionesCe.findByGeneral", query = "SELECT n FROM NotificacionesCe n WHERE n.general = :general")
-    , @NamedQuery(name = "NotificacionesCe.findByFechaRegistro", query = "SELECT n FROM NotificacionesCe n WHERE n.fechaRegistro = :fechaRegistro")})
+    @NamedQuery(name = "NotificacionesCe.findAll", query = "SELECT n FROM NotificacionesCe n ORDER BY n.horaInicio ASC "),
+    @NamedQuery(name = "NotificacionesCe.findByNotificacion", query = "SELECT n FROM NotificacionesCe n WHERE n.notificacion = :notificacion"),
+    @NamedQuery(name = "NotificacionesCe.findByAreaResponsable", query = "SELECT n FROM NotificacionesCe n WHERE n.areaResponsable = :areaResponsable"),
+    @NamedQuery(name = "NotificacionesCe.findByTituloPrincipal", query = "SELECT n FROM NotificacionesCe n WHERE n.tituloPrincipal = :tituloPrincipal"),
+    @NamedQuery(name = "NotificacionesCe.findBySubtitulo", query = "SELECT n FROM NotificacionesCe n WHERE n.subtitulo = :subtitulo"),
+    @NamedQuery(name = "NotificacionesCe.findByTipo", query = "SELECT n FROM NotificacionesCe n WHERE n.tipo = :tipo"),
+    @NamedQuery(name = "NotificacionesCe.findByLugar", query = "SELECT n FROM NotificacionesCe n WHERE n.lugar = :lugar"),
+    @NamedQuery(name = "NotificacionesCe.findByHoraInicio", query = "SELECT n FROM NotificacionesCe n WHERE n.horaInicio = :horaInicio"),
+    @NamedQuery(name = "NotificacionesCe.findByHoraFin", query = "SELECT n FROM NotificacionesCe n WHERE n.horaFin = :horaFin"),
+    @NamedQuery(name = "NotificacionesCe.findByDuracionEvento", query = "SELECT n FROM NotificacionesCe n WHERE n.duracionEvento = :duracionEvento"),
+    @NamedQuery(name = "NotificacionesCe.findByPersonaResponsable", query = "SELECT n FROM NotificacionesCe n WHERE n.personaResponsable = :personaResponsable"),
+    @NamedQuery(name = "NotificacionesCe.findByExpositor", query = "SELECT n FROM NotificacionesCe n WHERE n.expositor = :expositor"),
+    @NamedQuery(name = "NotificacionesCe.findByParticipantesEstudiantes", query = "SELECT n FROM NotificacionesCe n WHERE n.participantesEstudiantes = :participantesEstudiantes"),
+    @NamedQuery(name = "NotificacionesCe.findByParticipantesPersonal", query = "SELECT n FROM NotificacionesCe n WHERE n.participantesPersonal = :participantesPersonal"),
+    @NamedQuery(name = "NotificacionesCe.findByParticipantesOtros", query = "SELECT n FROM NotificacionesCe n WHERE n.participantesOtros = :participantesOtros"),
+    @NamedQuery(name = "NotificacionesCe.findByPersonaRegistro", query = "SELECT n FROM NotificacionesCe n WHERE n.personaRegistro = :personaRegistro"),
+    @NamedQuery(name = "NotificacionesCe.findByAlcance", query = "SELECT n FROM NotificacionesCe n WHERE n.alcance = :alcance"),
+    @NamedQuery(name = "NotificacionesCe.findByGeneral", query = "SELECT n FROM NotificacionesCe n WHERE n.general = :general"),
+    @NamedQuery(name = "NotificacionesCe.findByFechaRegistro", query = "SELECT n FROM NotificacionesCe n WHERE n.fechaRegistro = :fechaRegistro")})
 public class NotificacionesCe implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,24 +62,19 @@ public class NotificacionesCe implements Serializable {
     @Basic(optional = false)
     @Column(name = "notificacion")
     private Integer notificacion;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1000)
+    @Size(max = 255)
+    @Column(name = "area_responsable")
+    private String areaResponsable;
+    @Size(max = 1000)
     @Column(name = "titulo_principal")
     private String tituloPrincipal;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 2000)
+    @Size(max = 2000)
     @Column(name = "subtitulo")
     private String subtitulo;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 23)
+    @Size(max = 284)
     @Column(name = "tipo")
     private String tipo;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 1000)
+    @Size(max = 1000)
     @Column(name = "lugar")
     private String lugar;
     @Column(name = "hora_inicio")
@@ -105,18 +101,14 @@ public class NotificacionesCe implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "persona_registro")
-    private int personaRegistro;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 238)
+    private Integer personaRegistro;
+    @Size(max = 22)
     @Column(name = "alcance")
     private String alcance;
     @Basic(optional = false)
     @NotNull
     @Column(name = "general")
-    private boolean general;
-    @Basic(optional = false)
-    @NotNull
+    private Boolean general;
     @Column(name = "fecha_registro")
     @Temporal(TemporalType.DATE)
     private Date fechaRegistro;
@@ -134,24 +126,58 @@ public class NotificacionesCe implements Serializable {
         this.notificacion = notificacion;
     }
 
-    public NotificacionesCe(Integer notificacion, String tituloPrincipal, String subtitulo, String tipo, String lugar, int personaRegistro, String alcance, boolean general, Date fechaRegistro) {
+    public NotificacionesCe(Integer notificacion, String areaResponsable, String tituloPrincipal, String subtitulo, String tipo, String lugar, Date horaInicio, Date horaFin, Date duracionEvento, String personaResponsable, String expositor, Integer participantesEstudiantes, Integer participantesPersonal, Integer participantesOtros, Integer personaRegistro, String alcance, Boolean general, Date fechaRegistro) {
         this.notificacion = notificacion;
+        this.areaResponsable = areaResponsable;
         this.tituloPrincipal = tituloPrincipal;
         this.subtitulo = subtitulo;
         this.tipo = tipo;
         this.lugar = lugar;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+        this.duracionEvento = duracionEvento;
+        this.personaResponsable = personaResponsable;
+        this.expositor = expositor;
+        this.participantesEstudiantes = participantesEstudiantes;
+        this.participantesPersonal = participantesPersonal;
+        this.participantesOtros = participantesOtros;
         this.personaRegistro = personaRegistro;
         this.alcance = alcance;
         this.general = general;
         this.fechaRegistro = fechaRegistro;
     }
 
+    public NotificacionesCe(String areaResponsable, String tituloPrincipal, String subtitulo, String tipo, String lugar, Date horaInicio, Date horaFin, Date duracionEvento, String personaResponsable, String expositor, Integer personaRegistro, String alcance, Date fechaRegistro) {
+        this.areaResponsable = areaResponsable;
+        this.tituloPrincipal = tituloPrincipal;
+        this.subtitulo = subtitulo;
+        this.tipo = tipo;
+        this.lugar = lugar;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+        this.duracionEvento = duracionEvento;
+        this.personaResponsable = personaResponsable;
+        this.expositor = expositor;
+        this.personaRegistro = personaRegistro;
+        this.alcance = alcance;
+        this.fechaRegistro = fechaRegistro;
+    }
+
+    
     public Integer getNotificacion() {
         return notificacion;
     }
 
     public void setNotificacion(Integer notificacion) {
         this.notificacion = notificacion;
+    }
+
+    public String getAreaResponsable() {
+        return areaResponsable;
+    }
+
+    public void setAreaResponsable(String areaResponsable) {
+        this.areaResponsable = areaResponsable;
     }
 
     public String getTituloPrincipal() {
@@ -250,11 +276,11 @@ public class NotificacionesCe implements Serializable {
         this.participantesOtros = participantesOtros;
     }
 
-    public int getPersonaRegistro() {
+    public Integer getPersonaRegistro() {
         return personaRegistro;
     }
 
-    public void setPersonaRegistro(int personaRegistro) {
+    public void setPersonaRegistro(Integer personaRegistro) {
         this.personaRegistro = personaRegistro;
     }
 
@@ -266,11 +292,11 @@ public class NotificacionesCe implements Serializable {
         this.alcance = alcance;
     }
 
-    public boolean getGeneral() {
+    public Boolean getGeneral() {
         return general;
     }
 
-    public void setGeneral(boolean general) {
+    public void setGeneral(Boolean general) {
         this.general = general;
     }
 
