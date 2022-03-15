@@ -13,7 +13,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import javax.servlet.http.Part;
@@ -43,11 +42,10 @@ import org.primefaces.model.StreamedContent;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.util.Objects;
 import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
-import mx.edu.utxj.pye.sgi.entity.ch.Permisosevaluacionpoaex;
 import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
@@ -69,8 +67,9 @@ public class AreaPoaEvaluacion implements Serializable {
     @Getter    @Setter    private List<AreasUniversidad> areasUniversidads=new ArrayList<>();    
     @Getter    @Setter    private List<Calendarioevaluacionpoa> calendarioevaluacionpoas=new ArrayList<>();
     
-    @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
-    @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ListaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ListaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ListaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
     
     @Getter    @Setter    private Procesopoa procesopoa=new Procesopoa();
     @Getter    @Setter    private ActividadesPoa actividadesPoaEditando = new ActividadesPoa(),actividadMadre=new ActividadesPoa();
@@ -83,15 +82,16 @@ public class AreaPoaEvaluacion implements Serializable {
     @Getter    @Setter    private String siglaArea="",mesNombre="";
     @Getter    @Setter    private Short claveArea = 0, ejercicioFiscal = 0;
     @Getter    @Setter    private Date fechaActual=new Date();
-    @Getter    @Setter    private Iterator<actividad> poaActual;
+    @Getter    @Setter    private Iterator<DTOreportePoa.Actividad> poaActual;
     @Getter    @Setter    private Integer claveEje=0,mes=0,cuatrimestre=0,mostradaL=0,celEva=0;
     @Getter    @Setter    private Integer mes1=0,mes2=0,mes3=0,mes4=0,mes5=0,mes6=0,mes7=0,mes8=0,mes9=0,mes10=0,mes11=0,mes12=0;
-    @Getter    @Setter    private Boolean archivoSC=false,general=true,periodoActivo=Boolean.FALSE;
+    @Getter    @Setter    private Boolean archivoSC=false,general=Boolean.FALSE,periodoActivo=Boolean.FALSE;
     @Getter    @Setter    private Part file;
     
     @Getter    @Setter    private Double totalPCuatrimestre=0D,totalACuatrimestre=0D,totalPCorte=0D,totalACorte=0D;
     @Getter    @Setter    private Double porcentajeCuatrimestre=0D,porcentejeAlCorte=0D;
     @Getter    @Setter    private String semaforoC="",semaforoG="";
+    @Getter    @Setter    private Boolean agregar=Boolean.FALSE;
     
     @Getter    @Setter    private List<Eventos> nuevaListaEventos = new ArrayList<>();
     
@@ -120,6 +120,7 @@ public class AreaPoaEvaluacion implements Serializable {
         cargado = true;       
         consultrAreasEvaluacion();
         datosPreviosConsultaPoa();
+        tipoVista();
     }
 
     public void datosArea(Short clave) {
@@ -223,43 +224,43 @@ public class AreaPoaEvaluacion implements Serializable {
         }
     }
 
-    public void asignarParametrosRegistro(ValueChangeEvent event) {
-        archivoSC = false;
-        if (Short.parseShort(event.getNewValue().toString()) != Short.parseShort("0")) {
-            switch (event.getComponent().getId()) {
-                case "eje":
-                    ejes = new EjesRegistro();
-                    estrategias = new Estrategias();
-                    ejes = ejbCatalogosPoa.mostrarEjeRegistro(Integer.parseInt(event.getNewValue().toString()));
-                    if (ejes != null) {
-                        estrategiases.clear();
-                        estrategiases.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
-                        ejbCatalogosPoa.getEstarategiasPorEje(ejes, ejercicioFiscal, procesopoa.getArea()).forEach((t) -> {
-                            estrategiases.add(t);
-                        });
-                    }
-                    resetearValores();
-                    break;
-                case "estrategia":
-                    estrategias = new Estrategias();
-                    estrategias = ejbCatalogosPoa.mostrarEstrategia(Short.parseShort(event.getNewValue().toString()));
-                    resetearValores();
-                    if (ejes != null) {
-                        if (general) {
-                            generaListaActividadesEje();
-                        } else {
-                            generaListaActividades();
-                        }
-                    }
-                    break;
-            }
-        } else {
-            ejes = new EjesRegistro();
-            estrategias = new Estrategias();
-            estrategiases.clear();
-            consultarListas();
-        }
-    }
+//    public void asignarParametrosRegistro(ValueChangeEvent event) {
+//        archivoSC = false;
+//        if (Short.parseShort(event.getNewValue().toString()) != Short.parseShort("0")) {
+//            switch (event.getComponent().getId()) {
+//                case "eje":
+//                    ejes = new EjesRegistro();
+//                    estrategias = new Estrategias();
+//                    ejes = ejbCatalogosPoa.mostrarEjeRegistro(Integer.parseInt(event.getNewValue().toString()));
+//                    if (ejes != null) {
+//                        estrategiases.clear();
+//                        estrategiases.add(new Estrategias(Short.parseShort("0"), Short.parseShort("0"), "Selecciones Uno"));
+//                        ejbCatalogosPoa.getEstarategiasPorEje(ejes, ejercicioFiscal, procesopoa.getArea()).forEach((t) -> {
+//                            estrategiases.add(t);
+//                        });
+//                    }
+//                    resetearValores();
+//                    break;
+//                case "estrategia":
+//                    estrategias = new Estrategias();
+//                    estrategias = ejbCatalogosPoa.mostrarEstrategia(Short.parseShort(event.getNewValue().toString()));
+//                    resetearValores();
+//                    if (ejes != null) {
+//                        if (general) {
+//                            generaListaActividadesEje();
+//                        } else {
+//                            generaListaActividades();
+//                        }
+//                    }
+//                    break;
+//            }
+//        } else {
+//            ejes = new EjesRegistro();
+//            estrategias = new Estrategias();
+//            estrategiases.clear();
+//            consultarListas();
+//        }
+//    }
 
     public void resetearValores() {
         actividadesPoaEditando = new ActividadesPoa();
@@ -291,52 +292,75 @@ public class AreaPoaEvaluacion implements Serializable {
     }
 
     public void generaListaActividades() {
+        ejesEsLaAp = new ArrayList<>();
+        ejesEsLaAp.clear();
         actividadesPoasAreasEjes.clear();
         listaListaEjeEstrategia.clear();
         listaEstrategiaActividadesesEje.clear();
-        
-        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias,ejes, ejercicioFiscal, claveArea))));
-        Integer mNum=0;
-        if(mes==12){
-            mNum=new Date().getMonth();
-        }else{
-            mNum=mes;
-        }
-        
-        if (mNum <= 3) {
-            cuatrimestre = 1;
-        } else if (mNum <= 7) {
-            cuatrimestre = 2;
-        } else if (mNum <= 11) {
-            cuatrimestre = 3;
-        }
-        
-        
-        listaEstrategiaActividadesesEje.forEach((t) -> {
-            poaActual = t.getActividadesPoas().iterator();
-            while (poaActual.hasNext()) {
-                actividad next = poaActual.next();
-                switch (mes) {
-                    case 0:   if (next.getActividadesPoa().getNPEnero() == 0)      {  poaActual.remove();  }  break;
-                    case 1:   if (next.getActividadesPoa().getNPFebrero() == 0)    {  poaActual.remove();  }  break;
-                    case 2:   if (next.getActividadesPoa().getNPMarzo() == 0)      {  poaActual.remove();  }  break;
-                    case 3:   if (next.getActividadesPoa().getNPAbril() == 0)      {  poaActual.remove();  }  break;
-                    case 4:   if (next.getActividadesPoa().getNPMayo() == 0)       {  poaActual.remove();  }  break;
-                    case 5:   if (next.getActividadesPoa().getNPJunio() == 0)      {  poaActual.remove();  }  break;
-                    case 6:   if (next.getActividadesPoa().getNPJulio() == 0)      {  poaActual.remove();  }  break;
-                    case 7:   if (next.getActividadesPoa().getNPAgosto() == 0)     {  poaActual.remove();  }  break;
-                    case 8:   if (next.getActividadesPoa().getNPSeptiembre() == 0) {  poaActual.remove();  }  break;
-                    case 9:   if (next.getActividadesPoa().getNPOctubre() == 0)    {  poaActual.remove();  }  break;
-                    case 10:  if (next.getActividadesPoa().getNPNoviembre() == 0)  {  poaActual.remove();  }  break;
-                    case 11:  if (next.getActividadesPoa().getNPDiciembre() == 0)  {  poaActual.remove();  }  break;
-                }
-            }
-        });
 
-        mostradaL=2;
+//        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias,ejes, ejercicioFiscal, claveArea))));
+        List<EjesRegistro> ers = ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal);
+        if (!ers.isEmpty()) {
+            ers.forEach((ej) -> {
+                listaListaEjeEstrategia = new ArrayList<>();
+                listaListaEjeEstrategia.clear();
+                listaListaEjeEstrategia.add(new DTOreportePoa.ListaEjeEstrategia(ej, ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, claveArea)));
+                if (!listaListaEjeEstrategia.isEmpty()) {
+                    listaListaEjeEstrategia.forEach((e) -> {
+                        listaEstrategiaActividadesesEje = new ArrayList<>();
+                        listaEstrategiaActividadesesEje.clear();
+                        agregar = Boolean.FALSE;
+                        e.getEstrategiases().forEach((es) -> {
+                            List<ActividadesPoa> aps = ejbRegistroActividades.getActividadesPoasEstarategias(es, ej, ejercicioFiscal, claveArea);
+
+                            List<ActividadesPoa> apsfiltradas = new ArrayList<>();
+                            switch (mes) {
+                                case 0:  apsfiltradas=aps.stream().filter(t-> t.getNPEnero()!=0).collect(Collectors.toList());  break;
+                                case 1:  apsfiltradas=aps.stream().filter(t-> t.getNPFebrero()!=0).collect(Collectors.toList());  break;
+                                case 2:  apsfiltradas=aps.stream().filter(t-> t.getNPMarzo()!=0).collect(Collectors.toList());  break;
+                                case 3:  apsfiltradas=aps.stream().filter(t-> t.getNPAbril()!=0).collect(Collectors.toList());  break;
+                                case 4:  apsfiltradas=aps.stream().filter(t-> t.getNPMayo()!=0).collect(Collectors.toList());  break;
+                                case 5:  apsfiltradas=aps.stream().filter(t-> t.getNPJunio()!=0).collect(Collectors.toList());  break;
+                                case 6:  apsfiltradas=aps.stream().filter(t-> t.getNPJulio()!=0).collect(Collectors.toList());  break;
+                                case 7:  apsfiltradas=aps.stream().filter(t-> t.getNPAgosto()!=0).collect(Collectors.toList());  break;
+                                case 8:  apsfiltradas=aps.stream().filter(t-> t.getNPSeptiembre()!=0).collect(Collectors.toList());  break;
+                                case 9:  apsfiltradas=aps.stream().filter(t-> t.getNPOctubre()!=0).collect(Collectors.toList());  break;
+                                case 10: apsfiltradas=aps.stream().filter(t-> t.getNPNoviembre()!=0).collect(Collectors.toList());  break;
+                                case 11: apsfiltradas=aps.stream().filter(t-> t.getNPDiciembre()!=0).collect(Collectors.toList());  break;
+                            }
+                            if (!apsfiltradas.isEmpty()) {
+                                agregar=Boolean.TRUE;
+                                listaEstrategiaActividadesesEje.add(new DTOreportePoa.ListaEstrategiaActividades(es, aconsultarTotales(apsfiltradas)));
+                                Integer mNum = 0;
+                                if (mes == 12) {
+                                    mNum = new Date().getMonth();
+                                } else {
+                                    mNum = mes;
+                                }
+
+                                if (mNum <= 3) {
+                                    cuatrimestre = 1;
+                                } else if (mNum <= 7) {
+                                    cuatrimestre = 2;
+                                } else if (mNum <= 11) {
+                                    cuatrimestre = 3;
+                                }
+                                mostradaL = 2;
+                            }
+                        });
+                        if (agregar) {
+                            ejesEsLaAp.add(new DTOreportePoa.ListaEjesEsLaAp(ej, listaEstrategiaActividadesesEje));
+                        }
+                    });
+                }
+            });
+        }
+        Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjeA().getEje(), y.getEjeA().getEje()));
     }
-    
+
     public void generaListaActividadesEje() {
+        ejesEsLaAp = new ArrayList<>();
+        ejesEsLaAp.clear();
         actividadesPoasAreasEjes.clear();
         listaListaEjeEstrategia.clear();
         listaEstrategiaActividadesesEje.clear();
@@ -352,12 +376,32 @@ public class AreaPoaEvaluacion implements Serializable {
 
         mostradaL = 1;
 
-        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias, ejes, ejercicioFiscal, claveArea))));
-
+//        listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(estrategias, aconsultarTotales(ejbRegistroActividades.getActividadesPoasEstarategias(estrategias, ejes, ejercicioFiscal, claveArea))));
+        List<EjesRegistro> ers = ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal);
+        if (!ers.isEmpty()) {
+            ers.forEach((ej) -> {
+                listaListaEjeEstrategia = new ArrayList<>();
+                listaListaEjeEstrategia.clear();
+                listaListaEjeEstrategia.add(new DTOreportePoa.ListaEjeEstrategia(ej, ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, claveArea)));
+                if (!listaListaEjeEstrategia.isEmpty()) {
+                    listaListaEjeEstrategia.forEach((e) -> {
+                        listaEstrategiaActividadesesEje = new ArrayList<>();
+                        listaEstrategiaActividadesesEje.clear();
+                        agregar = Boolean.FALSE;
+                        e.getEstrategiases().forEach((es) -> {
+                            List<ActividadesPoa> aps = ejbRegistroActividades.getActividadesPoasEstarategias(es, ej, ejercicioFiscal, claveArea);
+                            listaEstrategiaActividadesesEje.add(new DTOreportePoa.ListaEstrategiaActividades(es, aconsultarTotales(aps)));
+                        });
+                        ejesEsLaAp.add(new DTOreportePoa.ListaEjesEsLaAp(ej, listaEstrategiaActividadesesEje));
+                    });
+                }
+            });
+        }
+        Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjeA().getEje(), y.getEjeA().getEje()));
     }
 
-    public List<actividad> aconsultarTotales(List<ActividadesPoa> actividadesPoas) {
-        List<actividad> actividades = new ArrayList<>();
+    public List<DTOreportePoa.Actividad> aconsultarTotales(List<ActividadesPoa> actividadesPoas) {
+        List<DTOreportePoa.Actividad> actividades = new ArrayList<>();
         actividades.clear();
         actividadesPoas.forEach((t) -> {
             semaforoC = "";
@@ -392,7 +436,7 @@ public class AreaPoaEvaluacion implements Serializable {
             semaforoC = pOAUtilidades.obtenerSemaforo(porcentajeCuatrimestre);
             semaforoG = pOAUtilidades.obtenerSemaforo(porcentejeAlCorte);
 
-            actividades.add(new actividad(t, totalPCuatrimestre, totalACuatrimestre, totalPCorte, totalACorte, porcentajeCuatrimestre, porcentejeAlCorte, semaforoC, semaforoG));
+            actividades.add(new DTOreportePoa.Actividad(t, totalPCuatrimestre, totalACuatrimestre, totalPCorte, totalACorte, porcentajeCuatrimestre, porcentejeAlCorte, semaforoC, semaforoG));
         });
 
         return actividades;
@@ -414,7 +458,7 @@ public class AreaPoaEvaluacion implements Serializable {
         mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
         actividads=new ArrayList<>();
         actividads.clear();
-        actividad nuevaactividad = (actividad) event.getObject();
+        DTOreportePoa.Actividad nuevaactividad = (DTOreportePoa.Actividad) event.getObject();
         ActividadesPoa modificada = nuevaactividad.getActividadesPoa();
         ultimaEstrategiaExpandida = modificada.getCuadroMandoInt().getEstrategia();
         ejbRegistroActividades.actualizaActividadesPoa(modificada);
@@ -470,7 +514,7 @@ public class AreaPoaEvaluacion implements Serializable {
 
     public void onRowCancel(RowEditEvent event) {
         archivoSC = false;
-        actividad nuevaactividad = (actividad) event.getObject();
+        DTOreportePoa.Actividad nuevaactividad = (DTOreportePoa.Actividad) event.getObject();
         ultimaEstrategiaExpandida = new Estrategias();
         ActividadesPoa modificada = nuevaactividad.getActividadesPoa();
         ultimaEstrategiaExpandida = modificada.getCuadroMandoInt().getEstrategia();
@@ -602,49 +646,10 @@ public class AreaPoaEvaluacion implements Serializable {
         consultarEvidencias(actividadesPoaEditando);
     }
 
+    public void ocultaEvidencias() {
+        archivoSC = Boolean.FALSE;
+    }
     public void imprimirValores() {
-    }
-     
-    public static class listaEjeEstrategia {
-
-        @Getter        @Setter        private EjesRegistro ejess;
-        @Getter        @Setter        private List<Estrategias> listaEstrategiases1;
-
-        public listaEjeEstrategia(EjesRegistro ejess, List<Estrategias> listaEstrategiases1) {
-            this.ejess = ejess;
-            this.listaEstrategiases1 = listaEstrategiases1;
-        }        
-    }
-    
-    public static class listaEstrategiaActividades {
-
-        @Getter        @Setter        private Estrategias estrategias;
-         @Getter        @Setter        private List<actividad> actividadesPoas;
-
-        public listaEstrategiaActividades(Estrategias estrategias, List<actividad> actividadesPoas) {
-            this.estrategias = estrategias;
-            this.actividadesPoas = actividadesPoas;
-        }       
-    }
-    
-    public static class actividad {
-
-        @Getter        @Setter        private ActividadesPoa actividadesPoa;
-        @Getter        @Setter        private Double totalPCuatrimestre, totalACuatrimestre, totalPCorte, totalACorte;
-        @Getter        @Setter        private Double porcentajeCuatrimestre, porcentejeAlCorte;
-        @Getter        @Setter        private String semaforoC, semaforoG;
-
-        public actividad(ActividadesPoa actividadesPoa, Double totalPCuatrimestre, Double totalACuatrimestre, Double totalPCorte, Double totalACorte, Double porcentajeCuatrimestre, Double porcentejeAlCorte, String semaforoC, String semaforoG) {
-            this.actividadesPoa = actividadesPoa;
-            this.totalPCuatrimestre = totalPCuatrimestre;
-            this.totalACuatrimestre = totalACuatrimestre;
-            this.totalPCorte = totalPCorte;
-            this.totalACorte = totalACorte;
-            this.porcentajeCuatrimestre = porcentajeCuatrimestre;
-            this.porcentejeAlCorte = porcentejeAlCorte;
-            this.semaforoC = semaforoC;
-            this.semaforoG = semaforoG;
-        }
     }
 }
 

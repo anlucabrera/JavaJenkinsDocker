@@ -118,8 +118,8 @@ public class ServiciosEducacion implements EjbEducacion {
                         c.setNombre(t.getNombre());
                         c.setFechaInicio(t.getFechaInicial());
                         c.setFechaFin(t.getFechaFinal());
-                        c.setDuracionHoras(Short.parseShort(parts[0]));
-                        c.setDuracionMinutos(Short.parseShort(parts[1]));
+                        c.setDuracionHoras(duracion(parts[0]));
+                        c.setDuracionMinutos(duracion(parts[1]));
                         c.setTipo(new CursosTipo(t.getTipo().getPercapTipo(), t.getTipo().getTipo()));
                         c.setModalidad(new CursosModalidad(t.getModalidad().getPercapMod(), t.getModalidad().getModalidad()));
                         c.setEmpresaImpartidora(t.getEmpresaImpartidora());
@@ -139,6 +139,23 @@ public class ServiciosEducacion implements EjbEducacion {
 
         
         return pr;
+    }
+    
+    public Short duracion(String tim){
+        Short tiempo=0;
+        switch (tim){
+            case "00": tiempo=Short.parseShort("0"); break;
+            case "01": tiempo=Short.parseShort("1"); break;
+            case "02": tiempo=Short.parseShort("2"); break;
+            case "03": tiempo=Short.parseShort("3"); break;
+            case "04": tiempo=Short.parseShort("4"); break;
+            case "05": tiempo=Short.parseShort("5"); break;
+            case "06": tiempo=Short.parseShort("6"); break;
+            case "07": tiempo=Short.parseShort("7"); break;
+            case "08": tiempo=Short.parseShort("8"); break;
+            case "09": tiempo=Short.parseShort("9"); break;
+        }
+        return tiempo;
     }
 
     @Override
