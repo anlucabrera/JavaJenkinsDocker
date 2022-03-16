@@ -45,7 +45,7 @@
                 setTimeout(function () {
                     var valor = document.getElementById(idP);
                     var respuesta = document.getElementById(id);
-                    var cantidad = valor.value.length;
+                    var cantidad = valor.value.toString().trim().length;
                     if (cantidad > total) {
                         respuesta.style.color = "black";
                         document.getElementById(id).innerHTML = cantidad + ' caractere/s';

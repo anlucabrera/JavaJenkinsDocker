@@ -656,7 +656,7 @@
 
                         <!-- Seguimiento de Evaluacion y Encuestas por parte de: Dirección de Planeación, Secretaría Académica, Departamento de Información y Estadística,
                                Directores Académicos y Tutores-->
-                        <c:if test="#{administracionEncuesta.dto.esServEst or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor}">
+                        <c:if test="#{controlEscolarMenu.tieneElementos() or administracionEncuesta.dto.esServEst or administracionEncuesta.dto.planeacion or administracionEncuesta.dto.esSecretario or administracionEncuesta.dto.esDeIyE or administracionEncuesta.dto.director or administracionEncuesta.dto.tutor}">
                             <li class="treeview">
                                 <a href="#">
                                     <i class="fa fa-check-square-o"></i> <span>Seguimiento encuestas</span>
@@ -670,6 +670,7 @@
                                     <c:if test="#{administracionEncuesta.dto.ESActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaServicios.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta servicios</span></p:link></li></c:if>
                                     <c:if test="#{administracionEncuesta.dto.EEActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEvaluacionEstadia.xhtml"><i class="fa fa-list-ol"></i><span>Evaluación Estadía</span></p:link></li></c:if>
                                     <c:if test="#{administracionEncuesta.dto.ECEActiva}"><li><p:link href="#{request.contextPath}/encuestas/seguimiento/administracionEncuestaCondicionesEstudio.xhtml"><i class="fa fa-list-ol"></i><span>Encuesta Condiciones Estudio</span></p:link></li></c:if>
+                                    <c:if test="#{administracionEncuestaAreaSeguimientoEgresados.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/seguimientoEgresados/administracionEncuestaEgresadosYEmpleadores.xhtml"><i class="fa fa-list-ol"></i><span>Egresados y Empleadores</span></p:link></li></c:if>
                                 </ul>
                             </li>
                         </c:if>

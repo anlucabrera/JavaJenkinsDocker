@@ -1,0 +1,1196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                xmlns:ice="http://www.icefaces.org/icefaces/core"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"/>
+
+    <ui:define name="head-end">
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
+        </c:if>
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a7d0  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+            .ui-tabs:not(.ui-ribbon) .ui-tabs-nav {
+                background: #000000;
+            }
+            li.ui-state-default{
+                background: #000000 !important;
+                border-color: #000000 !important
+            }
+            .ui-tabs .ui-tabs-panel{
+                border-width: 0;
+                padding: 0 1.4em;
+                background: 0;
+            }
+            .ui-g {
+                display: -webkit-box;
+                display: -moz-box;
+                display: -ms-flexbox;
+                display: -webkit-flex;
+                display: flex;
+                flex-wrap: wrap;
+                box-sizing: border-box;
+                width: 550px;
+            }
+            .callout-activo {
+                border-radius: 0.25rem;
+                box-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
+                background-color: #fff;
+                border-left: 5px solid #00a65a;
+                margin-bottom: 1rem;
+                padding: 1rem;
+                padding-top: 0rem;
+            }
+            .callout-inactivo {
+                border-radius: 0.25rem;
+                box-shadow: 0 1px 3px rgb(0 0 0 / 12%), 0 1px 2px rgb(0 0 0 / 24%);
+                background-color: #fff;
+                border-left: 5px solid #de2315;
+                margin-bottom: 1rem;
+                padding: 1rem;
+                padding-top: 0rem;
+            }
+            .ui-inputfield{
+                width: 100% !important;
+            }
+            .search {
+                width: 100%;
+                position: relative;
+                display: flex;
+            }
+
+            .searchTerm {
+                width: 100%;
+                border: 3px solid #00B4CC;
+                border-right: none;
+                padding: 5px;
+                height: 36px;
+                border-radius: 5px 0 0 5px;
+                outline: none;
+                color: #9DBFAF;
+            }
+
+            .searchTerm:focus{
+                color: #00B4CC;
+            }
+
+            .searchButton {
+                width: 40px;
+                height: 36px;
+                border: 1px solid #00B4CC;
+                background: #00B4CC;
+                text-align: center;
+                color: #fff;
+                border-radius: 0 5px 5px 0;
+                cursor: pointer;
+                font-size: 20px;
+            }
+
+            /*Resize the wrap to see the search bar change!*/
+            .wrap{
+                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .input-text{
+                text-align: left;
+                font-family: Arial,serif;
+                font-weight: normal; 
+                font-size: 12px;
+                font-weight: bold;
+            }
+            .output-text{
+                text-align: left;
+                font-family: Arial,serif;
+                font-weight: normal; 
+                font-size: 14px;
+            }
+
+            .card-success.card-outline {
+                border-top: 3px solid #28a745;
+            }
+
+            .card-primary {
+                border-top: 3px solid #00a7d0;
+            }
+            .card {
+                box-shadow: 0 0 1px rgb(0 0 0 / 13%), 0 1px 3px rgb(0 0 0 / 20%);
+                margin-bottom: 1rem;
+            }
+            .card {
+                position: relative;
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-direction: column;
+                -ms-flex-direction: column;
+                flex-direction: column;
+                min-width: 0;
+                word-wrap: break-word;
+                background-color: #fff;
+                background-clip: border-box;
+                border: 0 solid rgba(0,0,0,.125);
+                border-radius: 0.25rem;
+            }
+            .card-header:first-child {
+                border-radius: calc(.25rem - 0) calc(.25rem - 0) 0 0;
+            }
+            .card-header {
+                background-color: transparent;
+                border-bottom: 1px solid rgba(0,0,0,.125);
+                padding: 0.75rem 1.25rem;
+                position: relative;
+                border-top-left-radius: 0.25rem;
+                border-top-right-radius: 0.25rem;
+            }
+            .card-header {
+                padding: 0.75rem 1.25rem;
+                margin-bottom: 0;
+                background-color: rgba(0,0,0,.03);
+                border-bottom: 0 solid rgba(0,0,0,.125);
+            }
+            .card-title {
+                float: left;
+                font-size: 14px;
+                font-weight: 400;
+                margin: 0;
+            }
+            .card-title {
+                margin-bottom: 0.75rem;
+            }
+            .card-body {
+                -webkit-flex: 1 1 auto;
+                -ms-flex: 1 1 auto;
+                flex: 1 1 auto; min-height: 1px;
+                padding: 1.25rem;
+            }
+            .card-header>.card-tools {
+                float: right;
+                margin-right: -0.625rem;
+            }
+            .card-footer:last-child {
+                border-radius: 0 0 calc(.25rem - 0) calc(.25rem - 0);
+            }
+            .card-footer {
+                padding: 0.75rem 1.25rem;
+                background-color: rgba(0,0,0,.03);
+                border-top: 0 solid rgba(0,0,0,.125);
+            }
+            .style-div{
+                margin-bottom: 30px;
+                margin-top: 20px;
+            }
+            .style-row {
+                display: -webkit-flex;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-flex-wrap: wrap;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+                margin-right: -7.5px;
+                margin-left: -7.5px;
+            }
+            .aceptado{
+                background-color: #00a65a !important;
+            }
+            .pendiente{
+                background-color: #f39c12 !important;
+            }
+            .denegado{
+                background-color: #de2315 !important;
+            }
+        </style>
+
+    </ui:define>
+
+    <ui:define name="title">
+        Administracion:
+    </ui:define>
+
+    <ui:define name="description">
+        (Encuesta de Seguimiento a Egresados y Encuesta a Empleadores)
+    </ui:define>
+
+    <ui:define name="body">
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+
+        </script>
+        <section>
+            <c:if test="#{administracionEncuestaAreaSeguimientoEgresados.cargado}">
+                <div class="contenedor">
+                    <c:if test="#{administracionEncuestaAreaSeguimientoEgresados.tieneAcceso}">
+                        <h:form id="frm" prependId="false" class="form-inline">
+                            <div class="col-md-12">
+                                <div class="box box-primary">
+                                    <div class="box-header with-border">
+                                        <div id="main-buttons" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb">
+                                                <f:facet name="left">
+
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+                                    </div>
+                                    <div class="box box-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p:tabView id="tvwPrincipal" cache="false">
+                                                    <p:tab id="tabConfig">
+                                                        <f:facet name="title"><i class="fa fa-cog" style="color: #ffffff"></i><span style="color: #ffffff"> Configuración</span></f:facet>
+                                                        <div class="row">
+                                                            <p:tabView id="tvwSecundario" cache="false">
+                                                                <p:tab id="tabVerificacion">
+                                                                    <f:facet name="title"><i class="fa fa-check-square" style="color: #ffffff"></i><span style="color: #ffffff"> Configurar Encuesta</span></f:facet>
+                                                                    <div class="row">
+                                                                        <p:outputPanel id="otp1">
+                                                                            <c:if test="#{administracionEncuestaAreaSeguimientoEgresados.rol.estaActiva}">
+                                                                                <div class="col-sm-6">
+                                                                                    <div class="callout-activo">
+                                                                                        <h4 style="font-weight: bold"><i class="fa fa-check" style="color: #00a65a"></i>Activo</h4>
+                                                                                        <p>Tipo: <span style="font-weight: bold;"> #{administracionEncuestaAreaSeguimientoEgresados.rol.evaluacionA.tipo} </span></p>
+                                                                                        <c:set var="fechaInicio" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.evaluacionA.fechaInicio}"/>
+                                                                                        <c:set var="fechaFin" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.evaluacionA.fechaFin}"/>
+                                                                                        <p>Fecha inicio: <span style="font-weight: bold;">#{administracionEncuestaAreaSeguimientoEgresados.dateToString(fechaInicio)}</span>
+                                                                                        </p>
+                                                                                        <p>Fecha fin: <span style="font-weight: bold;">#{administracionEncuestaAreaSeguimientoEgresados.dateToString(fechaFin)}</span>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                    <br/>
+                                                                                </div>
+                                                                            </c:if>
+                                                                            <c:if test="#{!administracionEncuestaAreaSeguimientoEgresados.rol.estaActiva}">
+                                                                                <div class="col-sm-6">
+                                                                                    <div class="callout-inactivo">
+                                                                                        <h4 style="font-weight: bold"><i class="fa fa-times" style="color: #de2315"></i>Inactivo</h4>
+                                                                                        <span style="font-weight: bold;">No hay encuesta activa.</span>
+                                                                                    </div>
+                                                                                    <br/>
+                                                                                </div>
+                                                                            </c:if>
+                                                                        </p:outputPanel>
+                                                                    </div>
+                                                                    <div class="row style-div">
+                                                                        <div class="card card-success card-outline">
+                                                                            <div class="card-header">
+                                                                                <h3 class="card-title">
+                                                                                    <i class="fa fa-cog"></i>
+                                                                                    Aperturar o actualizar fechas.
+                                                                                </h3>
+                                                                                <div class="card-tools">
+
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- /.card-header -->
+                                                                            <div class="card-body">
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-3 style-div">
+                                                                                        <div class="ui-material">
+                                                                                            <h:outputText value="Generación:" class=" hidden-sm hidden-xs input-text" style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 14px"/>
+                                                                                            <p:selectOneMenu id="generacion" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.periodo}" required="true" 
+                                                                                                             requiredMessage="Para poder realizar la configuración de fechas debe seleccionar una de las opciones.">
+                                                                                                <f:selectItem value="#{null}" itemLabel="Seleccionar generación"/>
+                                                                                                <f:selectItems value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerListaGeneraciones()}" var="enc" 
+                                                                                                               itemLabel="Generación #{enc.anio} nivel #{enc.nivel}" itemValue="#{enc.periodo}"/>
+                                                                                                <p:ajax process="generacion" />
+                                                                                            </p:selectOneMenu>
+                                                                                            <p:message for="generacion" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-3 style-div">
+                                                                                        <div class="ui-material">
+                                                                                            <h:outputText value="Tipo:" class=" hidden-sm hidden-xs input-text" style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 14px"/>
+                                                                                            <p:selectOneMenu id="tipo" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.tipoEvaluacion}" required="true" 
+                                                                                                             requiredMessage="Para poder realizar la configuración de fechas debe seleccionar una de las opciones.">
+                                                                                                <f:selectItem value="#{null}" itemLabel="Seleccionar tipo"/>
+                                                                                                <f:selectItem itemValue="Encuesta Seguimiento de Egresados" itemLabel="Encuesta Seguimiento de Egresados"/>
+                                                                                                <f:selectItem itemValue="Encuesta Empleadores TSU" itemLabel="Encuesta Empleadores TSU"/>
+                                                                                                <f:selectItem itemValue="Encuesta Empleadores ING-LIC" itemLabel="Encuesta Empleadores ING-LIC"/>
+                                                                                                <p:ajax process="tipo" update="otp1 fechaIn fechaFin" listener="#{administracionEncuestaAreaSeguimientoEgresados.obtenerEvaluacion()}"/>
+                                                                                            </p:selectOneMenu>
+                                                                                            <p:message for="tipo" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-3 style-div" >
+                                                                                        <div class="ui-material">
+                                                                                            <h:outputText value="Fecha inicio:" 
+                                                                                                          class=" hidden-sm hidden-xs input-text" style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 14px"/>
+                                                                                            <p:datePicker id="fechaIn" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.fechaIn}">
+                                                                                            </p:datePicker>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-3 style-div" >
+                                                                                        <div class="ui-material">
+                                                                                            <h:outputText value="Fecha fin:" 
+                                                                                                          class=" hidden-sm hidden-xs input-text" style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 14px"/>
+                                                                                            <p:datePicker id="fechaFin" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.fechaFin}">
+                                                                                            </p:datePicker>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- /.card-body -->
+                                                                            <div class="card-footer">
+                                                                                <div class="input-group">
+                                                                                    <p:commandButton id="btnRegistro2" value="Realizar registro" process="@this generacion tipo fechaIn fechaFin" update="@this otp1" class="btn btn-primary" 
+                                                                                                     actionListener="#{administracionEncuestaAreaSeguimientoEgresados.guardarNuevoRegistro()}" icon="fa fa-floppy-o">
+                                                                                    </p:commandButton>
+                                                                                </div>
+                                                                                <div class="input-group">
+                                                                                    <p:commandButton id="btnRegistro3" value="Actualizar fechas" process="@this generacion tipo fechaIn fechaFin" update="@this otp1" class="btn btn-success" 
+                                                                                                     actionListener="#{administracionEncuestaAreaSeguimientoEgresados.actualizarFechasEncuesta()}" icon="fa fa-refresh">
+                                                                                    </p:commandButton>
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- /.card-footer-->
+                                                                        </div>
+                                                                    </div>
+                                                                </p:tab>
+                                                                <p:tab id="tabApertura">
+                                                                    <f:facet name="title"><i class="fa fa-user-plus" style="color: #ffffff"></i><span style="color: #ffffff"> Asignar Egresado</span></f:facet>
+                                                                    <div class="row">
+                                                                        <div class="panel panel-default">
+                                                                            <div class="panel-heading">
+                                                                                <h3 class="panel-title" style="text-align: justify;">
+                                                                                    <i class="fa fa-check"></i>
+                                                                                    Información de la encuesta a asignar.
+                                                                                </h3>
+                                                                            </div>
+                                                                            <div class="panel-body">
+                                                                                <p:outputPanel id="otpPEnc" rendered="true">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-4">
+                                                                                            <div class="ui-material">
+                                                                                                <h:outputText value="Generación:" class=" hidden-sm hidden-xs input-text" style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 14px"/>
+                                                                                                <p:selectOneMenu id="generacion2" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.periodoB}" required="true" 
+                                                                                                                 requiredMessage="Para poder realizar la configuración de fechas debe seleccionar una de las opciones.">
+                                                                                                    <f:selectItem value="#{null}" itemLabel="Seleccionar generación"/>
+                                                                                                    <f:selectItems value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerListaGeneraciones()}" var="enc" 
+                                                                                                                   itemLabel="Generación #{enc.anio} nivel #{enc.nivel}" itemValue="#{enc.periodo}"/>
+                                                                                                    <p:ajax process="generacion2" update="tvwSecundario2:tbl2" listener="#{administracionEncuestaAreaSeguimientoEgresados.obtenerListaEstudiantes()}"/>
+                                                                                                    <p:ajax process="generacion2" listener="#{administracionEncuestaAreaSeguimientoEgresados.verificarEvaluacion()}"/>
+                                                                                                </p:selectOneMenu>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </p:outputPanel>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <p:tabView id="tvwSecundario2" cache="false">
+                                                                            <p:tab id="tabRegistroUnico">
+                                                                                <f:facet name="title"><i class="fa fa-user-circle-o" style="color: #ffffff"></i><span style="color: #ffffff"> Registro único</span></f:facet>
+                                                                                <div class="row">
+                                                                                    <hr/>
+                                                                                    <div class="col-sm-6">
+                                                                                        <div class="wrap">
+                                                                                            <div class="search">
+                                                                                                <p:inputText id="matricula" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.matricula}" 
+                                                                                                             placeholder="Ingresa la matricula a buscar" class="searchTerm">
+                                                                                                    <p:ajax process="matricula" update="@this otpPDatos" listener="#{administracionEncuestaAreaSeguimientoEgresados.buscarEstudiante()}"/>
+                                                                                                </p:inputText>
+                                                                                                <button type="submit" class="searchButton" disabled="true">
+                                                                                                    <i class="fa fa-search"></i>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-6">
+                                                                                        <div class="wrap">
+                                                                                            <div class="search" style="justify-content: center">
+                                                                                                <p:link href="http://siip.utxj.edu.mx/sii2-encuesta-egresados" target="_blank" class="btn btn-info">
+                                                                                                    <i class="fa fa-external-link"></i><span> Ir a evaluación</span>
+                                                                                                </p:link>
+                                                                                                <p:commandButton id="btnRegistro" icon="fa fa-floppy-o" value="Realizar registro" process="@this" update="@this otpPDatos" class="btn btn-primary" 
+                                                                                                                 actionListener="#{administracionEncuestaAreaSeguimientoEgresados.realizarRegistro()}">
+                                                                                                </p:commandButton>
+
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <br/><br/><br/>
+                                                                                </div>
+
+                                                                                <div class="row">
+                                                                                    <div class="panel panel-default">
+                                                                                        <div class="panel-heading">
+                                                                                            <h3 class="panel-title" style="text-align: justify;">
+                                                                                                <i class="fa fa-user-plus"></i>
+                                                                                                Información de él estudiante o la estudiante.
+                                                                                            </h3>
+                                                                                        </div>
+                                                                                        <div class="panel-body">
+                                                                                            <p:outputPanel id="otpPDatos" rendered="true">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-sm-4">
+                                                                                                        <div class="ui-material">
+                                                                                                            <h:outputText value="Nombre:" class="output-text"/>
+                                                                                                            <p:inputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoEstudianteInf.nombre}" class="input-text"/>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="col-sm-4">
+                                                                                                        <div class="ui-material">
+                                                                                                            <h:outputText value="Primer Apellido:" class="output-text"/>
+                                                                                                            <p:inputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoEstudianteInf.primerAp}" class="input-text"/>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="col-sm-4">
+                                                                                                        <div class="ui-material">
+                                                                                                            <h:outputText value="Segundo Apellido:" class="output-text"/>
+                                                                                                            <p:inputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoEstudianteInf.segundoAp}" class="input-text"/>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <br/>
+                                                                                                <div class="row">
+                                                                                                    <div class="col-sm-4">
+                                                                                                        <div class="ui-material">
+                                                                                                            <h:outputText value="Matricula:" class="output-text"/>
+                                                                                                            <p:inputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoEstudianteInf.matricula}" class="input-text"/>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="col-sm-4">
+                                                                                                        <div class="ui-material">
+                                                                                                            <h:outputText value="Cuatrimestre:" class="output-text"/>
+                                                                                                            <p:inputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoEstudianteInf.grado}° #{administracionEncuestaAreaSeguimientoEgresados.rol.dtoEstudianteInf.grupo}" class="input-text"/>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                    <div class="col-sm-4">
+                                                                                                        <div class="ui-material">
+                                                                                                            <h:outputText value="Carrera:" class="output-text"/>
+                                                                                                            <p:inputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoEstudianteInf.carrera}" class="input-text"/>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </p:outputPanel>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </p:tab>
+                                                                            <p:tab id="tabRegistroMultiple">
+                                                                                <f:facet name="title"><i class="fa fa-users" style="color: #ffffff"></i><span style="color: #ffffff"> Registro múltiple</span></f:facet>
+                                                                                <div class="row">
+                                                                                    <div class="panel panel-default">
+                                                                                        <div class="panel-heading">
+                                                                                            <h3 class="panel-title" style="text-align: justify;">
+                                                                                                <i class="fa fa-check"></i>
+                                                                                                Lista de Estudiantes
+                                                                                            </h3>
+                                                                                        </div>
+                                                                                        <div class="panel-body">
+                                                                                            <div class="row">
+                                                                                                <div class="col-sm-12">
+                                                                                                    <p:dataTable var="estudiante" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.listaDtoE}"
+                                                                                                                 rows="15" selection="#{administracionEncuestaAreaSeguimientoEgresados.rol.listaRegistro}"
+                                                                                                                 rendered="true" emptyMessage="Sin registros." id="tbl2" rowIndexVar="rowIndex" paginatorPosition="top"
+                                                                                                                 paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                                                                                 {RowsPerPageDropdown} {Exporters}" paginator="true"
+                                                                                                                 tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                                                 rowKey="#{estudiante.matricula}" 
+                                                                                                                 tableStyle="vertical-align: middle;">
+                                                                                                        <f:facet name="{Exporters}" class="noPrint">
+                                                                                                            <div class="btn-group">
+                                                                                                                <p:commandLink rendered="#{administracionEncuestaAreaSeguimientoEgresados.rol.activarBtn2}"
+                                                                                                                    process="@this"
+                                                                                                                    update="tbl2"
+                                                                                                                    class="#{true?'btn btn-info btn-sm':'btn btn-warning btn-sm'}"
+                                                                                                                    actionListener="#{administracionEncuestaAreaSeguimientoEgresados.realizarRegistroMultiple()}"
+                                                                                                                    title="Realizar registro"><i class="fa fa-floppy-o"></i>
+                                                                                                                    Realizar registro masivo
+                                                                                                                    <p:confirm header="Confirmar registro"
+                                                                                                                               message="Se realizaran #{administracionEncuestaAreaSeguimientoEgresados.rol.listaDtoE.size()}
+                                                                                                                               registros, ¿desea continuar con la operación?"/>
+                                                                                                                </p:commandLink>
+                                                                                                            </div>
+                                                                                                        </f:facet>
+                                                                                                        <p:column headerText="Matrícula" style="width: 80px;text-align: center; font-size: small">
+                                                                                                            <h:outputText value="#{estudiante.matricula}"/>
+                                                                                                        </p:column>
+                                                                                                        <p:column headerText="Nombre completo" style="width: 160px;text-align: left; font-size: small;">
+                                                                                                            <h:outputText value="#{estudiante.nombre}"/>
+                                                                                                        </p:column>
+                                                                                                        <p:column headerText="Carrera" style="width: 260px;text-align: left; font-size: small;">
+                                                                                                            <h:outputText value="#{estudiante.carrera}"/>
+                                                                                                        </p:column>
+                                                                                                        <p:column headerText="Grado" style="width: 80px;text-align: center; font-size: small;">
+                                                                                                            <h:outputText value="#{estudiante.grado}° #{estudiante.grupo}" />
+                                                                                                        </p:column>
+                                                                                                    </p:dataTable>
+                                                                                                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"
+                                                                                                                     styleClass="panel panel-primary" width="500"
+                                                                                                                     closable="false" closeOnEscape="true">
+                                                                                                        <p:commandButton value="Si" type="button"
+                                                                                                                         styleClass="ui-confirmdialog-yes btn btn-primary"
+                                                                                                                         icon="ui-icon-check"/>
+                                                                                                        <p:commandButton value="No" type="button"
+                                                                                                                         styleClass="ui-confirmdialog-no btn btn-primary"
+                                                                                                                         icon="ui-icon-close"/>
+                                                                                                    </p:confirmDialog> 
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </p:tab>
+                                                                        </p:tabView>
+                                                                    </div>
+
+                                                                </p:tab>
+                                                            </p:tabView>
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab>
+                                                        <f:facet name="title"><i class="fa fa-list-alt" style="color: #ffffff"></i><span style="color: #ffffff"> Seguimiento a Egresados</span></f:facet>
+                                                        <div class="row">
+                                                            <div class="row style-div">
+                                                                <div class="card card-success card-outline">
+                                                                    <div class="card-header">
+                                                                        <h3 class="card-title">
+                                                                            <i class="fa fa-list-ol"></i>
+                                                                            Resultados.
+                                                                        </h3>
+                                                                    </div>
+                                                                    <!-- /.card-header -->
+                                                                    <div class="card-body">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-4 style-div">
+                                                                                <div class="ui-material">
+                                                                                    <h:outputText value="Generación:" class=" hidden-sm hidden-xs input-text" style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 14px"/>
+                                                                                    <p:selectOneMenu id="generacion3" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.periodoConsulta}" required="true" >
+                                                                                        <f:selectItem value="#{null}" itemLabel="Seleccionar generación"/>
+                                                                                        <f:selectItems value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerListaGeneraciones()}" var="enc" 
+                                                                                                       itemLabel="Generación #{enc.anio} nivel #{enc.nivel}" itemValue="#{enc.periodo}"/>
+                                                                                        <p:ajax process="generacion3" update="tblResultado" listener="#{administracionEncuestaAreaSeguimientoEgresados.consultarResultadosEvaluacion()}"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:message for="generacion3" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <p:dataTable var="registro" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.listaDtoResultados}" selectionMode="single"
+                                                                                         rows="15" selection="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado}" multiViewState="true"
+                                                                                         rendered="true" emptyMessage="Sin registros." id="tblResultado" rowIndexVar="rowIndex" paginatorPosition="top"
+                                                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                                                         {RowsPerPageDropdown} {Exporters}" paginator="true" filteredValue="#{administracionEncuestaAreaSeguimientoEgresados.rol.listaDtoFiltro}"
+                                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                         rowKey="#{registro.evaluador}"
+                                                                                         tableStyle="vertical-align: middle;">
+                                                                                <f:facet name="{Exporters}" class="noPrint">
+                                                                                    <div class="btn-group">
+                                                                                        <p:commandButton value="Decargar Base" id="btnDescarga" actionListener="#{administracionEncuestaAreaSeguimientoEgresados.descargarResultados()}" 
+                                                                                                         class="btn btn-primary oculto-impresion" rendered="#{administracionEncuestaAreaSeguimientoEgresados.rol.activarBtn}"
+                                                                                                         title="Da clic para descargar la base de resultados obtenidos" icon="fa fa-download" 
+                                                                                                         process="@this" styleClass="btn-primary"  update="@this"/>
+                                                                                        <p:commandButton value="Actualizar tabla" id="btnActualizar" actionListener="#{administracionEncuestaAreaSeguimientoEgresados.consultarResultadosEvaluacion()}" 
+                                                                                                         class="btn btn-primary oculto-impresion" rendered="#{administracionEncuestaAreaSeguimientoEgresados.rol.activarBtn}"
+                                                                                                         title="Da clic para actualizar la información de la tabla" icon="fa fa-download" 
+                                                                                                         process="@this" styleClass="btn-primary"  update="tblResultado"/>
+                                                                                    </div>
+                                                                                </f:facet>
+                                                                                <p:ajax event="rowSelect" update="customerDetail" oncomplete="PF('customerDialog').show()"/>
+                                                                                <p:column headerText="Matrícula" filterBy="#{registro.dtoEstudiante.matricula}" style="width: 80px;text-align: center; font-size: small">
+                                                                                    <h:outputText value="#{registro.dtoEstudiante.matricula}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Nombre completo" filterBy="#{registro.dtoEstudiante.nombre}" style="width: 160px;text-align: left; font-size: small;">
+                                                                                    <h:outputText value="#{registro.dtoEstudiante.nombre}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Carrera" style="width: 260px;text-align: left; font-size: small;">
+                                                                                    <h:outputText value="#{registro.dtoEstudiante.carrera}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Grado" style="width: 40px;text-align: center; font-size: small;">
+                                                                                    <h:outputText value="#{registro.dtoEstudiante.grado}° #{registro.dtoEstudiante.grupo}" />
+                                                                                </p:column>
+                                                                                <p:column headerText="Telefono fijo" style="width: 60px;text-align: center; font-size: small;">
+                                                                                    <h:outputText value="#{registro.encuesta.numTelFijo}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Telefono móvil" style="width: 60px;text-align: center; font-size: small;">
+                                                                                    <h:outputText value="#{registro.encuesta.numTelMovil}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Correo Electrónico" style="width: 150px;text-align: center; font-size: small;">
+                                                                                    <h:outputText value="#{registro.encuesta.correoElectronico}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Estatus" style="width: 60px;text-align: center; font-size: small;">
+                                                                                    <i class="#{administracionEncuestaAreaSeguimientoEgresados.verificarEstatus(registro.encuesta) eq 'Completo'?'fa fa-check':'fa fa-times'}" 
+                                                                                       style="color: #{administracionEncuestaAreaSeguimientoEgresados.verificarEstatus(registro.encuesta) eq 'Completo'?'#00a65a':'#de2315'}"
+                                                                                       aria-hidden="true">
+                                                                                    </i>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- /.card-body -->
+                                                                    <div class="card-footer">
+                                                                        <div class="input-group">
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- /.card-footer-->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:tab>
+                                                    <p:tab>
+                                                        <f:facet name="title"><i class="fa fa-list-alt" style="color: #ffffff"></i><span style="color: #ffffff"> Encuesta a Empleadores</span></f:facet>
+                                                        <div class="row">
+                                                            <div class="row style-div">
+                                                                <div class="card card-success card-outline">
+                                                                    <div class="card-header">
+                                                                        <h3 class="card-title">
+                                                                            <i class="fa fa-list-ol"></i>
+                                                                            Resultados.
+                                                                        </h3>
+                                                                    </div>
+                                                                    <!-- /.card-header -->
+                                                                    <div class="card-body">
+                                                                        <div class="row">
+                                                                            <div class="col-sm-4 style-div">
+                                                                                <div class="ui-material">
+                                                                                    <h:outputText value="Generación:" class=" hidden-sm hidden-xs input-text" style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 14px"/>
+                                                                                    <p:selectOneMenu id="generacion4" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.periodoConsulta2}" required="true" >
+                                                                                        <f:selectItem value="#{null}" itemLabel="Seleccionar generación"/>
+                                                                                        <f:selectItems value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerListaGeneraciones()}" var="enc" 
+                                                                                                       itemLabel="Generación #{enc.anio} nivel #{enc.nivel}" itemValue="#{enc.periodo}"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:message for="generacion4" />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-sm-4 style-div">
+                                                                                <div class="ui-material">
+                                                                                    <h:outputText value="Tipo:" class=" hidden-sm hidden-xs input-text" style="text-align: left; font-family: Arial,serif; font-weight: normal; font-size: 14px"/>
+                                                                                    <p:selectOneMenu id="tipo2" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.tipoEvaluacion2}" required="true" 
+                                                                                                     requiredMessage="Para poder realizar la configuración de fechas debe seleccionar una de las opciones.">
+                                                                                        <f:selectItem value="#{null}" itemLabel="Seleccionar tipo"/>
+                                                                                        <f:selectItem itemValue="Encuesta Empleadores TSU" itemLabel="Encuesta Empleadores TSU"/>
+                                                                                        <f:selectItem itemValue="Encuesta Empleadores ING-LIC" itemLabel="Encuesta Empleadores ING-LIC"/>
+                                                                                        <p:ajax process="tipo2 generacion4" update="tblResultado2" listener="#{administracionEncuestaAreaSeguimientoEgresados.consultarResultadosEmpleadores()}"/>
+                                                                                    </p:selectOneMenu>
+                                                                                    <p:message for="tipo2" />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <p:dataTable var="registro2" value="#{administracionEncuestaAreaSeguimientoEgresados.rol.listaDtoResultados2}" selectionMode="single"
+                                                                                         rows="15" selection="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2}" multiViewState="true"
+                                                                                         rendered="true" emptyMessage="Sin registros." id="tblResultado2" rowIndexVar="rowIndex" paginatorPosition="top"
+                                                                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}
+                                                                                         {RowsPerPageDropdown} {Exporters}" paginator="true" filteredValue="#{administracionEncuestaAreaSeguimientoEgresados.rol.listaDtoFiltro}"
+                                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                                         rowKey="#{registro2.evaluador}"
+                                                                                         tableStyle="vertical-align: middle;">
+                                                                                <f:facet name="{Exporters}" class="noPrint">
+                                                                                    <div class="btn-group">
+                                                                                        <p:commandButton value="Decargar Base" id="btnDescarga" actionListener="#{administracionEncuestaAreaSeguimientoEgresados.descargarResultadosEmpleadores()}" 
+                                                                                                         class="btn btn-primary oculto-impresion" rendered="#{administracionEncuestaAreaSeguimientoEgresados.rol.activarBtn2}"
+                                                                                                         title="Da clic para descargar la base de resultados" icon="fa fa-download" 
+                                                                                                         process="@this" styleClass="btn-primary"  update="@this"/>
+                                                                                    </div>
+                                                                                </f:facet>
+                                                                                <p:ajax event="rowSelect" update="customerDetail2" oncomplete="PF('customerDialog2').show()"/>
+                                                                                <p:column headerText="Matrícula" filterBy="#{registro2.encuesta.encuestado}" style="width: 80px;text-align: center; font-size: small">
+                                                                                    <h:outputText value="#{registro2.encuesta.encuestado}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Nombre completo" filterBy="#{registro2.encuesta.nombreEgresado}" style="width: 100px;text-align: left; font-size: small;">
+                                                                                    <h:outputText value="#{registro2.encuesta.nombreEgresado}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Carrera" style="width: 260px;text-align: left; font-size: small;">
+                                                                                    <h:outputText value="#{registro2.encuesta.carrera}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Empresa" style="width: 120px;text-align: center; font-size: small;">
+                                                                                    <h:outputText value="#{registro2.encuesta.nombreEmpresa}"/>
+                                                                                </p:column>
+                                                                                <p:column headerText="Estatus" style="width: 60px;text-align: center; font-size: small;">
+                                                                                    <i class="#{administracionEncuestaAreaSeguimientoEgresados.verificarEstatus(registro2.encuesta) eq 'Completo'?'fa fa-check':'fa fa-times'}" 
+                                                                                       style="color: #{administracionEncuestaAreaSeguimientoEgresados.verificarEstatus(registro2.encuesta) eq 'Completo'?'#00a65a':'#de2315'}"
+                                                                                       aria-hidden="true">
+                                                                                    </i>
+                                                                                </p:column>
+                                                                            </p:dataTable>
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- /.card-body -->
+                                                                    <div class="card-footer">
+                                                                        <div class="input-group">
+                                                                        </div>
+                                                                    </div>
+                                                                    <!-- /.card-footer-->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </p:tab>
+
+                                                </p:tabView>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <p:dialog header="Encuesta de Seguimiento a Egresados" widgetVar="customerDialog" modal="true" showEffect="fade" hideEffect="fade"
+                                      resizable="false" position="top">
+                                <p:outputPanel id="customerDetail">
+                                    <p:panelGrid columns="5">
+                                        <h:outputText value="DATOS DEL EGRESADO (A)"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="5" rendered="#{not empty administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado}">
+                                        <h:outputText value="Matrícula:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="Nombre completo:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="Carrera:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="Telefono (fijo):" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="Telefono (movil):" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.dtoEstudiante.matricula}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.dtoEstudiante.nombre}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.dtoEstudiante.carrera}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.numTelFijo}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.numTelMovil}"/>
+
+                                        <h:outputText value="Correo Electrónico:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="Red Social:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="Último de nivel de escolaridad:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="En que tipo de institucion estudias actualmente:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value=""/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.correoElectronico}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.redSocial}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivelEscolaridad(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.ultNivelEscolaridad)}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerInstitucion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.institucionEstudias)}"/>
+                                        <h:outputText value=""/>
+                                    </p:panelGrid>
+                                    <hr/>
+                                    <p:panelGrid columns="5">
+                                        <h:outputText value="ACTIVIDAD ACTUAL DEL EGRESADO (A)"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="1" rendered="#{not empty administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado}">
+                                        <h:outputText value="Activad actual:" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerActividadActual(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.actividadActual)}"/>
+                                        <h:outputText value="Actividad Económico:" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerActividadEconomico(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.actividadEconomico)}"/>
+                                        <h:outputText value="Puesto actual o último que desempeñaste:" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerPuesto(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.puestoActual)}"/>
+                                        <h:outputText value="¿En que medida conincide el trabajo que tienes actualmente o el último que desempeñaste,
+                                                      con la formación que recibiste en la UT?" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerCoincideFormacion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.coincideFormacionUt)}"/>
+                                        <h:outputText value="Ingreso mensual en tu empleo o en el último que desempeñaste" 
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerIngresoMensual(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.ingresoMensual)}"/>
+                                        <h:outputText value="¿A qupe régimen jurídico pertenece la empresa donde trabajas actualmente o donde trabajaste en 
+                                                      tu último empleo?" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRegimen(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.regimenJuridico)}"/>
+                                        <h:outputText value="Tamaño de la empresa donde trabajas actualmente o donde trabajaste por última vez:" 
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerTamanioEmpresa(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.tamanioEmpresa)}"/>
+                                        <h:outputText value="Al concluir tus estudios, ¿cuánto tiempo tardaste en encontrar tu último empleo, en 
+                                                      empezar a trabajar por tu cuenta o en un negocio familiar o propio?" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerTiempo(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.tiempoEmpleo)}"/>
+                                        <h:outputText value="¿Por qué medio obtuviste tu trabajo actual o el último que desempeñaste?" 
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerMedios(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.medioTrabajo)}"/>
+                                        <h:outputText value="¿Cuánta gente tienes a tu cargo?" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerGenteCargo(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.genteCargo)}"/>
+                                        <h:outputText value="Desde que egresaste a la fecha, ¿cómo consideras que ha cambiado tu situación económica?" 
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerSituacion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.situacionEconomica)}"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="1">
+                                        <h:outputText value="¿En que medida consideras que influyeron los siguientes factores en la obtención del empleo?"
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasFactores().size() + 1}">
+                                        <h:outputText value=""/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasFactores()}">
+                                            <h:outputText value="#{item.value}. #{item.label}"/>
+                                        </c:forEach>
+                                        <h:outputText value="a) La buena imagen de la UT" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasFactores()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorA.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorA.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="b) La formación recibida" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasFactores()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorB.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorB.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="c) Pertinencia de la carrera con las necesidades" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasFactores()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorC.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorC.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="d) Recomendaciones o relaciones personales con la empresa" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasFactores()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorD.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorD.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="e) Habilidades personales para obtener el empleo" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasFactores()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorE.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorE.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="f) Experiencia laboral previa" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasFactores()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorF.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.factorF.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                    </p:panelGrid>
+                                    <hr/>
+                                    <p:panelGrid columns="5">
+                                        <h:outputText value="DATOS GENERALES DE LA EMPRESA EN LA QUE LABORAS ACTUALMENTE"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="4">
+                                        <h:outputText value="Nombre de la empresa" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="Calle y No. de la empresa" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="Colonia" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="Municipio" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.nombreEmpresa}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.calleNoEmpresa}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.colonia}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.municipio}"/>
+                                        <h:outputText value="Estado" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="Teléfono" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="Extension" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="Correo Electronico" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.estado}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.telefono}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.extension}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.correoElectronicoEmpresa}"/>
+
+                                    </p:panelGrid>
+                                    <hr/>
+                                    <p:panelGrid columns="5">
+                                        <h:outputText value="Opinión y aporte personal del Egresado (a)"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="1">
+                                        <h:outputText value="A partir de tu experiencia personal, ¿Que tan adecuados consideras los siguientes aspectos de tu 
+                                                      formación profesional?"
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos().size() + 1}">
+                                        <h:outputText value=""/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <h:outputText value="#{item.value}. #{item.label}"/>
+                                        </c:forEach>
+                                        <h:outputText value="a) Contenidos teóricos" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoA.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoA.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="b) Practicas en talleres y laboratorios" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoB.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoB.toString()}">
+                                                <i class="fa fa-circle-thin" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="c) Prácticas realizadas en las empresas previas a la estadía" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoC.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoC.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="d) Visitas guiadas" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoD.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoD.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="e) Estadia" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoE.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoE.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="f) Equipo de talleres y laboratorios" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoF.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoF.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="g) Programa de tutorias " style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoG.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoG.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="h) Asesorias de tus profesores" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoH.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoH.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="i) Enseñanza de idioma extranjero" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoI.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoI.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="j) Uso de herramientas informaticas" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoJ.toString()}">
+                                                <i class="fa fa-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoJ.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="k) Formación integral" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoK.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoK.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="l) Proceso de enseñanza" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoL.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoL.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="m) Servicios de consulta en biblioteca" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerRespuestasAspectos()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoM.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.aspectoM.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="1">
+                                        <h:outputText value="La formacion que recibiste en la Universidad Tecnologica, ¿Cubrio tus expectativas?" 
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerExpectativa(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.formacionExpectativa)}"/>
+                                        <h:outputText value="Menciona un curso, capacitacion o cualquier otro tipo de educacion continua que desearias
+                                                      recibir recibir para incrementar tus competencias profesionales" 
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.curso}"/>
+                                        <h:outputText value="Comentarios" 
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado.encuesta.comentarios}"/>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+                            
+                            <p:dialog header="Encuesta a Empleadores" widgetVar="customerDialog2" modal="true" showEffect="fade" hideEffect="fade"
+                                      resizable="false" position="top">
+                                <p:outputPanel id="customerDetail2">
+                                    <p:panelGrid columns="5">
+                                        <h:outputText value="DATOS DEL EGRESADO (A)"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="4" rendered="#{not empty administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2}">
+                                        <h:outputText value="Matrícula:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="Nombre completo:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="Carrera:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="Nombre de la empresa u organización:" style="font-weight: bold; font-size: 14px"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.encuestado}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.nombreEgresado}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.carrera}"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.nombreEmpresa}"/>
+                                    </p:panelGrid>
+                                    <hr/>
+                                    <p:panelGrid columns="5">
+                                        <h:outputText value="SATISFACCIÓN DEL EMPLEADOR"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="1" rendered="#{not empty administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2}">
+                                        <h:outputText value="¿Cómo consideras los conocimientos con los que cuenta el egresado/a para proponer alternativas de solución a los problemas que se le consultan de acuerdo a la carrera que cursó, función que desempeña y/o al puesto?:" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivelSatisfaccion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r6)}"/>
+                                        <h:outputText value="El conocimiento y habilidad por parte del egresado/a, en el manejo del equipo, maquinaria y herramientas de trabajo para desempeñar sus actividades lo considera:" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivelSatisfaccion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r7)}"/>
+                                        <h:outputText value="¿Cómo valora usted el trabajo desempeñado por el egresado/a en cuanto a calidad y rapidez en los proyectos asignados?" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivelSatisfaccion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r8)}"/>
+                                        <h:outputText value="La creatividad e innovación para proponer mejoras a los procesos de la empresa por parte del egresado/a, lo considera" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivelSatisfaccion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r9)}"/>
+                                        <h:outputText value="La capacidad y disposición con que cuenta el egresado/a para trabajo en equipo" 
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivelSatisfaccion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r10)}"/>
+                                        <h:outputText value="El nivel académico del egresado/a para alcanzar una mejor posición laboral en su empresa es" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivelSatisfaccion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r11)}"/>
+                                        <h:outputText value="¿Considera usted que el egresado/a cumple con los requisitos del sector productivo y Social?:" 
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivelSatisfaccion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r12)}"/>
+                                        <h:outputText value="En general ¿Cómo calificaría el desempeño del egresado/a, en su empresa?" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivelSatisfaccion(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r13)}"/>
+                                    </p:panelGrid>
+                                    <hr/>
+                                    <p:panelGrid columns="5">
+                                        <h:outputText value="NECESIDADES DEL EMPLEADOR"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="1" rendered="#{not empty administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2}">
+                                        <h:outputText value="Conocimientos técnicos indispensables de acuerdo a su perfil profesional que deben tener nuestros egresados(as)::" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r14}"/>
+                                        <h:outputText value="Herramientas Informáticas deseables:" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r15}"/>
+                                    </p:panelGrid>
+                                    
+                                    <p:panelGrid columns="1">
+                                        <h:outputText value="Idioma requerido"
+                                                      style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivel().size() + 1}">
+                                        <h:outputText value=""/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivel()}">
+                                            <h:outputText value="#{item.value}. #{item.label}"/>
+                                        </c:forEach>
+                                        <h:outputText value="INGLÉS" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivel()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r16.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r16.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="ALEMÁN" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivel()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r17.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r17.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="FRANCES" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivel()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r18.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r18.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                        <h:outputText value="OTRO" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <c:forEach var="item" items="#{administracionEncuestaAreaSeguimientoEgresados.obtenerNivel()}">
+                                            <c:if test="#{item.value eq administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r19.toString()}">
+                                                <i class="fa fa-check-circle" aria-hidden="true"></i>
+                                            </c:if>
+                                            <c:if test="#{item.value ne administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r19.toString()}">
+                                                <i class="fa fa-circle-o" aria-hidden="true"></i>
+                                            </c:if>
+                                        </c:forEach>
+                                    </p:panelGrid>
+                                    <hr/>
+                                    <p:panelGrid columns="5">
+                                        <h:outputText value="Modelo de Evaluación de la Calidad de Universidades Tecnológicas"/>
+                                    </p:panelGrid>
+                                    <p:panelGrid columns="1">
+                                        <h:outputText value="¿Qué áreas de oportunidad observa en nuestros egresados/as? " style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerOportunidades(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r20)}"/>
+                                        <h:outputText value="¿Qué debe de mejorar nuestra Institución?" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerMejoras(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r21)}"/>
+                                        <h:outputText value="Si de usted dependiera, ¿Contrataría a nuestros egresados(as)?" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.obtenerOpciones(administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r22)}"/>
+                                        <h:outputText value="Comentarios" style="font-weight: bold; font-size: 14px; text-align: left"/>
+                                        <h:outputText value="#{administracionEncuestaAreaSeguimientoEgresados.rol.dtoSeleccionado2.encuesta.r23}"/>
+                                    </p:panelGrid>
+                                </p:outputPanel>
+                            </p:dialog>
+                        </h:form>
+                    </c:if>
+                </div>
+            </c:if>
+        </section>
+    </ui:define>
+
+</ui:composition>
