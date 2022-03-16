@@ -21,6 +21,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CargaAcademica;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.shiro.User;
 
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -265,6 +267,27 @@ public class ServiciosPersonal implements EjbPersonal {
         TypedQuery<Docencias> q = em.createQuery("SELECT d FROM Docencias d JOIN d.clavePersonal c where c.clave=:clave ORDER BY d.anio DESC ", Docencias.class);
         q.setParameter("clave", claveTrabajador);
         List<Docencias> pr = q.getResultList();
+        
+        
+        TypedQuery<CargaAcademica> cac = em.createQuery("SELECT d FROM CargaAcademica d INNER JOIN d.cveGrupo g WHERE d.docente=:clave AND g.periodo>:periodo GROUP BY d.idPlanMateria.idPlanMateria ORDER BY g.periodo DESC", CargaAcademica.class);
+        cac.setParameter("clave", claveTrabajador);
+        cac.setParameter("periodo", 57);
+        List<CargaAcademica> ca = cac.getResultList();
+        if(!ca.isEmpty()){
+            ca.forEach((t) -> {
+                Docencias d= new Docencias();
+                d.setClavePersonal(new Personal(t.getDocente()));
+                d.setPrograma(t.getIdPlanMateria().getIdPlan().getDescripcion());
+                d.setMateria(t.getIdPlanMateria().getClaveMateria()+" "+t.getIdPlanMateria().getIdMateria().getNombre());
+                PeriodosEscolares per = em.find(PeriodosEscolares.class, t.getCveGrupo().getPeriodo());
+                d.setAnio(per.getAnio());
+                d.setMesInicio(per.getMesInicio().getMes());
+                d.setMsFin(per.getMesFin().getMes());
+                pr.add(d);
+            });
+        }
+        
+        pr.stream().forEachOrdered(t-> t.getAnio());
         return pr;
     }
 
