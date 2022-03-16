@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
@@ -46,10 +41,6 @@ import org.omnifaces.cdi.ViewScoped;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
-/**
- *
- * @author UTXJ
- */
 @Named
 @ViewScoped
 public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desarrollable {

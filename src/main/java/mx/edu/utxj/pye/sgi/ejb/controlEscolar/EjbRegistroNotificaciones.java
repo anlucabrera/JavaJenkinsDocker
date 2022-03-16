@@ -153,11 +153,8 @@ public class EjbRegistroNotificaciones {
 
     public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesActivas(int clave) {
         try {
-            //List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findAll")
             List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.personaRegistro = :clave ORDER BY n.horaInicio ASC")
                     .setParameter("clave", clave)
-                    //.setParameter("fechaF", fechaF)
-                    //.setMaxResults(10)
                     .getResultList();
             if (!listaNotificaciones.isEmpty()) {
                 return ResultadoEJB.crearCorrecto(listaNotificaciones, "");
@@ -171,11 +168,9 @@ public class EjbRegistroNotificaciones {
 
     public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesAlumnos(Date fechaI, Date fechaF) {
         try {
-            //List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findAll")
             List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.alcance LIKE 'Todos' AND n.horaInicio BETWEEN :fechaI AND :fechaF OR n.alcance LIKE 'Alumnos' AND n.horaInicio BETWEEN :fechaI AND :fechaF ORDER BY n.horaInicio ASC")
                     .setParameter("fechaI", fechaI)
                     .setParameter("fechaF", fechaF)
-                    //.setMaxResults(10)
                     .getResultList();
             if (!listaNotificaciones.isEmpty()) {
                 return ResultadoEJB.crearCorrecto(listaNotificaciones, "");
@@ -189,11 +184,9 @@ public class EjbRegistroNotificaciones {
 
     public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesTrabajador(Date fechaI, Date fechaF) {
         try {
-            //List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findAll")
             List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.alcance LIKE 'Personal' AND n.horaInicio BETWEEN :fechaI AND :fechaF OR n.alcance LIKE 'Todos' AND n.horaInicio BETWEEN :fechaI AND :fechaF ORDER BY n.horaInicio ASC")
                     .setParameter("fechaI", fechaI)
                     .setParameter("fechaF", fechaF)
-                    //.setMaxResults(10)
                     .getResultList();
             if (!listaNotificaciones.isEmpty()) {
                 return ResultadoEJB.crearCorrecto(listaNotificaciones, "");
