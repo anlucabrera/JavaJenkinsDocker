@@ -42,13 +42,13 @@ public interface EjbUtilidadesCH {
     public Procesopoa actualizarEtapaPOA(Procesopoa procesopoa) throws Throwable;
 
     public List<Calendarioevaluacionpoa> mostrarCalendarioevaluacionpoas() throws Throwable;
-    
-    public List<Permisosevaluacionpoaex> mostrarPermisosEvaluacionExtemporaneaPOA(Date fecha,Procesopoa idP) throws Throwable;
-    
-    public List<Calendarioevaluacionpoa> mostrarCalendaiosActivosAreaPOA(Date fecha,Procesopoa idP,Short area);
-    
+
+    public List<Permisosevaluacionpoaex> mostrarPermisosEvaluacionExtemporaneaPOA(Date fecha, Procesopoa idP) throws Throwable;
+
+    public List<Calendarioevaluacionpoa> mostrarCalendaiosActivosAreaPOA(Date fecha, Procesopoa idP, Short area);
+
     public Calendarioevaluacionpoa mostrarCalendarioEvaluacion(Date fecha) throws Throwable;
-        
+
     public List<Calendarioevaluacionpoa> mostrarCalendariosEvaluacionActivos(Date fecha) throws Throwable;
 ////////////////////////////////////////////////////////////////////////////////Eventos Áreas
 
@@ -65,25 +65,37 @@ public interface EjbUtilidadesCH {
 ////////////////////////////////////////////////////////////////////////////////Personal Categorias y Habilidades
     public List<PersonalCategorias> mostrarListaPersonalCategorias() throws Throwable;
 
+    public List<PersonalCategorias> mostrarListaPersonalCategorias360() throws Throwable;
+    
     public List<PersonalCategorias> mostrarListaPersonalCategoriasArea(Short area) throws Throwable;
 
     public PersonalCategorias crearNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable;
     
+    public PersonalCategorias actualizarNuevoPersonalCategorias(PersonalCategorias nuevoPersonalCategorias) throws Throwable;
+
     public List<PeriodosEscolares> mostrarPeriodosEscolaresEvaluaciones360() throws Throwable;
-    
+
     public Evaluaciones360 muestraEvaluaciones360() throws Throwable;
-    
+
     public List<Habilidades> mostrarListaHabilidades() throws Throwable;
 
     public Habilidades crearNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
-    
+
     public Habilidades actualizarNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
-    
+
     public List<CategoriasHabilidades> mostrarCategoriasHabilidades(Integer periodo) throws Throwable;
 
     public CategoriasHabilidades crearCategoriasHabilidades(CategoriasHabilidades categoriasHabilidades) throws Throwable;
-    
+
     public CategoriasHabilidades eliminarCategoriasHabilidades(CategoriasHabilidades categoriasHabilidades) throws Throwable;
+
+    public List<Evaluaciones360> getEvaluaciones360() throws Throwable;
+    
+    public Evaluaciones360 getEvaluaciones360Periodo(Integer cvlPeriodo) throws Throwable;
+
+    public Evaluaciones360 crearNuevaEvaluaciones360(Evaluaciones360 e360) throws Throwable;
+
+    public Evaluaciones360 actualizarEvaluaciones360(Evaluaciones360 e360) throws Throwable;
 //    
 //    public Habilidades actualizarNuevoHabilidades(Habilidades nuevoHabilidades) throws Throwable;
 
@@ -111,13 +123,13 @@ public interface EjbUtilidadesCH {
 
 ////////////////////////////////////////////////////////////////////////////////Menu
     public List<MenuDinamico> mostrarListaMenu(ListaPersonal personal, Integer nivel, String titulo, String tipoUsuario);
-    
+
     public List<MenuDinamico> mostrarListaTitulosMenu(ListaPersonal personal, Integer nivel, String titulo, String tipoUsuario);
-    
+
     public List<MenuDinamico> mostrarListaMenuDocumentacion();
-    
+
     public MenuDinamico agregarMenuDocumentacion(MenuDinamico md);
-    
+
     public MenuDinamico actualizaMenuDocumentacion(MenuDinamico md);
 
 ////////////////////////////////////////////////////////////////////////////////Errores

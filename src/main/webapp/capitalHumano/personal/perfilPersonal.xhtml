@@ -825,7 +825,7 @@
                                                                                 </div>
                                                                                 <div class="col-sm-3 col-md-3 col-lg-3">
                                                                                     <label for="fechaI" class="col-sm-12 control-label">Fecha de Ingreso</label>
-                                                                                    <p:inputText class="form-control" id="fechaI" placeholder="Fecha de Ingreso" value="#{controladorPersonal.nuevOBJPersonalSubordinado.fechaIngreso}" disabled="true"><f:convertDateTime pattern="dd/MM/yyyy"/></p:inputText>
+                                                                                    <p:calendar locale="es" id="fechaI" value="#{controladorPersonal.nuevOBJPersonalSubordinado.fechaIngreso}" pattern="dd-MM-yyyy" placeholder="00-00-0000" style="height:100%; width: 100%; object-fit: contain; font-size: large"/>
                                                                                     <hr/>
                                                                                 </div>
                                                                                 <div class="col-sm-6 col-md-6 col-lg-6">
@@ -1690,11 +1690,18 @@
                                         <p:tab title="Docencias">
                                             <h:form id="frmExLab">                                               
                                                 <p:outputPanel>
-                                                    <p:dataTable id="tblActividades"  value="#{controladorPersonal.listaDocenciases}"  var="docencia"
-                                                                 paginator="true" rows="10"
+                                                     <p:dataTable id="tblActividades"  value="#{controladorPersonal.listaDocenciases}"  var="docencia"
+                                                                 paginator="true" rows="10" editable="true" style="margin-bottom:20px" expandableRowGroups="true"
                                                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                                 rowsPerPageTemplate="5,10,15,20,25,30"
-                                                                 emptyMessage="No se encontraron registros." rendered="true">
+                                                                 rowsPerPageTemplate="5,10,15,20,25,30" sortBy="#{docencia.anio}#{docencia.mesInicio}" sortOrder="Descending"
+                                                                 emptyMessage="No se encontraron Registros." rendered="true">
+
+                                                        <p:headerRow>
+                                                            <p:column colspan="2" style="background: #009c95">
+                                                                <h:outputLabel value="#{docencia.mesInicio} - #{docencia.msFin} -- #{docencia.anio}"/>
+                                                            </p:column>
+                                                        </p:headerRow>
+
                                                         <p:column headerText="Programa" 
                                                                   sortBy="#{docencia.programa}" 
                                                                   filterBy="#{docencia.programa}" 
@@ -1706,14 +1713,7 @@
                                                                   filterBy="#{docencia.materia}" 
                                                                   filterMatchMode="contains">
                                                             <h:outputText value="#{docencia.materia}" />
-                                                        </p:column>                                                
-                                                        <p:column headerText="Periodo escolar" 
-                                                                  sortBy="#{docencia.anio}" 
-                                                                  filterBy="#{docencia.anio}" 
-                                                                  filterMatchMode="contains"
-                                                                  width="200">
-                                                            <h:outputText value="#{docencia.anio}, #{docencia.mesInicio} -#{docencia.msFin}" />
-                                                        </p:column>  
+                                                        </p:column>      
                                                     </p:dataTable>  
                                                 </p:outputPanel>    
                                             </h:form>

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.logging.Level;
@@ -105,19 +106,10 @@ public class UtilidadesCH implements Serializable {
     public Integer obtenerEdad(Date fechaNa) {
         try {
             if (fechaNa != null) {
-                LocalDate fechaActual = LocalDate.now();
-                LocalDate fechaNacimi = castearDaLD(fechaNa);
-
-                if (fechaActual.getMonthValue() >= fechaNacimi.getMonthValue()) {
-                    if (fechaActual.getDayOfMonth() >= fechaNacimi.getDayOfMonth()) {
-                        return (fechaActual.getYear() - fechaNacimi.getYear());
-                    } else {
-                        return ((fechaActual.getYear() - fechaNacimi.getYear()) - 1);
-                    }
-                } else {
-                    return ((fechaActual.getYear() - fechaNacimi.getYear()) - 1);
-                }
-            } else {    
+                LocalDate fechaI = fechaNa.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                Period edad = Period.between(fechaI, LocalDate.now());
+                return edad.getYears();
+            } else {
                 return 0;
             }
         } catch (Throwable ex) {
@@ -211,6 +203,20 @@ public class UtilidadesCH implements Serializable {
 
         //Se realiza la separación de la ruta obtenida y se coloca una máscara para poder mostrar los archivos sin exponer su ubicación real.
         return "evidencias2".concat(file.toURI().toString().split("archivos")[1]);
+    }
+    
+    public String convertirRutaVistaL(String ruta) {
+        //Se comprueba si la bao contiene la ruta de almacenamiento de la evidencia.
+        if (ruta.isEmpty()) {
+            mensajes("No fue posible cargar el archivo", "W", "C");
+            return null;
+        }
+
+        //Se inicializa una variable de tipo File mediante la obtención de la ruta (variable enviada desde la interfaz gráfica.
+        File file = new File(ruta);
+
+        //Se realiza la separación de la ruta obtenida y se coloca una máscara para poder mostrar los archivos sin exponer su ubicación real.
+        return file.toURI().toString().split("archivos")[1];
     }
 
     public String creaRutaNombramiento(Integer claveP) {

@@ -67,6 +67,11 @@ public class SeguimientoEstadiaRolCoordinador extends AbstractRol{
      */
     @Getter @NonNull private DtoSeguimientoEstadia estudianteSeguimiento;
     
+     /**
+     * Indica si se visualiza todas las columnas
+     */
+    @Getter @NonNull private Boolean ocultarColumnas;
+    
     public SeguimientoEstadiaRolCoordinador(Filter<PersonalActivo> filtro, PersonalActivo docente) {
         super(filtro);
         this.docente = docente;
@@ -106,6 +111,10 @@ public class SeguimientoEstadiaRolCoordinador extends AbstractRol{
 
     public void setEstudianteSeguimiento(DtoSeguimientoEstadia estudianteSeguimiento) {
         this.estudianteSeguimiento = estudianteSeguimiento;
+    }
+    
+    public void setOcultarColumnas(Boolean ocultarColumnas) {
+        this.ocultarColumnas = ocultarColumnas;
     }
     
 }

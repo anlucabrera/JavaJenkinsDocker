@@ -2,9 +2,6 @@ package mx.edu.utxj.pye.sgi.ejb.poa;
 
 import java.util.List;
 import javax.ejb.Local;
-import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.Comentariosprocesopoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;

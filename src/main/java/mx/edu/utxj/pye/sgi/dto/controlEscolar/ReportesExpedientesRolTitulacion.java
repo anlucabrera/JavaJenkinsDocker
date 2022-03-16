@@ -55,6 +55,16 @@ public class ReportesExpedientesRolTitulacion extends AbstractRol{
      */
     @Getter @NonNull private List<DtoReporteFotografiasTitulacion> reporteFotografiasTitulacion;
     
+     /**
+     * Lista de estudiantes que se encuentran activos de la generación y programa educativo seleccionado
+     */
+    @Getter @NonNull private List<DtoDatosEstudiante> listadoEstudiantesActivos;
+    
+     /**
+     * Lista de estudiantes que concluyeron estadía de la generación y programa educativo seleccionado
+     */
+    @Getter @NonNull private List<DtoDatosEstudiante> listadoConcluyeronEstadia;
+    
     /**
      * Generacion seleccionada
      */
@@ -124,6 +134,14 @@ public class ReportesExpedientesRolTitulacion extends AbstractRol{
         this.reporteFotografiasTitulacion = reporteFotografiasTitulacion;
     }
 
+    public void setListadoEstudiantesActivos(List<DtoDatosEstudiante> listadoEstudiantesActivos) {
+        this.listadoEstudiantesActivos = listadoEstudiantesActivos;
+    }
+
+    public void setListadoConcluyeronEstadia(List<DtoDatosEstudiante> listadoConcluyeronEstadia) {
+        this.listadoConcluyeronEstadia = listadoConcluyeronEstadia;
+    }
+    
     public void setGeneracion(Generaciones generacion) {
         this.generacion = generacion;
     }

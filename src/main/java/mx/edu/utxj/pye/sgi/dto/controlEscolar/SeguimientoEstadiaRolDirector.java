@@ -77,6 +77,11 @@ public class SeguimientoEstadiaRolDirector extends AbstractRol{
      */
     @Getter @NonNull private List<CalificacionCriterioEstadia> listaEvaluacionEstadiaRegistrada;
     
+     /**
+     * Indica si se visualiza todas las columnas
+     */
+    @Getter @NonNull private Boolean ocultarColumnas;
+    
     public SeguimientoEstadiaRolDirector(Filter<PersonalActivo> filtro, PersonalActivo directorCarrera) {
         super(filtro);
         this.directorCarrera = directorCarrera;
@@ -124,5 +129,9 @@ public class SeguimientoEstadiaRolDirector extends AbstractRol{
 
     public void setListaEvaluacionEstadiaRegistrada(List<CalificacionCriterioEstadia> listaEvaluacionEstadiaRegistrada) {
         this.listaEvaluacionEstadiaRegistrada = listaEvaluacionEstadiaRegistrada;
+    }
+
+    public void setOcultarColumnas(Boolean ocultarColumnas) {
+        this.ocultarColumnas = ocultarColumnas;
     }
 }

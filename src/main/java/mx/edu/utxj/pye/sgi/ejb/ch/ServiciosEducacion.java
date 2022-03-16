@@ -13,6 +13,8 @@ import mx.edu.utxj.pye.sgi.entity.ch.CursosTipo;
 import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
 import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
 import mx.edu.utxj.pye.sgi.entity.ch.Grados;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.pye2.PersonalCapacitado;
 
 import mx.edu.utxj.pye.sgi.facade.Facade;
 
@@ -24,6 +26,8 @@ public class ServiciosEducacion implements EjbEducacion {
 
     @EJB
     Facade facade;
+    
+    Integer i = 800;
 
 ////////////////////////////////////////////////////////////////////////////////Formacion Academica
     @Override
@@ -94,10 +98,64 @@ public class ServiciosEducacion implements EjbEducacion {
 
     @Override
     public List<Capacitacionespersonal> mostrarCapacitacionespersonal(Integer claveTrabajador) throws Throwable {
-        TypedQuery<Capacitacionespersonal> q = em.createQuery("select c from Capacitacionespersonal c JOIN c.clavePersonal cp where cp.clave= :clave ORDER BY c.estatus DESC", Capacitacionespersonal.class);
+        TypedQuery<Capacitacionespersonal> q = em.createQuery("SELECT c FROM Capacitacionespersonal c JOIN c.clavePersonal cp where cp.clave= :clave ORDER BY c.estatus DESC", Capacitacionespersonal.class);
         q.setParameter("clave", claveTrabajador);
         List<Capacitacionespersonal> pr = q.getResultList();
+        
+        TypedQuery<PersonalCapacitado> p = em.createQuery("SELECT c FROM PersonalCapacitado c JOIN c.participantesPersonalCapacitadoList pc where pc.personal= :clave", PersonalCapacitado.class);
+        p.setParameter("clave", claveTrabajador);
+        List<PersonalCapacitado> pc = p.getResultList();
+        i = 800;
+        pc.forEach((t) -> {
+            t.getParticipantesPersonalCapacitadoList().forEach((par) -> {
+                if(claveTrabajador==par.getPersonal()){
+                par.getRegistros().getEvidenciasList().forEach((ev) -> {
+                    ev.getEvidenciasDetalleList().forEach((evd) -> {
+                        String[] parts = t.getDuracion().split(":");
+                        Capacitacionespersonal c = new Capacitacionespersonal();
+                        c.setCursoClave(i);
+                        c.setClavePersonal(new Personal(par.getPersonal()));
+                        c.setNombre(t.getNombre());
+                        c.setFechaInicio(t.getFechaInicial());
+                        c.setFechaFin(t.getFechaFinal());
+                        c.setDuracionHoras(duracion(parts[0]));
+                        c.setDuracionMinutos(duracion(parts[1]));
+                        c.setTipo(new CursosTipo(t.getTipo().getPercapTipo(), t.getTipo().getTipo()));
+                        c.setModalidad(new CursosModalidad(t.getModalidad().getPercapMod(), t.getModalidad().getModalidad()));
+                        c.setEmpresaImpartidora(t.getEmpresaImpartidora());
+                        c.setObjetivo(t.getObjetivo());
+                        c.setLugar(t.getLugarImparticion());
+                        c.setEvidenciaCapacitacion(evd.getRuta());
+                        c.setEstatus("Aceptado");
+                        c.setTipoCapacitacion("Interna");
+                        c.setCategoriaCapacitacion("profesional");
+                        pr.add(c);
+                        i++;
+                    });
+                });
+                }
+            });
+        });
+
+        
         return pr;
+    }
+    
+    public Short duracion(String tim){
+        Short tiempo=0;
+        switch (tim){
+            case "00": tiempo=Short.parseShort("0"); break;
+            case "01": tiempo=Short.parseShort("1"); break;
+            case "02": tiempo=Short.parseShort("2"); break;
+            case "03": tiempo=Short.parseShort("3"); break;
+            case "04": tiempo=Short.parseShort("4"); break;
+            case "05": tiempo=Short.parseShort("5"); break;
+            case "06": tiempo=Short.parseShort("6"); break;
+            case "07": tiempo=Short.parseShort("7"); break;
+            case "08": tiempo=Short.parseShort("8"); break;
+            case "09": tiempo=Short.parseShort("9"); break;
+        }
+        return tiempo;
     }
 
     @Override

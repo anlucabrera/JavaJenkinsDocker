@@ -83,6 +83,7 @@ public class EjbAdministracionBecas {
         try{
             BecaTipos becaTipo = new BecaTipos();
             becaTipo.setNombre(tipoBeca);
+            becaTipo.setActiva(true);
             em.persist(becaTipo);
             em.flush();
            
