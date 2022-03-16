@@ -30,70 +30,95 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
-
 @Named(value = "credencializacionSE")
 @ViewScoped
-public class credencializacionSE  extends ViewScopedRol implements Desarrollable {
+public class credencializacionSE extends ViewScopedRol implements Desarrollable {
 
-    @Getter @Setter  CredencializacionRolServiciosE rol;
-    @EJB private EjbPropiedades ep;
-    @EJB private EjbCredencializacion ejb;
-    @Inject LogonMB logonMB;
-    @Getter Boolean tieneAcceso = false;
-    
+    @Getter
+    @Setter
+    CredencializacionRolServiciosE rol;
+    @EJB
+    private EjbPropiedades ep;
+    @EJB
+    private EjbCredencializacion ejb;
+    @Inject
+    LogonMB logonMB;
+    @Getter
+    Boolean tieneAcceso = false;
 
+    @Getter
+    private Boolean cargado = false;
 
-@Getter private Boolean cargado = false;
-
-@PostConstruct
-    public void init(){
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
-        try{
+    @PostConstruct
+    public void init() {
+        if (!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) {
+            return;
+        }
+        cargado = true;
+        try {
             setVistaControlador(ControlEscolarVistaControlador.CREDENCIALIZACION);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validaSE(logonMB.getPersonal().getClave()); //Validar si pertenece departamento de Servicios Escolares
-            if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
+            if (!resAcceso.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resAcceso);
+                return;
+            }//cortar el flujo si no se pudo verificar el acceso
 
             ResultadoEJB<Filter<PersonalActivo>> resValidacion = ejb.validaSE(logonMB.getPersonal().getClave());
-            if(!resValidacion.getCorrecto()){ mostrarMensajeResultadoEJB(resValidacion);return; }//cortar el flujo si no se pudo validar
+            if (!resValidacion.getCorrecto()) {
+                mostrarMensajeResultadoEJB(resValidacion);
+                return;
+            }//cortar el flujo si no se pudo validar
 
             Filter<PersonalActivo> filtro = resValidacion.getValor();//se obtiene el filtro resultado de la validación
             PersonalActivo serviciosEscolares = filtro.getEntity();//            ejbPersonalBean.pack(logonMB.getPersonal());
             rol = new CredencializacionRolServiciosE(filtro, serviciosEscolares, serviciosEscolares.getAreaOperativa());
             tieneAcceso = rol.tieneAcceso(serviciosEscolares);
-            if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            if (!tieneAcceso) {
+                mostrarMensajeNoAcceso();
+                return;
+            } //cortar el flujo si no tiene acceso
 
             rol.setServiciosEscolares(serviciosEscolares);
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
-            if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
-            if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
+            if (verificarInvocacionMenu()) {
+                return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
+            }
+            if (!tieneAcceso) {
+                mostrarMensajeNoAcceso();
+                return;
+            }
             rol.setNivelRol(NivelRol.OPERATIVO);
 
             rol.getInstrucciones().add("Ingresar la matricula del estudiante.");
             rol.getInstrucciones().add("Verificar que los datos sean correctos.");
             rol.getInstrucciones().add("Para imprimir la credencial, seleccione el botón de imprimir, que se encuentra en la parte superior derecha.");
             rol.getInstrucciones().add("Al presionar el botón, se abrirá una nueva ventana con la credencial, lista para su impresión.");
-        }catch (Exception e){
+        } catch (Exception e) {
             mostrarExcepcion(e);
         }
     }
+
     //TODO: Busca al estudiante por matricula
-    public void buscaEstudiante(){
+    public void buscaEstudiante() {
         setAlertas(Collections.EMPTY_LIST);
-        if(rol.getMatricula()== null) return;
+        if (rol.getMatricula() == null) {
+            return;
+        }
         //TODO: Se ejecuta el metodo de busqueda
         ResultadoEJB<Estudiante> resEstudiante = ejb.getEstudiantebyMatricula(rol.getMatricula());
-        if(resEstudiante.getCorrecto()==true){
+        if (resEstudiante.getCorrecto() == true) {
             rol.setEstudiante(resEstudiante.getValor());
             rol.setNombreC(rol.getEstudiante().getAspirante().getIdPersona().getNombre().concat(" ").concat(rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno().concat(" ").concat(rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno())));
             getCarrera();
-        }else{
+            alertas();
+        } else {
             mostrarMensajeResultadoEJB(resEstudiante);
+            alertas();
         }
-        alertas();
-        
+
     }
-    public void alertas(){
+
+    public void alertas() {
         setAlertas(Collections.EMPTY_LIST);
         ResultadoEJB<List<DtoAlerta>> resMensajes = ejb.identificaMensajes(rol);
         if (resMensajes.getCorrecto()) {
@@ -103,6 +128,7 @@ public class credencializacionSE  extends ViewScopedRol implements Desarrollable
         }
         repetirUltimoMensaje();
     }
+
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
         String valor = "credencializacion";
@@ -111,19 +137,45 @@ public class credencializacionSE  extends ViewScopedRol implements Desarrollable
         return mostrar(request, map.containsValue(valor));
 
     }
-    
+
     //TODO: Se obtiene la carrera del etudiante
-    public void getCarrera(){
-        ResultadoEJB<AreasUniversidad> resArea= ejb.getAreabyClave(rol);
-        if(resArea.getCorrecto()==true){
+    public void getCarrera() {
+        ResultadoEJB<AreasUniversidad> resArea = ejb.getAreabyClave(rol);
+        if (resArea.getCorrecto() == true) {
             rol.setCarrera(resArea.getValor());
-        }else{mostrarMensajeResultadoEJB(resArea);}
+        } else {
+            mostrarMensajeResultadoEJB(resArea);
+        }
 
     }
     
+    public boolean obtenerSituacionAcademica(){
+        boolean puedeImprimir = false;
+            ResultadoEJB resAcademica = ejb.getSituacionAcademicaEstudiante(rol.getMatricula());
+            if(resAcademica.getCorrecto()){
+            puedeImprimir = true;
+            return puedeImprimir;
+            }else{
+            return puedeImprimir;
+            }
+    }
+
+    //Verifica que las fotografias para la credencial se encuentren en el servidor
+    public boolean existenFotos() {
+        boolean existen = false;
+        ResultadoEJB resFoto = ejb.getFotoAlumno(rol);
+        ResultadoEJB resFirma = ejb.getFirmaAlumno(rol);
+        if (resFoto.getCorrecto() == true && resFirma.getCorrecto() == true) {
+            existen = true;
+            return existen;
+        } else {
+            return existen;
+        }
+    }
+
     //TODO:Genera la credencial 
-    public void generarCredencial(){
-       ejb.generaCredencial(rol);
-       
+    public void generarCredencial() {
+        ejb.generaCredencial(rol);
+
     }
 }
