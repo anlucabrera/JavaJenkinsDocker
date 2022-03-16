@@ -1,5 +1,9 @@
 package mx.edu.utxj.pye.sgi.ejb.ch;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -163,6 +167,9 @@ public class ServiciosPersonal implements EjbPersonal {
     @Override
     public InformacionAdicionalPersonal mostrarInformacionAdicionalPersonalLogeado(Integer claveTrabajador) throws Throwable {
         InformacionAdicionalPersonal pr = em.find(InformacionAdicionalPersonal.class, claveTrabajador);
+        LocalDate fechaI=pr.getPersonal().getFechaNacimiento().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Period edad= Period.between(fechaI, LocalDate.now());
+        pr.setEdad(edad.getYears());        
         if (pr == null) {
             return null;
         } else {

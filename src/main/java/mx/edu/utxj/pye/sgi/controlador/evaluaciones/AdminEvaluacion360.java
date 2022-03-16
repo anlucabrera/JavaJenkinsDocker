@@ -41,7 +41,20 @@ import org.omnifaces.util.Messages;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.faces.event.ValueChangeEvent;
+import mx.edu.utxj.pye.sgi.controladores.ch.AdministracionControl;
+import mx.edu.utxj.pye.sgi.controladores.ch.ControladorPersonalconfiguracion;
+import mx.edu.utxj.pye.sgi.entity.ch.CategoriasHabilidades;
+import mx.edu.utxj.pye.sgi.entity.ch.CategoriasHabilidadesPK;
+import mx.edu.utxj.pye.sgi.entity.ch.Habilidades;
+import mx.edu.utxj.pye.sgi.entity.ch.Modulosregistro;
+import mx.edu.utxj.pye.sgi.entity.prontuario.Categorias;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Ajax;
+import org.primefaces.event.RowEditEvent;
 
 
 
@@ -87,12 +100,36 @@ public class AdminEvaluacion360 implements Serializable {
     
     @Getter @Setter private List<SelectItem> sIPeriodo360 , sIPeriodoDesempemio, sIPeriodos ;
     
+    //Inicio Admin Ev360
+    @Getter    @Setter    private List<Evaluaciones360> evaluaciones360s = new ArrayList<>();
+    @Getter    @Setter    private List<PeriodosEscolares> periodosEscolareses = new ArrayList<>();
+    @Getter    @Setter    private List<PersonalCategorias> categorias360 = new ArrayList<>();
+    @Getter    @Setter    private List<Habilidades> habilidadeses = new ArrayList<>();
+    @Getter    @Setter    private List<CategoriasHabilidades> categoriasHabilidadeses = new ArrayList<>();
+    
+    @Getter    @Setter    private List<Boolean> estatus = new ArrayList<>();
+    
+    @Getter    @Setter    private PersonalCategorias categorias;  
+    @Getter    @Setter    private Habilidades habilidades;  
+    @Getter    @Setter    private Evaluaciones360 evaluaciones360CategoriasHablidades;  
+    
+    
+    @Getter    @Setter    private Integer periodoEv = 0,pestaniaActiva=0,periodoActivo=0,cvlHab=0;
+    @Getter    @Setter    private Date fechaI, fechaF;  
+    @Getter    @Setter    private Boolean otroPeriodo;  
+    @Getter    @Setter    private Short cvlCat=0;      
+    @Getter    @Setter    private String datosP="",nombCat="",nombHab="";
+    
+    //Fin Admin Ev360
+    
     @EJB EJBSelectItems eJBSelectItems;
     @EJB EjbEvaluacion360Combinaciones ejbEvaluacion360Combinaciones;
     @EJB EjbEvaluacion3601 ejbEvaluacion3601;
     @EJB EjbAdministracionEncuestas ejbAdministracionEncuestas;
     @EJB EjbEvaluacionDesempenio ejbDes;
     
+    
+    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
 
 @Inject LogonMB logonMB;
 @Getter private Boolean cargado = false;
@@ -112,6 +149,7 @@ public class AdminEvaluacion360 implements Serializable {
         sIPeriodo360 = eJBSelectItems.itemsPeriodos360();
         sIPeriodoDesempemio = eJBSelectItems.itemsPeriodos360();
         sIPeriodos = eJBSelectItems.itemsPeriodos();
+        listadosAdministracion();
     }
 
     public void generaEvaluacion360() {
@@ -337,4 +375,279 @@ public class AdminEvaluacion360 implements Serializable {
         this.edesempenio = edesempenio;
         this.e360b = !edesempenio;
     }
+    
+    //--------------------------------------------------------------------------Herramientas de administracion evaluacion 360//--------------------------------------------------------------------------
+    public void listadosAdministracion() {
+        try {
+            evaluaciones360s = ejbUtilidadesCH.getEvaluaciones360();
+            periodosEscolareses = ejbUtilidadesCH.mostrarPeriodosEscolaresEvaluaciones360();
+            categorias360 = ejbUtilidadesCH.mostrarListaPersonalCategorias360();
+            habilidadeses = ejbUtilidadesCH.mostrarListaHabilidades();
+            periodoEv = periodosEscolareses.get(0).getPeriodo();
+            periodoActivo = periodoEv;
+            categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
+            estatus.add(Boolean.TRUE);
+            estatus.add(Boolean.FALSE);
+            categorias = new PersonalCategorias();
+            habilidades = new Habilidades();
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void numeroProcesoAsiganado(ValueChangeEvent event) {
+        try {
+            pestaniaActiva = 3;
+            periodoEv = Integer.parseInt(event.getNewValue().toString());
+            categoriasHabilidadeses = new ArrayList<>();
+            categoriasHabilidadeses.clear();
+            categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
+            Ajax.update("frmCatHab");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public String datosperido(Integer periodo) {
+        datosP = "";
+        periodosEscolareses.forEach((t) -> {
+            if (Objects.equals(periodo, t.getPeriodo())) {
+                datosP = t.getPeriodo() + ": " + t.getMesInicio().getMes() + " - " + t.getMesFin().getMes() + " -- " + t.getAnio();
+            }
+        });
+        return datosP;
+    }
+
+    public void onRowEditEvaluacion(RowEditEvent event) {
+        try {
+            evaluaciones360s = new ArrayList<>();
+            evaluaciones360s.clear();
+            Evaluaciones360 m = (Evaluaciones360) event.getObject();
+            ejbUtilidadesCH.actualizarEvaluaciones360(m);
+            Messages.addGlobalInfo("¡Operación exitosa!");
+            evaluaciones360s = ejbUtilidadesCH.getEvaluaciones360();
+            pestaniaActiva = 0;
+            Ajax.update("frmev");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void onRowEditCategorias(RowEditEvent event) {
+        try {
+            categorias360 = new ArrayList<>();
+            categorias360.clear();
+            PersonalCategorias m = (PersonalCategorias) event.getObject();
+            ejbUtilidadesCH.actualizarNuevoPersonalCategorias(m);
+            Messages.addGlobalInfo("¡Operación exitosa!");
+            categorias360 = ejbUtilidadesCH.mostrarListaPersonalCategorias360();
+            pestaniaActiva = 1;
+            Ajax.update("frmCat");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void onRowEditHabilidades(RowEditEvent event) {
+        try {
+            habilidadeses = new ArrayList<>();
+            habilidadeses.clear();
+            Habilidades m = (Habilidades) event.getObject();
+            ejbUtilidadesCH.actualizarNuevoHabilidades(m);
+            Messages.addGlobalInfo("¡Operación exitosa!");
+            habilidadeses = ejbUtilidadesCH.mostrarListaHabilidades();
+            pestaniaActiva = 2;
+            Ajax.update("frmHab");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void crearEvluacion360() {
+        try {
+            List<Evaluaciones360> es = new ArrayList<>();
+            es = evaluaciones360s.stream().filter(t -> t.getPeriodo() == periodoEv).collect(Collectors.toList());
+            if (!es.isEmpty()) {
+                Messages.addGlobalWarn("¡Ya cuenta con una evaluación para este periodo!");
+                return;
+            }
+            evaluaciones360s = new ArrayList<>();
+            evaluaciones360s.clear();
+            Evaluaciones360 e360 = new Evaluaciones360();
+            e360.setFechaFin(fechaF);
+            e360.setFechaInicio(fechaI);
+            e360.setPeriodo(periodoEv);
+            ejbUtilidadesCH.crearNuevaEvaluaciones360(e360);
+            evaluaciones360s = ejbUtilidadesCH.getEvaluaciones360();
+            pestaniaActiva = 0;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void crearCategoria() {
+        try {
+            categorias360 = new ArrayList<>();
+            categorias360.clear();
+            categorias.setTipo("Específica");
+            categorias.setActivo(Boolean.TRUE);
+            ejbUtilidadesCH.crearNuevoPersonalCategorias(categorias);
+            categorias360 = ejbUtilidadesCH.mostrarListaPersonalCategorias360();
+            categorias = new PersonalCategorias();
+            pestaniaActiva = 1;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void crearHabilidad() {
+        try {
+            habilidadeses = new ArrayList<>();
+            habilidadeses.clear();
+            habilidades.setActivo(Boolean.TRUE);
+            ejbUtilidadesCH.crearNuevoHabilidades(habilidades);
+            habilidadeses = ejbUtilidadesCH.mostrarListaHabilidades();
+            habilidades = new Habilidades();
+            pestaniaActiva = 2;
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void agregaCategoriasHabilidadesEvAnterior() {
+        try {
+            pestaniaActiva = 3;
+            categoriasHabilidadeses = new ArrayList<>();
+            categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
+            Evaluaciones360 e = ejbUtilidadesCH.muestraEvaluaciones360();
+            if(!periodoEv.equals(e.getPeriodo())){
+                Messages.addGlobalError("¡Aún no cuenta con una evaluación para este periodo!");
+                return;
+            }
+            if (categoriasHabilidadeses.isEmpty()) {
+                categoriasHabilidadeses = new ArrayList<>();
+                categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades((periodoEv - 1));
+                if (!categoriasHabilidadeses.isEmpty()) {
+                    categoriasHabilidadeses.forEach((t) -> {
+                        CategoriasHabilidades ch = new CategoriasHabilidades();
+                        CategoriasHabilidadesPK chpk = new CategoriasHabilidadesPK();
+
+                        chpk.setCategoria(t.getPersonalCategorias().getCategoria());
+                        chpk.setHabilidad(t.getHabilidades().getHabilidad());
+                        chpk.setEvaluacion(e.getEvaluacion());
+
+                        ch.setCategoriasHabilidadesPK(new CategoriasHabilidadesPK());
+                        ch.setCategoriasHabilidadesPK(chpk);
+                        ch.setEvaluaciones360(new Evaluaciones360());
+                        ch.setHabilidades(new Habilidades());
+                        ch.setPersonalCategorias(new PersonalCategorias());
+
+                        ch.setEvaluaciones360(e);
+                        ch.setHabilidades(t.getHabilidades());
+                        ch.setPersonalCategorias(t.getPersonalCategorias());
+
+                        try {
+                            ejbUtilidadesCH.crearCategoriasHabilidades(ch);
+                        } catch (Throwable ex) {
+                            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+                            Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+                }
+            }
+            categoriasHabilidadeses = new ArrayList<>();
+            categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void agregaCategoriasHabilidades() {
+        try {
+            categorias = new PersonalCategorias();
+            if (cvlCat == 0) {
+                categorias.setNombre(nombCat);
+                categorias.setTipo("Específica");
+                categorias.setActivo(Boolean.TRUE);
+                categorias = ejbUtilidadesCH.crearNuevoPersonalCategorias(categorias);
+            } else {
+                categorias.setCategoria(cvlCat);
+            }
+
+            habilidades = new Habilidades();
+            if (cvlHab == 0) {
+                habilidades.setNombre(nombHab);
+                habilidades.setActivo(Boolean.TRUE);
+                habilidades = ejbUtilidadesCH.crearNuevoHabilidades(habilidades);
+            } else {
+                habilidades.setHabilidad(cvlHab);
+            }
+
+            evaluaciones360CategoriasHablidades = new Evaluaciones360();
+            evaluaciones360CategoriasHablidades = ejbUtilidadesCH.getEvaluaciones360Periodo(periodoEv);
+
+            pestaniaActiva = 3;
+            CategoriasHabilidades ch = new CategoriasHabilidades();
+            CategoriasHabilidadesPK chpk = new CategoriasHabilidadesPK();
+
+            chpk.setCategoria(categorias.getCategoria());
+            chpk.setHabilidad(habilidades.getHabilidad());
+            chpk.setEvaluacion(evaluaciones360CategoriasHablidades.getEvaluacion());
+
+            ch.setCategoriasHabilidadesPK(new CategoriasHabilidadesPK());
+            ch.setCategoriasHabilidadesPK(chpk);
+            ch.setEvaluaciones360(new Evaluaciones360());
+            ch.setHabilidades(new Habilidades());
+            ch.setPersonalCategorias(new PersonalCategorias());
+
+            ch.setEvaluaciones360(evaluaciones360CategoriasHablidades);
+            ch.setHabilidades(habilidades);
+            ch.setPersonalCategorias(categorias);
+
+            ejbUtilidadesCH.crearCategoriasHabilidades(ch);
+
+            categoriasHabilidadeses = new ArrayList<>();
+            categorias360 = new ArrayList<>();
+            habilidadeses = new ArrayList<>();
+
+            categorias360 = ejbUtilidadesCH.mostrarListaPersonalCategorias360();
+            habilidadeses = ejbUtilidadesCH.mostrarListaHabilidades();
+            categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
+
+            evaluaciones360CategoriasHablidades = new Evaluaciones360();
+            habilidades = new Habilidades();
+            categorias = new PersonalCategorias();
+            cvlHab = 0;
+            nombCat = "";
+            nombHab = "";
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void eliminaAineacion(CategoriasHabilidades categoriasHabilidades) {
+        try {
+            ejbUtilidadesCH.eliminarCategoriasHabilidades(categoriasHabilidades);
+            categoriasHabilidadeses = new ArrayList<>();
+            categoriasHabilidadeses = ejbUtilidadesCH.mostrarCategoriasHabilidades(periodoEv);
+            Ajax.update("frmCatHab");
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdminEvaluacion360.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void imprimirValores() {
+    }
+
 }

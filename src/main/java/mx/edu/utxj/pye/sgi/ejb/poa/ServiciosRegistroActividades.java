@@ -8,18 +8,12 @@ import javax.ejb.Stateful;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.pye2.ActividadesPoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.Comentariosprocesopoa;
 import mx.edu.utxj.pye.sgi.entity.pye2.CuadroMandoIntegral;
 import mx.edu.utxj.pye.sgi.entity.pye2.EjesRegistro;
 import mx.edu.utxj.pye.sgi.entity.pye2.Estrategias;
-import mx.edu.utxj.pye.sgi.entity.pye2.LineasAccion;
 import mx.edu.utxj.pye.sgi.entity.pye2.Proyectos;
-import mx.edu.utxj.pye.sgi.entity.pye2.RecursosActividad;
-import mx.edu.utxj.pye.sgi.entity.pye2.UnidadMedidas;
 
 @Stateful
 public class ServiciosRegistroActividades implements EjbRegistroActividades {

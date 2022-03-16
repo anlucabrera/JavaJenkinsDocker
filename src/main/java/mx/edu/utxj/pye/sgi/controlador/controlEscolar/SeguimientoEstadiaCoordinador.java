@@ -105,6 +105,8 @@ public class SeguimientoEstadiaCoordinador extends ViewScopedRol implements Desa
             rol.getInstrucciones().add("Dar clic en botón que se habilita para validar o invalidar la información registrada por el asesor académico.");
             rol.getInstrucciones().add("Dar clic en el campo del comentario para capturar las observaciones, en caso contrario dejar con el texto predeterminado.");
             
+            rol.setOcultarColumnas(false);
+            
             generacionesEventosRegistrados();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -286,6 +288,19 @@ public class SeguimientoEstadiaCoordinador extends ViewScopedRol implements Desa
            permiso = Boolean.TRUE;
         }
         return permiso;
+    }
+    
+      /**
+     * Método que cambia el tipo de visualización de la información (todos los seguimientos o solo los que están validados por dirección de carrera)
+     * @param event Evento al tipo de visualización
+     */
+    public void cambiarOcultarColumnas(ValueChangeEvent event){
+        if(rol.getOcultarColumnas()){
+            rol.setOcultarColumnas(false);
+        }else{
+            rol.setOcultarColumnas(true);
+        }
+        Ajax.update("frm");
     }
    
 }

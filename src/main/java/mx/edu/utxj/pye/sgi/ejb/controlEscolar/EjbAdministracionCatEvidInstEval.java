@@ -158,7 +158,7 @@ public class EjbAdministracionCatEvidInstEval {
     }
     
     /**
-     * Permite guardar la evidencia a la categoría educativa seleccionada
+     * Permite guardar la evidencia a la categoría de evaluación seleccionada
      * @param categoria
      * @param evidencia
      * @return Resultado del proceso
@@ -173,9 +173,9 @@ public class EjbAdministracionCatEvidInstEval {
             em.persist(evidenciaEvaluacion);
             em.flush();
            
-            return ResultadoEJB.crearCorrecto(evidenciaEvaluacion, "Se registró correctamente la evidencia a la categoría educativa seleccionada.");
+            return ResultadoEJB.crearCorrecto(evidenciaEvaluacion, "Se registró correctamente la evidencia a la categoría de evaluación seleccionada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la evidencia a la categoría educativa seleccionada. (EjbAdministracionCatEvidInstEval.guardarEvidenciaCategoria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar correctamente la evidencia a la categoría de evaluación seleccionada. (EjbAdministracionCatEvidInstEval.guardarEvidenciaCategoria)", e, null);
         }
     }
     
@@ -191,9 +191,9 @@ public class EjbAdministracionCatEvidInstEval {
                 .setParameter("evidencia", evidenciaEvaluacion.getEvidencia())
                 .executeUpdate();
             
-            return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente el evento escolar del periodo seleccionado.");
+            return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente la evidencia de la categoría de evaluación seleccionada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el evento escolar del periodo seleccionado. (EjbAdministracionCatEvidInstEval.eliminarEvidenciaCategoria)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo eliminar la evidencia de la categoría de evaluación seleccionada. (EjbAdministracionCatEvidInstEval.eliminarEvidenciaCategoria)", e, null);
         }
     }
     

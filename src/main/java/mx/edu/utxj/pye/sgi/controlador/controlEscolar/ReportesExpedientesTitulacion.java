@@ -24,6 +24,7 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteFotografiasTitulacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteEstadisticoTitulacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReportesExpedientesRolTitulacion;
@@ -83,15 +84,17 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
             
             rol.getInstrucciones().add("Seleccione generación.");
             rol.getInstrucciones().add("Seleccione nivel educativo.");
-            rol.getInstrucciones().add("Seleccione tipo de búsqueda: por programa eductivo o general.");
+            rol.getInstrucciones().add("Seleccione tipo de búsqueda: por programa educativo o general.");
             rol.getInstrucciones().add("Seleccione programa educativo.");
             rol.getInstrucciones().add("Seleccione reporte que desea consultar.");
             rol.getInstrucciones().add("A continuación, visualizará una tabla con la información correspondiente a los filtros seleccionados.");
             rol.getInstrucciones().add("En la parte superior derecha de la interfaz, encontrará los iconos para descargar la siguiente información:");
-            rol.getInstrucciones().add("1. El primer icono descarga el reporte estadístico por generación y nivel educativo.");
-            rol.getInstrucciones().add("2. El segundo icono descarga el listado de fotografías de titulación por generación, nivel educativo, programa educativo o general.");
-            rol.getInstrucciones().add("3. El tercer icono descarga las fotografías por generación y nivel educativo en un archivo zip.");
-           
+            rol.getInstrucciones().add("1.1 Para el primer reporte el primer icono descargará el reporte estadístico por generación y nivel educativo.");
+            rol.getInstrucciones().add("1.2 Para el primer reporte el tercer icono descargará las fotografías por generación y nivel educativo en un archivo zip.");
+            rol.getInstrucciones().add("2. Para el segundo reporte descargará el listado de fotografías de titulación por generación, nivel educativo, programa educativo o general.");
+            rol.getInstrucciones().add("3. Para el tercer reporte descargará el listado de estudiantes activos (en situación regular) por generación, nivel educativo, programa educativo o general.");
+            rol.getInstrucciones().add("4. Para el cuarto reporte descargará el listado de estudiantes que concluyeron estadía (en situación egresado no titulado) por generación, nivel educativo, programa educativo o general.");
+            
             rol.setDeshabilitarTipoBusqueda(false);
             rol.setTipoBusqueda("busquedaPrograma");
             listaGeneracionesExpedientesRegistrados();
@@ -160,6 +163,8 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
         else if(rol.getPersonal().getPersonal().getAreaOperativa()==60){
             listaReportes.add("Expediente con fotografía");
             listaReportes.add("Informe estadístico");
+            listaReportes.add("Lista estudiantes activos");
+            listaReportes.add("Lista estudiantes concluyeron estadía");
         }
         
         rol.setReportes(listaReportes);
@@ -175,6 +180,10 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
            generarReporteFotografiaTitulacion();
         }else if("Informe estadístico".equals(rol.getReporte())){
            generarReporteEstadisticoTitulacion();
+        }else if("Lista estudiantes activos".equals(rol.getReporte())){
+           generarListadoEstudiantesActivos();
+        }else if("Lista estudiantes concluyeron estadía".equals(rol.getReporte())){
+           generarListadoConcluyeronEstadia();
         }
     }
     
@@ -258,7 +267,6 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
                 Ajax.update("tbReporteFotografia");
             }else mostrarMensajeResultadoEJB(res);
         }else{
-            System.err.println("generarReporteFotografiaTitulacion - reporteGeneral ");
             ResultadoEJB<List<DtoReporteFotografiasTitulacion>> res = ejb.getReporteFotografiaTitulacion(rol.getGeneracion(), rol.getNivelEducativo(), rol.getProgramasEducativos());
             if(res.getCorrecto()){
                 rol.setReporteFotografiasTitulacion(res.getValor());
@@ -276,6 +284,41 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
             rol.setReporteEstadisticoTitulacion(res.getValor());
             Ajax.update("tbReporteEstadistico");
         } else mostrarMensajeResultadoEJB(res);
+    }
+    
+     /**
+     * Permite generar listado de estudiantes activos de la generación y nivel educativo seleccionado
+     */
+    public void generarListadoEstudiantesActivos(){
+        ResultadoEJB<List<DtoDatosEstudiante>> res = ejb.getListadoEstudiantesActivos(rol.getGeneracion(), rol.getNivelEducativo());
+        if (res.getCorrecto()) {
+            if(rol.getTipoBusqueda().equals("busquedaPrograma")){
+                rol.setListadoEstudiantesActivos(res.getValor().stream().filter(p->p.getProgramaEducativo().equals(rol.getProgramaEducativo())).collect(Collectors.toList()));
+            }else{
+                rol.setListadoEstudiantesActivos(res.getValor());
+            }
+            Ajax.update("tbListadoEstudiantesActivos");
+        } else {
+            mostrarMensajeResultadoEJB(res);
+        }
+    }
+    
+     /**
+     * Permite generar listado de estudiantes que conclueron estadía de la generación y nivel educativo seleccionado
+     */
+    public void generarListadoConcluyeronEstadia(){
+        ResultadoEJB<List<DtoDatosEstudiante>> res = ejb.getListadoConcluyeronEstadia(rol.getGeneracion(), rol.getNivelEducativo());
+        if (res.getCorrecto()) {
+            if(rol.getTipoBusqueda().equals("busquedaPrograma")){
+                rol.setListadoConcluyeronEstadia(res.getValor().stream().filter(p->p.getProgramaEducativo().equals(rol.getProgramaEducativo())).collect(Collectors.toList()));
+            }else{
+                rol.setListadoConcluyeronEstadia(res.getValor());
+            }
+            Ajax.update("tbListadoConcluyeronEstadia");
+        } else {
+            mostrarMensajeResultadoEJB(res);
+        }
+       
     }
     
      /**
@@ -303,6 +346,24 @@ public class ReportesExpedientesTitulacion extends ViewScopedRol implements Desa
      */
     public void descargarListadoFotografiasGeneracionNivel() throws IOException, Throwable{
         File f = new File(ejb.getDescargarReporteFotografia(rol.getGeneracion(), rol.getNivelEducativo(), rol.getProgramasEducativos()));
+        Faces.sendFile(f, true);
+    } 
+    
+     /**
+     * Permite descargar el listado de estudiantes activos por generación y nivel educativo
+     * @throws java.io.IOException
+     */
+    public void descargarListadoEstudiantesActivos() throws IOException, Throwable{
+        File f = new File(ejb.getDescargarListadoEstudiantesActivos(rol.getGeneracion(), rol.getNivelEducativo()));
+        Faces.sendFile(f, true);
+    } 
+    
+    /**
+     * Permite descargar el listado de estudiantes que concluyeron estadía por generación y nivel educativo
+     * @throws java.io.IOException
+     */
+    public void descargarListadoConcluyeronEstadia() throws IOException, Throwable{
+        File f = new File(ejb.getDescargarListadoConcluyeronEstadia(rol.getGeneracion(), rol.getNivelEducativo()));
         Faces.sendFile(f, true);
     } 
     

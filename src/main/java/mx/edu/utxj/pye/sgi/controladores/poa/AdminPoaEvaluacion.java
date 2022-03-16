@@ -2,7 +2,6 @@ package mx.edu.utxj.pye.sgi.controladores.poa;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -16,14 +15,12 @@ import javax.annotation.PostConstruct;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 import org.omnifaces.cdi.ViewScoped;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controladores.ch.ControladorEmpleado;
-import mx.edu.utxj.pye.sgi.controladores.ch.ZipWritter;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbEvidenciasPoa;
@@ -38,7 +35,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Evidencias;
 import mx.edu.utxj.pye.sgi.entity.pye2.EvidenciasDetalle;
 import mx.edu.utxj.pye.sgi.util.UtilidadesPOA;
 import org.omnifaces.util.Ajax;
-import org.omnifaces.util.Faces;
 import org.omnifaces.util.Messages;
 import org.omnifaces.util.Servlets;
 import org.primefaces.event.RowEditEvent;
@@ -49,6 +45,7 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.FileOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 @Named
@@ -66,10 +63,10 @@ public class AdminPoaEvaluacion implements Serializable {
     @Getter    @Setter    private List<EvidenciasDetalle> evidenciasesDetalles=new ArrayList<>(),evidenciasesDe=new ArrayList<>();
     @Getter    @Setter    private List<AreasUniversidad> areasUniversidads = new ArrayList<>(),areasUniversidadsRegistros = new ArrayList<>();
     
-    @Getter    @Setter    private List<listaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
-    @Getter    @Setter    private List<listaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
-    @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
-    @Getter    @Setter    private List<listaEstrategiaActividades> listaEstrategiaActividadesesEje2 = new ArrayList<>(), listaEstrategiaActividadesesEje3 = new ArrayList<>(), listaEstrategiaActividadesesEje4 = new ArrayList<>(), listaEstrategiaActividadesesEje5 = new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ListaEjesEsLaAp> ejesEsLaAp=new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ListaEjeEstrategia> listaListaEjeEstrategia=new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ListaEstrategiaActividades> listaEstrategiaActividadesesEje = new ArrayList<>();
+    @Getter    @Setter    private List<DTOreportePoa.ListaEstrategiaActividades> listaEstrategiaActividadesesEje2 = new ArrayList<>(), listaEstrategiaActividadesesEje3 = new ArrayList<>(), listaEstrategiaActividadesesEje4 = new ArrayList<>(), listaEstrategiaActividadesesEje5 = new ArrayList<>();
 
     @Getter    @Setter    private ActividadesPoa actividadesPoaEditando = new ActividadesPoa(),actividadMadre=new ActividadesPoa();
     @Getter    @Setter    private AreasUniversidad areaPOASeleccionada = new AreasUniversidad(); 
@@ -226,19 +223,19 @@ public class AdminPoaEvaluacion implements Serializable {
             ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal).forEach((ej) -> {
                 listaListaEjeEstrategia = new ArrayList<>();
                 listaListaEjeEstrategia.clear();
-                listaListaEjeEstrategia.add(new listaEjeEstrategia(ej, ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, claveArea)));
+                listaListaEjeEstrategia.add(new DTOreportePoa.ListaEjeEstrategia(ej, ejbCatalogosPoa.getEstarategiasPorEje(ej, ejercicioFiscal, claveArea)));
                 if (!listaListaEjeEstrategia.isEmpty()) {
                     listaListaEjeEstrategia.forEach((e) -> {
-                        e.getListaEstrategiases1().forEach((t) -> {
+                        e.getEstrategiases().forEach((t) -> {
                             List<ActividadesPoa> listaActividadesPoasFiltradas = new ArrayList<>();
                             listaActividadesPoasFiltradas.clear();
                             listaActividadesPoasFiltradas = ejbRegistroActividades.getActividadesPoasporEstarategias(t, e.getEjess(), ejercicioFiscal, claveArea);
                             Collections.sort(listaActividadesPoasFiltradas, (x, y) -> (x.getNumeroP() + "." + x.getNumeroS()).compareTo(y.getNumeroP() + "." + y.getNumeroS()));
-                            listaEstrategiaActividadesesEje.add(new listaEstrategiaActividades(t, aconsultarTotales(listaActividadesPoasFiltradas)));
+                            listaEstrategiaActividadesesEje.add(new DTOreportePoa.ListaEstrategiaActividades(t, aconsultarTotales(listaActividadesPoasFiltradas)));
                             Collections.sort(listaEstrategiaActividadesesEje, (x, y) -> Short.compare(x.getEstrategias().getEstrategia(), y.getEstrategias().getEstrategia()));
 
                         });
-                        ejesEsLaAp.add(new listaEjesEsLaAp(ej, listaEstrategiaActividadesesEje));
+                        ejesEsLaAp.add(new DTOreportePoa.ListaEjesEsLaAp(ej, listaEstrategiaActividadesesEje));
                         listaEstrategiaActividadesesEje = new ArrayList<>();
                         listaEstrategiaActividadesesEje.clear();
                     });
@@ -248,8 +245,8 @@ public class AdminPoaEvaluacion implements Serializable {
         Collections.sort(ejesEsLaAp, (x, y) -> Integer.compare(x.getEjeA().getEje(), y.getEjeA().getEje()));
     }
 
-    public List<actividad> aconsultarTotales(List<ActividadesPoa> actividadesPoas) {
-        List<actividad> actividades = new ArrayList<>();
+    public List<DTOreportePoa.Actividad> aconsultarTotales(List<ActividadesPoa> actividadesPoas) {
+        List<DTOreportePoa.Actividad> actividades = new ArrayList<>();
         actividades.clear();
         actividadesPoas.forEach((t) -> {
             semaforoC = "";
@@ -285,7 +282,7 @@ public class AdminPoaEvaluacion implements Serializable {
             semaforoC = pOAUtilidades.obtenerSemaforo(porcentajeCuatrimestre);
             semaforoG = pOAUtilidades.obtenerSemaforo(porcentejeAlCorte);
 
-            actividades.add(new actividad(t, totalPCuatrimestre, totalACuatrimestre, totalPCorte, totalACorte, porcentajeCuatrimestre, porcentejeAlCorte, semaforoC, semaforoG));
+            actividades.add(new DTOreportePoa.Actividad(t, totalPCuatrimestre, totalACuatrimestre, totalPCorte, totalACorte, porcentajeCuatrimestre, porcentejeAlCorte, semaforoC, semaforoG));
         });
 
         return actividades;
@@ -297,7 +294,7 @@ public class AdminPoaEvaluacion implements Serializable {
         mes1 = 0;        mes2 = 0;        mes3 = 0;        mes4 = 0;        mes5 = 0;        mes6 = 0;
         mes7 = 0;        mes8 = 0;        mes9 = 0;        mes10 = 0;        mes11 = 0;        mes12 = 0;
         actividads.clear();
-        actividad editada = (actividad) event.getObject();
+        DTOreportePoa.Actividad editada = (DTOreportePoa.Actividad) event.getObject();
         ActividadesPoa modificada = editada.getActividadesPoa();
         ultimaEstrategiaExpandida = modificada.getCuadroMandoInt().getEstrategia();
         ejbRegistroActividades.actualizaActividadesPoa(modificada);
@@ -349,7 +346,7 @@ public class AdminPoaEvaluacion implements Serializable {
 
     public void onRowCancel(RowEditEvent event) {
         ultimaEstrategiaExpandida = new Estrategias(); 
-        actividad editada = (actividad) event.getObject();
+        DTOreportePoa.Actividad editada = (DTOreportePoa.Actividad) event.getObject();
         ActividadesPoa modificada = editada.getActividadesPoa();
         ultimaEstrategiaExpandida = modificada.getCuadroMandoInt().getEstrategia();
         consultarListasValidacionFinal();
@@ -519,58 +516,5 @@ public class AdminPoaEvaluacion implements Serializable {
     }
 
     public void imprimirValores() {
-    }
-
-    public static class listaEjesEsLaAp {
-
-        @Getter        @Setter        private EjesRegistro ejeA;
-        @Getter        @Setter        private List<listaEstrategiaActividades> listalistaEstrategiaLaAp;
-
-        public listaEjesEsLaAp(EjesRegistro ejeA, List<listaEstrategiaActividades> listalistaEstrategiaLaAp) {
-            this.ejeA = ejeA;
-            this.listalistaEstrategiaLaAp = listalistaEstrategiaLaAp;
-        }
-    }
-    
-    public static class listaEjeEstrategia {
-
-        @Getter        @Setter        private EjesRegistro ejess;
-        @Getter        @Setter        private List<Estrategias> listaEstrategiases1;
-
-        public listaEjeEstrategia(EjesRegistro ejess, List<Estrategias> listaEstrategiases1) {
-            this.ejess = ejess;
-            this.listaEstrategiases1 = listaEstrategiases1;
-        }        
-    }
-    
-    public static class listaEstrategiaActividades {
-
-        @Getter        @Setter        private Estrategias estrategias;
-        @Getter        @Setter        private List<actividad> actividadesPoas;
-
-        public listaEstrategiaActividades(Estrategias estrategias, List<actividad> actividadesPoas) {
-            this.estrategias = estrategias;
-            this.actividadesPoas = actividadesPoas;
-        }       
-    }
-    
-    public static class actividad {
-
-        @Getter        @Setter        private ActividadesPoa actividadesPoa;
-        @Getter        @Setter        private Double totalPCuatrimestre, totalACuatrimestre, totalPCorte, totalACorte;
-        @Getter        @Setter        private Double porcentajeCuatrimestre, porcentejeAlCorte;
-        @Getter        @Setter        private String semaforoC, semaforoG;
-
-        public actividad(ActividadesPoa actividadesPoa, Double totalPCuatrimestre, Double totalACuatrimestre, Double totalPCorte, Double totalACorte, Double porcentajeCuatrimestre, Double porcentejeAlCorte, String semaforoC, String semaforoG) {
-            this.actividadesPoa = actividadesPoa;
-            this.totalPCuatrimestre = totalPCuatrimestre;
-            this.totalACuatrimestre = totalACuatrimestre;
-            this.totalPCorte = totalPCorte;
-            this.totalACorte = totalACorte;
-            this.porcentajeCuatrimestre = porcentajeCuatrimestre;
-            this.porcentejeAlCorte = porcentejeAlCorte;
-            this.semaforoC = semaforoC;
-            this.semaforoG = semaforoG;
-        }
     }
 }

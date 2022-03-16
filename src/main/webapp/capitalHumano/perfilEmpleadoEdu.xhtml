@@ -762,7 +762,9 @@
                                                 <p:ajax event="rowEditCancel" listener="#{utilidadesCH.onRowCancel}" update="@this" oncomplete="actualizarTabla3()"/>
 
                                                 <p:column >
-                                                    <p:commandButton actionListener="#{cvEducacion.eliminarCapacitacion(capacitaciones)}" update="tblActualizacionesProfesionalesUTXJ" oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary" title="Eliminar planeación">
+                                                    <p:commandButton actionListener="#{cvEducacion.eliminarCapacitacion(capacitaciones)}" update="tblActualizacionesProfesionalesUTXJ" 
+                                                                     oncomplete="actualizarTabla3()" icon="fa fa-trash" styleClass="btn-primary"
+                                                                     disabled="#{capacitaciones.estatus eq 'Aceptado'?true:false}" title="Eliminar planeación">
                                                         <p:confirm header="Confirmación" message="¿Confirma la eliminación de la capacitacion: #{capacitaciones.nombre}?" icon="ui-icon-alert" />
                                                     </p:commandButton>
                                                 </p:column>
@@ -907,7 +909,7 @@
                                                     </p:cellEditor>
                                                 </p:column>
                                                 <p:column>
-                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(capacitaciones.evidenciaCapacitacion)}" target="_blank" style="color: #000000">
+                                                    <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(capacitaciones.evidenciaCapacitacion)}" target="_blank" style=" visibility:#{capacitaciones.evidenciaCapacitacion eq null?'hidden':'visible'}; color: #000000">
                                                         <i class="fa fa-search"></i>
                                                         <span>Ver</span>
                                                     </p:link>
