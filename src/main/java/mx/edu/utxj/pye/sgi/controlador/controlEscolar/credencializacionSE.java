@@ -110,10 +110,11 @@ public class credencializacionSE extends ViewScopedRol implements Desarrollable 
             rol.setEstudiante(resEstudiante.getValor());
             rol.setNombreC(rol.getEstudiante().getAspirante().getIdPersona().getNombre().concat(" ").concat(rol.getEstudiante().getAspirante().getIdPersona().getApellidoPaterno().concat(" ").concat(rol.getEstudiante().getAspirante().getIdPersona().getApellidoMaterno())));
             getCarrera();
+            alertas();
         } else {
             mostrarMensajeResultadoEJB(resEstudiante);
+            alertas();
         }
-        alertas();
 
     }
 
@@ -127,6 +128,7 @@ public class credencializacionSE extends ViewScopedRol implements Desarrollable 
         }
         repetirUltimoMensaje();
     }
+
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
         String valor = "credencializacion";
@@ -147,6 +149,18 @@ public class credencializacionSE extends ViewScopedRol implements Desarrollable 
 
     }
     
+    public boolean obtenerSituacionAcademica(){
+        boolean puedeImprimir = false;
+            ResultadoEJB resAcademica = ejb.getSituacionAcademicaEstudiante(rol.getMatricula());
+            if(resAcademica.getCorrecto()){
+            puedeImprimir = true;
+            return puedeImprimir;
+            }else{
+            return puedeImprimir;
+            }
+    }
+
+    //Verifica que las fotografias para la credencial se encuentren en el servidor
     public boolean existenFotos() {
         boolean existen = false;
         ResultadoEJB resFoto = ejb.getFotoAlumno(rol);
@@ -158,7 +172,6 @@ public class credencializacionSE extends ViewScopedRol implements Desarrollable 
             return existen;
         }
     }
-    
 
     //TODO:Genera la credencial 
     public void generarCredencial() {

@@ -145,6 +145,39 @@ public class EjbCredencializacion {
         }catch (Exception e){return ResultadoEJB.crearErroneo(1, "Error al buscar al pago de credencial (EjbCredencializacion.getPagoCredencialbyMatricula)", e, null);}
     }
     
+    public ResultadoEJB getSituacionAcademicaEstudiante(String matricula){
+        try{
+            Estudiante estudiante = new Estudiante();
+            //Comprobar que la matricula no venga nula
+            if(matricula ==null){return  ResultadoEJB.crearErroneo(1, estudiante,"La matricula no debe ser nula");}
+            else{
+                //Se hace la consulta
+                estudiante = em.createQuery("select e from  Estudiante e where e.matricula=:matricula order by e.periodo desc ",Estudiante.class)
+                .setParameter("matricula",Integer.parseInt(matricula))
+                .getResultStream()
+                .findAny()
+                .orElse(null);
+                switch(estudiante.getTipoEstudiante().getDescripcion()){
+                    case "Regular":
+                        return ResultadoEJB.crearCorrecto(estudiante,"Situacion Academica: Regular");
+                    case "Baja Temporal":
+                        return ResultadoEJB.crearErroneo(1,estudiante,"Situacion Academica: Con baja temporal");
+                    case "Baja Definitiva":
+                        return ResultadoEJB.crearErroneo(1,estudiante,"Situacion Academica: Con baja definitiva");
+                    case "Egresado No Titulado":
+                        return ResultadoEJB.crearErroneo(1,estudiante,"Situacion Academica: Egresado no titulado");
+                    case "Reincorporacion TSU":
+                        return ResultadoEJB.crearCorrecto(estudiante,"Situacion Academica: Reincorporacion a TSU");
+                    case "Reincorporacion ING":
+                        return ResultadoEJB.crearCorrecto(estudiante,"Situacion Academica: Reincorporacion a ING");
+                    case "Invalido por repetición de cuatrimestre":
+                        return ResultadoEJB.crearErroneo(1,estudiante,"Situacion Academica: Invalido por repetición de cuatrimestre");
+                    default:
+                        return ResultadoEJB.crearErroneo(1,estudiante,"No se ha encontrado al estudiante");
+                }
+            }
+        }catch (Exception e){ return ResultadoEJB.crearErroneo(1, "Error al buscar al estudiante (EjbCredencializacion.getEstudiantebyMatricula)", e, null); }
+    }
     public ResultadoEJB getFotoAlumno(CredencializacionRolServiciosE rol){
         try{
             Image imageEstudiante = Image.getInstance("C://archivos//control_escolar//fotos//" + rol.getMatricula() + ".jpg");
@@ -184,10 +217,16 @@ public class EjbCredencializacion {
                 ResultadoEJB<Registro> resPago = getPagoCredencialbyMatricula(matricula);
                 ResultadoEJB resFoto = getFotoAlumno(rol);
                 ResultadoEJB resFirma = getFirmaAlumno(rol);
+                ResultadoEJB resAcademica = getSituacionAcademicaEstudiante(matricula);
                 
+                if(resAcademica.getCorrecto()==true){
+                    alertas.add(new DtoAlerta(resAcademica.getMensaje(),AlertaTipo.CORRECTO));
+                }else{
+                    alertas.add(new DtoAlerta(resAcademica.getMensaje(),AlertaTipo.SUGERENCIA));
+                }
                 
                 if (resPago.getCorrecto() == true && resFoto.getCorrecto() == true && resFirma.getCorrecto() == true) {
-                    alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " ha realizado el pago de credencial y puede imprimir su credencial", AlertaTipo.CORRECTO));
+                    alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " ha realizado el pago de credencial", AlertaTipo.CORRECTO));
                     alertas.add(new DtoAlerta("Corroborar que la firma y foto correspondan con el estudiante", AlertaTipo.SUGERENCIA));
                 } else {
                     if (resPago.getCorrecto() == true) {
@@ -198,16 +237,15 @@ public class EjbCredencializacion {
 
                     if (resFoto.getCorrecto() == true) {
                         if (resFirma.getCorrecto() == true) {
-                            alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " ha registrado su foto y firma", AlertaTipo.CORRECTO));
                         } else {
-                            alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " no ha registrado su firma", AlertaTipo.SUGERENCIA));
+                            alertas.add(new DtoAlerta("No se ha encontrado la firma del estudiante en el sistema", AlertaTipo.SUGERENCIA));
                         }
                     } else {
                         if (resFirma.getCorrecto() == true) {
-                            alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " ha registrado su firma", AlertaTipo.CORRECTO));
-                            alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " no ha registrado su foto", AlertaTipo.SUGERENCIA));
+                            alertas.add(new DtoAlerta("No se ha encontrado la foto del estudiante en el sistema", AlertaTipo.SUGERENCIA));
                         } else {
-                            alertas.add(new DtoAlerta("El estudiante con matricula " + matricula + " no ha registrado su foto ni su firma", AlertaTipo.SUGERENCIA));
+                            alertas.add(new DtoAlerta("No se ha encontrado la foto del estudiante en el sistema", AlertaTipo.SUGERENCIA));
+                            alertas.add(new DtoAlerta("No se ha encontrado la firma del estudiante en el sistema", AlertaTipo.SUGERENCIA));
                         }
                     }
                 }
@@ -215,7 +253,7 @@ public class EjbCredencializacion {
             }
             return ResultadoEJB.crearCorrecto(Collections.EMPTY_LIST, "Sin mensajes");
             
-        } catch (Exception e) {return ResultadoEJB.crearErroneo(1, "No se pudieron identificar los mensajes(EjbCredencializacion.identificaMensajes)", e, null);}
+        } catch (Exception e) {return ResultadoEJB.crearErroneo(1, "No se pudieron identificar los mensajes(EjbCredencializacion.identificaMensajes) === Error :", e, null);}
     }
 
     /**

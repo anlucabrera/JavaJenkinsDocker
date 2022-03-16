@@ -85,7 +85,7 @@
                                                                     </div>
                                                                     <div class="col-sm-1 col-md-1 col-lg-1">
                                                                         <p:outputLabel for="matricula" style="font-size: inherit;text-align: left;" value="Matricula:" />
-                                                                        <p:inputText id="matricula" class="form-control" value="#{credencializacionSE.rol.matricula}" required="true" requiredMessage="Ingrese la matricula del estudiante"  >
+                                                                        <p:inputText id="matricula" maxlength="6" class="form-control" value="#{credencializacionSE.rol.matricula}" required="true" requiredMessage="Ingrese la matricula del estudiante"  >
                                                                             <p:ajax event="change" listener="#{credencializacionSE.buscaEstudiante()}" update="@form"/>
                                                                         </p:inputText>
                                                                         <p:message for="matricula"><p:autoUpdate/></p:message>
