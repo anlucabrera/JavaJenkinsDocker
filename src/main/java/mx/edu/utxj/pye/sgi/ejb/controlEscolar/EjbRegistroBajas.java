@@ -1591,4 +1591,37 @@ public class EjbRegistroBajas {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de bajas registradas por causa. (EjbRegistroBajas.generarConcentradoBajasPorCausa)", e, null);
         }
     }
+    
+    /* MÓDULO PARA REGISTRO DE DICTAMEN DE PSICOPEDAGOGÍA DE MANERA INDIVIDUAL*/
+    
+    /**
+     * Permite identificar a una lista de posibles estudiante para registrar la baja
+     * @param pista Contenido que la vista que puede incluir parte del nombre, apellidos o matricula del estudiante
+     * @return Resultado del proceso con docentes ordenador por nombre
+     */
+    public ResultadoEJB<List<DtoEstudianteComplete>> buscarEstudianteBaja(String pista){
+        try{
+             //buscar lista de docentes operativos por nombre, nùmero de nómina o área  operativa segun la pista y ordener por nombre del docente
+            List<Estudiante> estudiantes = em.createQuery("select b from Baja b INNER JOIN b.estudiante e INNER JOIN e.aspirante a INNER JOIN a.idPersona p WHERE concat(p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.matricula) like concat('%',:pista,'%') ORDER BY p.apellidoPaterno, p.apellidoMaterno, p.nombre, e.periodo DESC", Baja.class)
+                    .setParameter("pista", pista)
+                    .getResultStream()
+                    .map(p->p.getEstudiante())
+                    .collect(Collectors.toList());
+            
+            List<DtoEstudianteComplete> listaDtoEstudiantes = new ArrayList<>();
+            
+            estudiantes.forEach(estudiante -> {
+                String datosComplete = estudiante.getAspirante().getIdPersona().getApellidoPaterno()+" "+ estudiante.getAspirante().getIdPersona().getApellidoMaterno()+" "+ estudiante.getAspirante().getIdPersona().getNombre()+ " - " + estudiante.getMatricula();
+                PeriodosEscolares periodo = em.find(PeriodosEscolares.class, estudiante.getPeriodo());
+                String periodoEscolar = periodo.getMesInicio().getAbreviacion()+" - "+periodo.getMesFin().getAbreviacion()+" "+periodo.getAnio();
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, estudiante.getCarrera());
+                DtoEstudianteComplete dtoEstudianteComplete = new DtoEstudianteComplete(estudiante, datosComplete, periodoEscolar, programaEducativo);
+                listaDtoEstudiantes.add(dtoEstudianteComplete);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaDtoEstudiantes, "Lista para mostrar en autocomplete");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo localizar la lista de estudiantes activos. (EjbRegistroBajas.buscarEstudiante)", e, null);
+        }
+    }
 }

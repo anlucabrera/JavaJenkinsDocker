@@ -29,6 +29,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCumplimientoEstDocEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadiaDatosComplementarios;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteActividadesEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteEstadiaVinculacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstIns;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstPrograma;
@@ -37,6 +38,7 @@ import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAsignacionRolesEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReportesEstadia;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CoordinadorAreaEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
@@ -82,7 +84,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarRolesReportesEstadia(logon.getPersonal().getClave());//validar si es director
             
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return; }//cortar el flujo si no se pudo validar
-
+            
             Filter<PersonalActivo> filtro = resAcceso.getValor();//se obtiene el filtro resultado de la validación
             PersonalActivo usuario = filtro.getEntity();//ejbPersonalBean.pack(logon.getPersonal());
             rol = new ReportesEstadiaRolMultiple(filtro, usuario);
@@ -95,6 +97,12 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
            
             rol.setNivelRol(NivelRol.OPERATIVO);
+            rol.setCoordinadorEstadiaArea(false);
+            List<CoordinadorAreaEstadia> listaAsignaciones = ejbSeguimientoEstadia.asignacionesCoordinadorEstadia(rol.getUsuario().getPersonal().getClave()).getValor();
+            if (!listaAsignaciones.isEmpty()) {
+                rol.setCoordinadorEstadiaArea(true);
+            }
+            
 //            rol.setSoloLectura(true);
             
             rol.getInstrucciones().add("Seleccione generación y nivel educativo.");
@@ -148,7 +156,9 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
     public void listaReportes(){
         List<String> listaReportes = new ArrayList<>();
         
-        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48 || rol.getCoordinadorEstadiaArea()){
+            listaReportes.add("Seguimiento actividades de estadía");
+            listaReportes.add("Asignación de asesor académico por programa educativo");
             listaReportes.add("Cumplimiento estudiante documentos");
             listaReportes.add("Eficiencia estadía técnica");
             listaReportes.add("Listado estudiantes con promedios");
@@ -157,6 +167,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             generarReportesDireccionAcademica();
         }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15){
             listaReportes.add("Cumplimiento estudiante documentos");
+            listaReportes.add("Porcentaje de cumplimiento y validación");
             listaReportes.add("Eficiencia estadía técnica");
             listaReportes.add("Listado estudiantes con promedios");
             listaReportes.add("Zona influencia institucional");
@@ -201,6 +212,8 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
            generarAsigProgramaAsesor();
         }else if("Cumplimiento estudiante documentos".equals(rol.getReporte())){
            generarCumpDocumentoPrograma();
+        }else if("Porcentaje de cumplimiento y validación".equals(rol.getReporte())){
+           generarReporteDocumentosVinculacion();
         }else if("Eficiencia estadía técnica".equals(rol.getReporte())){
            generarEficienciaEstadia();
         }else if("Eficiencia estadía técnica - Datos complementarios".equals(rol.getReporte())){
@@ -224,6 +237,12 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
            generarEficienciaEstadiaAreaAcademica();
         }else if("Listado estudiantes con promedios".equals(rol.getReporte())){
            generarListadoEstudiantesPromediosAreaAcademica();
+        }else if("Seguimiento actividades de estadía".equals(rol.getReporte())){
+           generarSeguimientoActEstadia();
+        }else if("Cumplimiento estudiante documentos".equals(rol.getReporte())){
+           generarCumpDocumentoPrograma();
+        }else if("Asignación de asesor académico por programa educativo".equals(rol.getReporte())){
+           generarAsigProgramaAsesor();
         }
     }
     
@@ -233,7 +252,11 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
     public void generarSeguimientoActEstadia(){
         ResultadoEJB<List<DtoReporteActividadesEstadia>> res = ejb.getSeguimientoActividadesEstadia(rol.getGeneracion(), rol.getNivelEducativo());
         if(res.getCorrecto()){
-             rol.setListaSegActEstadia(res.getValor());
+            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48 || rol.getCoordinadorEstadiaArea()){
+                 rol.setListaSegActEstadia(res.getValor().stream().filter(p->p.getProgramaEducativo().getAreaSuperior().equals(rol.getUsuario().getAreaOficial().getArea())).collect(Collectors.toList()));
+            }else{
+                 rol.setListaSegActEstadia(res.getValor());
+            }
              rol.setTotalIniciaron(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesIniciaron()).sum());
              rol.setTotalActivos(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesActivos()).sum());
              rol.setTotalAsignados(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesAsignados()).sum());
@@ -255,8 +278,13 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
     public void generarAsigProgramaAsesor(){
         ResultadoEJB<List<DtoAsigAsesorAcadEstadia>> res = ejb.getAsignacionAsesorAcademicoPE(rol.getGeneracion(), rol.getNivelEducativo());
         if(res.getCorrecto()){
-             rol.setListaAsigAsesorAcad(res.getValor());
-             Ajax.update("tbAsigAsesorAcad");
+            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48 || rol.getCoordinadorEstadiaArea()){
+                rol.setListaAsigAsesorAcad(res.getValor().stream().filter(p->p.getProgramaEducativo().getAreaSuperior().equals(rol.getUsuario().getAreaOficial().getArea())).collect(Collectors.toList()));
+            }else{
+                
+                rol.setListaAsigAsesorAcad(res.getValor());
+            }
+            Ajax.update("tbAsigAsesorAcad");
          }else mostrarMensajeResultadoEJB(res);
     }
     
@@ -270,7 +298,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
                 rol.setListaCumplimientoEstudiante(res.getValor());
                 Ajax.update("tbCumpDocEstPE");
             }else mostrarMensajeResultadoEJB(res);
-        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48 || rol.getCoordinadorEstadiaArea()){
             ResultadoEJB<List<DtoCumplimientoEstDocEstadia>> res = ejb.getCumplimientoDocumentoPE(rol.getGeneracion(), rol.getNivelEducativo());
             if(res.getCorrecto()){
                 rol.setListaCumplimientoEstudiante(res.getValor().stream().filter(p->p.getProgramaEducativo().getAreaSuperior().equals(rol.getUsuario().getAreaOficial().getArea())).collect(Collectors.toList()));
@@ -284,6 +312,22 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             }else mostrarMensajeResultadoEJB(res);
         }
        
+    }
+    
+    /**
+     * Permite generar el reporte de cumplimiento y validación de documentos de vinculación
+     */
+    public void generarReporteDocumentosVinculacion(){
+        ResultadoEJB<List<DtoReporteEstadiaVinculacion>> res = ejb.getReporteDocumentosVinculacion(rol.getGeneracion(), rol.getNivelEducativo());
+        if(res.getCorrecto()){
+             rol.setListaReporteVinculacion(res.getValor());
+             rol.setTotalActivos(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesActivos()).sum());
+             rol.setTotalEstudiantesEvidencia(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesEvidencia()).sum());
+             rol.setTotalEstudiantesSinEvidencia(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesSinEvidencia()).sum());
+             rol.setTotalEvidenciaValidada(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesEvidenciaValidada()).sum());
+             rol.setTotalEvidenciaNoValidada(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesEvidenciaNoValidada()).sum());
+             Ajax.update("tbPorCumplVal");
+         }else mostrarMensajeResultadoEJB(res);
     }
     
     
@@ -326,7 +370,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
     public void generarEficienciaEstadiaAreaAcademica(){
         ResultadoEJB<List<DtoEficienciaEstadia>> res = ejb.getEficienciaEstadia(rol.getGeneracion(), rol.getNivelEducativo());
         if(res.getCorrecto()){
-             rol.setEficienciaEstadia(res.getValor().stream().filter(p->p.getProgramaEducativo().getAreaSuperior().equals(rol.getUsuario().getAreaOperativa().getArea())).collect(Collectors.toList()));
+             rol.setEficienciaEstadia(res.getValor().stream().filter(p->p.getProgramaEducativo().getAreaSuperior().equals(rol.getUsuario().getAreaOficial().getArea())).collect(Collectors.toList()));
              rol.setTotalAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getAcreditaron()).sum());
              rol.setTotalNoAcreditados(rol.getEficienciaEstadia().stream().mapToInt(p->p.getNoAcreditaron()).sum());
              rol.setTotal(rol.getEficienciaEstadia().stream().mapToInt(p->p.getSeguimiento()).sum());
@@ -352,7 +396,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
     public void generarListadoEstudiantesPromediosAreaAcademica(){
         ResultadoEJB<List<DtoSeguimientoEstadia>> res = ejb.getListaEstudiantesPromedio(rol.getGeneracion(), rol.getNivelEducativo());
           if(res.getCorrecto()){
-              rol.setListadoEstudiantesPromedio(res.getValor().stream().filter(p->p.getAreaSuperior().getArea().equals(rol.getUsuario().getAreaOperativa().getArea())).collect(Collectors.toList()));
+              rol.setListadoEstudiantesPromedio(res.getValor().stream().filter(p->p.getAreaSuperior().getArea().equals(rol.getUsuario().getAreaOficial().getArea())).collect(Collectors.toList()));
               Ajax.update("tbEstudiantesPromedios");
           }else mostrarMensajeResultadoEJB(res);
     }
@@ -410,7 +454,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
         if(e.getNewValue() instanceof  ProgramasEducativosNiveles){
             ProgramasEducativosNiveles nivel = (ProgramasEducativosNiveles)e.getNewValue();
             rol.setNivelEducativo(nivel);
-            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48 || rol.getCoordinadorEstadiaArea()){
                 generarReportesDireccionAcademica();
             }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){
                 generarReportes();
@@ -427,7 +471,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
         if(e.getNewValue() instanceof  String){
             String reporte = (String)e.getNewValue();
             rol.setReporte(reporte);
-            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+            if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48 || rol.getCoordinadorEstadiaArea()){
                 generarReportesDireccionAcademica();
             }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){
                 generarReportes();
@@ -455,10 +499,13 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
      * @throws java.io.IOException
      */
      public void descargarReportesEstadia() throws IOException, Throwable{
-        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
+        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48 || rol.getCoordinadorEstadiaArea()){
+            generarSeguimientoActEstadia();
+            generarAsigProgramaAsesor();
+            generarCumpDocumentoPrograma();
             generarEficienciaEstadiaAreaAcademica();
             generarListadoEstudiantesPromediosAreaAcademica();
-            File f = new File(ejb.getReportesEstadiaAreaAcademica(rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getGeneracion(), rol.getNivelEducativo()));
+            File f = new File(ejb.getReportesEstadiaAreaAcademica(rol.getListaSegActEstadia(), rol.getListaAsigAsesorAcad(), rol.getListaCumplimientoEstudiante(), rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getGeneracion(), rol.getNivelEducativo()));
             Faces.sendFile(f, true);
         }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){     
             generarSeguimientoActEstadia();

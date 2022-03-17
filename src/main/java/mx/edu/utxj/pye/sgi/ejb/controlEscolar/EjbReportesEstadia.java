@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCumplimientoEstDocEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadiaDatosComplementarios;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteActividadesEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteEstadiaVinculacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstIns;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstPrograma;
@@ -29,6 +30,7 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorAcademicoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CoordinadorAreaEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
@@ -62,6 +64,7 @@ public class EjbReportesEstadia {
     @EJB EjbCarga ejbCarga;
     public static final String ACTUALIZADO_ESTADIA = "seguimientoEstadia.xlsx";
     public static final String ACTUALIZADO_ESTADIA_DIRECCION = "seguimientoEstadiaAreaAcademica.xlsx";
+    Integer evidencias = 0, evidenciasValidadas = 0, evidenciasSinValidar = 0;
     
     @PostConstruct
     public  void init(){
@@ -77,6 +80,7 @@ public class EjbReportesEstadia {
         try{
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
+            List<CoordinadorAreaEstadia> listaAsignaciones = ejbSeguimientoEstadia.asignacionesCoordinadorEstadia(clave).getValor();
             if (p.getPersonal().getAreaSuperior()== 2 && p.getPersonal().getCategoriaOperativa().getCategoria()==18) {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.AREA_SUPERIOR.getLabel(), String.valueOf(ep.leerPropiedadEntera("directorAreaSuperior").orElse(2)));
@@ -96,6 +100,9 @@ public class EjbReportesEstadia {
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
             else if (p.getPersonal().getCategoriaOperativa().getCategoria()== 38 || p.getPersonal().getCategoriaOperativa().getCategoria()==43) {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }else if (!listaAsignaciones.isEmpty()) {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
@@ -169,7 +176,6 @@ public class EjbReportesEstadia {
                     .setParameter("grados", grados)
                     .setParameter("generacion", eventoSeleccionado.getGeneracion())
                     .getResultStream()
-
                     .collect(Collectors.toList());
             
             List<Estudiante> listaActivos = listaEstudiantes.stream().filter(p-> p.getTipoEstudiante().getIdTipoEstudiante()!=2 && p.getTipoEstudiante().getIdTipoEstudiante()!=3).collect(Collectors.toList());
@@ -846,6 +852,120 @@ public class EjbReportesEstadia {
         }
     }
     
+    /**
+     * Permite obtener la lista de seguimiento de actividades de estadía por programa educativo dependiendo del nivel educativo seleccionado
+     * @param generacion
+     * @param nivelEducativo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoReporteEstadiaVinculacion>> getReporteDocumentosVinculacion(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
+        try{
+            EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
+            
+            List<Short> listaProgramasNivel = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.nivelEducativo=:nivel", AreasUniversidad.class)
+                    .setParameter("nivel", nivelEducativo)
+                    .getResultStream()
+                    .map(p -> p.getArea())
+                    .collect(Collectors.toList());
+            
+            List<Short> listaProgramasGeneracion= em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.idPe IN :lista",  Grupo.class)
+                    .setParameter("generacion",  generacion.getGeneracion())
+                    .setParameter("lista",  listaProgramasNivel)
+                    .getResultStream()
+                    .map(p -> p.getIdPe())
+                    .distinct()
+                    .collect(Collectors.toList());
+           
+            List<DtoReporteEstadiaVinculacion> listaRepDocVinculacion = new ArrayList<>();
+            
+                if (!listaProgramasGeneracion.isEmpty()) {
+                    
+                listaRepDocVinculacion = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.area IN :lista", AreasUniversidad.class)
+                        .setParameter("lista", listaProgramasGeneracion)
+                        .getResultStream()
+                        .map(e -> packReporteDocumentosPrograma(e, eventoSeleccionado).getValor())
+                        .sorted(DtoReporteEstadiaVinculacion::compareTo)
+                        .collect(Collectors.toList());
+                }
+            return ResultadoEJB.crearCorrecto(listaRepDocVinculacion, "Lista de seguimiento de actividades de estadía por programa educativo.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de seguimiento de actividades de estadía por programa educativo. (EjbReportesEstadia.getReporteDocumentosVinculacion)", e, null);
+        }
+    }
+    
+     /**
+     * Empaqueta el seguimiento de actividades de estadía en un DTO Wrapper
+     * @param programaEducativo 
+     * @param eventoSeleccionado
+     * @return Seguimiento de actividades de estadía empaquetada
+     */
+    public ResultadoEJB<DtoReporteEstadiaVinculacion> packReporteDocumentosPrograma(AreasUniversidad programaEducativo, EventoEstadia eventoSeleccionado){
+        try{
+            evidencias = 0; evidenciasValidadas = 0; evidenciasSinValidar = 0;
+            
+            if(programaEducativo == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar programa educativo nulo.", DtoReporteEstadiaVinculacion.class);
+            if(programaEducativo.getArea()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar programa educativo con clave nula.", DtoReporteEstadiaVinculacion.class);
+
+            AreasUniversidad programaBD = em.find(AreasUniversidad.class, programaEducativo.getArea());
+            if(programaBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar programa educativo no registrado previamente en base de datos.", DtoReporteEstadiaVinculacion.class);
+            
+            List<Integer> grados = new ArrayList<>();
+            grados.add(6);
+            grados.add(11);
+            
+            List<Short> tipos = new ArrayList<>();
+            tipos.add((short)1);
+            tipos.add((short)4);
+            
+            List<Estudiante> listaActivos = em.createQuery("SELECT e FROM Estudiante e WHERE e.grupo.idPe=:programa AND e.grupo.grado IN :grados AND e.grupo.generacion=:generacion AND e.tipoEstudiante.idTipoEstudiante IN :tipos", Estudiante.class)
+                    .setParameter("programa", programaBD.getArea())   
+                    .setParameter("grados", grados)
+                    .setParameter("generacion", eventoSeleccionado.getGeneracion())
+                    .setParameter("tipos", tipos)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            List<SeguimientoEstadiaEstudiante> listaSeguimiento = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s INNER JOIN s.estudiante e INNER JOIN e.grupo g WHERE s.evento=:evento AND g.idPe=:programaEducativo", SeguimientoEstadiaEstudiante.class)
+                    .setParameter("programaEducativo", programaBD.getArea()) 
+                    .setParameter("evento", eventoSeleccionado)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            List<Integer> documentosVinculacion = new ArrayList<>(); documentosVinculacion.add(33); documentosVinculacion.add(34); documentosVinculacion.add(39); documentosVinculacion.add(40); documentosVinculacion.add(41);
+            
+            listaSeguimiento.forEach(seguimiento -> {
+                List<DocumentoSeguimientoEstadia> listaDocumentosVinculacion = em.createQuery("SELECT d FROM DocumentoSeguimientoEstadia d WHERE d.seguimientoEstadia=:seguimiento AND d.documento.documento IN :documentos", DocumentoSeguimientoEstadia.class)
+                    .setParameter("seguimiento", seguimiento)   
+                    .setParameter("documentos", documentosVinculacion)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+                
+                
+                if(listaDocumentosVinculacion.size()== 5){
+                        evidencias = 1 + evidencias;
+                }
+                if(listaDocumentosVinculacion.stream().filter(p->p.getValidado()).collect(Collectors.toList()).size() == 5){
+                        evidenciasValidadas = 1 + evidenciasValidadas;
+                }
+                if(listaDocumentosVinculacion.stream().filter(p->!p.getValidado()).collect(Collectors.toList()).size() == 5){
+                        evidenciasSinValidar = 1 + evidenciasSinValidar;
+                }
+            });
+            
+            Integer estudiantesSinEvidencia = listaActivos.size() - evidencias;
+            
+            Double porcentajeCumplimiento = (double) evidencias/listaActivos.size() * 100;
+            
+            Double porcentajeValidacion = (double) evidenciasValidadas/listaActivos.size() * 100;
+            
+            DtoReporteEstadiaVinculacion  dtoReporteEstadiaVinculacion = new DtoReporteEstadiaVinculacion(programaBD, listaActivos.size(), evidencias, estudiantesSinEvidencia, evidenciasValidadas, evidenciasSinValidar, porcentajeCumplimiento, porcentajeValidacion);
+            
+            return ResultadoEJB.crearCorrecto(dtoReporteEstadiaVinculacion, "Seguimiento de actividades de estadía empaquetada.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el seguimiento de actividades de estadía. (EjbReportesEstadia.packReporteDocumentosPrograma).", e, DtoReporteEstadiaVinculacion.class);
+        }
+    }
+    
     /* APARTADOS PARA GENERAR EL ARCHIVO DE EXCEL CON LOS REPORTES */
     
      /**
@@ -887,6 +1007,9 @@ public class EjbReportesEstadia {
     
      /**
      * Permite generar el archivo de excel con los reportes de estadía de la generación y nivel educativo seleccionado del área académica correspondiente
+     * @param listaSegActEstadia
+     * @param listaAsigAsesorAcad
+     * @param listaCumplimientoEstudiante
      * @param listaEficienciaEstadia 
      * @param listaEstudiantesPromedio 
      * @param generacion
@@ -895,7 +1018,7 @@ public class EjbReportesEstadia {
      * @throws java.lang.Throwable
      */
     
-    public String getReportesEstadiaAreaAcademica(List<DtoEficienciaEstadia> listaEficienciaEstadia, List<DtoSeguimientoEstadia> listaEstudiantesPromedio, Generaciones generacion, ProgramasEducativosNiveles nivelEducativo) throws Throwable {
+    public String getReportesEstadiaAreaAcademica(List<DtoReporteActividadesEstadia> listaSegActEstadia, List<DtoAsigAsesorAcadEstadia> listaAsigAsesorAcad, List<DtoCumplimientoEstDocEstadia> listaCumplimientoEstudiante, List<DtoEficienciaEstadia> listaEficienciaEstadia, List<DtoSeguimientoEstadia> listaEstudiantesPromedio, Generaciones generacion, ProgramasEducativosNiveles nivelEducativo) throws Throwable {
         String gen = generacion.getInicio()+ "-" + generacion.getFin();
         String niv = nivelEducativo.getNivel();
         String rutaPlantilla = "C:\\archivos\\seguimientoEstadia\\reportesEstadiaAreaAcademica.xlsx";
@@ -904,6 +1027,9 @@ public class EjbReportesEstadia {
         String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_ESTADIA_DIRECCION);
         
         Map beans = new HashMap();
+        beans.put("segActEst", listaSegActEstadia);
+        beans.put("asigAsesor", listaAsigAsesorAcad);
+        beans.put("cumpDoc", listaCumplimientoEstudiante);
         beans.put("efiEst", listaEficienciaEstadia);
         beans.put("estProm", listaEstudiantesPromedio);
         XLSTransformer transformer = new XLSTransformer();

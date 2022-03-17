@@ -19,6 +19,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEmpresaComplete;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadiaReporte;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
@@ -41,11 +42,14 @@ import java.time.LocalDate;
 import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalendarioEventosEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEmpresaSeguimientosEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEvaluacionEstadiaEstudiante;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorEmpresarialEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
@@ -57,6 +61,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.EvaluacionEstadiaDescripcion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.FolioAcreditacionEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.TipoEstudiante;
 import mx.edu.utxj.pye.sgi.enums.PersonalFiltro;
+import net.sf.jxls.transformer.XLSTransformer;
 
 /**
  *
@@ -71,6 +76,9 @@ public class EjbSeguimientoEstadia {
     @EJB EjbPacker ejbPacker;
     @EJB Facade f;
     private EntityManager em;
+    
+    @EJB EjbCarga ejbCarga;
+    public static final String ACTUALIZADO_ESTADIA_VINCULACION = "seguimientoEstadiaVinculacion.xlsx";
     
     @PostConstruct
     public  void init(){
@@ -1688,6 +1696,161 @@ public class EjbSeguimientoEstadia {
             return ResultadoEJB.crearErroneo(1, "No se pudo validar o invalidar el documento seleccionado. (EjbSeguimientoEstadia.validarDocumento)", e, null);
         }
     }
+    
+    /**
+     * Permite generar el archivo de excel el listado de seguimiento de estadía de la generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivelEducativo
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    
+    public String getReporteSeguimientoEstadia(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo) throws Throwable {
+        String gen = generacion.getInicio()+ "-" + generacion.getFin();
+        String niv = nivelEducativo.getNivel();
+        String rutaPlantilla = "C:\\archivos\\seguimientoEstadia\\seguimientoEstadiaVinculacion.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesEstadia(gen,niv);
+
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_ESTADIA_VINCULACION);
+        
+        Map beans = new HashMap();
+        beans.put("generacion", gen);
+        beans.put("nivel", nivelEducativo.getNombre());
+        beans.put("segEst", getListaEstudiantesSeguimientoCoordinadorEstadiasReporte(generacion, nivelEducativo).getValor());
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+    
+    /**
+     * Permite obtener el reporte de la lista de estudiantes con seguimiento de estadía de la generación, nivel educativo seleccionado
+     * @param generacion
+     * @param nivelEducativo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoSeguimientoEstadiaReporte>> getListaEstudiantesSeguimientoCoordinadorEstadiasReporte(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
+        try{
+            EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
+            
+            List<DtoSeguimientoEstadiaReporte> seguimientoEstadia = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante s WHERE s.evento.evento=:evento", SeguimientoEstadiaEstudiante.class)
+                    .setParameter("evento", eventoSeleccionado.getEvento())
+                    .getResultStream()
+                    .map(seg -> packSeguimientoReporte(seg, eventoSeleccionado).getValor())
+                    .filter(dto -> dto != null)
+                    .sorted(DtoSeguimientoEstadiaReporte::compareTo)
+                    .collect(Collectors.toList());
+            
+            return ResultadoEJB.crearCorrecto(seguimientoEstadia, "El reporte de la lista de estudiantes con seguimiento de estadía de la generación, nivel educativo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener el reporte de la lista de estudiantes con seguimiento de estadía de la generación, nivel educativo seleccionado. (EjbSeguimientoEstadia.getListaEstudiantesSeguimientoCoordinadorEstadiasReporte)", e, null);
+        }
+    }
+    
+    /**
+     * Empaqueta el seguimiento de estadía para reporte en un DTO Wrapper para obtener datos del estudiante
+     * @param seguimientoEstadiaEstudiante Seguimiento de estadía a empaquetar
+     * @param eventoSeleccionado
+     * @return Seguimiento de estadía empaquetada
+     */
+    public ResultadoEJB<DtoSeguimientoEstadiaReporte> packSeguimientoReporte(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante, EventoEstadia eventoSeleccionado){
+        try{
+            if(seguimientoEstadiaEstudiante == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar seguimiento nulo.", DtoSeguimientoEstadiaReporte.class);
+            if(seguimientoEstadiaEstudiante.getSeguimiento()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar seguimiento con clave nula.", DtoSeguimientoEstadiaReporte.class);
+
+            SeguimientoEstadiaEstudiante segEstBD = em.find(SeguimientoEstadiaEstudiante.class, seguimientoEstadiaEstudiante.getSeguimiento());
+            if(segEstBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar seguimiento no registrado previamente en base de datos.", DtoSeguimientoEstadiaReporte.class);
+
+            DtoDatosEstudiante dtoDatosEstudiante = packEstudiante(seguimientoEstadiaEstudiante, eventoSeleccionado).getValor();
+            
+            Personal asesorEstadia = em.find(Personal.class, seguimientoEstadiaEstudiante.getAsesor().getPersonal());
+
+            AreasUniversidad area = em.find(AreasUniversidad.class, dtoDatosEstudiante.getProgramaEducativo().getAreaSuperior());
+
+            Personal director = em.find(Personal.class, area.getResponsable());
+
+            String nombreEmpresa = "Sin información", direccionEmpresa = "Sin información", proyecto = "Sin información";
+            
+            if (seguimientoEstadiaEstudiante.getEmpresa() != null) {
+                OrganismosVinculados empresa = em.createQuery("SELECT o FROM OrganismosVinculados o WHERE o.empresa=:clave", OrganismosVinculados.class)
+                        .setParameter("clave", seguimientoEstadiaEstudiante.getEmpresa())
+                        .getResultStream().findFirst().orElse(null);
+                
+                if (empresa != null) {
+                    nombreEmpresa = empresa.getNombre();
+                    direccionEmpresa = empresa.getDireccion();
+                }
+            }
+            
+            if(segEstBD.getProyecto()!= null){
+                proyecto = segEstBD.getProyecto();
+            }
+            
+            Double semanas = 0.0;
+            if(seguimientoEstadiaEstudiante.getFechaInicio() != null && seguimientoEstadiaEstudiante.getFechaFin() != null){
+                    semanas = calcularSemanasEstadia(seguimientoEstadiaEstudiante.getFechaInicio(), seguimientoEstadiaEstudiante.getFechaFin()).getValor();
+            }
+            
+            String validacionDireccion = "Sin validar", validacionCartaPresentacion = "Sin validar", comentariosCartaPresentacion = "Sin información", validacionCartaAceptacion = "Sin validar", comentariosCartaAceptacion = "Sin información", validacionLiberacionEmpresarial = "Sin validar", comentariosLiberacionEmpresarial = "Sin información", validacionEvaluacioEmpresarial = "Sin validar", comentariosEvaluacioEmpresarial = "Sin información", validacionCartaAcreditacion = "Sin validar", comentariosCartaAcreditacion = "Sin información", validacionEstadia = "Sin validar";
+
+            if(segEstBD.getValidacionDirector()){
+                validacionDireccion = "Validado";
+            }
+            
+            if(segEstBD.getValidacionVinculacion()){
+                validacionEstadia = "Validado";
+            }
+            
+            DocumentoSeguimientoEstadia cartaPresentacion = buscarDocumentoEstudiante(segEstBD, 33).getValor();
+            if (cartaPresentacion.getDocumentoSeguimiento() != null) {
+                if (cartaPresentacion.getValidado()) {
+                    validacionCartaPresentacion = "Validado";
+                }
+                comentariosCartaPresentacion = cartaPresentacion.getObservaciones();
+            }
+            
+            DocumentoSeguimientoEstadia cartaAceptacion = buscarDocumentoEstudiante(segEstBD, 34).getValor();
+            if (cartaAceptacion.getDocumento() != null) {
+                if (cartaAceptacion.getValidado()) {
+                    validacionCartaAceptacion = "Validado";
+                }
+                comentariosCartaAceptacion = cartaAceptacion.getObservaciones();
+            }
+
+            DocumentoSeguimientoEstadia cartaLibEmp = buscarDocumentoEstudiante(segEstBD, 39).getValor();
+            if (cartaLibEmp.getDocumento() != null) {
+                if (cartaLibEmp.getValidado()) {
+                    validacionLiberacionEmpresarial = "Validado";
+                }
+                comentariosLiberacionEmpresarial = cartaLibEmp.getObservaciones();
+            }
+            
+            DocumentoSeguimientoEstadia evalLib = buscarDocumentoEstudiante(segEstBD, 40).getValor();
+            if (evalLib.getDocumento() != null) {
+                if (evalLib.getValidado()) {
+                    validacionEvaluacioEmpresarial = "Validado";
+                }
+                comentariosEvaluacioEmpresarial = evalLib.getObservaciones();
+            }
+            
+            DocumentoSeguimientoEstadia cartaAcreditacion = buscarDocumentoEstudiante(segEstBD, 41).getValor();
+            if (cartaAcreditacion.getDocumento() != null) {
+                if (cartaAcreditacion.getValidado()) {
+                    validacionCartaAcreditacion = "Validado";
+                }
+                comentariosCartaAcreditacion = cartaAcreditacion.getObservaciones();
+            }
+            
+            DtoSeguimientoEstadiaReporte dtoSeguimientoEstadiaReporte = new DtoSeguimientoEstadiaReporte(seguimientoEstadiaEstudiante, dtoDatosEstudiante, asesorEstadia, area, director, nombreEmpresa, direccionEmpresa, proyecto, semanas, validacionDireccion, validacionCartaPresentacion, comentariosCartaPresentacion, validacionCartaAceptacion, comentariosCartaAceptacion, validacionLiberacionEmpresarial, comentariosLiberacionEmpresarial, validacionEvaluacioEmpresarial, comentariosEvaluacioEmpresarial, validacionCartaAcreditacion, comentariosCartaAcreditacion, validacionEstadia);
+            
+            return ResultadoEJB.crearCorrecto(dtoSeguimientoEstadiaReporte, "Seguimiento de estadía empaquetado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el seguimiento de estadía. (EjbSeguimientoEstadia.packSeguimiento).", e, DtoSeguimientoEstadiaReporte.class);
+        }
+    }
+    
+    
     
      /* MÓDULO CONSULTA DE EMPRESAS ASIGNADAS PARA COORDINACIÓN DE ESTADÍAS DE VINCULACIÓN */
     

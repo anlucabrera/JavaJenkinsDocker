@@ -24,6 +24,11 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
      * Representa la referencia hacia al usuario
      */
     @Getter @NonNull private PersonalActivo usuario;
+    
+    /**
+     * Representa el valor si el usuario es también o ha sido coordinador de estadía de un área académica
+     */
+    @Getter @NonNull private Boolean coordinadorEstadiaArea;
   
     /**
      * Lista generaciones
@@ -197,6 +202,31 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private List<DtoCumplimientoEstDocEstadia> listaCumplimientoEstudiante;
     
+      /**
+     * Reporte de validación de vinculación y cumplimiento de los estudiantes por documento por programa educativo 
+     */
+    @Getter @NonNull private List<DtoReporteEstadiaVinculacion> listaReporteVinculacion;
+    
+     /**
+     * Total de estudiantes con documentos de vinculación cargados
+     */
+    @Getter @NonNull private Integer totalEstudiantesEvidencia;
+    
+    /**
+     * Total de estudiantes sin documentos de vinculación cargados
+     */
+    @Getter @NonNull private Integer totalEstudiantesSinEvidencia;
+    
+     /**
+     * Total de estudiantes con documentos de vinculación validados
+     */
+    @Getter @NonNull private Integer totalEvidenciaValidada;
+    
+     /**
+     * Total de estudiantes con documentos de vinculación sin validar
+     */
+    @Getter @NonNull private Integer totalEvidenciaNoValidada;
+    
     public ReportesEstadiaRolMultiple(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
         this.usuario = usuario;
@@ -204,6 +234,10 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
 
     public void setUsuario(PersonalActivo usuario) {
         this.usuario = usuario;
+    }
+
+    public void setCoordinadorEstadiaArea(Boolean coordinadorEstadiaArea) {
+        this.coordinadorEstadiaArea = coordinadorEstadiaArea;
     }
 
     public void setGeneraciones(List<Generaciones> generaciones) {
@@ -341,5 +375,24 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
     public void setListaCumplimientoEstudiante(List<DtoCumplimientoEstDocEstadia> listaCumplimientoEstudiante) {
         this.listaCumplimientoEstudiante = listaCumplimientoEstudiante;
     }
-    
+
+    public void setListaReporteVinculacion(List<DtoReporteEstadiaVinculacion> listaReporteVinculacion) {
+        this.listaReporteVinculacion = listaReporteVinculacion;
+    }
+
+    public void setTotalEstudiantesEvidencia(Integer totalEstudiantesEvidencia) {
+        this.totalEstudiantesEvidencia = totalEstudiantesEvidencia;
+    }
+
+    public void setTotalEstudiantesSinEvidencia(Integer totalEstudiantesSinEvidencia) {
+        this.totalEstudiantesSinEvidencia = totalEstudiantesSinEvidencia;
+    }
+
+    public void setTotalEvidenciaValidada(Integer totalEvidenciaValidada) {
+        this.totalEvidenciaValidada = totalEvidenciaValidada;
+    }
+
+    public void setTotalEvidenciaNoValidada(Integer totalEvidenciaNoValidada) {
+        this.totalEvidenciaNoValidada = totalEvidenciaNoValidada;
+    }
 }
