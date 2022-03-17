@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 
 import java.io.Serializable;
@@ -27,10 +22,6 @@ import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-/**
- *
- * @author UTXJ
- */
 @Entity
 @Table(name = "notificaciones_ce", catalog = "control_escolar", schema = "")
 @XmlRootElement
@@ -358,7 +349,7 @@ public class NotificacionesCe implements Serializable {
 
     @Override
     public String toString() {
-        return "mx.edu.utxj.pye.sgi.entity.controlEscolar.NotificacionesCe[ notificacion=" + notificacion + " ]";
+        return "NotificacionesCe{" + "notificacion=" + notificacion + ", areaResponsable=" + areaResponsable + ", tituloPrincipal=" + tituloPrincipal + ", subtitulo=" + subtitulo + ", tipo=" + tipo + ", lugar=" + lugar + ", horaInicio=" + horaInicio + ", horaFin=" + horaFin + ", duracionEvento=" + duracionEvento + ", personaResponsable=" + personaResponsable + ", expositor=" + expositor + ", participantesEstudiantes=" + participantesEstudiantes + ", participantesPersonal=" + participantesPersonal + ", participantesOtros=" + participantesOtros + ", personaRegistro=" + personaRegistro + ", alcance=" + alcance + ", general=" + general + ", fechaRegistro=" + fechaRegistro + '}';
     }
-    
+
 }

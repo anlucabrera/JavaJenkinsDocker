@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
@@ -19,16 +14,14 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.NotificacionesCe;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.NotificacionesCeImagenes;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.NotificacionesEnlaces;
 
-/**
- *
- * @author UTXJ
- */
 public class RegistroNotificacionRolGeneral {
     @Getter             @NonNull                private                                     PersonalActivo                              personal;
     @Getter             @NonNull                private                                     Estudiante                                  estudiante;
     
     @Getter             @Setter                 private                                     Date                                        fechaInicio;
     @Getter             @Setter                 private                                     Date                                        fechaFin;
+    @Getter             @Setter                 private                                     Date                                        horaInicio;
+    @Getter             @Setter                 private                                     Date                                        horaDuracion;
     
     @Getter             @Setter                 private                                     Date                                        fechaInicioFiltro;
     @Getter             @Setter                 private                                     Date                                        fechaFinFiltro;

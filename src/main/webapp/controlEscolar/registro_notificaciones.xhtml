@@ -103,7 +103,7 @@
                                                                             required="true"
                                                                             requiredMessage="Ingrese fecha de inicio de la notificación"
                                                                             value="#{registroNotificacionesGeneral.rol.fechaInicio}"
-                                                                            valueChangeListener="#{registroNotificacionesGeneral.valifaFechaInicio}"
+                                                                            valueChangeListener="#{registroNotificacionesGeneral.validaFechaInicio}"
                                                                             pattern="yyyy-MM-dd"
                                                                             style="width: 18em;"
                                                                             locale="es"
@@ -139,6 +139,46 @@
                                                             </div>
                                                             <p>Fecha de fin (duración de la notificación</p>
                                                         </div>
+                                                        <div class="col-sm-12 col-md-6 col-lg-3" style="margin-top: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:calendar id="rnHoraInicio"
+                                                                            label="rnHoraInicio"
+                                                                            required="true"
+                                                                            requiredMessage="Ingrese fecha de inicio de la notificación"
+                                                                            value="#{registroNotificacionesGeneral.rol.horaInicio}"
+                                                                            style="width: 18em;"
+                                                                            locale="es"
+                                                                            showOn="both"
+                                                                            readonlyInput="true"
+                                                                            timeControlType="select"
+                                                                            pattern="hh:mm a"
+                                                                            timeOnly="true"
+                                                                            >
+                                                                    <!--<p:ajax event="dateSelect" global="false" process="@this" update="rnHoraInicio"/>-->
+                                                                </p:calendar>
+                                                            </div>
+                                                            <p>Hora de Inicio(inicio del evento</p>
+                                                        </div>
+                                                        <div class="col-sm-12 col-md-6 col-lg-3" style="margin-top: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:calendar id="rnDuracion"
+                                                                            label="rnDuracion"
+                                                                            required="true"
+                                                                            requiredMessage="Ingrese fecha de inicio de la notificación"
+                                                                            value="#{registroNotificacionesGeneral.rol.horaDuracion}"
+                                                                            style="width: 18em;"
+                                                                            locale="es"
+                                                                            showOn="both"
+                                                                            readonlyInput="true"
+                                                                            timeControlType="select"
+                                                                            pattern="HH:mm"
+                                                                            timeOnly="true"
+                                                                            >
+                                                                    <!--<p:ajax event="dateSelect" global="false" process="@this" update="rnDuracion"/>-->
+                                                                </p:calendar>
+                                                            </div>
+                                                            <p>Duracion del evento (duración de la notificación</p>
+                                                        </div>
 
                                                         <!--style="margin-bottom: 20px;"-->
                                                         <div class="col-sm-12 col-md-12 col-lg-12"></div>
@@ -148,30 +188,58 @@
                                                                 <p:inputText id="rnTituloPrincipal"
                                                                              label="rnTituloPrincipal"
                                                                              maxlength="100"
-                                                                             value="#{registroNotificacionesGeneral.rol.notificacionCe.tituloPrincipal}"
+                                                                             value="#{registroNotificacionesGeneral.notificacionCe.tituloPrincipal}"
                                                                              style="width: 35em"
                                                                              class="form-control"
                                                                              required="true"
                                                                              requiredMessage="Por favor ingrese el título principal de la notificación"
                                                                              />
-                                                                <p:watermark for="rnTituloPrincipal" value="Ejemplo de título principal de la notificación *" />
                                                                 <p:outputLabel for="rnTituloPrincipal" value="Título principal de la notificación (este título identificará a la notificación): "/>
                                                             </div>
                                                         </div>
 
                                                         <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;">
                                                             <div class="ui-material">
-                                                                <p:inputText id="rnSubtitulo"
-                                                                             label="rnSubtitulo"
+                                                                <p:inputText id="rnLugar"
+                                                                             label="rnLugar"
                                                                              maxlength="200"
-                                                                             value="#{registroNotificacionesGeneral.rol.notificacionCe.subtitulo}"
+                                                                             value="#{registroNotificacionesGeneral.notificacionCe.lugar}"
                                                                              style="width: 35em"
                                                                              class="form-control"
                                                                              required="true"
                                                                              requiredMessage="Por favor ingrese el subtítulo de la notificación"
                                                                              />
-                                                                <p:watermark for="rnSubtitulo" value="Ejemplo de subtítulo de la notificación *" />
-                                                                <p:outputLabel for="rnSubtitulo" value="Subtítulo de la notificación (en este campo puede agregar datos de interés): "/>
+                                                                <p:outputLabel for="rnLugar" value="Lugar donde se realizara el evento"/>
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="rnResponsable"
+                                                                             label="rnResponsable"
+                                                                             maxlength="100"
+                                                                             value="#{registroNotificacionesGeneral.notificacionCe.personaResponsable}"
+                                                                             style="width: 35em"
+                                                                             class="form-control"
+                                                                             required="true"
+                                                                             requiredMessage="Por favor ingrese el título principal de la notificación"
+                                                                             />
+                                                                <p:outputLabel for="rnResponsable" value="Nombre de la persona responsable del evento"/>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;">
+                                                            <div class="ui-material">
+                                                                <p:inputText id="rnExpositor"
+                                                                             label="rnExpositor"
+                                                                             maxlength="200"
+                                                                             value="#{registroNotificacionesGeneral.notificacionCe.expositor}"
+                                                                             style="width: 35em"
+                                                                             class="form-control"
+                                                                             required="true"
+                                                                             requiredMessage="Por favor ingrese el subtítulo de la notificación"
+                                                                             />
+                                                                <p:outputLabel for="rnExpositor" value="Nombre del expositor"/>
                                                             </div>
                                                         </div>
 
@@ -180,9 +248,10 @@
                                                         <div class="col-sm-12 col-md-6 col-lg-6">
                                                             <div class="ui-material">
                                                                 <p:selectOneMenu id="rnTipoN" 
-                                                                                 value="#{registroNotificacionesGeneral.rol.notificacionCe.tipo}" 
-                                                                                 converter="entityConverter" 
+                                                                                 value="#{registroNotificacionesGeneral.notificacionCe.tipo}" 
                                                                                  required="true" 
+                                                                                 filter="true"
+                                                                                 filterMatchMode="contains"
                                                                                  styleClass="form-control"
                                                                                  style="width: 35em"
                                                                                  >
@@ -198,28 +267,25 @@
 
                                                         <div class="col-sm-12 col-md-12 col-lg-6" >
                                                             <div class="ui-material">
-                                                                <p:selectCheckboxMenu id="rnAlcance"
-                                                                                      value="#{registroNotificacionesGeneral.rol.alcance}" 
-                                                                                      label="Alcance de notificación" 
-                                                                                      multiple="true"
-                                                                                      filter="true" 
-                                                                                      filterMatchMode="startsWith" 
-                                                                                      panelStyle="width:400px"
-                                                                                      style="width: 35em"
-                                                                                      >
+                                                                <p:selectOneMenu id="rnAlcance"
+                                                                                 value="#{registroNotificacionesGeneral.notificacionCe.alcance}" 
+                                                                                 label="Alcance de notificación" 
+                                                                                 panelStyle="width:400px"
+                                                                                 style="width: 35em"
+                                                                                 >
                                                                     <f:selectItems value="#{registroNotificacionesGeneral.listaNotificacionRol}"
                                                                                    var="notificacion"
                                                                                    itemDescription="#{notificacion.label}"
                                                                                    itemValue="#{notificacion.label}"
                                                                                    itemLabel="#{notificacion.label}"/>
-                                                                </p:selectCheckboxMenu>
+                                                                </p:selectOneMenu>
                                                             </div>
                                                             <p>Alcance de la notificación</p>
                                                         </div>
 
                                                         <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;">
                                                             <div class="ui-material">
-                                                                <p:inputTextarea id="rnContenido"
+                                                                <p:inputTextarea id="rnSubtitulo"
                                                                                  rows="4" 
                                                                                  cols="95"
                                                                                  counter="displayContenido" 
@@ -227,12 +293,11 @@
                                                                                  counterTemplate="{0} caracteres en total." 
                                                                                  autoResize="true"
                                                                                  class="form-control"
-                                                                                 value="#{registroNotificacionesGeneral.rol.notificacionCe.subtitulo}"
+                                                                                 value="#{registroNotificacionesGeneral.notificacionCe.subtitulo}"
                                                                                  />
                                                                 <h:outputText id="displayContenido" />
-                                                                <p:watermark for="rnContenido" value="Ejemplo de contenido de la notificación *" />
-                                                                <p:message for="rnContenido" />
-                                                                <p:outputLabel for="rnContenido" value="Contenido de la notificación (en este campo puede agregar el contenido específico de la notificación): " />
+                                                                <p:message for="rnSubtitulo" />
+                                                                <p:outputLabel for="rnSubtitulo" value="Contenido de la notificación (en este campo puede agregar el contenido específico de la notificación): " />
                                                             </div>
                                                         </div>
 
@@ -273,7 +338,7 @@
                                                                 <p:row class="success">
                                                                     <p:column colspan="2" rowspan="2" headerText="Opciones" style="width:80px"/>
                                                                     <p:column rowspan="2" headerText="Titulo" filterBy="#{notificacion.tituloPrincipal}" filterMatchMode="contains" style="width: 150px;" />
-                                                                    <p:column rowspan="2" headerText="Subtitulo" filterBy="#{notificacion.subtitulo}" filterMatchMode="contains" style="width: 150px;"/>
+                                                                    <p:column rowspan="2" headerText="Contenido" filterBy="#{notificacion.subtitulo}" filterMatchMode="contains" style="width: 150px;"/>
                                                                     <p:column rowspan="2" headerText="Tipo" filterBy="#{notificacion.tipo}" filterMatchMode="contains" style="width: 70px;"/>
                                                                     <p:column rowspan="2" headerText="Lugar" style="width: 100px;"/>
                                                                     <p:column rowspan="2" headerText="Hora Inicio" style="width: 80px;"/>
