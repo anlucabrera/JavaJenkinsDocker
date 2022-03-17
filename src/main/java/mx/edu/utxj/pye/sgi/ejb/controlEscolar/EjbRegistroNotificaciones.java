@@ -18,6 +18,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.servlet.http.Part;
+import javax.validation.ConstraintViolationException;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoNotificacionesAreas;
@@ -58,8 +59,12 @@ public class EjbRegistroNotificaciones {
     public ResultadoEJB<NotificacionesCe> guardaNotificacion(@NonNull NotificacionesCe notificacionCE) {
         try {
             notificacionCE.setFechaRegistro(new Date());
+            notificacionCE.setGeneral(Boolean.TRUE);
             em.persist(notificacionCE);
             return ResultadoEJB.crearCorrecto(notificacionCE, "Notificación guardada correctamente en sistema.");
+        } catch (ConstraintViolationException  cve){
+            System.out.println(cve.getConstraintViolations());
+            return ResultadoEJB.crearErroneo(1, "No se ha podido guardar la notificación, favor de verificar la siguiente información. (EjbRegistroNotificaciones.guardaNotificacion): ", cve, NotificacionesCe.class);
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se ha podido guardar la notificación, favor de verificar la siguiente información. (EjbRegistroNotificaciones.guardaNotificacion): ", e, NotificacionesCe.class);
         }
@@ -136,10 +141,6 @@ public class EjbRegistroNotificaciones {
     public ResultadoEJB<List<NotificacionesCe>> consultarNotificacionesTotal() {
         try {
             List<NotificacionesCe> listaNotificaciones = em.createNamedQuery("NotificacionesCe.findAll")
-                    //            List<NotificacionesCe> listaNotificaciones = em.createQuery("SELECT n FROM NotificacionesCe n WHERE n.personaRegistro = :clave ORDER BY n.horaInicio ASC")
-                    //                    .setParameter("clave", clave)
-                    //                    .setParameter("fechaF", fechaF)
-                    //                    .setMaxResults(10)
                     .getResultList();
             if (!listaNotificaciones.isEmpty()) {
                 return ResultadoEJB.crearCorrecto(listaNotificaciones, "");

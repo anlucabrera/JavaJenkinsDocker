@@ -153,6 +153,7 @@
                                                                             timeControlType="select"
                                                                             pattern="hh:mm a"
                                                                             timeOnly="true"
+                                                                            stepMinute="5"
                                                                             >
                                                                     <!--<p:ajax event="dateSelect" global="false" process="@this" update="rnHoraInicio"/>-->
                                                                 </p:calendar>
@@ -173,6 +174,7 @@
                                                                             timeControlType="select"
                                                                             pattern="HH:mm"
                                                                             timeOnly="true"
+                                                                            stepMinute="10"
                                                                             >
                                                                     <!--<p:ajax event="dateSelect" global="false" process="@this" update="rnDuracion"/>-->
                                                                 </p:calendar>
@@ -289,7 +291,7 @@
                                                                                  rows="4" 
                                                                                  cols="95"
                                                                                  counter="displayContenido" 
-                                                                                 maxlength="4000" 
+                                                                                 maxlength="2000" 
                                                                                  counterTemplate="{0} caracteres en total." 
                                                                                  autoResize="true"
                                                                                  class="form-control"
@@ -305,7 +307,7 @@
                                                             <p:commandButton id="btnGuardarNotificacion" 
                                                                              value="Guardar Notificación" 
                                                                              action="#{registroNotificacionesGeneral.guardarNotificacion}" 
-                                                                             oncomplete="actualizarRegistroNotificaciones();" 
+                                                                             oncomplete="actualizarTabla();" 
                                                                              icon="fa fa-pencil-square-o" 
                                                                              class="btn-primary" 
                                                                              style="width:15em;" 

@@ -319,42 +319,40 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     
     public void guardarNotificacion() {
         try {
-            Date fechaInicio, fechaFin, duracionEvento;
-            LocalDateTime inicio, fin, fechaActual;
-            Long duracionHoras,duracionMinutos, tiempoInicioHoras, tiempoInicioMinutos, tiempoFinHoras,tiempoFinMinutos;
-            fechaActual = LocalDateTime.now();
+            Date fechaInicio, fechaFin,duracionEvento;
+            LocalDateTime inicio, fin;
+            Long duracionHoras, duracionMinutos, tiempoInicioHoras, tiempoInicioMinutos, tiempoFinHoras, tiempoFinMinutos;
             inicio = utilidadesCH.castearDaLDT(rol.getFechaInicio());
             fin = utilidadesCH.castearDaLDT(rol.getFechaFin());
-            
+
             duracionHoras = Long.parseLong(obtenerHora(rol.getHoraDuracion()).toString());
             tiempoInicioHoras = Long.parseLong(obtenerHora(rol.getHoraInicio()).toString());
-            tiempoFinHoras = tiempoInicioHoras+duracionHoras;
-            
+            tiempoFinHoras = tiempoInicioHoras + duracionHoras;
+
             duracionMinutos = Long.parseLong(obtenerMinuto(rol.getHoraDuracion()).toString());
             tiempoInicioMinutos = Long.parseLong(obtenerMinuto(rol.getHoraInicio()).toString());
-            tiempoFinMinutos = tiempoInicioMinutos+duracionMinutos;
+            tiempoFinMinutos = tiempoInicioMinutos + duracionMinutos;
 
             fechaInicio = utilidadesCH.castearLDTaD(inicio.plusHours(tiempoInicioHoras).plusMinutes(tiempoInicioMinutos));
             fechaFin = utilidadesCH.castearLDTaD(fin.plusHours(tiempoFinHoras).plusMinutes(tiempoFinMinutos));
             duracionEvento = rol.getHoraDuracion();
-            
             notificacionCe.setHoraInicio(fechaInicio);
             notificacionCe.setHoraFin(fechaFin);
             notificacionCe.setDuracionEvento(duracionEvento);
             notificacionCe.setPersonaRegistro(logonMB.getPersonal().getClave());
-            notificacionCe.setFechaRegistro(utilidadesCH.castearLDTaD(fechaActual));
             System.out.println(notificacionCe);
 
             ResultadoEJB<NotificacionesCe> resNotificacion = ejb.guardaNotificacion(notificacionCe);
             if (resNotificacion.getCorrecto()) {
+                inicializarNotificacionCe();
+                inicializarListaNotificacionesCe();
+                obtenerListaNotificacionesTotal();
                 mostrarMensajeResultadoEJB(resNotificacion);
-                inicializarGeneral();
-                obtenerListaNotificacionesUltimosDiez();
             } else {
                 mostrarMensajeResultadoEJB(resNotificacion);
             }
         } catch (Exception e) {
-            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistroNotificacionesGeneral.guardarNotificacion() == "+e);
+            System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistroNotificacionesGeneral.guardarNotificacion() == " + e);
         }
     }
 
@@ -363,7 +361,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         if (resNotificacion.getCorrecto()) {
             inicializarNotificacionCe();
             inicializarListaNotificacionesCe();
-            obtenerListaNotificacionesActivas(logonMB.getPersonal().getClave());
             obtenerListaNotificacionesTotal();
             mostrarMensajeResultadoEJB(resNotificacion);
         } else {
@@ -377,7 +374,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             if (resNotificacion.getCorrecto()) {
                 inicializarNotificacionCe();
                 inicializarListaNotificacionesCe();
-//                obtenerListaNotificacionesActivas(logonMB.getPersonal().getClave());
                 obtenerListaNotificacionesTotal();
                 mostrarMensajeResultadoEJB(resNotificacion);
             } else {
