@@ -306,8 +306,8 @@
                                                         <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;">
                                                             <p:commandButton id="btnGuardarNotificacion" 
                                                                              value="Guardar Notificación" 
-                                                                             action="#{registroNotificacionesGeneral.guardarNotificacion}" 
-                                                                             oncomplete="actualizarTabla();" 
+                                                                             actionListener="#{registroNotificacionesGeneral.guardarNotificacion}" 
+                                                                             oncomplete="actualizarTabla();"
                                                                              icon="fa fa-pencil-square-o" 
                                                                              class="btn-primary" 
                                                                              style="width:15em;" 
@@ -422,7 +422,12 @@
                                                                         <h:outputText value="#{notificacion.horaInicio}" ><f:convertDateTime pattern="dd 'de' MMMM 'a las' hh:mm a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
                                                                     </f:facet>
                                                                     <f:facet name="input">
-                                                                        <p:calendar value="#{notificacion.horaInicio}" stepMinute="15" pattern="dd-MM-yyyy hh:mm:ss a" defaultHour="#{registroNotificacionesGeneral.obtenerHora(notificacion.horaInicio)}" defaultMinute="#{registroNotificacionesGeneral.obtenerMinuto(notificacion.horaInicio)}" showSecond="false" locale="es" timeZone="America/Mexico_City" timeControlType="select"/>
+                                                                        <p:calendar value="#{notificacion.horaInicio}" stepMinute="15" pattern="dd-MM-yyyy hh:mm:ss a" 
+                                                                                    defaultHour="#{registroNotificacionesGeneral.obtenerHora(notificacion.horaInicio)}" 
+                                                                                    defaultMinute="#{registroNotificacionesGeneral.obtenerMinuto(notificacion.horaInicio)}" 
+                                                                                    showSecond="false" locale="es" timeZone="America/Mexico_City" timeControlType="select"
+                                                                                    valueChangeListener="#{registroNotificacionesGeneral.validaFechaInicioFiltro}"
+                                                                                    />
                                                                     </f:facet>
                                                                 </p:cellEditor>
                                                             </p:column> 
@@ -432,7 +437,12 @@
                                                                         <h:outputText value="#{notificacion.horaFin}" ><f:convertDateTime pattern="dd 'de' MMMM 'a las' hh:mm a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
                                                                     </f:facet>
                                                                     <f:facet name="input">
-                                                                        <p:calendar value="#{notificacion.horaFin}" stepMinute="15" defaultHour="#{registroNotificacionesGeneral.obtenerHora(notificacion.horaFin)}" defaultMinute="#{registroNotificacionesGeneral.obtenerMinuto(notificacion.horaFin)}"  pattern="dd-MM-yyyy hh:mm:ss a" showSecond="false" locale="es" timeZone="America/Mexico_City" timeControlType="select"/>
+                                                                        <p:calendar value="#{notificacion.horaFin}" stepMinute="15" pattern="dd-MM-yyyy hh:mm:ss a"
+                                                                                    defaultHour="#{registroNotificacionesGeneral.obtenerHora(notificacion.horaFin)}" 
+                                                                                    defaultMinute="#{registroNotificacionesGeneral.obtenerMinuto(notificacion.horaFin)}"  
+                                                                                    showSecond="false" locale="es" timeZone="America/Mexico_City" timeControlType="select"
+                                                                                    valueChangeListener="#{registroNotificacionesGeneral.validaFechaFinFiltro}"
+                                                                                    />
                                                                     </f:facet>
                                                                 </p:cellEditor>
                                                             </p:column> 

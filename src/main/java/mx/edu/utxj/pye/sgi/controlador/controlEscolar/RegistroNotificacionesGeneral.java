@@ -238,7 +238,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         }
     }
 
-    public void valifaFechaInicioFiltro(ValueChangeEvent event) {
+    public void validaFechaInicioFiltro(ValueChangeEvent event) {
         if ((Date) event.getNewValue() != null && rol.getFechaFinFiltro() != null || rol.getFechaFinFiltro() != null) {
             rol.setFechaInicioFiltro((Date) event.getNewValue());
             if (rol.getFechaInicioFiltro().before(rol.getFechaFinFiltro())) {
@@ -252,7 +252,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         }
     }
 
-    public void valifaFechaFinFiltro(ValueChangeEvent event) {
+    public void validaFechaFinFiltro(ValueChangeEvent event) {
         if ((Date) event.getNewValue() != null && rol.getFechaInicioFiltro() != null || rol.getFechaInicioFiltro() != null) {
             rol.setFechaFinFiltro((Date) event.getNewValue());
             if (rol.getFechaFinFiltro().after(rol.getFechaInicioFiltro())) {

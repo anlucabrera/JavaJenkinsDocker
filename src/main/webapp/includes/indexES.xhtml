@@ -580,14 +580,24 @@
                                             <p><strong>Duracion: </strong>
                                                 <c:if test="#{tieneVariosDias}">
                                                     <c:if test="#{mismoMes}">
-                                                        <h:outputLabel value="#{notificacionCe.duracionEvento}">
-                                                            <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> horas
+                                                        <c:if test="#{notificacionCe.duracionEvento eq 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                            Todo el dia.
+                                                        </c:if>
+                                                        <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                            <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                                <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                            </h:outputLabel> horas
+                                                        </c:if>
                                                     </c:if>
                                                     <c:if test="#{!mismoMes}">
-                                                        <h:outputLabel value="#{notificacionCe.duracionEvento}">
-                                                            <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> horas
+                                                        <c:if test="#{notificacionCe.duracionEvento eq 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                            Todo el dia.
+                                                        </c:if>
+                                                        <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                            <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                                <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                            </h:outputLabel> horas
+                                                        </c:if>
                                                     </c:if>
                                                 </c:if>
                                                 <c:if test="#{!tieneVariosDias}">
