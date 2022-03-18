@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import java.util.List;
-import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -15,7 +14,6 @@ import javax.persistence.StoredProcedureQuery;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
-import mx.edu.utxj.pye.sgi.entity.prontuario.VariablesProntuario;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import mx.edu.utxj.pye.sgi.saiiut.entity.Alumnos;
 import mx.edu.utxj.pye.sgi.saiiut.facade.Facade2;

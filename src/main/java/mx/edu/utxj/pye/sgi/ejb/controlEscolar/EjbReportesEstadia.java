@@ -62,8 +62,9 @@ public class EjbReportesEstadia {
     private EntityManager em;
     
     @EJB EjbCarga ejbCarga;
-    public static final String ACTUALIZADO_ESTADIA = "seguimientoEstadia.xlsx";
-    public static final String ACTUALIZADO_ESTADIA_DIRECCION = "seguimientoEstadiaAreaAcademica.xlsx";
+    public static final String ACTUALIZADO_ESTADIA = "reportesEstadia.xlsx";
+    public static final String ACTUALIZADO_ESTADIA_DIRECCION = "reportesEstadiaAreaAcademica.xlsx";
+    public static final String ACTUALIZADO_ESTADIA_VINCULACION = "reportesEstadiaVinculacion.xlsx";
     Integer evidencias = 0, evidenciasValidadas = 0, evidenciasSinValidar = 0;
     
     @PostConstruct
@@ -209,19 +210,31 @@ public class EjbReportesEstadia {
                 porcentajeRegistro = 0.0;
             }
             
-            List<SeguimientoEstadiaEstudiante> listaValidados = listaSeguimiento.stream().filter(p->p.getValidacionCoordinador()).collect(Collectors.toList());
+            List<SeguimientoEstadiaEstudiante> listaValidadosCoordinador = listaSeguimiento.stream().filter(p->p.getValidacionCoordinador()).collect(Collectors.toList());
             
-            Integer sinValidar = listaEstudiantes.size()- listaValidados.size();
+            Integer sinValidarCoordinador = listaEstudiantes.size()- listaValidadosCoordinador.size();
             
-            Double porcentajeValidacion;
+            Double porcentajeValidacionCoordinador;
             if(!listaSeguimiento.isEmpty()){
-                Double division = (double)listaValidados.size()/listaEstudiantes.size();
-                porcentajeValidacion = division*100;
+                Double division = (double)listaValidadosCoordinador.size()/listaEstudiantes.size();
+                porcentajeValidacionCoordinador = division*100;
             }else{
-                porcentajeValidacion = 0.0;
+                porcentajeValidacionCoordinador = 0.0;
             }
             
-            DtoReporteActividadesEstadia  dtoReporteActividadesEstadia = new DtoReporteActividadesEstadia(programaBD, listaEstudiantes.size(), listaActivos.size(), listaSeguimiento.size(),sinAsignar, porcentajeAsignacion, listaInfoEstadia.size(), sinInfo, porcentajeRegistro, listaValidados.size(), sinValidar, porcentajeValidacion);
+            List<SeguimientoEstadiaEstudiante> listaValidadosDirector = listaSeguimiento.stream().filter(p->p.getValidacionDirector()).collect(Collectors.toList());
+            
+            Integer sinValidarDirector = listaEstudiantes.size()- listaValidadosDirector.size();
+            
+            Double porcentajeValidacionDirector;
+            if(!listaSeguimiento.isEmpty()){
+                Double division = (double)listaValidadosDirector.size()/listaEstudiantes.size();
+                porcentajeValidacionDirector = division*100;
+            }else{
+                porcentajeValidacionDirector = 0.0;
+            }
+            
+            DtoReporteActividadesEstadia  dtoReporteActividadesEstadia = new DtoReporteActividadesEstadia(programaBD, listaEstudiantes.size(), listaActivos.size(), listaSeguimiento.size(),sinAsignar, porcentajeAsignacion, listaInfoEstadia.size(), sinInfo, porcentajeRegistro, listaValidadosCoordinador.size(), sinValidarCoordinador, porcentajeValidacionCoordinador, listaValidadosDirector.size(), sinValidarDirector, porcentajeValidacionDirector);
             
             return ResultadoEJB.crearCorrecto(dtoReporteActividadesEstadia, "Seguimiento de actividades de estadía empaquetada.");
         }catch (Exception e){
@@ -1032,6 +1045,41 @@ public class EjbReportesEstadia {
         beans.put("cumpDoc", listaCumplimientoEstudiante);
         beans.put("efiEst", listaEficienciaEstadia);
         beans.put("estProm", listaEstudiantesPromedio);
+        XLSTransformer transformer = new XLSTransformer();
+        transformer.transformXLS(rutaPlantilla, beans, plantillaC);
+
+        return plantillaC;
+    }
+    
+     /**
+     * Permite generar el archivo de excel con los reportes de estadía de la generación y nivel educativo seleccionado
+     * @param listaCumplimientoEstudiante
+     * @param listaReporteVinculacion
+     * @param listaEficienciaEstadia 
+     * @param listaEstudiantesPromedio 
+     * @param listaZonaInfluenciaEstIns 
+     * @param listaZonaInfluenciaEstPrograma 
+     * @param generacion
+     * @param nivelEducativo
+     * @return Resultado del proceso
+     * @throws java.lang.Throwable
+     */
+    
+    public String getReportesEstadiaVinculacion(List<DtoCumplimientoEstDocEstadia> listaCumplimientoEstudiante, List<DtoReporteEstadiaVinculacion> listaReporteVinculacion, List<DtoEficienciaEstadia> listaEficienciaEstadia, List<DtoSeguimientoEstadia> listaEstudiantesPromedio, List<DtoZonaInfluenciaEstIns> listaZonaInfluenciaEstIns, List<DtoZonaInfluenciaEstPrograma> listaZonaInfluenciaEstPrograma, Generaciones generacion, ProgramasEducativosNiveles nivelEducativo) throws Throwable {
+        String gen = generacion.getInicio()+ "-" + generacion.getFin();
+        String niv = nivelEducativo.getNivel();
+        String rutaPlantilla = "C:\\archivos\\seguimientoEstadia\\reportesEstadiaVinculacion.xlsx";
+        String rutaPlantillaC = ejbCarga.crearDirectorioReportesEstadia(gen,niv);
+
+        String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_ESTADIA_VINCULACION);
+        
+        Map beans = new HashMap();
+        beans.put("cumpDoc", listaCumplimientoEstudiante);
+        beans.put("cumpVal", listaReporteVinculacion);
+        beans.put("efiEst", listaEficienciaEstadia);
+        beans.put("estProm", listaEstudiantesPromedio);
+        beans.put("zonaInfIns", listaZonaInfluenciaEstIns);
+        beans.put("zonaInfProg", listaZonaInfluenciaEstPrograma);
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 

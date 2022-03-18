@@ -28,11 +28,14 @@ public class DtoReporteActividadesEstadia implements Serializable, Comparable<Dt
     @Getter @Setter Integer estudiantesInformacion;
     @Getter @Setter Integer estudiantesSinInformacion;
     @Getter @Setter Double porcentajeRegistro;
-    @Getter @Setter Integer estudiantesValidados;
-    @Getter @Setter Integer estudiantesSinValidar;
-    @Getter @Setter Double porcentajeValidacion;
+    @Getter @Setter Integer estudiantesValidadosCoordinador;
+    @Getter @Setter Integer estudiantesSinValidarCoordinador;
+    @Getter @Setter Double porcentajeValidacionCoordinador;
+    @Getter @Setter Integer estudiantesValidadosDirector;
+    @Getter @Setter Integer estudiantesSinValidarDirector;
+    @Getter @Setter Double porcentajeValidacionDirector;
 
-    public DtoReporteActividadesEstadia(AreasUniversidad programaEducativo, Integer estudiantesIniciaron, Integer estudiantesActivos, Integer estudiantesAsignados, Integer estudiantesSinAsignar, Double porcentajeAsignacion, Integer estudiantesInformacion, Integer estudiantesSinInformacion, Double porcentajeRegistro, Integer estudiantesValidados, Integer estudiantesSinValidar, Double porcentajeValidacion) {
+    public DtoReporteActividadesEstadia(AreasUniversidad programaEducativo, Integer estudiantesIniciaron, Integer estudiantesActivos, Integer estudiantesAsignados, Integer estudiantesSinAsignar, Double porcentajeAsignacion, Integer estudiantesInformacion, Integer estudiantesSinInformacion, Double porcentajeRegistro, Integer estudiantesValidadosCoordinador, Integer estudiantesSinValidarCoordinador, Double porcentajeValidacionCoordinador, Integer estudiantesValidadosDirector, Integer estudiantesSinValidarDirector, Double porcentajeValidacionDirector) {
         this.programaEducativo = programaEducativo;
         this.estudiantesIniciaron = estudiantesIniciaron;
         this.estudiantesActivos = estudiantesActivos;
@@ -42,12 +45,14 @@ public class DtoReporteActividadesEstadia implements Serializable, Comparable<Dt
         this.estudiantesInformacion = estudiantesInformacion;
         this.estudiantesSinInformacion = estudiantesSinInformacion;
         this.porcentajeRegistro = porcentajeRegistro;
-        this.estudiantesValidados = estudiantesValidados;
-        this.estudiantesSinValidar = estudiantesSinValidar;
-        this.porcentajeValidacion = porcentajeValidacion;
+        this.estudiantesValidadosCoordinador = estudiantesValidadosCoordinador;
+        this.estudiantesSinValidarCoordinador = estudiantesSinValidarCoordinador;
+        this.porcentajeValidacionCoordinador = porcentajeValidacionCoordinador;
+        this.estudiantesValidadosDirector = estudiantesValidadosDirector;
+        this.estudiantesSinValidarDirector = estudiantesSinValidarDirector;
+        this.porcentajeValidacionDirector = porcentajeValidacionDirector;
     }
 
-    
     @Override
     public int compareTo(DtoReporteActividadesEstadia o) {
         return toLabel(this).compareTo(toLabel(o));

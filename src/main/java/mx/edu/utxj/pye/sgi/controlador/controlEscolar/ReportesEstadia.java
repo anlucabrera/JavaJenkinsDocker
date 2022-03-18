@@ -265,9 +265,12 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
              rol.setTotalInfoRegistrada(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesInformacion()).sum());
              rol.setTotalSinInfoRegistrada(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesSinInformacion()).sum());
              rol.setPorcentajeRegistro(String.format("%.2f", rol.getListaSegActEstadia().stream().mapToDouble(p->p.getPorcentajeRegistro()).average().getAsDouble()));
-             rol.setTotalInfoValidada(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesValidados()).sum());
-             rol.setTotalSinInfoValidada(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesSinValidar()).sum());
-             rol.setPorcentajeValidacion(String.format("%.2f", rol.getListaSegActEstadia().stream().mapToDouble(p->p.getPorcentajeValidacion()).average().getAsDouble()));
+             rol.setTotalInfoValidadaCoordinador(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesValidadosCoordinador()).sum());
+             rol.setTotalSinInfoValidadaCoordinador(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesSinValidarCoordinador()).sum());
+             rol.setPorcentajeValidacionCoordinador(String.format("%.2f", rol.getListaSegActEstadia().stream().mapToDouble(p->p.getPorcentajeValidacionCoordinador()).average().getAsDouble()));
+             rol.setTotalInfoValidadaDirector(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesValidadosDirector()).sum());
+             rol.setTotalSinInfoValidadaDirector(rol.getListaSegActEstadia().stream().mapToInt(p->p.getEstudiantesSinValidarDirector()).sum());
+             rol.setPorcentajeValidacionDirector(String.format("%.2f", rol.getListaSegActEstadia().stream().mapToDouble(p->p.getPorcentajeValidacionDirector()).average().getAsDouble()));
              Ajax.update("tbSegActEstadia");
          }else mostrarMensajeResultadoEJB(res);
     }
@@ -359,7 +362,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
              rol.setPorcentajeEficiencia(String.format("%.2f", rol.getEficienciaEstadiaDatosComplementarios().stream().mapToDouble(p->p.getEficienciaEstadia()).average().getAsDouble()));
              rol.setTotalValidadoDireccion(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getValidadosDireccion()).sum());
              rol.setTotalNoValidadosDireccion(rol.getEficienciaEstadiaDatosComplementarios().stream().mapToInt(p->p.getNoValidadosDireccion()).sum());
-             rol.setPorcentajeValidacion(String.format("%.2f", rol.getEficienciaEstadiaDatosComplementarios().stream().mapToDouble(p->p.getEficienciaValidacionDireccion()).average().getAsDouble()));
+             rol.setPorcentajeValidacionDirector(String.format("%.2f", rol.getEficienciaEstadiaDatosComplementarios().stream().mapToDouble(p->p.getEficienciaValidacionDireccion()).average().getAsDouble()));
              Ajax.update("tbEficienciaEstadiaDatosComplementarios");
          }else mostrarMensajeResultadoEJB(res);
     }
@@ -507,7 +510,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             generarListadoEstudiantesPromediosAreaAcademica();
             File f = new File(ejb.getReportesEstadiaAreaAcademica(rol.getListaSegActEstadia(), rol.getListaAsigAsesorAcad(), rol.getListaCumplimientoEstudiante(), rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getGeneracion(), rol.getNivelEducativo()));
             Faces.sendFile(f, true);
-        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){     
+        }else if(rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){     
             generarSeguimientoActEstadia();
             generarAsigProgramaAsesor();
             generarCumpDocumentoPrograma();
@@ -516,6 +519,15 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             generarZonaInfluenciaIns();
             generarZonaInfluenciaPrograma();
             File f = new File(ejb.getReportesEstadia(rol.getListaSegActEstadia(), rol.getListaAsigAsesorAcad(), rol.getListaCumplimientoEstudiante(), rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getListaZonaInfluenciaIns(), rol.getListaZonaInfluenciaPrograma(), rol.getGeneracion(), rol.getNivelEducativo()));
+            Faces.sendFile(f, true);
+        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15){     
+            generarCumpDocumentoPrograma();
+            generarReporteDocumentosVinculacion();
+            generarEficienciaEstadia();
+            generarListadoEstudiantesPromedios();
+            generarZonaInfluenciaIns();
+            generarZonaInfluenciaPrograma();
+            File f = new File(ejb.getReportesEstadiaVinculacion(rol.getListaCumplimientoEstudiante(), rol.getListaReporteVinculacion(), rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getListaZonaInfluenciaIns(), rol.getListaZonaInfluenciaPrograma(), rol.getGeneracion(), rol.getNivelEducativo()));
             Faces.sendFile(f, true);
         }
     }
