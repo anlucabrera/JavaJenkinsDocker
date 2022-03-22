@@ -183,7 +183,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
      * *************************************************
      */
     public void validaFechaInicio(ValueChangeEvent event) {
-        System.out.println("Fecha de inicio" + (Date) event.getNewValue());
         if ((Date) event.getNewValue() != null && rol.getFechaFin() != null || rol.getFechaFin() != null) {
 
             rol.setFechaInicio((Date) event.getNewValue());
@@ -201,7 +200,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     public void validaFechaFin(ValueChangeEvent event) {
         if ((Date) event.getNewValue() != null && rol.getFechaInicio() != null || rol.getFechaInicio() != null) {
             rol.setFechaFin((Date) event.getNewValue());
-            System.out.println("Fecha de fin == " + rol.getFechaFin());
             if (rol.getFechaFin().after(rol.getFechaInicio())) {
             } else {
                 if (rol.getFechaInicio().after(rol.getFechaFin())) {
@@ -216,7 +214,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     public void verDuracion(ValueChangeEvent event) {
         if ((Date) event.getNewValue() != null && rol.getHoraDuracion() != null || rol.getHoraDuracion() != null) {
             rol.setHoraDuracion((Date) event.getNewValue());
-            System.out.println("Duracion del evento == " + rol.getHoraDuracion());
         } else {
             rol.setHoraDuracion(null);
         }
@@ -226,7 +223,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     public void verHoraInicio(ValueChangeEvent event) {
         if ((Date) event.getNewValue() != null && rol.getHoraInicio() != null || rol.getHoraInicio() != null) {
             rol.setHoraInicio((Date) event.getNewValue());
-            System.out.println("Hora de inicio del evento == " + rol.getHoraInicio());
         } else {
             rol.setHoraInicio(null);
         }
@@ -291,10 +287,8 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             
                 fechaInicio = utilidadesCH.castearLDTaD(inicio.plusHours(tiempoInicioHoras).plusMinutes(tiempoInicioMinutos));
             if (rol.getFechaFin() != null) {
-                System.out.println(rol.getFechaFin());
                 fechaFin = utilidadesCH.castearLDTaD(fin.plusHours(tiempoFinHoras).plusMinutes(tiempoFinMinutos));
             } else {
-                System.out.println(rol.getFechaFin());
                 fechaFin = utilidadesCH.castearLDTaD(inicio.plusHours(tiempoFinHoras).plusMinutes(tiempoFinMinutos));
             }
             duracionEvento = rol.getHoraDuracion();
@@ -302,7 +296,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             notificacionCe.setHoraFin(fechaFin);
             notificacionCe.setDuracionEvento(duracionEvento);
             notificacionCe.setPersonaRegistro(logonMB.getPersonal().getClave());
-            System.out.println(notificacionCe);
 
             ResultadoEJB<NotificacionesCe> resNotificacion = ejb.guardaNotificacion(notificacionCe);
             if (resNotificacion.getCorrecto()) {
@@ -315,7 +308,29 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             }
         } catch (Exception e) {
             System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.RegistroNotificacionesGeneral.guardarNotificacion() == " + e);
+        }finally{
+            limpiarNotificacion(notificacionCe);
         }
+    }
+    
+    public void limpiarNotificacion(NotificacionesCe notificacion){
+        rol.setFechaInicio(null);
+        rol.setFechaFin(null);
+        rol.setHoraInicio(null);
+        rol.setHoraDuracion(null);
+        notificacion.setAlcance(null);
+        notificacion.setDuracionEvento(null);
+        notificacion.setExpositor(null);
+        notificacion.setFechaRegistro(null);
+        notificacion.setGeneral(null);
+        notificacion.setHoraFin(null);
+        notificacion.setHoraInicio(null);
+        notificacion.setLugar(null);
+        notificacion.setPersonaRegistro(null);
+        notificacion.setPersonaResponsable(null);
+        notificacion.setSubtitulo(null);
+        notificacion.setTipo(null);
+        notificacion.setTituloPrincipal(null);
     }
 
     public void actualizarNotificacion(NotificacionesCe notificacion) {
@@ -337,6 +352,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
                 inicializarNotificacionCe();
                 inicializarListaNotificacionesCe();
                 obtenerListaNotificacionesTotal();
+                limpiarNotificacion(notificacion);
                 mostrarMensajeResultadoEJB(resNotificacion);
             } else {
                 mostrarMensajeResultadoEJB(resNotificacion);

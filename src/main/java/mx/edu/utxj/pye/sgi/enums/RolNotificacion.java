@@ -11,7 +11,8 @@ import lombok.RequiredArgsConstructor;
 public enum RolNotificacion {
     TODOS(1D, "Todos"),     
     PERSONAL(1D, "Personal"),
-    ALUMNOS(1D, "Alumnos");
+    ALUMNOS(1D, "Alumnos"),
+    NADIEOCULTA(1D, "Nadie / Oculta");
     @Getter @NonNull    private Double nivel;
     @Getter @NonNull    private String label;
     
