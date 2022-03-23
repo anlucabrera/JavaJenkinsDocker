@@ -190,8 +190,8 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
             listaReportes.add("Aprovechamiento escolar");
             listaReportes.add("Aprovechamiento escolar por estudiante");
             listaReportes.add("Reprobación por asignatura");
-            listaReportes.add("Matricula");
-            listaReportes.add("Distribución de matricula");
+            listaReportes.add("Matrícula");
+            listaReportes.add("Distribución de matrícula");
             listaReportes.add("Deserción académica");
         }
         else if(rol.getUsuario().getPersonal().getAreaOperativa()==23){
@@ -220,9 +220,9 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
            generarListaAprovechamientoEscolar();
         }else if("Reprobación por asignatura".equals(rol.getReporte())){
            generarReprobacionAsignatura();
-        }else if("Matricula".equals(rol.getReporte())){
+        }else if("Matrícula".equals(rol.getReporte())){
            generarMatricula();
-        }else if("Distribución de matricula".equals(rol.getReporte())){
+        }else if("Distribución de matrícula".equals(rol.getReporte())){
            generarDistribucionMatricula();  
         }else if("Deserción académica".equals(rol.getReporte())){
            generarDesercionAcademica();
@@ -329,10 +329,10 @@ public class ReportesAcademicos extends ViewScopedRol implements Desarrollable{
          } else if ("Reprobación por asignatura".equals(rol.getReporte())) {
              File f = new File(ejb.getReporteRepAsignatura(rol.getPeriodo(), rol.getUsuario().getPersonal()));
              Faces.sendFile(f, true);
-         } else if ("Matricula".equals(rol.getReporte())) {
+         } else if ("Matrícula".equals(rol.getReporte())) {
              File f = new File(ejb.getReporteMatricula(rol.getPeriodo(), rol.getUsuario().getPersonal()));
              Faces.sendFile(f, true);
-         } else if ("Distribución de matricula".equals(rol.getReporte())) {
+         } else if ("Distribución de matrícula".equals(rol.getReporte())) {
              File f = new File(ejb.getReporteDistMatricula(rol.getPeriodo(), rol.getUsuario().getPersonal()));
              Faces.sendFile(f, true);
          } else if ("Deserción académica".equals(rol.getReporte())) {
