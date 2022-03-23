@@ -5,6 +5,7 @@
  */
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.controlador.Caster;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.ValidacionTutoriaGrupalRolEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ParticipantesTutoriaGrupal;
@@ -144,19 +146,26 @@ public class EjbAsistenciaTutoriaGrupalEstudiante {
      * @param matricula
      * @return 
      */
-    public ResultadoEJB<Long> verificarTutoriasPendientesFirmas(Integer periodoEscolar, Integer matricula){
+    public ResultadoEJB<List<ValidacionTutoriaGrupalRolEstudiante.DtoTutoriasPendientes>> verificarTutoriasPendientesFirmas(Integer periodoEscolar, Integer matricula){
         try {
-            Object faltantes = em.createQuery("SELECT COUNT(ptg.asistencia) FROM ParticipantesTutoriaGrupal ptg WHERE ptg.estudiante1.periodo = :periodoEscolar AND ptg.estudiante1.matricula = :matricula AND ptg.aceptacionAcuerdos = :aceptacionAcuerdos GROUP BY ptg.asistencia", Integer.class)
+            List<ValidacionTutoriaGrupalRolEstudiante.DtoTutoriasPendientes> listaDtoFaltantes = new ArrayList<>();
+            List<Object[]> faltantes = em.createQuery("SELECT ptg.tutoriasGrupales.eventoRegistro, COUNT(ptg.asistencia) FROM ParticipantesTutoriaGrupal ptg WHERE ptg.estudiante1.periodo = :periodoEscolar AND ptg.estudiante1.matricula = :matricula AND ptg.aceptacionAcuerdos = :aceptacionAcuerdos GROUP BY ptg.tutoriasGrupales.eventoRegistro ORDER BY ptg.tutoriasGrupales.eventoRegistro")
                     .setParameter("periodoEscolar", periodoEscolar)
                     .setParameter("matricula", matricula)
                     .setParameter("aceptacionAcuerdos", ParticipanteTutoriaGrupalAcuerdos.PENDIENTE_DE_REGISTRO.getLabel())
-                    .getSingleResult();
-            Long numeroFaltantes = (Long) faltantes;
-            if(numeroFaltantes == null || numeroFaltantes == 0){
-                return ResultadoEJB.crearCorrecto(numeroFaltantes, "El estudiante no cuenta con firmas de tutorías grupales pendientes");
-            }else{
-                return ResultadoEJB.crearCorrecto(numeroFaltantes, "El estudiante aún cuenta con firmas de tutorías grupales pendientes");
-            }
+                    .getResultList();
+            if(faltantes.isEmpty()) return ResultadoEJB.crearErroneo(2, null, "El estudiante no cuenta con tutorias grupales pendientes");
+            faltantes.stream().map((resultado) -> {
+                int     eventoRegistro      =       ((Number)       resultado[0]).intValue();
+                long    numeroFaltantes     =       ((Long)         resultado[1]).longValue();
+                EventosRegistros resultadoEventoRegistro = em.find(EventosRegistros.class, eventoRegistro);
+                ValidacionTutoriaGrupalRolEstudiante.DtoTutoriasPendientes dto = new ValidacionTutoriaGrupalRolEstudiante.DtoTutoriasPendientes(resultadoEventoRegistro, numeroFaltantes);
+                return dto;
+            }).forEachOrdered((dto) -> {
+                listaDtoFaltantes.add(dto);
+            });
+            if(listaDtoFaltantes.isEmpty()) return ResultadoEJB.crearErroneo(3, null, "El estudiante no cuenta con tutorias grupales pendientes");    
+            return ResultadoEJB.crearCorrecto(listaDtoFaltantes, "El estudiante aún cuenta con firmas de tutorías grupales pendientes");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la cantidad de firmas pendientes en tutorías grupales", e, null);
         }

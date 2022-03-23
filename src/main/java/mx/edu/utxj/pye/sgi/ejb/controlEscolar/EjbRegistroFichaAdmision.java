@@ -45,6 +45,7 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -890,23 +891,36 @@ public class EjbRegistroFichaAdmision {
             String qrCode = pdf.getQRCode(1, true, true);
             String fecha_nacimiento = "";
             String[] parts = qrCode.split("\\|");
-            if(buscaPersonaByCurp(parts[0]) != null){
+            
+//            Arrays.stream(parts).forEach(System.out::println);
+//            
+//            System.err.println("parts 0 " + parts[0]);
+//            System.err.println("parts 1 " + parts[1]);
+//            System.err.println("parts 2 " + parts[2]);
+//            System.err.println("parts 3 " + parts[3]);
+//            System.err.println("parts 4 " + parts[4]);
+//            System.err.println("parts 5 " + parts[5]);
+//            System.err.println("parts 6 " + parts[6]);
+//            System.err.println("parts 7 " + parts[7]);
+            
+            
+            if(buscaPersonaByCurp(parts[0].replaceAll("\\s+", "")) != null){
                 //System.out.println("0");
-                p = buscaPersonaByCurp(parts[0]);
-                //System.out.println("per" + p);
+                p = buscaPersonaByCurp(parts[0].replaceAll("\\s+", ""));
+//                System.out.println("per" + p);
 
             }else{
-                if((parts != null && (parts.length == 7 || parts.length == 8))) {
-                        p.setCurp(parts[0]);
+                if(parts != null) {
+                        p.setCurp(parts[0].replaceAll("\\s+", ""));
                         p.setApellidoPaterno(ucFirst(parts[2]).trim());
                         p.setApellidoMaterno(ucFirst(parts[3]).trim());
                         p.setNombre(ucFirst(parts[4]));
-                        String generoCaracter = String.valueOf(parts[0].charAt(10));
+                        String generoCaracter = parts[0].substring(10, 11);
                         if(generoCaracter.equals("H"))
                             p.setGenero((short) 2);
                         if(generoCaracter.equals("M"))
                             p.setGenero((short) 1);
-                        fecha_nacimiento = parts[5].replace("/","-");
+                        fecha_nacimiento = parts[6].replace("/","-");
                         p.setFechaNacimiento(sm.parse(fecha_nacimiento));
                         String claveEstado = parts[0].substring(11, 13);
                         if(claveEstado.equals("NE")){
@@ -923,15 +937,19 @@ public class EjbRegistroFichaAdmision {
                         }
                         p.setUrlCurp(rutaRelativa);
                 }else{
+//                    System.err.println("Error encontrado es nulo o el tamaño no corresponde con la condicion");
                         ServicioArchivos.eliminarArchivo(rutaRelativa);
                         p = new Persona();    
                 }
             }
         }catch (IOException ex){
+            System.err.println("error ex: " + ex.getMessage() + " Causa: " + ex.getCause());
             Logger.getLogger(ServicioFichaAdmision.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
+            System.err.println("error ex: " + ex.getMessage() + " Causa: " + ex.getCause());
             Logger.getLogger(ServicioFichaAdmision.class.getName()).log(Level.SEVERE, null, ex);
         }catch (NotFoundException ex){
+            System.err.println("error ex: " + ex.getMessage() + " Causa: " + ex.getCause());
             ServicioArchivos.eliminarArchivo(rutaRelativa);
             Logger.getLogger(ServicioFichaAdmision.class.getName()).log(Level.SEVERE, null, ex);
         }

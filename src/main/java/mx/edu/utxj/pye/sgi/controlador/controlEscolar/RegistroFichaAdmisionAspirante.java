@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.primefaces.PrimeFaces;
 
 @Named(value = "registroFichaAdmisionAspirante")
 @ViewScoped
@@ -141,7 +142,11 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                     //System.out.println("..."+ resGen.getValor());
                    // if(resGen.getCorrecto()){
                         //rol.setGeneral(resGen.getValor());
-                        getRegistro();
+                        if(rol.getPersonaD().getEcontrado()){
+                            abrirFormularioAccesoInformacion();
+                        }else{
+                            getRegistro();
+                        }
                         mostrarMensajeResultadoEJB(resPersona);
                     //}else {mostrarMensajeResultadoEJB(resGen);}
 
@@ -189,6 +194,30 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             else {mostrarMensajeResultadoEJB(resPersona);}
         }catch (Exception e){mostrarExcepcion(e);}
     }
+    
+    public void verificaRegistroPersonaEncontrada(){
+        try{
+            ResultadoEJB<Persona> resPersona =  ejbRegistroFicha.getPersonabyCurp(rol.getPersonaD().getPersona().getCurp());
+            if(resPersona.getCorrecto()==true){
+                rol.getPersonaD().setPersona(resPersona.getValor());
+                if(rol.getPersonaD().getPersona().getIdpersona()==Integer.parseInt(rol.getPwdPer())){
+                    ResultadoEJB<DtoAspirante.PersonaR> resPer= ejbRegistroFicha.getPersonaR(rol.getPersonaD().getPersona());
+                    if(resPer.getCorrecto()==true){
+                        PrimeFaces current = PrimeFaces.current();
+                        current.executeScript("PF('modalAccesoDatos').hide();");
+                        rol.setPersonaD(resPer.getValor());
+                        ResultadoEJB<DtoAspirante.PersonaR> resPersona2 =  ejbRegistroFicha.getPersonaR(resPersona.getValor());
+                        if(resPersona2.getCorrecto()==true){    rol.setPersonaD(resPersona2.getValor());getRegistro();}
+                        else {mostrarMensajeResultadoEJB(resPer);}
+                    }else { mostrarMensajeResultadoEJB(resPer);}
+                }
+                else {mostrarMensajeResultadoEJB(ResultadoEJB.crearErroneo(3,new Persona(),"La contraseña ingresada es incorrecta."));init();}
+
+            }
+            else {mostrarMensajeResultadoEJB(resPersona);}
+        }catch (Exception e){mostrarExcepcion(e);}
+    }
+    
     //Obtiene un registro
     public void getRegistro(){
         try{
@@ -432,7 +461,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             rol.getDdomicilios().getDomicilio().setEstadoProcedencia(rol.getDdomicilios().getDomicilio().getIdEstado());
             rol.getDdomicilios().getDomicilio().setMunicipioProcedencia(rol.getDdomicilios().getDomicilio().getIdMunicipio());
             rol.getDdomicilios().getDomicilio().setAsentamientoProcedencia(rol.getDdomicilios().getDomicilio().getIdAsentamiento());
-        }
+        }  
     }
     public void comprabarEncuesta(@NonNull EncuestaAspirante resultados){
         if(rol.getEncuesta().getEcontrado()){
@@ -517,7 +546,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
      */
     public void  saveDatosMedicosyComunicacion(){
         try {
-            System.out.println("Medios comunicacion " + rol.getPersonaD().getMedioComunicacion().getEmail());
+//            System.out.println("Medios comunicacion " + rol.getPersonaD().getMedioComunicacion().getEmail());
             ResultadoEJB<DtoAspirante.PersonaR> resMC = ejbRegistroFicha.operacionesMedioC(rol.getPersonaD());
             //Datos medicos
             ResultadoEJB<DtoAspirante.MedicosR> resSaveDm = ejbRegistroFicha.operacionesDatosMedicos(rol.getDmedico(),rol.getPersonaD());
@@ -975,9 +1004,24 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             else {mostrarMensajeResultadoEJB(resGeneros);}
         }catch (Exception e){}
     }
-
-
-
+    
+    public void abrirFormularioAccesoInformacion(){
+        try {
+            rol.setForzarAperturaDialogo(Boolean.TRUE);
+            forzarAperturaAccesoInformacion();
+        } catch (Exception e) {
+            mostrarMensaje("Ocurrio un error al abrir el formulario para el acceso a información: " + e.getMessage() + " Causa: " + e.getCause());
+        }
+    }
+    
+    public void forzarAperturaAccesoInformacion(){
+        if(rol.getForzarAperturaDialogo()){
+            PrimeFaces current = PrimeFaces.current();
+            current.executeScript("PF('modalAccesoDatos').show();");
+            rol.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
+    
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
         String valor = "registroFichaAspirante";

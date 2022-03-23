@@ -110,6 +110,8 @@ public class Persona implements Serializable {
     private DatosMedicos datosMedicos;
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
     private EncuestaVocacional encuestaVocacional;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "persona", fetch = FetchType.LAZY)
+    private TestVocacional testVocacional;
 
     public Persona() {
     }
@@ -264,6 +266,14 @@ public class Persona implements Serializable {
 
     public void setEncuestaVocacional(EncuestaVocacional encuestaVocacional) {
         this.encuestaVocacional = encuestaVocacional;
+    }
+    
+    public TestVocacional getTestVocacional() {
+        return testVocacional;
+    }
+
+    public void setTestVocacional(TestVocacional testVocacional) {
+        this.testVocacional = testVocacional;
     }
 
     @Override

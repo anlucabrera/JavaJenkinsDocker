@@ -19,7 +19,7 @@
             <c:if test="#{consultaDocumentosOficialesEstudiante.mostrarEnDesarrollo(request) and consultaDocumentosOficialesEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/consultaDocumentosOficiales.xhtml"><i class="fa fa-folder"></i><span>Consulta documentos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
             <c:if test="#{consultaCalificacionesEstudiante.mostrarEnDesarrollo(request) and consultaCalificacionesEstudiante.tieneAcceso}"><li>
             <p:link href="#{request.contextPath}/controlEscolar/estudiante/consultarCalificaciones.xhtml"><i class="fa fa-list-alt"></i><span>Consultar mis calificaciones</span></p:link></li></c:if>
-            <c:if test="#{casosCriticosEstudiante.mostrarEnDesarrollo(request) and casosCriticosEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/casosCriticos.xhtml"><i class="fa fa-slideshare"></i><span>Casos Críticos Registrados</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+            <c:if test="#{casosCriticosEstudiante.mostrarEnDesarrollo(request) and casosCriticosEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/casosCriticos.xhtml"><i class="fa fa-slideshare"></i><span>Casos Críticos<br/> Registrados</span><span class="pull-right-container"></span></p:link></li></c:if>
             <c:if test="#{reinscripcionAutonomaEstudiante.mostrarEnDesarrollo(request) and reinscripcionAutonomaEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/reinscripcionAutonoma.xhtml"><i class="fa fa-id-badge"></i><span>Reinscripción Autónoma</span><span class="pull-right-container"></span></p:link></li></c:if>
             <c:if test="#{cambioPwdEstudiante.mostrarEnDesarrollo(request) and cambioPwdEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/CambioPwdEstudiante.xhtml"><i class="fa fa-key"></i><span>Cambio de contraseña</span><span class="pull-right-container"></span></p:link></li></c:if>
             <c:if test="#{cartaNoAdeudoEstudiante.mostrarEnDesarrollo(request) and cartaNoAdeudoEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/cartaNoAdeudoEstudiante.xhtml"><i class="fa fa-check-square-o"></i><span>Carta no adeudo</span></p:link></li></c:if>
@@ -42,6 +42,11 @@
             <c:if test="#{testDiagnosticoAprendizajeEstudiante.mostrarEnDesarrollo(request) and testDiagnosticoAprendizajeEstudiante.tieneAcceso}">
                 <li><p:link href="#{request.contextPath}/controlEscolar/estudiante/testAprendizaje.xhtml"><i class="fa fa-check-square"></i><span>Test de Diagnóstico de Aprendizaje</span></p:link></li>
             </c:if>
+            
+            <c:if test="#{testVocacionalC.mostrarEnDesarrollo(request) and testVocacionalC.tieneAcceso}">
+                <li><p:link href="#{request.contextPath}/encuestas/Estudiantes/testVocacional.xhtml"><i class="fa fa-check-square"></i><span>Test Vocacional</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li>
+            </c:if>
+            
             <c:if test="#{encuestaSatisfaccionEgresadosTsu.mostrarEnDesarrollo(request) and encuestaSatisfaccionEgresadosTsu.tieneAcceso}">
                 <li><p:link href="#{request.contextPath}/controlEscolar/estudiante/satisfaccionEgresadosTsu.xhtml"><i class="fa fa-check-square"></i><span>Satisfacción de Egresados T.S.U</span></p:link></li>
             </c:if>
@@ -53,7 +58,7 @@
             </c:if>
 
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Asesorías y Tutorías</li>
-            <c:if test="#{validacionTutoriaGrupalEstudiante.mostrarEnDesarrollo(request) and validacionTutoriaGrupalEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/tutorias_grupales.xhtml"><i class="fa fa-slideshare"></i><span>Tutorías</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+            <c:if test="#{validacionTutoriaGrupalEstudiante.mostrarEnDesarrollo(request) and validacionTutoriaGrupalEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/tutorias_grupales.xhtml"><i class="fa fa-slideshare"></i><span>Tutorías</span><span class="pull-right-container"></span></p:link></li></c:if>
 
             <c:if test="#{(seguimientoEstadiaPorEstudiante.mostrarEnDesarrollo(request) and seguimientoEstadiaPorEstudiante.tieneAcceso) or (letreroFotografiasEstudiante.mostrarEnDesarrollo(request) and letreroFotografiasEstudiante.tieneAcceso)}">
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Estadía</li>
@@ -94,6 +99,6 @@
                 <span>Soporte técnico</span>
             </p:link>
         </li>
-        <li><p:link href="http://www.utxicotepec.edu.mx/index.php/normatividad-institucional/" target="_blank"><i class="fa fa-leanpub"></i><span>Reglamento Institucional</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li>
+        <li><p:link href="http://www.utxicotepec.edu.mx/index.php/normatividad-institucional/" target="_blank"><i class="fa fa-leanpub"></i><span>Reglamento Institucional</span><span class="pull-right-container"></span></p:link></li>
     </ul>
 </ui:composition>

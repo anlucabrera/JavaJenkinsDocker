@@ -71,6 +71,11 @@ public class RegistroFichaAdmisionRolAspirante {
     @Getter @Setter @NonNull private List<AreasUniversidad> areasAcademicas;
     @Getter @Setter @NonNull private List<AreasUniversidad> programasEducativosPo,programasEducativosSo,carrerasEv;
     @Getter @Setter @NonNull private  List<Generos> generos;
+    @Getter @Setter Boolean forzarAperturaDialogo;
+
+    public RegistroFichaAdmisionRolAspirante() {
+        setForzarAperturaDialogo(false);
+    }
 
     public void setEventoEscolar(EventoEscolar eventoEscolar) {
         this.eventoEscolar = eventoEscolar;

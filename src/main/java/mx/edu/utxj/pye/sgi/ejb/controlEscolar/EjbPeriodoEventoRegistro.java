@@ -8,10 +8,12 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
@@ -121,12 +123,32 @@ public class EjbPeriodoEventoRegistro {
                     .collect(Collectors.toList());
 
             if(!meses.isEmpty()){
-                List<EventosRegistros> l = em.createQuery("SELECT er from EventosRegistros er INNER JOIN er.ejercicioFiscal ef WHERE ef.anio=:anio AND er.mes in :meses AND er.fechaInicio <= :fecha ORDER BY er.fechaInicio DESC, er.fechaFin DESC", EventosRegistros.class)
+                List<EventosRegistros> l = em.createQuery("SELECT er from EventosRegistros er INNER JOIN FETCH er.ejercicioFiscal ef WHERE ef.anio=:anio AND er.mes in :meses AND er.fechaInicio <= :fecha ORDER BY er.fechaInicio DESC, er.fechaFin DESC", EventosRegistros.class)
                         .setParameter("fecha", new Date())
                         .setParameter("anio", periodo.getAnio())
                         .setParameter("meses", meses)
                         .getResultList();
-                return ResultadoEJB.crearCorrecto(l, "Eventos de Registro por periodo escolar");
+                if(!l.isEmpty()){
+                String mes = Caster.obtenerNombreMes(new Date());
+//                String mes = "Febrero";
+                EventosRegistros eventoConFecha = em.createQuery("SELECT er FROM EventosRegistros er INNER JOIN FETCH er.ejercicioFiscal ef WHERE ef.anio = :anio AND er.mes = :mes", EventosRegistros.class)
+                        .setParameter("anio", periodo.getAnio())
+                        .setParameter("mes", mes)
+                        .getResultStream()
+                        .findFirst()
+                        .orElse(null);
+                if(eventoConFecha != null){
+                    if(!l.contains(eventoConFecha)){
+                        l.add(eventoConFecha);
+                    }
+                }
+                
+                List<EventosRegistros> ordenada = l.stream().sorted(Comparator.comparingInt(EventosRegistros::getEventoRegistro).reversed()).collect(Collectors.toList());
+                
+                return ResultadoEJB.crearCorrecto(ordenada, "Eventos de Registro por periodo escolar");
+                }else{
+                    return ResultadoEJB.crearErroneo(2, null, "No se puedo obtener la lista de eventos de registro, debido a que se encuentra vacía");
+                }
             }else{
                 return ResultadoEJB.crearErroneo(2, null,"No se pudo obtener la lista de eventos de registro debido a que no existen meses");
             }

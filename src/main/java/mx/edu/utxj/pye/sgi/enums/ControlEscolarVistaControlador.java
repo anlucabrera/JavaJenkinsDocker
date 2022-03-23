@@ -120,7 +120,8 @@ public enum ControlEscolarVistaControlador {
     SEGUIMIENTO_CUESTIONARIO_PSICOPEDAGOGICO("/controlEscolar/psicopedagogia/seguimientoCuestionarioPsicopedagogico.xhtml", SeguimientoCuestionariopsiPsicopedagogia.class),
     ADMINISTRACION_EVALUACIONES_PSICOPEDAGOGIA("/controlEscolar/psicopedagogia/administracionEvaluacionesPsicopedagogia.xhtml", AdministracionEvaluacionesPsicopedagogia.class),
     SEGUIMIENTO_TEST_APRENDIZAJE_PSICOPEDAGOGIA("/controlEscolar/psicopedagogia/seguimientoTestAprendizaje.xhtml", SeguimientoTestAprendizajePsicopedagogia.class),
-
+    SEGUIMIENTO_TEST_VOCACIONAL("/encuestas/seguimiento/seguimientoTestVocacional.xhtml", SeguimientoTestVocacionalPsicopedagogia.class),
+    
     ADMINISTRACION_EVALUACIONES_FORTALECIMIENTO("/evaluaciones/administracion/administracionEvaluacionesFortalecimiento.xhtml", AdministracionEvaluacionesFortalecimiento.class),
     COMBINACIONES_EVALUACION_PARES_ACADEMICOS("/evaluaciones/administracion/combinacionesEvParesAcademicos.xhtml", EvaluacionParesAcademicosFortalecimiento.class),
     RESULTADOS_EVALUACION_PARES_ACADEMICOS("/evaluaciones/administracion/resultadosEvParesAcademicos.xhtml", ResultadosEvParesAcademicos.class),
@@ -184,6 +185,7 @@ public enum ControlEscolarVistaControlador {
     EVALUACION_ESTADIA("/controlEscolar/estudiante/evaluacionEstadia.xhtml", EvaluacionEstadiaControlEscolar.class),
     CARTA_NO_ADUEDO_ESTUDIANTE("/controlEscolar/estudiante/cartaNoAdeudoEstudiante.xhtml", CartaNoAdeudoEstudiante.class),
     REGISTRO_SEGURO_FACULTATIVO("/controlEscolar/estudiante/registro_seguro_facultativo.xhtml", RegistroSeguroFacultativoEstudiante.class),
+    TEST_VOCACIONAL("/encuestas/Estudiantes/testVocacional.xhtml", TestVocacionalC.class),
 
     REGISTRO_FICHA_ASPIRANTE("/controlEscolar/aspirante/registroFichaAspirante.xhtml", RegistroFichaAdmisionAspirante.class),
     CARGA_DOCUMENTOS_ASPIRANTE("/controlEscolar/aspirante/cargaDocumentos.xhtml", CargaDocumentosAspirante.class),
