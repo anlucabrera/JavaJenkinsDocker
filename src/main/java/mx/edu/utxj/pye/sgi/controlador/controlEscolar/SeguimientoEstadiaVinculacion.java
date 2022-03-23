@@ -405,5 +405,14 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
         }
         Ajax.update("frm");
     }
+    
+    /**
+     * Método que permite descargar en excel los reportes de la generación y nivel educativo seleccionado
+     * @throws java.io.IOException
+     */
+     public void descargarSeguimientoEstadia() throws IOException, Throwable{
+        File f = new File(ejb.getReporteSeguimientoEstadia(rol.getGeneracion(), rol.getNivelEducativo()));
+        Faces.sendFile(f, true);
+    }
    
 }

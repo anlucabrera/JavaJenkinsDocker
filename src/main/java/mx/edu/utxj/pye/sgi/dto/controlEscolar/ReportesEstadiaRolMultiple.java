@@ -24,6 +24,11 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
      * Representa la referencia hacia al usuario
      */
     @Getter @NonNull private PersonalActivo usuario;
+    
+    /**
+     * Representa el valor si el usuario es también o ha sido coordinador de estadía de un área académica
+     */
+    @Getter @NonNull private Boolean coordinadorEstadiaArea;
   
     /**
      * Lista generaciones
@@ -173,19 +178,34 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
     @Getter @NonNull private String porcentajeRegistro;
     
      /**
-     * Total de estudiantes con información de estadía validada
+     * Total de estudiantes con información de estadía validada por coordinador de estadía del área académica
      */
-    @Getter @NonNull private Integer totalInfoValidada;
+    @Getter @NonNull private Integer totalInfoValidadaCoordinador;
     
      /**
-     * Total de estudiantes sin información de estadía sin validar
+     * Total de estudiantes sin información de estadía sin validar por coordinador de estadía del área académica
      */
-    @Getter @NonNull private Integer totalSinInfoValidada;
+    @Getter @NonNull private Integer totalSinInfoValidadaCoordinador;
     
      /**
-     * Porcentaje de validación de información de estadía
+     * Porcentaje de validación de información de estadía por coordinador de estadía del área académica
      */
-    @Getter @NonNull private String porcentajeValidacion;
+    @Getter @NonNull private String porcentajeValidacionCoordinador;
+    
+     /**
+     * Total de estudiantes con información de estadía validada por director de carrera
+     */
+    @Getter @NonNull private Integer totalInfoValidadaDirector;
+    
+     /**
+     * Total de estudiantes sin información de estadía sin validar por director de carrera
+     */
+    @Getter @NonNull private Integer totalSinInfoValidadaDirector;
+    
+     /**
+     * Porcentaje de validación de información de estadía por director de carrera
+     */
+    @Getter @NonNull private String porcentajeValidacionDirector;
 
       /**
      * Reporte de listado de asignación de estudiantes por programa educativo y asesor académico 
@@ -197,6 +217,31 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
      */
     @Getter @NonNull private List<DtoCumplimientoEstDocEstadia> listaCumplimientoEstudiante;
     
+      /**
+     * Reporte de validación de vinculación y cumplimiento de los estudiantes por documento por programa educativo 
+     */
+    @Getter @NonNull private List<DtoReporteEstadiaVinculacion> listaReporteVinculacion;
+    
+     /**
+     * Total de estudiantes con documentos de vinculación cargados
+     */
+    @Getter @NonNull private Integer totalEstudiantesEvidencia;
+    
+    /**
+     * Total de estudiantes sin documentos de vinculación cargados
+     */
+    @Getter @NonNull private Integer totalEstudiantesSinEvidencia;
+    
+     /**
+     * Total de estudiantes con documentos de vinculación validados
+     */
+    @Getter @NonNull private Integer totalEvidenciaValidada;
+    
+     /**
+     * Total de estudiantes con documentos de vinculación sin validar
+     */
+    @Getter @NonNull private Integer totalEvidenciaNoValidada;
+    
     public ReportesEstadiaRolMultiple(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
         this.usuario = usuario;
@@ -204,6 +249,10 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
 
     public void setUsuario(PersonalActivo usuario) {
         this.usuario = usuario;
+    }
+
+    public void setCoordinadorEstadiaArea(Boolean coordinadorEstadiaArea) {
+        this.coordinadorEstadiaArea = coordinadorEstadiaArea;
     }
 
     public void setGeneraciones(List<Generaciones> generaciones) {
@@ -322,16 +371,28 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
         this.porcentajeRegistro = porcentajeRegistro;
     }
 
-    public void setTotalInfoValidada(Integer totalInfoValidada) {
-        this.totalInfoValidada = totalInfoValidada;
+    public void setTotalInfoValidadaCoordinador(Integer totalInfoValidadaCoordinador) {
+        this.totalInfoValidadaCoordinador = totalInfoValidadaCoordinador;
     }
 
-    public void setTotalSinInfoValidada(Integer totalSinInfoValidada) {
-        this.totalSinInfoValidada = totalSinInfoValidada;
+    public void setTotalSinInfoValidadaCoordinador(Integer totalSinInfoValidadaCoordinador) {
+        this.totalSinInfoValidadaCoordinador = totalSinInfoValidadaCoordinador;
     }
 
-    public void setPorcentajeValidacion(String porcentajeValidacion) {
-        this.porcentajeValidacion = porcentajeValidacion;
+    public void setPorcentajeValidacionCoordinador(String porcentajeValidacionCoordinador) {
+        this.porcentajeValidacionCoordinador = porcentajeValidacionCoordinador;
+    }
+
+    public void setTotalInfoValidadaDirector(Integer totalInfoValidadaDirector) {
+        this.totalInfoValidadaDirector = totalInfoValidadaDirector;
+    }
+
+    public void setTotalSinInfoValidadaDirector(Integer totalSinInfoValidadaDirector) {
+        this.totalSinInfoValidadaDirector = totalSinInfoValidadaDirector;
+    }
+
+    public void setPorcentajeValidacionDirector(String porcentajeValidacionDirector) {
+        this.porcentajeValidacionDirector = porcentajeValidacionDirector;
     }
 
     public void setListaAsigAsesorAcad(List<DtoAsigAsesorAcadEstadia> listaAsigAsesorAcad) {
@@ -341,5 +402,24 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
     public void setListaCumplimientoEstudiante(List<DtoCumplimientoEstDocEstadia> listaCumplimientoEstudiante) {
         this.listaCumplimientoEstudiante = listaCumplimientoEstudiante;
     }
-    
+
+    public void setListaReporteVinculacion(List<DtoReporteEstadiaVinculacion> listaReporteVinculacion) {
+        this.listaReporteVinculacion = listaReporteVinculacion;
+    }
+
+    public void setTotalEstudiantesEvidencia(Integer totalEstudiantesEvidencia) {
+        this.totalEstudiantesEvidencia = totalEstudiantesEvidencia;
+    }
+
+    public void setTotalEstudiantesSinEvidencia(Integer totalEstudiantesSinEvidencia) {
+        this.totalEstudiantesSinEvidencia = totalEstudiantesSinEvidencia;
+    }
+
+    public void setTotalEvidenciaValidada(Integer totalEvidenciaValidada) {
+        this.totalEvidenciaValidada = totalEvidenciaValidada;
+    }
+
+    public void setTotalEvidenciaNoValidada(Integer totalEvidenciaNoValidada) {
+        this.totalEvidenciaNoValidada = totalEvidenciaNoValidada;
+    }
 }
