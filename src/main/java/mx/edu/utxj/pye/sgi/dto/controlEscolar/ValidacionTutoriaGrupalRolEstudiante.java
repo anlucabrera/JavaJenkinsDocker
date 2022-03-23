@@ -7,9 +7,12 @@ package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import java.util.Collections;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ParticipantesTutoriaGrupal;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
@@ -38,7 +41,7 @@ public class ValidacionTutoriaGrupalRolEstudiante {
 
     @Getter     @Setter     private                             Boolean                                         comentarioPendiente;
     
-    @Getter     @Setter     private                             Long                                            firmasPendiente;
+    @Getter     @Setter     private                             List<DtoTutoriasPendientes>                     firmasPendiente;
     
     public ValidacionTutoriaGrupalRolEstudiante(@NonNull DtoEstudiante dtoEstudiante) {
         this.dtoEstudiante = dtoEstudiante;
@@ -92,6 +95,12 @@ public class ValidacionTutoriaGrupalRolEstudiante {
 
     public void setListaParticipantesTutoriaGrupal(List<ParticipantesTutoriaGrupal> listaParticipantesTutoriaGrupal) {
         this.listaParticipantesTutoriaGrupal = listaParticipantesTutoriaGrupal;
+    }
+    
+    @RequiredArgsConstructor @AllArgsConstructor @ToString
+    public static class DtoTutoriasPendientes{
+        @Getter @Setter private     EventosRegistros        eventoRegistro;
+        @Getter @Setter private     Long                    numeroTutoriasPendintes;
     }
     
 }

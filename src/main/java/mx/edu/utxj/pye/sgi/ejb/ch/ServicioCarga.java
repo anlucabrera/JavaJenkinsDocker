@@ -177,7 +177,12 @@ public class ServicioCarga implements EjbCarga {
     public static final String reportesPlaneacion = "reportesPlaneacion";
     public static final String alineacionMaterias = "alineacionMaterias";
     public static final String reportePOapre = "POA";
+//    Variable para la creación de la ruta de los reportes del modulo de seguro facultativo
     public static final String seguroFacultativoPlantillas = "seguro_facultativo_plantillas";
+//    Variables para la creación de la ruta de los reportes del modulo de test vocacional
+    public static final String control_escolar = "control_escolar";
+    public static final String psicopedagogia = "psicopedagogia";
+    public static final String test_vocacional_plantillas = "test_vocacional_plantillas";
 
 //    Método que se encarga de crear la carpeta raíz en caso de que no exista para poder almacenar el archivo
     static {
@@ -221,6 +226,14 @@ public class ServicioCarga implements EjbCarga {
     
     public static String genCarpetaRelativaReporteSF(String completo){
         return carpetaRaiz + seguroFacultativoPlantillas + File.separator + completo + File.separator;
+    }
+    
+    public static String genCarpetaRelativaReporteTestVocacional(){
+        return carpetaRaiz + File.separator + control_escolar + File.separator + psicopedagogia + File.separator + test_vocacional_plantillas + File.separator;
+    }
+    
+    public static String genCarpetaRelativaReporteTestVocacional(String completo){
+        return carpetaRaiz + File.separator + control_escolar + File.separator + psicopedagogia + File.separator + test_vocacional_plantillas + File.separator + completo + File.separator;
     }
     
      public static String genCarpetaRelativa(String alineacionMaterias){
@@ -338,6 +351,21 @@ public class ServicioCarga implements EjbCarga {
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
     }
+    
+    @Override
+    public String crearDirectorioTestVocacionalReporte() {
+        String rutaRelativa = genCarpetaRelativaReporteTestVocacional();
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+
+    @Override
+    public String crearDirectorioTestVocacionalReporteCompleto() {
+        String rutaRelativa = genCarpetaRelativaReporteTestVocacional(completo);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+    
 
     @Override
     public String subirDocExpTit(Part file, String tipoDoc, File rutaRelativa, String matricula) {

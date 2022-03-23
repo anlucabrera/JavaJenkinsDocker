@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+                >
+
+    <ui:define name="head-end">
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputStylesheet library="css" name="timepicker.css"/>
+        <h:outputStylesheet library="primefaces62" name="inputnumber.css" />
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js"/>
+        <h:outputScript library="primefaces62" name="inputnumber.js"  />
+        <style type="text/css">
+            .ui-datatable .ui-datatable-header {
+                text-align: right !important;
+            }
+            .description-block{
+                text-align: justify;
+            }
+
+            .description-header{
+                text-align: center;
+            }
+
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a7d0  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
+        </style>
+        <script>
+            function descargar(ruta) {
+                var win = window.open(ruta, '_blank');
+                if (win) {
+                    win.focus();
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento a Test Vocacional:
+    </ui:define>
+
+    <ui:define name="description">
+        Encuesta de Test Vocacional realizada a estudiantes de nuevo ingreso
+    </ui:define>
+
+    <ui:define name="body">
+        <adm:breadcrumb title="Validación y Alta de Seguros Facultativos"/>
+        <adm:sidebar collapsed="true"/>
+        <c:if test="#{seguimientoTestVocacionalPsicopedagogia.cargado}">
+            <c:if test="#{seguimientoTestVocacionalPsicopedagogia.tieneAcceso}">
+                <div class="contenedorGeneral">
+
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h:form id="frmEncabezado" prependId="false" class="form-inline">
+                                <div id="main-buttons" class="hidden-sm hidden-xs">
+                                    <p:toolbar id="tb">
+                                        <f:facet name="left">
+                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                            <p:outputLabel value="Antes de consultar los datos, favor de verificar que los filtros sean los correctos" />
+                                        </f:facet>
+                                        <f:facet name="right">
+                                            <p:commandLink class="btn btn-info" rendered="#{true}" disabled="#{false}"
+                                                           onclick="PF('modalAyuda').show();"
+                                                           process="@this"
+                                                           title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i class="fa fa-question" />
+                                            </p:commandLink>
+                                        </f:facet>
+                                    </p:toolbar>
+                                </div>
+                            </h:form>
+
+                            <div class="box box-solid">
+                                <div class="box-body">
+
+                                    <h:form id="frmFiltros" prependId="false" class="form-inline">
+                                        <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
+                                        <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
+                                        <c:set var="casilla4" value="#{'col-sm-12 col-md-6 col-lg-4'}" />
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px">
+                                                <p:toolbar>
+                                                    <f:facet name="left">
+                                                        <p:outputLabel value="1.- Seleccione el filtrado correspondiente según la consulta requerida." style="padding-top: 5px;" />
+                                                        <p></p>
+                                                    </f:facet>
+                                                    
+                                                    <f:facet name="right">
+                                                        <c:if test="#{seguimientoTestVocacionalPsicopedagogia.rol.periodoEscolarSeleccionado ne null}">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:commandLink class="btn btn-success btn-sm" ajax="false" action="#{seguimientoTestVocacionalPsicopedagogia.descargarReportePorPeriodoEscolar()}" target="_blank" title="Descargar Reporte Cuatrimestral" value="Reporte Cuatrimestral - "><i class="fa fa-file-excel-o" />
+                                                                <p:confirm header="Descargar" message="El reporte seleccionado podría demorar dependiendo de la velocidad del internet de la Universidad, no cierre la pestaña que se abrírá en automático, ¿desea continuar?" icon="ui-icon-alert" />
+                                                            </p:commandLink>
+                                                        </c:if>
+                                                        
+                                                        <c:if test="#{seguimientoTestVocacionalPsicopedagogia.rol.grupoSeleccionado ne null}">
+                                                            <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                            <p:commandLink class="btn btn-success btn-sm" ajax="false" action="#{seguimientoTestVocacionalPsicopedagogia.descargarReporteAvance()}" target="_blank" title="Descargar Reporte Grupal" value="Reporte Grupal - "><i class="fa fa-file-excel-o" /></p:commandLink>
+                                                        </c:if>
+                                                    </f:facet>
+                                                </p:toolbar>
+                                            </div>
+
+                                            <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px;"></div>
+
+                                            <div class="#{casilla}" style="margin-bottom: 20px">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="periodo" value="#{seguimientoTestVocacionalPsicopedagogia.rol.periodoEscolarSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                        <f:selectItems value="#{seguimientoTestVocacionalPsicopedagogia.rol.listaPeriodosEscolares}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
+                                                        <p:ajax process="@this" update="@this frmFiltros programaEducativo grupo frmAvanceProgramaEducativo" listener="#{seguimientoTestVocacionalPsicopedagogia.cambiarPeriodo}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Periodo" for="periodo"/>
+                                                    <p:message for="periodo" />
+                                                </div>
+                                            </div>
+
+                                            <div class="#{casilla4}" style="margin-bottom: 20px">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="programaEducativo" value="#{seguimientoTestVocacionalPsicopedagogia.rol.programaEducativoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                        <f:selectItems value="#{seguimientoTestVocacionalPsicopedagogia.rol.listaProgramasEducativos}" var="programaEducativo" itemValue="#{programaEducativo}" itemLabel="#{programaEducativo.nombre}" />
+                                                        <p:ajax process="@this" update="@this frmFiltros grupo frmAvanceGrupal" listener="#{seguimientoTestVocacionalPsicopedagogia.cambiarProgramaEducativo}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Programa Educativo" for="programaEducativo"/>
+                                                    <p:message for="programaEducativo" ><p:autoUpdate/></p:message>
+                                                </div>
+                                            </div>
+
+                                            <div class="#{casilla3}" style="margin-bottom: 20px">
+                                                <div class="ui-material">
+                                                    <p:selectOneMenu id="grupo" value="#{seguimientoTestVocacionalPsicopedagogia.rol.grupoSeleccionado}" converter="entityConverter" styleClass="form-control" >
+                                                        <f:selectItem itemLabel=" - Seleccione - " itemValue="#{null}"/>
+                                                        <f:selectItems value="#{seguimientoTestVocacionalPsicopedagogia.rol.listaGrupos}" var="grupo" itemValue="#{grupo}" itemLabel="#{grupo.grado} - #{grupo.literal}" />
+                                                        <p:ajax process="@this" update="@this frmFiltros frmAvanceResultadosEstudiante" listener="#{seguimientoTestVocacionalPsicopedagogia.cambiarGrupo()}" />
+                                                    </p:selectOneMenu>
+                                                    <p:outputLabel value="Grupo" for="grupo"/>
+                                                    <p:message for="grupo" ><p:autoUpdate/></p:message>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px"></div>
+
+                                        </div>
+                                    </h:form>
+
+                                    <div class="row">
+                                        <div class="col-lg-12 col-md-12 text-info">
+                                            <p:outputPanel id="contenedorGeneral">
+                                                <!--Sección de resultados por periodo escolar - Avance Programa Educativo General - Sin filtrar por Área Académica - Considerar filtro por área académica-->
+
+                                                <h:form id="frmAvanceProgramaEducativo" prependId="false" class="form-inline" >
+                                                    <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px">
+                                                        <p:toolbar>
+                                                            <f:facet name="left">
+                                                                <p:outputLabel value="1.- Avance de Resultados de la Aplicación de Test Vocacional por Periodo Escolar. (#{caster.periodoToString(seguimientoTestVocacionalPsicopedagogia.rol.periodoEscolarSeleccionado)})" style="padding-top: 5px;" />
+                                                                <p></p>
+                                                            </f:facet>
+                                                            <f:facet name="right">
+                                                                
+                                                            </f:facet>
+                                                        </p:toolbar>
+
+                                                        <center>
+                                                            <p:dataTable id="dtAvanceProgramaEducativo" 
+                                                                         var="dtAvanceProgramaEducativo" 
+                                                                         value="#{seguimientoTestVocacionalPsicopedagogia.rol.listaDtoTestVocacionalAvanceProgramaEducativo}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                         resizeMode="expand"
+                                                                         emptyMessage="El filtrado no contiene resultados en el periodo escolar seleccionado"
+                                                                         >
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="sucess">
+                                                                        <p:column headerText="Siglas"                           width="100"/>
+                                                                        <p:column headerText="Programa Educativo"               width="400"/>
+                                                                        <p:column headerText="Total Matricula"                  width="100"/>
+                                                                        <p:column headerText="Total Completos"                  width="100"/>
+                                                                        <p:column headerText="Total Incompletos"                width="100"/>
+                                                                        <p:column headerText="Total Sin Entrar"                 width="100"/>
+                                                                        <p:column headerText="Porcentaje"                       width="100"/>
+                                                                        <p:column headerText="Barra porcentaje"                 width="100"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceProgramaEducativo.siglas}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: left;">
+                                                                    <h:outputText value="#{dtAvanceProgramaEducativo.programaEducativo}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceProgramaEducativo.totalMatricula}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceProgramaEducativo.totalCompletos}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceProgramaEducativo.totalIncompletos}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceProgramaEducativo.totalSinEntrar}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceProgramaEducativo.porcentaje} %" />
+                                                                </p:column>
+                                                                
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                                                             aria-valuenow="#{pe.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                                                             style="background-color: #00a65a; width:#{dtAvanceProgramaEducativo.porcentaje}%">
+                                                                            <span class="progress-completed">
+                                                                                <h:outputText value="#{dtAvanceProgramaEducativo.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                                                    <f:convertNumber type="number" pattern="0.00"/>
+                                                                                </h:outputText>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </p:column>
+
+                                                            </p:dataTable>
+                                                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                            </p:confirmDialog>
+                                                        </center>
+                                                    </div>
+                                                </h:form>
+
+                                                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px"></div>
+                                                <!--Sección de resultados por periodo y programa educativo - Avance Grupal por Programa Educativo-->
+                                                <h:form id="frmAvanceGrupal" prependId="false" class="form-inline" >
+                                                    <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px">
+                                                        <p:toolbar>
+                                                            <f:facet name="left">
+                                                                <p:outputLabel value="2.- Avance de Resultados de la Aplicación de Test Vocacional por Periodo Escolar, Programa Educativo. (#{caster.periodoToString(seguimientoTestVocacionalPsicopedagogia.rol.periodoEscolarSeleccionado).concat(' - ').concat(seguimientoTestVocacionalPsicopedagogia.rol.programaEducativoSeleccionado.siglas)})" style="padding-top: 5px;" />
+                                                                <p></p>
+                                                            </f:facet>
+                                                            <f:facet name="right">
+
+                                                            </f:facet>
+                                                        </p:toolbar>
+
+                                                        <center>
+                                                            <p:dataTable id="dtAvanceGrupal" 
+                                                                         var="dtAvanceGrupal" 
+                                                                         value="#{seguimientoTestVocacionalPsicopedagogia.rol.listaDtoTestVocacionalAvanceGrupal}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                         resizeMode="expand"
+                                                                         emptyMessage="El filtrado no contiene resultados en el periodo escolar seleccionado"
+                                                                         >
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="sucess">
+                                                                        <p:column headerText="Grupo"                            width="100"/>
+                                                                        <p:column headerText="Programa educativo"               width="200"/>
+                                                                        <p:column headerText="Total Matricula Grupo"          width="200"/>
+                                                                        <p:column headerText="Total Completos"                  width="200"/>
+                                                                        <p:column headerText="Total Incompletos"                width="200"/>
+                                                                        <p:column headerText="Total Sin Entrar"                 width="200"/>
+                                                                        <p:column headerText="Porcentaje"                       width="200"/>
+                                                                        <p:column headerText="Barra porcentaje"                 width="200"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceGrupal.grupo.grado}° #{dtAvanceGrupal.grupo.literal}" />
+                                                                </p:column>
+                                                                
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{seguimientoTestVocacionalPsicopedagogia.rol.programaEducativoSeleccionado.siglas}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceGrupal.totalEstudiantesGrupo}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceGrupal.totalCompletos}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceGrupal.totalIncompletos}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceGrupal.totalSinEntrar}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceGrupal.porcentaje} %" />
+                                                                </p:column>
+                                                                
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <div class="progress">
+                                                                        <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                                                             aria-valuenow="#{pe.porcentaje}" aria-valuemin="0" aria-valuemax="100"
+                                                                             style="background-color: #00a65a; width:#{dtAvanceGrupal.porcentaje}%">
+                                                                            <span class="progress-completed">
+                                                                                <h:outputText value="#{dtAvanceGrupal.porcentaje}" style="color: #0E0000; font-weight: bold">
+                                                                                    <f:convertNumber type="number" pattern="0.00"/>
+                                                                                </h:outputText>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </p:column>
+
+                                                            </p:dataTable>
+                                                        </center>
+                                                    </div>
+                                                </h:form>
+
+                                                <div class="col-sm-12 col-md-12 col-lg-12" style="margin-bottom: 20px"></div>
+                                                <!--Sección de resultados por periodo, programa educativo y grupo - Se muestrán los resultados generales de un grupo en especifico así como sus resultados-->
+                                                <h:form id="frmAvanceResultadosEstudiante" prependId="false" class="form-inline" >
+                                                    <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 10px">
+                                                        <p:toolbar>
+                                                            <f:facet name="left">
+                                                                <p:outputLabel value="3.- Avance de Resultados de la Aplicación de Test Vocacional por Periodo Escolar, Programa Educativo, Grupo (#{caster.periodoToString(seguimientoTestVocacionalPsicopedagogia.rol.periodoEscolarSeleccionado).concat(' - ').concat(seguimientoTestVocacionalPsicopedagogia.rol.programaEducativoSeleccionado.siglas).concat(' - ').concat(seguimientoTestVocacionalPsicopedagogia.rol.grupoSeleccionado.grado).concat('° ').concat(seguimientoTestVocacionalPsicopedagogia.rol.grupoSeleccionado.literal)})" style="padding-top: 5px;" />
+                                                                <p></p>
+                                                            </f:facet>
+                                                            <f:facet name="right">
+                                                                
+                                                            </f:facet>
+                                                        </p:toolbar>
+
+                                                        <center>
+                                                            <p:dataTable id="dtAvanceResultadoEstudiante" 
+                                                                         var="dtAvanceResultadoEstudiante" 
+                                                                         value="#{seguimientoTestVocacionalPsicopedagogia.rol.listaDtoTestVocacionalResultadoEstudiante}"
+                                                                         tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                                         resizeMode="expand"
+                                                                         emptyMessage="El filtrado no contiene resultados en el periodo escolar seleccionado"
+                                                                         >
+                                                                <p:columnGroup type="header">
+                                                                    <p:row class="sucess">
+                                                                        <p:column headerText="Estudiante"                       width="350"/>
+                                                                        <p:column headerText="Programa Educativo"               width="100"/>
+                                                                        <p:column headerText="Test Vocacional Aplicado"         width="100"/>
+                                                                        <p:column headerText="Estatus Test"                     width="200"/>
+                                                                        <p:column headerText="Identificador"                    width="100"/>
+                                                                        <p:column headerText="Fecha creación"                   width="100"/>
+                                                                        <p:column headerText="Fecha termino"                    width="100"/>
+                                                                        <p:column headerText="Interes en otra carrera"          width="100"/>
+                                                                        <p:column headerText="Respuesta carrera interés"        width="350"/>
+                                                                        <p:column headerText="Resultado primera Opción"         width="200"/>
+                                                                        <p:column headerText="Resultado segunda Opción"         width="200"/>
+                                                                        <p:column headerText="Resultado tercera Opción"         width="200"/>
+                                                                    </p:row>
+                                                                </p:columnGroup>
+
+                                                                <p:column style="align-content: center;text-align: left;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.estudiante.matricula} - #{dtAvanceResultadoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{dtAvanceResultadoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{dtAvanceResultadoEstudiante.estudiante.aspirante.idPersona.nombre}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.programaEducativo.siglas}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.testVocacionalAplicada?'Si':'No'}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.estatusTest}" />
+                                                                </p:column>
+
+                                                                <!--Identificador del Test-->
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.testVocacional.idPersona}" />
+                                                                </p:column>
+
+                                                                <!--Fecha de ingreso al Test-->
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.testVocacional.fechaCreacion}">
+                                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <!--Fecha de termino del Test-->
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.testVocacional.fechaTermino}">
+                                                                        <f:convertDateTime type="date" pattern="yyyy-MM-dd"/>
+                                                                    </h:outputText>
+                                                                </p:column>
+
+                                                                <!--Carrera Interés Otra Universidad Pregunta-->
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.testVocacional.carreraInteresOu?'Si':'No'}" />
+                                                                </p:column>
+
+                                                                <!--Respuesta carrera interés-->
+                                                                <p:column style="align-content: center;text-align: left;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.testVocacional.respuestaCarreraInteresOu}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.primeraOpcionCarreraResultado == '' || dtAvanceResultadoEstudiante.primeraOpcionCarreraResultado == null ? 'Test sin terminar' : dtAvanceResultadoEstudiante.primeraOpcionCarreraResultado.concat('%')}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.segundaOpcionCarreraResultado == '' || dtAvanceResultadoEstudiante.segundaOpcionCarreraResultado == null ? 'Test sin terminar' : dtAvanceResultadoEstudiante.segundaOpcionCarreraResultado.concat('%')}" />
+                                                                </p:column>
+
+                                                                <p:column style="align-content: center;text-align: center;">
+                                                                    <h:outputText value="#{dtAvanceResultadoEstudiante.terceraOpcionCarreraResultado == '' || dtAvanceResultadoEstudiante.terceraOpcionCarreraResultado == null ? 'Test sin terminar' : dtAvanceResultadoEstudiante.terceraOpcionCarreraResultado.concat('%')}" />
+                                                                </p:column>
+
+                                                            </p:dataTable>
+                                                        </center>
+                                                    </div>
+                                                </h:form>
+                                            </p:outputPanel>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </c:if>
+            <c:if test="#{!seguimientoTestVocacionalPsicopedagogia.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para el área de psicopedagogía."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </c:if>  
+    </ui:define>
+
+</ui:composition>

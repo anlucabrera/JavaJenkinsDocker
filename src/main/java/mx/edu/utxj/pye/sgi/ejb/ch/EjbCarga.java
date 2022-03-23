@@ -109,6 +109,18 @@ public interface EjbCarga extends Serializable {
      */
     public String crearDirectorioSeguroFacultativoReporteCompleto();
     
+    /**
+     * Método que crea o comprueba el directorio de la plantilla del reporte actualizado del Test Vocacional
+     * @return Regresa la ruta del directorio del reporte
+     */
+    public String crearDirectorioTestVocacionalReporte();
+    
+    /**
+     * Método que crea o comprueba el directorio para la copia y archivo con información del reporte del Test Vocacional
+     * @return Regresa la ruta del directorio del reporte
+     */
+    public String crearDirectorioTestVocacionalReporteCompleto();
+    
      /**
      * Método de subida de archivos en el servidor para el módulo de titulación
      * el cual recibe los siguiente parámetros:
