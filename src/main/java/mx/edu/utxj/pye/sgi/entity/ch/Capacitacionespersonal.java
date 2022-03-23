@@ -108,6 +108,11 @@ public class Capacitacionespersonal implements Serializable {
     @Size(min = 1, max = 29)
     @Column(name = "categoria_capacitacion")
     private String categoriaCapacitacion;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "ripppa")
+    private String ripppa;
     @JoinColumn(name = "modalidad", referencedColumnName = "modalidad")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private CursosModalidad modalidad;
@@ -290,5 +295,12 @@ public class Capacitacionespersonal implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal[ cursoClave=" + cursoClave + " ]";
     }
-    
+
+    public String getRipppa() {
+        return ripppa;
+    }
+
+    public void setRipppa(String ripppa) {
+        this.ripppa = ripppa;
+    }
 }

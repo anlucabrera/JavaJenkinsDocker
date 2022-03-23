@@ -1,21 +1,24 @@
 package mx.edu.utxj.pye.sgi.controladores.ch;
 
 import com.github.adminfaces.starter.infra.security.LogonMB;
-import java.io.File;
+import com.itextpdf.text.Document; 
+import com.itextpdf.text.pdf.PdfContentByte; 
+import com.itextpdf.text.pdf.PdfImportedPage; 
+import com.itextpdf.text.pdf.PdfReader; 
+import com.itextpdf.text.pdf.PdfWriter; 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.annotation.ManagedBean;
@@ -24,22 +27,22 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.dto.ListaEvaluaciones;
-import mx.edu.utxj.pye.sgi.ejb.EjbPersonalEvaluaciones;
-import mx.edu.utxj.pye.sgi.entity.ch.Actividades;
+import mx.edu.utxj.pye.sgi.dto.ch.CurriculumRIPPPA;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional;
+import mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia;
 import mx.edu.utxj.pye.sgi.entity.ch.Articulosp;
 import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
 import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Congresos;
 import mx.edu.utxj.pye.sgi.entity.ch.DesarrolloSoftware;
 import mx.edu.utxj.pye.sgi.entity.ch.DesarrollosTecnologicos;
-import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluacionResultados;
 import mx.edu.utxj.pye.sgi.entity.ch.Distinciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
-import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360Resultados;
 import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
-import mx.edu.utxj.pye.sgi.entity.ch.Funciones;
-import mx.edu.utxj.pye.sgi.entity.ch.Grados;
 import mx.edu.utxj.pye.sgi.entity.ch.HabilidadesInformaticas;
 import mx.edu.utxj.pye.sgi.entity.ch.Idiomas;
 import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
@@ -49,15 +52,11 @@ import mx.edu.utxj.pye.sgi.entity.ch.LibrosPub;
 import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.Memoriaspub;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
-import mx.edu.utxj.pye.sgi.entity.ch.PersonalCategorias;
 import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
-import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
-import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
+import org.apache.commons.collections4.list.AbstractLinkedList;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
-import org.primefaces.event.RowEditEvent;
 
 @Named
 @ManagedBean
@@ -80,6 +79,7 @@ public class ControladorComisionDictaminadora implements Serializable {
     @Getter    @Setter    private List<FormacionAcademica> listaFormacionAcademica = new ArrayList<>();
     @Getter    @Setter    private List<ExperienciasLaborales> listaExperienciasLaborales = new ArrayList<>();
     @Getter    @Setter    private List<Capacitacionespersonal> listaCapacitacionespersonal = new ArrayList<>();
+    @Getter    @Setter    private List<Capacitacionespersonal> capAceptadas = new ArrayList<>();
     @Getter    @Setter    private List<HabilidadesInformaticas> listaHabilidadesInformaticas = new ArrayList<>();
     @Getter    @Setter    private List<DesarrollosTecnologicos> listaDesarrollosTecnologicos = new ArrayList<>();
     @Getter    @Setter    private List<String> rutasEvidenciasBD = new ArrayList<>();
@@ -87,42 +87,26 @@ public class ControladorComisionDictaminadora implements Serializable {
     @Getter    @Setter    private InformacionAdicionalPersonal nuevoOBJInformacionAdicionalPersonal;
     @Getter    @Setter    private ListaPersonal nuevoOBJListaPersonal;
     @Getter    @Setter    private Personal nuevOBJPersonalSubordinado;
-////////////////////////////////////////////////////////////////////////////////Funciones
-    @Getter    @Setter    private List<Funciones> listaFuncioneSubordinado = new ArrayList<>();
-////////////////////////////////////////////////////////////////////////////////Evaluaciones
-    @Getter    @Setter    private List<ResultadoEva> listaResultadoEva = new ArrayList<>();
+    
+    @Getter    @Setter    private CurriculumRIPPPA.CurriculumRIPPPAReportes cripppar; 
+    @Getter    @Setter    private CurriculumRIPPPA.Personales personales;
+    @Getter    @Setter    private CurriculumRIPPPA.Escolaridad escolaridad;
+    @Getter    @Setter    private CurriculumRIPPPA.Experiencia experiencia;  
+    @Getter    @Setter    private CurriculumRIPPPA.Capacitacion capacitacion; 
 ////////////////////////////////////////////////////////////////////////////////Subordinados
     @Getter    @Setter    private List<Personal> listaPersonal = new ArrayList<>();
-////////////////////////////////////////////////////////////////////////////////Catalogos
-    @Getter    @Setter    private List<String> estatus = new ArrayList<>();
-    @Getter    @Setter    private List<Grados> listaGrados = new ArrayList<>();
-    @Getter    @Setter    private List<Actividades> listaActividades = new ArrayList<>();
-    @Getter    @Setter    private List<AreasUniversidad> listaAreasUniversidads = new ArrayList<>(), listareasSuperiores = new ArrayList<>();
-    @Getter    @Setter    private List<PersonalCategorias> listaPersonalCategorias = new ArrayList<>(), listaPersonalCategorias360 = new ArrayList<>();
 ////////////////////////////////////////////////////////////////////////////////Variables de apoyo
-    @Getter    @Setter    private Short actividad = 0, categoriaOP = 0, categoriaOF = 0, categoria360 = 0, grado = 0;
-    @Getter    @Setter    private Integer contactoDestino=0, total = 0, tv1 = 0, tv2 = 0, tv3 = 0, tv4 = 0, tv5 = 0, tv6 = 0, tv7 = 0, tv8 = 0, tv9 = 0;
-    @Getter    @Setter    private String clase = "", nombreTabla,nombreArchivo="";
+    @Getter    @Setter    private Integer contactoDestino=0;
+    @Getter    @Setter    private String nombreArchivo="";
     @Getter    @Setter    DecimalFormat df = new DecimalFormat("#.00");
-    List<String> filesListInDir = new ArrayList<>();
-    List<String> carpetas = new ArrayList<>();
-    List<String> archivosBD = new ArrayList<>();
-
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal ejbPersonal;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbFunciones ejbFunciones;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbEducacion ejbEducacion;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbHabilidades ejbHabilidades;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbPremios ejbPremios;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbTecnologia ejbTecnologia;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbProduccionProfecional ejbProduccionProfecional;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH ejbUtilidadesCH;
-    @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
-    @EJB    EjbPersonalEvaluaciones ejbPersonalEvaluaciones;
-
-    @Inject    ControladorEmpleado controladorEmpleado;
-    @Inject    UtilidadesCH utilidadesCH;    
-    @Inject    ControladorResultadosEvaluaciones cre;
-    
+////////////////////////////////////////////////////////////////////////////////EJB's
+    @EJB    private EjbPersonal ejbPersonal;
+    @EJB    private EjbEducacion ejbEducacion;
+    @EJB    private EjbHabilidades ejbHabilidades;
+    @EJB    private EjbPremios ejbPremios;
+    @EJB    private EjbTecnologia ejbTecnologia;
+    @EJB    private EjbProduccionProfecional ejbProduccionProfecional;
+     
     @Inject LogonMB logonMB;
     @Getter private Boolean cargado = false;
     
@@ -130,12 +114,9 @@ public class ControladorComisionDictaminadora implements Serializable {
     public void init() {
         if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
         cargado = true;
-        estatus.clear();
-        estatus.add("Aceptado");
-        estatus.add("Denegado");
         nuevOBJPersonalSubordinado = new Personal();
         mostrarSubordinados();
-        generarListasAreas();
+        inicializador();
     }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -148,38 +129,20 @@ public class ControladorComisionDictaminadora implements Serializable {
             Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public void generarListasAreas() {
+    
+    public void inicializador() {
         try {
-            listaGrados.clear();
-            listaActividades.clear();
-            listareasSuperiores.clear();
-            listaAreasUniversidads.clear();
-            listaPersonalCategorias.clear();
-            listaPersonalCategorias360.clear();
-
-            listaAreasUniversidads = ejbAreasLogeo.mostrarAreasUniversidadActivas();
-            listaAreasUniversidads.forEach((t) -> {
-                if (t.getCategoria().getCategoria() <= Short.parseShort("8")) {
-                    listareasSuperiores.add(t);
-                }
-            });
-
-            Collections.sort(listareasSuperiores, (x, y) -> x.getNombre().compareTo(y.getNombre()));
-            listaGrados = ejbEducacion.mostrarListaGrados();
-            listaActividades = ejbPersonal.mostrarListaActividades();
-            listaPersonalCategorias = ejbUtilidadesCH.mostrarListaPersonalCategorias();
-
-            listaPersonalCategorias.forEach((t) -> {
-                if (t.getTipo().equals("Específica")) {
-                    listaPersonalCategorias360.add(t);
-                }
-            });
+            personales = new CurriculumRIPPPA.Personales("", Boolean.FALSE, "", Boolean.FALSE);
+            escolaridad = new CurriculumRIPPPA.Escolaridad("", Boolean.FALSE, "", Boolean.FALSE, "", Boolean.FALSE, "", Boolean.FALSE, "", Boolean.FALSE, "", Boolean.FALSE, "", Boolean.FALSE);
+            experiencia = new CurriculumRIPPPA.Experiencia(new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE);
+            capacitacion = new CurriculumRIPPPA.Capacitacion(new ArrayList<>(), Boolean.FALSE);
+            cripppar = new CurriculumRIPPPA.CurriculumRIPPPAReportes(personales, escolaridad, experiencia, capacitacion);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
 
     public void mostrarPerfilSubordinado() {
         try {
@@ -194,88 +157,9 @@ public class ControladorComisionDictaminadora implements Serializable {
             }
             nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
             nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(contactoDestino);
+            inicializador();
             informacionCV();
-            mostrarFuncioneSubordinado();
-            mostrarLista();
-            actividad = nuevOBJPersonalSubordinado.getActividad().getActividad();
-            categoriaOP = nuevOBJPersonalSubordinado.getCategoriaOperativa().getCategoria();
-            categoriaOF = nuevOBJPersonalSubordinado.getCategoriaOficial().getCategoria();
-            categoria360 = nuevOBJPersonalSubordinado.getCategoria360().getCategoria();
-            grado = nuevOBJPersonalSubordinado.getGrado().getGrado();
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void onRowCancel(RowEditEvent event) {
-        Messages.addGlobalWarn("¡Operación cancelada!!");
-    }
-
-    public void mostrarFuncioneSubordinado() {
-        try {
-            listaFuncioneSubordinado = new ArrayList<>();
-            listaFuncioneSubordinado.clear();
-            if (nuevoOBJListaPersonal.getCategoriaOperativa() == 30
-                    || nuevoOBJListaPersonal.getCategoriaOperativa() == 32
-                    || nuevoOBJListaPersonal.getCategoriaOperativa() == 41
-                    || (nuevoOBJListaPersonal.getCategoriaOperativa() == 18 && (nuevoOBJListaPersonal.getAreaSuperior() >= 23 && nuevoOBJListaPersonal.getAreaSuperior() <= 29))
-                    || (nuevoOBJListaPersonal.getCategoriaOperativa() == 34 && (nuevoOBJListaPersonal.getAreaOperativa() >= 23 && nuevoOBJListaPersonal.getAreaOperativa() <= 29))) {
-                listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(Short.parseShort("61"), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
-            } else {
-                listaFuncioneSubordinado = ejbFunciones.mostrarListaFuncionesPersonalLogeado(nuevoOBJListaPersonal.getAreaOperativa(), nuevoOBJListaPersonal.getCategoriaOperativa(), nuevOBJPersonalSubordinado.getCategoriaEspecifica().getCategoriaEspecifica());
-            }
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void onRowEdit(RowEditEvent event) {
-        try {
-            clase = String.valueOf(event.getObject().getClass());
-            switch (clase) {
-                case "class mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica":
-                    nombreTabla = "Formacion Academica";
-                    ejbEducacion.actualizarFormacionAcademica((FormacionAcademica) event.getObject());
-                    break;
-                case "class mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales":
-                    nombreTabla = "Experiencias Laborales";
-                    ejbEducacion.actualizarExperienciasLaborales((ExperienciasLaborales) event.getObject());
-                    break;
-                case "class mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal":
-                    nombreTabla = "Capacitaciones personal";
-                    ejbEducacion.actualizarCapacitacionespersonal((Capacitacionespersonal) event.getObject());
-                    break;
-                case "class mx.edu.utxj.pye.sgi.entity.ch.Idiomas":
-                    nombreTabla = "Idiomas";
-                    ejbHabilidades.actualizarIdiomas((Idiomas) event.getObject());
-                    break;
-                case "class mx.edu.utxj.pye.sgi.entity.ch.DesarrollosTecnologicos":
-                    nombreTabla = "Desarrollos Tecnologicos";
-                    ejbTecnologia.actualizarDesarrollosTecnologicos((DesarrollosTecnologicos) event.getObject());
-                    break;
-                case "class mx.edu.utxj.pye.sgi.entity.ch.Distinciones":
-                    nombreTabla = "Distinciones";
-                    ejbPremios.actualizarDistinciones((Distinciones) event.getObject());
-                    break;
-                case "class mx.edu.utxj.pye.sgi.entity.ch.LibrosPub":
-                    nombreTabla = "Libros Publicados";
-                    ejbProduccionProfecional.actualizarLibrosPub((LibrosPub) event.getObject());
-                    break;
-                case "class mx.edu.utxj.pye.sgi.entity.ch.Articulosp":
-                    nombreTabla = "Articulos Publicados";
-                    ejbProduccionProfecional.actualizarArticulosp((Articulosp) event.getObject());
-                    break;
-                case "class mx.edu.utxj.pye.sgi.entity.ch.Memoriaspub":
-                    nombreTabla = "Memorias Publicados";
-                    ejbProduccionProfecional.actualizarMemoriaspub((Memoriaspub) event.getObject());
-                    break;
-            }
-            utilidadesCH.agregaBitacora(controladorEmpleado.getEmpleadoLogeado(), String.valueOf(event.getObject().hashCode()), nombreTabla, "Update");
-            clase = "";
-            Messages.addGlobalInfo("¡Operación exitosa!!");
-            informacionCV();
+//            unirPDFs();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
@@ -284,6 +168,7 @@ public class ControladorComisionDictaminadora implements Serializable {
 
     public void informacionCV() {
         try {            
+            capAceptadas.clear();
             listaIdiomas.clear();
             listaLenguas.clear();
             listaCongresos.clear();
@@ -300,9 +185,7 @@ public class ControladorComisionDictaminadora implements Serializable {
             listaExperienciasLaborales.clear();
             listaCapacitacionespersonal.clear();
             listaHabilidadesInformaticas.clear();
-            listaDesarrollosTecnologicos.clear();            
-            tv1 = 0;            tv2 = 0;            tv3 = 0;            tv4 = 0;            tv5 = 0;
-            tv6 = 0;            tv7 = 0;            tv8 = 0;            tv9 = 0;            total = 0;            
+            listaDesarrollosTecnologicos.clear();       
             listaIdiomas = ejbHabilidades.mostrarIdiomas(contactoDestino);
             listaLenguas = ejbHabilidades.mostrarLenguas(contactoDestino);
             listaDistinciones = ejbPremios.mostrarDistinciones(contactoDestino);
@@ -318,300 +201,237 @@ public class ControladorComisionDictaminadora implements Serializable {
             listaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(contactoDestino);
             listaCapacitacionespersonal = ejbEducacion.mostrarCapacitacionespersonal(contactoDestino);
             listaDesarrollosTecnologicos = ejbTecnologia.mostrarDesarrollosTecnologicos(contactoDestino);
-            listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(contactoDestino);            
-            if (!listaIdiomas.isEmpty()) {
-                listaIdiomas.forEach((t) -> {
-                    if (t.getEvidenciaDoc() != null){
-                        rutasEvidenciasBD.add(t.getEvidenciaDoc());
-                    }
-                    if (t.getEstatus().equals("Denegado")) {
-                        tv4 = tv4 + 1;
-                    }
-                });
+            listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(contactoDestino);   
+            
+            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\1.0.pdf");
+            
+            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\2.0.pdf");
+            if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa() != null) {
+                rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
+                personales.setCuentaA(Boolean.TRUE);
+                personales.setRutaA(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
             }
-            if (!listaLibrosPubs.isEmpty()) {
-                listaLibrosPubs.forEach((t) -> {
-                    if (t.getEvidencia() != null){
-                        rutasEvidenciasBD.add(t.getEvidencia());
-                    }
-                    if (t.getEstatus().equals("Denegado")) {
-                        tv7 = tv7 + 1;
-                    }
-                });
+            if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne() != null) {
+                rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
+                personales.setCuentaC(Boolean.TRUE);
+                personales.setRutaC(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
             }
-            if (!listaArticulosp.isEmpty()) {
-                listaArticulosp.forEach((t) -> {
-                    if (t.getEvidencia() != null){
-                        rutasEvidenciasBD.add(t.getEvidencia());
-                    }
-                    if (t.getEstatus().equals("Denegado")) {
-                        tv8 = tv8 + 1;
-                    }
-                });
-            }
-            if (!listaMemoriaspub.isEmpty()) {
-                listaMemoriaspub.forEach((t) -> {
-                    if (t.getEvidencia() != null){
-                        rutasEvidenciasBD.add(t.getEvidencia());
-                    }
-                    if (t.getEstatus().equals("Denegado")) {
-                        tv9 = tv9 + 1;
-                    }
-                });
-            }
-            if (!listaDistinciones.isEmpty()) {
-                listaDistinciones.forEach((t) -> {
-                    if (t.getEvidenciaDistincion() != null){
-                        rutasEvidenciasBD.add(t.getEvidenciaDistincion());
-                    }
-                    if (t.getEstatus().equals("Denegado")) {
-                        tv6 = tv6 + 1;
-                    }
-                });
-            }
+            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\3.0.pdf");
             if (!listaFormacionAcademica.isEmpty()) {
                 listaFormacionAcademica.forEach((t) -> {
-                    if (t.getEvidenciaCedula() != null){
-                        rutasEvidenciasBD.add(t.getEvidenciaCedula());
-                    }
-                    if (t.getEvidenciaTitulo() != null){
-                        rutasEvidenciasBD.add(t.getEvidenciaTitulo());
-                    }
-                    if (t.getEstatus().equals("Denegado")) {
-                        tv1 = tv1 + 1;
-                    }
+                    switch (t.getNivelEscolaridad().getGrado()) {
+                        case 5:                        case 6:                            
+                            if (t.getEvidenciaTitulo() != null) {
+                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
+                                escolaridad.setCuentaTm(Boolean.TRUE);
+                                escolaridad.setRutaTm(t.getEvidenciaTitulo());
+                            }
+                            break;
+                        case 7:                        case 8:                            
+                            if (t.getEvidenciaCedula() != null) {
+                                rutasEvidenciasBD.add(t.getEvidenciaCedula());
+                                escolaridad.setCuentaCt(Boolean.TRUE);
+                                escolaridad.setRutaCt(t.getEvidenciaCedula());
+                            }
+                            if (t.getEvidenciaTitulo() != null) {
+                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
+                                escolaridad.setCuentaTt(Boolean.TRUE);
+                                escolaridad.setRutaTt(t.getEvidenciaTitulo());
+                            }
+                            break;
+                        case 9:                        case 10:                            
+                            if (t.getEvidenciaCedula() != null) {
+                                rutasEvidenciasBD.add(t.getEvidenciaCedula());
+                                escolaridad.setCuentaCi(Boolean.TRUE);
+                                escolaridad.setRutaCi(t.getEvidenciaCedula());
+                            }
+                            if (t.getEvidenciaTitulo() != null) {
+                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
+                                escolaridad.setCuentaTi(Boolean.TRUE);
+                                escolaridad.setRutaTi(t.getEvidenciaTitulo());
+                            }
+                            break;
+                        case 13:                        case 14:                        case 15:                        case 16:
+                            if (t.getEvidenciaCedula() != null) {
+                                rutasEvidenciasBD.add(t.getEvidenciaCedula());
+                                escolaridad.setCuentaCp(Boolean.TRUE);
+                                escolaridad.setRutaCp(t.getEvidenciaCedula());
+                            }
+                            if (t.getEvidenciaTitulo() != null) {
+                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
+                                escolaridad.setCuentaTp(Boolean.TRUE);
+                                escolaridad.setRutaTp(t.getEvidenciaTitulo());
+                            }
+                            break;
+                    }                    
                 });
             }
+            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\4.0.pdf");
             if (!listaExperienciasLaborales.isEmpty()) {
                 listaExperienciasLaborales.forEach((t) -> {
-                    if (t.getEvidenciaNombremiento() != null){
+                    if (!t.getClaveRipppa().equals("No Aplica")) {
                         rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
-                    }
-                    if (t.getEstatus().equals("Denegado")) {
-                        tv2 = tv2 + 1;
+                        switch (t.getClaveRipppa()) {
+                            case "41":
+                                if (t.getEvidenciaNombremiento() != null) {
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    experiencia.setCuenta41(Boolean.TRUE);
+                                    experiencia.getRuta41().add(t.getEvidenciaNombremiento());
+                                }
+                                break;
+                            case "42":
+                                if (t.getEvidenciaNombremiento() != null) {
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    experiencia.setCuenta42(Boolean.TRUE);
+                                    experiencia.getRuta42().add(t.getEvidenciaNombremiento());
+                                }
+                                break;
+                            case "43":
+                                if (t.getEvidenciaNombremiento() != null) {
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    experiencia.setCuenta43(Boolean.TRUE);
+                                    experiencia.getRuta43().add(t.getEvidenciaNombremiento());
+                                }
+                                break;
+                            case "44":
+                                if (t.getEvidenciaNombremiento() != null) {
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    experiencia.setCuenta44(Boolean.TRUE);
+                                    experiencia.getRuta44().add(t.getEvidenciaNombremiento());
+                                }
+                                break;
+                            case "45":
+                                if (t.getEvidenciaNombremiento() != null) {
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    experiencia.setCuenta45(Boolean.TRUE);
+                                    experiencia.getRuta45().add(t.getEvidenciaNombremiento());
+                                }
+                                break;
+                            case "46":
+                                if (t.getEvidenciaNombremiento() != null) {
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    experiencia.setCuenta46(Boolean.TRUE);
+                                    experiencia.getRuta46().add(t.getEvidenciaNombremiento());
+                                }
+                                break;
+                            case "47":
+                                if (t.getEvidenciaNombremiento() != null) {
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    experiencia.setCuenta47(Boolean.TRUE);
+                                    experiencia.getRuta47().add(t.getEvidenciaNombremiento());
+                                }
+                                break;
+                            case "48":
+                                if (t.getEvidenciaNombremiento() != null) {
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    experiencia.setCuenta48(Boolean.TRUE);
+                                    experiencia.getRuta48().add(t.getEvidenciaNombremiento());
+                                }
+                                break;
+                            case "49":
+                                if (t.getEvidenciaNombremiento() != null) {
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    experiencia.setCuenta49(Boolean.TRUE);
+                                    experiencia.getRuta49().add(t.getEvidenciaNombremiento());
+                                }
+                                break;
+                        }
                     }
                 });
             }
+            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\5.0.pdf");
             if (!listaCapacitacionespersonal.isEmpty()) {
                 listaCapacitacionespersonal.forEach((t) -> {
-                    if (t.getEvidenciaCapacitacion() != null){
-                        rutasEvidenciasBD.add(t.getEvidenciaCapacitacion());
-                    }
-                    if (t.getEstatus().equals("Denegado")) {
-                        tv3 = tv3 + 1;
-                    }
-                });
-            }
-            if (!listaDesarrollosTecnologicos.isEmpty()) {
-                listaDesarrollosTecnologicos.forEach((t) -> {
-                    if (t.getDocumentoRespaldo() != null){
-                        rutasEvidenciasBD.add(t.getDocumentoRespaldo());
-                    }
-                    if (t.getEstatus().equals("Denegado")) {
-                        tv5 = tv5 + 1;
+                    if (t.getEvidenciaCapacitacion() != null) {
+                        if (!t.getRipppa().equals("No Aplica")) {
+                            if (t.getRipppa().equals("48")) {
+                                experiencia.setCuenta48(Boolean.TRUE);
+                                experiencia.getRuta48().add(t.getEvidenciaCapacitacion());
+                            } else {
+                                capAceptadas.add(t);
+                                capacitacion.setCuentaEv(Boolean.TRUE);
+                                capacitacion.getRutasEv().add(t.getEvidenciaCapacitacion());
+                                rutasEvidenciasBD.add(t.getEvidenciaCapacitacion());
+                            }
+                        }
                     }
                 });
             }
-
-            total = tv1 + tv2 + tv3 + tv4 + tv5 + tv6 + tv7 + tv8 + tv9;
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
-    public void actualizarEmpleado() {
+    
+    public void unirPDFs() {
         try {
-            nuevOBJPersonalSubordinado.setActividad(new Actividades());
-            nuevOBJPersonalSubordinado.setCategoriaOficial(new PersonalCategorias());
-            nuevOBJPersonalSubordinado.setCategoriaOperativa(new PersonalCategorias());
-            nuevOBJPersonalSubordinado.setCategoria360(new PersonalCategorias());
-            nuevOBJPersonalSubordinado.setGrado(new Grados());
-
-            nuevOBJPersonalSubordinado.getActividad().setActividad(actividad);
-            nuevOBJPersonalSubordinado.getCategoriaOperativa().setCategoria(categoriaOP);
-            nuevOBJPersonalSubordinado.getCategoriaOficial().setCategoria(categoriaOF);
-            nuevOBJPersonalSubordinado.getCategoria360().setCategoria(categoria360);
-            nuevOBJPersonalSubordinado.getGrado().setGrado(grado);
-
-            ejbPersonal.actualizarPersonal(nuevOBJPersonalSubordinado);
-            utilidadesCH.agregaBitacora(controladorEmpleado.getEmpleadoLogeado(), nuevOBJPersonalSubordinado.getClave().toString(), "Personal", "Update");
-            Messages.addGlobalInfo("¡Operación exitosa!!");
-            mostrarPerfilSubordinado();
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    public void mostrarLista() {
-        try {
-            Boolean nulos = Boolean.FALSE;
-            List<ListaEvaluaciones> listaEvaluaciones = new ArrayList<>();
-            ResultadoEva nuevoResEva;
-            String tipo = "";
-            ListaEvaluaciones nOBRE;
-            listaResultadoEva.clear();
-            listaEvaluaciones.clear();
-
-            List<PeriodosEscolares> periodos = ejbPersonalEvaluaciones.getPeriodos(nuevOBJPersonalSubordinado);
-            Map<PeriodosEscolares, List<Evaluaciones360Resultados>> resultados360 = ejbPersonalEvaluaciones.getEvaluaciones360PorPeriodo(nuevOBJPersonalSubordinado, periodos);
-            if (resultados360 == null) {
-                nulos = Boolean.TRUE;
-            }
-            Map<PeriodosEscolares, DesempenioEvaluacionResultados> resultadosDesempenio = ejbPersonalEvaluaciones.getEvaluacionesDesempenioPorPeriodo(nuevOBJPersonalSubordinado, periodos);
-            if (resultadosDesempenio == null) {
-                nulos = Boolean.TRUE;
-            }
-            if (nulos == Boolean.FALSE) {
-                listaEvaluaciones = ejbPersonalEvaluaciones.empaquetar(nuevOBJPersonalSubordinado, periodos, resultados360, resultadosDesempenio);
-
-                for (int i = 0; i <= listaEvaluaciones.size() - 1; i++) {
-                    nOBRE = listaEvaluaciones.get(i);
-
-                    if (!nOBRE.getPromedio360().isNaN()) {
-                        if (nOBRE.getPromedio360() != null) {
-                            if (nOBRE.getPromedio360() == 0.0) {
-                                tipo = "proceso";
-                            }
-                            if (nOBRE.getPromedio360() > 0.0 && nOBRE.getPromedio360() <= 0.9) {
-                                tipo = "danger";
-                            }
-                            if (nOBRE.getPromedio360() >= 1.0 && nOBRE.getPromedio360() <= 1.9) {
-                                tipo = "warning";
-                            }
-                            if (nOBRE.getPromedio360() >= 2.0 && nOBRE.getPromedio360() <= 2.9) {
-                                tipo = "info";
-                            }
-                            if (nOBRE.getPromedio360() >= 3.0 && nOBRE.getPromedio360() <= 4.0) {
-                                tipo = "success";
-                            }
-                            nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), Double.parseDouble(df.format(nOBRE.getPromedio360())), "Evaluación 360°", tipo);
-                            listaResultadoEva.add(nuevoResEva);
-                        }
-                    } else {
-                        nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), 0.00, "Evaluación 360°", "proceso");
-                        listaResultadoEva.add(nuevoResEva);
-                    }
-
-                    if (!nOBRE.getPromedioDesepenio().isNaN()) {
-                        if (nOBRE.getPromedioDesepenio() != null) {
-                            if (nOBRE.getPromedioDesepenio() == 0.0) {
-                                tipo = "proceso";
-                            }
-                            if (nOBRE.getPromedioDesepenio() > 0.0 && nOBRE.getPromedioDesepenio() <= 1.24) {
-                                tipo = "danger";
-                            }
-                            if (nOBRE.getPromedioDesepenio() >= 1.25 && nOBRE.getPromedioDesepenio() <= 2.49) {
-                                tipo = "warning";
-                            }
-                            if (nOBRE.getPromedioDesepenio() >= 2.50 && nOBRE.getPromedioDesepenio() <= 3.74) {
-                                tipo = "info";
-                            }
-                            if (nOBRE.getPromedioDesepenio() >= 3.75 && nOBRE.getPromedioDesepenio() <= 5.0) {
-                                tipo = "success";
-                            }
-                            nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), Double.parseDouble(df.format(nOBRE.getPromedioDesepenio())), "Evaluación Desempeño", tipo);
-                            listaResultadoEva.add(nuevoResEva);
-                        }
-                    } else {
-                        nuevoResEva = new ResultadoEva(nOBRE.getPeriodoEscolar().getAnio(), nOBRE.getPeriodoEscolar().getPeriodo(), nOBRE.getPeriodoEscolar().getMesFin().getMes(), nOBRE.getPeriodoEscolar().getMesInicio().getMes(), 0.00, "Evaluación Desempeño", "proceso");
-                        listaResultadoEva.add(nuevoResEva);
-                    }
+            nombreArchivo="";
+            nombreArchivo = "CVRIPPPA " + nuevoOBJListaPersonal.getClave() +" - "+ nuevoOBJListaPersonal.getNombre();
+            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorComisionDictaminadora.unirPDFs()"+rutasEvidenciasBD);
+            List<InputStream> inputPdfList = new ArrayList<InputStream>();
+            rutasEvidenciasBD.forEach((t) -> {
+                FileInputStream fis;
+                try {
+                    fis = new FileInputStream(t);
+                    inputPdfList.add(fis);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(ControladorResultadosEvaluaciones.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+            });
+            OutputStream outputStream = new FileOutputStream("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\"+nombreArchivo+".pdf");
 
-    public void descargarEvidenciasCH() {
-        try {
-            nombreArchivo = "CV " + nuevoOBJListaPersonal.getClave() +" - "+ nuevoOBJListaPersonal.getNombre();            
-            String rutaGeneral = "C:\\archivos\\evidenciasCapitalHumano\\" + nuevoOBJListaPersonal.getClave();
-            String rutaZipGeneral = "C:\\archivos\\evidenciasCapitalHumano\\zips\\" + nombreArchivo+ ".zip";
+            Document document = new Document();
+            List<PdfReader> readers = new ArrayList<PdfReader>();
+            int totalPages = 0;
+
+            //Create pdf Iterator object using inputPdfList. 
+            Iterator<InputStream> pdfIterator = inputPdfList.iterator();
+
+            // Create reader list for the input pdf files. 
+            while (pdfIterator.hasNext()) {
+                InputStream pdf = pdfIterator.next();
+                PdfReader pdfReader = new PdfReader(pdf);
+                readers.add(pdfReader);
+                totalPages = totalPages + pdfReader.getNumberOfPages();
+            }
+
+            // Create writer for the outputStream 
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+
+            //Open document. 
+            document.open();
+
+            //Contain the pdf data. 
+            PdfContentByte pageContentByte = writer.getDirectContent();
+            PdfImportedPage pdfImportedPage;
+            int currentPdfReaderPage = 1;
+            Iterator<PdfReader> iteratorPDFReader = readers.iterator();
+
+            // Iterate and process the reader list. 
+            while (iteratorPDFReader.hasNext()) {
+                PdfReader pdfReader = iteratorPDFReader.next();
+                //Create page and add content. 
+                while (currentPdfReaderPage <= pdfReader.getNumberOfPages()) {
+                    document.newPage();
+                    pdfImportedPage = writer.getImportedPage(pdfReader, currentPdfReaderPage);
+                    pageContentByte.addTemplate(pdfImportedPage, 0, 0);
+                    currentPdfReaderPage++;
+                }
+                currentPdfReaderPage = 1;
+            }
+
+            //Close document and outputStream. 
+            outputStream.flush();
+            document.close();
+            outputStream.close();
+            System.out.println("Pdf files merged successfully.");
             
-            File dirP = new File(rutaGeneral);
-            String zipDirName = rutaZipGeneral;
-                        
-            carpetas = new ArrayList<>();
-            carpetas.clear();
-            carpetas.add(rutaGeneral);
-            for (int i = 0; i < carpetas.size(); i++) {
-                File dir = new File(carpetas.get(i));
-                File[] files = dir.listFiles();
-                for (File file : files) {
-                    if (file.isFile()) {
-                        if (rutasEvidenciasBD.contains(file.getAbsoluteFile().toString())) {
-                            filesListInDir.add(file.getAbsolutePath());
-                        }
-                        
-                    } else if (file.isDirectory()) {
-                        carpetas.add(file.getAbsolutePath());
-                    }
-                }
-            }   
-                        
-            try (FileOutputStream fos = new FileOutputStream(zipDirName)) {
-                ZipOutputStream zos = new ZipOutputStream(fos);
-                for (String filePath : filesListInDir) {
-                    if(filePath.contains("evidenciasCapitalHumano")){
-                        //for ZipEntry we need to keep only relative file path, so we used substring on absolute path
-                        ZipEntry ze = new ZipEntry(filePath.substring(dirP.getAbsolutePath().length() + 1, filePath.length()));
-                        zos.putNextEntry(ze);
-                        //read the file and write to ZipOutputStream
-                        FileInputStream fis = new FileInputStream(filePath);
-                        byte[] buffer = new byte[1024];
-                        int len;
-                        while ((len = fis.read(buffer)) > 0) {
-                            zos.write(buffer, 0, len);
-                        }
-                        zos.closeEntry();
-                        fis.close();
-                    }
-                }
-                zos.close();
-            }
-
             if (!rutasEvidenciasBD.isEmpty()) {
-                Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/" + nombreArchivo + ".zip" + "');");
+                Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/RIPPPA/" + nombreArchivo + ".pdf" + "');");
             }
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
-            Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    private void populateFilesList(File dir) throws IOException {
-        File[] files = dir.listFiles();
-        for (File file : files) {
-            if (file.isFile()) {
-                filesListInDir.add(file.getAbsolutePath());
-            } else {
-                populateFilesList(file);
-            }
-        }
-    }
-    
-    public static class ResultadoEva {
 
-        @Getter        @Setter        private int anio;
-        @Getter        @Setter        private int periodo;
-        @Getter        @Setter        private String fin;
-        @Getter        @Setter        private String inicio;
-        @Getter        @Setter        private Double promedio;
-        @Getter        @Setter        private String tipoEvaluacion;
-        @Getter        @Setter        private String tipoClas;
-
-        private ResultadoEva(int _anio, int _periodo, String _fin, String _inicio, Double _promedio, String _tipoEvaluacion, String _tipoClas) {
-            anio = _anio;
-            periodo = _periodo;
-            fin = _fin;
-            inicio = _inicio;
-            promedio = _promedio;
-            tipoEvaluacion = _tipoEvaluacion;
-            tipoClas = _tipoClas;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

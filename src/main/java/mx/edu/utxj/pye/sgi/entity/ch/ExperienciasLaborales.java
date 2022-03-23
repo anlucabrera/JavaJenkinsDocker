@@ -81,6 +81,11 @@ public class ExperienciasLaborales implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "estatus")
     private String estatus;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 50)
+    @Column(name = "claveRipppa")
+    private String claveRipppa;
     @JoinColumn(name = "clave_personal", referencedColumnName = "clave")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Personal clavePersonal;
@@ -196,6 +201,14 @@ public class ExperienciasLaborales implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales[ empleo=" + empleo + " ]";
+    }
+
+    public String getClaveRipppa() {
+        return claveRipppa;
+    }
+
+    public void setClaveRipppa(String claveRipppa) {
+        this.claveRipppa = claveRipppa;
     }
     
 }

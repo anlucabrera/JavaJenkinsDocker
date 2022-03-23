@@ -2,6 +2,10 @@
     background-color: #bdbfc1 !important;
     color: #000000 !important;
 }
+.tituloRipppa{
+    background-color: #bdbfc1 !important;
+    color: #000000 !important;
+}
 .principal{
     background-color: #999999!important;
     color: #ffffff!important;
@@ -45,6 +49,11 @@ h4, .h4, h5, .h5, h6, .h6 {
         background-color: #bdbfc1 !important;
         color: #000000 !important;
         font-size: xx-small;
+    }
+    .tituloRipppa{
+        background-color: #bdbfc1 !important;
+        color: #000000 !important;
+        font-size: x-small;
     }
     .subactiviades{
         font-size: xx-small;
@@ -129,7 +138,7 @@ h4, .h4, h5, .h5, h6, .h6 {
         display: inline !important;
         visibility: visible !important;
     }
-    
+
     .noprint,.noprint *{
         display: none !important;
         visibility: hidden !important;

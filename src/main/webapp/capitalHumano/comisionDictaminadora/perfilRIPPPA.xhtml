@@ -19,9 +19,7 @@
             }
         </script>
         <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
-        </c:if>        
+        <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />    
         <!-- Fin estilos par proceso electoral -->
     </ui:define>
 
@@ -88,731 +86,839 @@
                 allDayText : 'Todo el día'
                 };
             </h:outputScript>
-            <p:panel id="errort" header="Error de Tamaño" class="show-xs show-sm hidden-md hidden-lg hidden-xl">
-                <h1>
-                    Esta página está disponible solo para pantallas superiores a 1024px.
-                </h1>
-            </p:panel>
-            <p:panel id="informacion" class="hidden-xs hidden-sm">
+            <p:panel id="informacion" style="height:100%; width: 100%; object-fit: contain;">
                 <c:if test="#{controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564}">
-                    <div class="row">
-                        <h:form id="frmFunciones">
+                    <h:form id="frmFunciones">
+                        <div class="row">
                             <p:outputLabel value="Subordinados(as)" for="clave" class="col-sm-2 control-label"/>
                             <div class="col-sm-3">
                                 <p:selectOneMenu id="clave" value="#{controladorComisionDictaminadora.contactoDestino}" filter="true" filterMatchMode="contains" style = "height:100%; width: 100%; object-fit: contain;" class="control-label">
                                     <f:selectItem itemValue="0" itemLabel=" Regresar "/>
                                     <f:selectItems value="#{controladorComisionDictaminadora.listaPersonal}" var="personal" itemValue="#{personal.clave}" itemLabel="#{personal.clave} - #{personal.nombre} - #{personal.categoriaOperativa.nombre}" />
-                                    <p:ajax update="@form :frmFunciones :informacion panelDatos" process="@form :frmFunciones" listener="#{controladorComisionDictaminadora.mostrarPerfilSubordinado()}"/>
+                                    <p:ajax update="@form :frmFunciones" process="@form :frmFunciones" listener="#{controladorComisionDictaminadora.mostrarPerfilSubordinado()}"/>
                                 </p:selectOneMenu>  
                                 <p:message for="clave"/>
                             </div>
-                        </h:form>
-                    </div> 
-                    <section class="content">
-                        <div class="row">
-                            <ui:include src="/includes/plantillaPerfilPersonal.xhtml"/>
-                            <div class="col-md-9">
-                                <div class="nav-tabs-custom">
-                                    <div class="row">
-                                        <div class="col-lg-10 col-xs-10"/>
-                                        <div class="col-lg-2 col-xs-2">
-                                            <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
-                                                <i class="fa fa-reply"></i>
-                                                <span>Regresar a mi perfil</span>
-                                            </p:link>
-                                        </div>      
-                                    </div>
-                                    <p:tabView>
-                                        <p:tab title="Currículum vitae">
-                                            <h:form>
-                                                <p:commandButton value="Imprimir currículum vitae" icon="fa fa-print" class="btn-success">                                        
-                                                    <p:printer target="CV" />
-                                                </p:commandButton>
-                                                <p:panel id="CV" >
-                                                    <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                        <div class="col-md-12">
-                                                            <div class="box box-widget widget-user-2">
-                                                                <div class="row">
-                                                                    <div class="col-sm-12 border-right">
-                                                                        <div class="description-block" style="text-align: center">
-                                                                            <h1><strong>Currículum vitae</strong></h1>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div id="tituloCV" class="col-sm-12">
-                                                                        <div class="description-block" style="text-align: center">
-                                                                            <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
-                                                                            <h3>Contenido de currículum para expedientes</h3>
-                                                                            <h4>Departamento de personal</h4>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <hr/>
-                                                                <div class="row">
-                                                                    <div class="col-sm-12 border-right">
-                                                                        <div class="description-block" style="text-align: center">
-                                                                            <h3><strong>Datos personales</strong></h3>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div class="col-sm-12 border-right">
-                                                                        <div class="description-block">
-                                                                            <div class="box box-primary">
-                                                                                <div class="box-header with-border">                                                                    
-                                                                                    <div class="col-sm-12">
-                                                                                        <div class="row">
-                                                                                            <div  id="fotoPersonal" class="col-sm-2 pull-left">
-                                                                                                <div class="description-block" style="text-align: center" >
-                                                                                                    <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{controladorComisionDictaminadora.nuevoOBJListaPersonal.clave}.jpg" alt="#{controladorComisionDictaminadora.nuevoOBJListaPersonal.clave}" title="Personal #{controladorComisionDictaminadora.nuevoOBJListaPersonal.clave}" style="width: 140px; height: 140px; align-content: center;"/>
-                                                                                                </div>  
-                                                                                            </div>
-                                                                                            <div class="col-sm-6">
-                                                                                                <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
-                                                                                                    <div class="description-block" style="text-align: justify">
-                                                                                                        <strong>Nombre completo</strong>
-                                                                                                        <p class="text-muted">
-                                                                                                            #{controladorComisionDictaminadora.nuevoOBJListaPersonal.nombre}
-                                                                                                        </p>
-                                                                                                        <hr/>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
-                                                                                                    <div class="description-block" style="text-align: justify">
-                                                                                                        <strong>CURP</strong>
-                                                                                                        <p class="text-muted" style="text-transform: uppercase">
-                                                                                                            #{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.curp}
-                                                                                                        </p>
-                                                                                                        <hr/>
-                                                                                                    </div>
-                                                                                                </div>
-
-                                                                                                <div  id="dstoasPerosonalesPersonal1" class="col-sm-3 pull-left" style="width: 250px;">        
-                                                                                                    <div class="description-block" style="text-align: justify">
-                                                                                                        <strong>Lugar de nacimiento</strong>
-                                                                                                        <p class="text-muted">
-                                                                                                            #{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}
-                                                                                                        </p> 
-                                                                                                        <hr/>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div  id="dstoasPerosonalesPersonal2" class="col-sm-3 pull-left" style="width: 200px;"> 
-                                                                                                    <div class="description-block" style="text-align: justify">
-                                                                                                        <strong>RFC</strong>
-                                                                                                        <p class="text-muted" style="text-transform: uppercase">
-                                                                                                            #{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.rfc}
-                                                                                                        </p>
-                                                                                                        <hr/>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div  id="dstoasPerosonalesPersonal3" class="col-sm-2 pull-left" style="width: 150px;"> 
-                                                                                                <div class="description-block" style="text-align: justify">
-                                                                                                    <strong>Edad</strong>
-                                                                                                    <p class="text-muted">
-                                                                                                        #{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.edad} años
-                                                                                                    </p>                                                             
-                                                                                                    <hr/>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div  id="dstoasPerosonalesPersonal4" class="col-sm-2 pull-left" style="width: 180px;"> 
-                                                                                                <div class="description-block" style="text-align: justify">
-                                                                                                    <strong>Estado civil</strong>
-                                                                                                    <p class="text-muted">
-                                                                                                        #{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.estadoCivil}
-                                                                                                    </p>
-                                                                                                    <hr/>
-                                                                                                </div>
-                                                                                            </div>
-
-
-                                                                                            <div  id="dstoasPerosonalesPersonal3" class="col-sm-2 pull-left" style="width: 150px;"> 
-                                                                                                <div class="description-block" style="text-align: justify">
-                                                                                                    <strong>Sexo</strong>
-                                                                                                    <p class="text-muted">
-                                                                                                        #{controladorComisionDictaminadora.nuevoOBJListaPersonal.generoNombre}
-                                                                                                    </p>
-                                                                                                    <hr/>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div  id="dstoasPerosonalesPersonal4" class="col-sm-2 pull-left" style="width: 180px;"> 
-                                                                                                <div class="description-block" style="text-align: justify">
-                                                                                                    <strong>Fecha de nacimiento</strong>
-                                                                                                    <p class="text-muted">
-                                                                                                        <h:outputLabel value="#{controladorComisionDictaminadora.nuevoOBJListaPersonal.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
-                                                                                                    </p>                                                                
-                                                                                                    <hr/>
-                                                                                                </div>
-                                                                                            </div>
-
-                                                                                        </div> 
-                                                                                        <div class="row">
-                                                                                            <div  id="dstoasPerosonalesPersonal5" class="col-sm-4 pull-left" style="width: 250px;">        
-                                                                                                <div class="description-block" style="text-align: justify">
-                                                                                                    <strong>Dirección</strong>
-                                                                                                    <p class="text-muted">
-                                                                                                        #{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.direccion}
-                                                                                                    </p>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div  id="dstoasPerosonalesPersonal6" class="col-sm-4 pull-left" style="width: 200px;">        
-                                                                                                <div class="description-block" style="text-align: justify">
-                                                                                                    <strong>Correo electrónico</strong>
-                                                                                                    <ul style="list-style-type: square">
-                                                                                                        <li>
-                                                                                                            #{controladorComisionDictaminadora.nuevoOBJListaPersonal.correoElectronico}
-                                                                                                            <br/>
-                                                                                                            #{controladorComisionDictaminadora.nuevoOBJListaPersonal.correoElectronico2}
-                                                                                                        </li>
-                                                                                                    </ul>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div  id="dstoasPerosonalesPersonal7" class="col-sm-4 pull-right" style="width: 200px;">        
-                                                                                                <div class="description-block" style="text-align: justify">
-                                                                                                    <strong>Número de teléfono</strong>
-                                                                                                    <ul style="list-style-type: square">
-                                                                                                        <li>
-                                                                                                            Casa: #{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.numTelFijo}
-                                                                                                        </li>
-                                                                                                        <li>
-                                                                                                            Cel.: #{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.numTelMovil}
-                                                                                                        </li>
-                                                                                                    </ul>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaFormacionAcademica.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblFormaciónAcadémica" value="#{controladorComisionDictaminadora.listaFormacionAcademica}" var="formaAL"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaFormacionAcademica.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Formación académica</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 20%" headerText="Estudio realizado" >
-                                                                                        <h:outputText value="#{formaAL.nivelEscolaridad.nombre}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 25%" headerText="Carrera" >
-                                                                                        <h:outputText value="#{formaAL.nombreCarrera}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 15%" headerText="Fecha" >
-                                                                                        <h:outputLabel value="#{formaAL.fechaObtencion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 25%" headerText="Institución" >
-                                                                                        <h:outputText value="#{formaAL.institucion}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 25%" headerText="Modo titulación" >
-                                                                                        <h:outputText value="#{formaAL.modoTitulacion}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 15%" headerText="No. cédula profesional" >
-                                                                                        <h:outputText value="#{formaAL.cedulaProfesional}" />
-                                                                                    </p:column>
-
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaExperienciasLaborales.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblExperienciaLaboral" value="#{controladorComisionDictaminadora.listaExperienciasLaborales}" var="experiencL"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaExperienciasLaborales.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Experiencia laboral</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 20%" headerText="Empresa o institución" >
-                                                                                        <h:outputText value="#{experiencL.institucionEmpresa}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 20%" headerText="Fechas" >   
-                                                                                        <h:outputLabel value="del"/>
-                                                                                        <p:spacer width="10px"/>
-                                                                                        <h:outputLabel value="#{experiencL.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>                                                                                
-                                                                                        <p:spacer width="10px"/>
-                                                                                        <h:outputLabel value="al"/>
-                                                                                        <p:spacer width="10px"/>
-                                                                                        <h:outputLabel value="#{experiencL.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 20%" headerText="Puesto" >
-                                                                                        <h:outputText value="#{experiencL.puestoDesepenado}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 40%" headerText="Funciones realizadas" >
-                                                                                        <h:outputText value="#{experiencL.funcionesDesempenio}" />
-                                                                                    </p:column>
-
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaCapacitacionespersonal.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblCapacitación" value="#{controladorComisionDictaminadora.listaCapacitacionespersonal}" var="capaci"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaCapacitacionespersonal.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Actualización profesional</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 50%" headerText="Nombre de la capacitación" >
-                                                                                        <h:outputText value="#{capaci.nombre}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 30%" headerText="Lugar" >
-                                                                                        <h:outputText value="#{capaci.lugar}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 20%" headerText="Fechas" >   
-                                                                                        <h:outputLabel value="del "/>
-                                                                                        <p:spacer width="10px"/>
-                                                                                        <h:outputLabel value="#{capaci.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
-                                                                                        <p:spacer width="10px"/>
-                                                                                        <h:outputLabel value="al "/>
-                                                                                        <p:spacer width="10px"/>
-                                                                                        <h:outputLabel value="#{capaci.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaIdiomas.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblIdiomas" value="#{controladorComisionDictaminadora.listaIdiomas}" var="idiomasD"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaIdiomas.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Idiomas</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 25%" headerText="Idioma">
-                                                                                        <h:outputText value="#{idiomasD.idiomaHablado}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 25%" headerText="% de conversación">
-                                                                                        <h:outputText value="#{idiomasD.nivelConversacion}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 25%" headerText="% de escritura">
-                                                                                        <h:outputText value="#{idiomasD.nivelEscritura}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 25%" headerText="% de lectura">
-                                                                                        <h:outputText value="#{idiomasD.nivelLectura}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaHabilidadesInformaticas.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblInformática" value="#{controladorComisionDictaminadora.listaHabilidadesInformaticas}" var="informaticD"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaHabilidadesInformaticas.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Habilidades informáticas </h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 30%" headerText="Conocimiento informático" >
-                                                                                        <h:outputText value="#{informaticD.tipoConocimiento}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 35%" headerText="Programa dominado">
-                                                                                        <h:outputText value="#{informaticD.programaDominante}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 35%" headerText="Nivel de dominio">
-                                                                                        <h:outputText value="#{informaticD.nivelConocimiento}" />
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaLenguas.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblLenguas" value="#{controladorComisionDictaminadora.listaLenguas}" var="lenguasD"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaLenguas.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Lenguas indígenas</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 25%" headerText="Lengua">
-                                                                                        <h:outputText value="#{lenguasD.tipoLengua}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 25%" headerText="% de conversación">
-                                                                                        <h:outputText value="#{lenguasD.nivelConversacion}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 25%" headerText="% de escritura">
-                                                                                        <h:outputText value="#{lenguasD.nivelEscritura}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 25%" headerText="% de lectura">
-                                                                                        <h:outputText value="#{lenguasD.nivelLectura}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaDesarrollosTecnologicos.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblTrabajosdeInvestigación" value="#{controladorComisionDictaminadora.listaDesarrollosTecnologicos}" var="des"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaDesarrollosTecnologicos.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Desarrollos tecnológicos</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 30%" headerText="Tipo de desarrollo">
-                                                                                        <h:outputText value="#{des.tipoDesarrollo}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 35%" headerText="Objetivo" >
-                                                                                        <h:outputText value="#{des.objetivoDesarrollo}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 35%" headerText="Resumen">
-                                                                                        <h:outputLabel value="#{des.resumenDesarrollo}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaInnovaciones.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblinnnovacion" value="#{controladorComisionDictaminadora.listaInnovaciones}" var="ino"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaInnovaciones.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Innovaciones</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column headerText="Tipo de innovación">
-                                                                                        <h:outputText value="#{ino.tipoInnovacion}"/>
-                                                                                    </p:column>
-                                                                                    <p:column headerText="Cobertura">
-                                                                                        <h:outputText value="#{ino.potencialCobertura}"/>
-                                                                                    </p:column>
-                                                                                    <p:column headerText="Aplicación">
-                                                                                        <h:outputText value="#{ino.aplicacionInnovacion}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaDesarrolloSoftwar.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tbldesSof" value="#{controladorComisionDictaminadora.listaDesarrolloSoftwar}" var="dess"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaDesarrolloSoftwar.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Desarrollo de Software</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 20%" headerText="Tipo">
-                                                                                        <h:outputText value="#{dess.tipoDesarrollo}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 20%" headerText="Lugar">
-                                                                                        <h:outputText value="#{dess.lugar}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 15%" headerText="Horas invertidas">
-                                                                                        <h:outputText value="#{dess.horasHombre}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 45%" headerText="Logros">
-                                                                                        <h:outputText value="#{dess.logros}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaDistinciones.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tbldistin" value="#{controladorComisionDictaminadora.listaDistinciones}" var="dist"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaDistinciones.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Premios y Distinciones</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 30%" headerText="Instituto">
-                                                                                        <h:outputText value="#{dist.institucion}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 35%" headerText="Nombre">
-                                                                                        <h:outputText value="#{dist.nombreDistincion}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 35%" headerText="Motivo">
-                                                                                        <h:outputText value="#{dist.motivoDescripcion}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaLibrosPubs.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tbllibros" value="#{controladorComisionDictaminadora.listaLibrosPubs}" var="libro"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaLibrosPubs.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Libros Publicados</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 15%" headerText="ISBN">
-                                                                                        <h:outputText value="#{libro.isbn}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 55%" headerText="Título">
-                                                                                        <h:outputText value="#{libro.titulo}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 15%" headerText="Idioma">
-                                                                                        <h:outputText value="#{libro.idioma}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 15%" headerText="País">
-                                                                                        <h:outputText value="#{libro.pasi}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaArticulosp.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblarticulos" value="#{controladorComisionDictaminadora.listaArticulosp}" var="articulo"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaArticulosp.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold"> Artículos Publicados</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 15%" headerText="ISBN electrónico">
-                                                                                        <h:outputText value="#{articulo.issnElectronico}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 35%" headerText="Nombre">
-                                                                                        <h:outputText value="#{articulo.nombre}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 35%" headerText="Título">
-                                                                                        <h:outputText value="#{articulo.tituloArticulo}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 15%" headerText="País">
-                                                                                        <h:outputText value="#{articulo.pais}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaMemoriaspub.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblmemorias" value="#{controladorComisionDictaminadora.listaMemoriaspub}" var="memoria"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaMemoriaspub.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Memorias Publicadas</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 29%" headerText="Título de memoria">
-                                                                                        <h:outputText value="#{memoria.tituloDeMemoria}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 29%" headerText="Título de publicación">
-                                                                                        <h:outputText value="#{memoria.tituloDePublicacion}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 29%" headerText="Título de obra">
-                                                                                        <h:outputText value="#{memoria.tituloDeObra}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 13%" headerText="País">
-                                                                                        <h:outputText value="#{memoria.pais}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaCongresos.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblcongreso" value="#{controladorComisionDictaminadora.listaCongresos}" var="idiomasD"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaCongresos.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Congresos</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 20%" headerText="Tipo de participación">
-                                                                                        <h:outputText value="#{idiomasD.participacion}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 35%" headerText="Nombre de congreso">
-                                                                                        <h:outputText value="#{idiomasD.nombreCongreso}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 30%" headerText="Título de trabajo">
-                                                                                        <h:outputText value="#{idiomasD.tituloTrabajo}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 15%" headerText="País">
-                                                                                        <h:outputText value="#{idiomasD.lugarPais}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="row" style="display: #{controladorComisionDictaminadora.listaInvestigacion.size() != 0?'inline':'none'} ">
-                                                                        <div class="col-sm-12 border-right">
-                                                                            <div class="description-block">
-                                                                                <p:dataTable id="tblInvestigaciones" value="#{controladorComisionDictaminadora.listaInvestigacion}" var="invest"
-                                                                                             emptyMessage="No se encontraron datos registrados." rendered="#{controladorComisionDictaminadora.listaInvestigacion.size() != 0?true:false}">
-
-                                                                                    <f:facet name="header">
-                                                                                        <h4 style="font-weight: bold">Investigación</h4>
-                                                                                    </f:facet>
-
-                                                                                    <p:column style="width: 10%" headerText="Tipo de Investigación">
-                                                                                        <h:outputText value="#{invest.tipo}"/>
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 25%" headerText="Nombre de la Investigación" >
-                                                                                        <h:outputText value="#{invest.nombreInvestigacion}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 30%" headerText="Descripción" >
-                                                                                        <h:outputText value="#{invest.decripcion}" />
-                                                                                    </p:column>
-                                                                                    <p:column style="width: 20%" headerText="Fechas" >   
-                                                                                        <h:outputLabel value="del "/>
-                                                                                        <p:spacer width="10px"/>
-                                                                                        <h:outputLabel value="#{invest.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
-                                                                                        <p:spacer width="10px"/>
-                                                                                        <h:outputLabel value="al "/>
-                                                                                        <p:spacer width="10px"/>
-                                                                                        <h:outputLabel value="#{invest.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel>
-                                                                                    </p:column>  
-                                                                                    <p:column style="width: 15%" headerText="Institución">
-                                                                                        <h:outputText value="#{invest.institucion}"/>
-                                                                                    </p:column>
-                                                                                </p:dataTable>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </p:panel>
-                                            </h:form>
-                                        </p:tab>
-                                        <p:tab title="Datos Personales">
-                                            <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
-                                                <div class="col-md-12">
-                                                    <div class="box box-widget widget-user-2">
-                                                        <div class="row">
-                                                            <div class="col-sm-12 border-right">
-                                                                <div class="description-block">                                                               
-                                                                    <p:tabView orientation="left">
-                                                                        <p:tab title="Acta de nacimiento" >
-                                                                            <p:outputPanel id="evidenicas1" style="text-align:center;width: 100%;height: 100%" >
-                                                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}" target="_blank">
-                                                                                    <i class="fa fa-book"></i>
-                                                                                    <span>Ver Acta de nacimiento</span>
-                                                                                </p:link>
-                                                                                <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                    <embed type="application/pdf" src="http://siip.utxj.edu.mx/sii2/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.evidenciaActa)}" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
-                                                                                </p:panelGrid>
-                                                                            </p:outputPanel>
-                                                                        </p:tab>
-                                                                        <p:tab title="INE" >
-                                                                            <p:outputPanel id="evidenicas5" style="text-align:center;width: 100%;height: 100%" >
-                                                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}" target="_blank">
-                                                                                    <i class="fa fa-book"></i>
-                                                                                    <span>Ver INE</span>
-                                                                                </p:link>
-                                                                                <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                    <embed type="application/pdf"  src="http://siip.utxj.edu.mx/sii2/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.evidenciaIne)}" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
-                                                                                </p:panelGrid>
-                                                                            </p:outputPanel>
-                                                                        </p:tab>
-                                                                    </p:tabView>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </p:tab>
-                                        <p:tab title="Docencias">
-                                            <h:form id="frmExLab">                                               
-                                                <p:outputPanel>
-                                                    <p:dataTable id="tblActividades"  value="#{controladorComisionDictaminadora.listaDocenciases}"  var="docencia"
-                                                                 paginator="true" rows="10" editable="true" style="margin-bottom:20px" expandableRowGroups="true"
-                                                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                                                 rowsPerPageTemplate="5,10,15,20,25,30" sortBy="#{docencia.anio}#{docencia.mesInicio}" sortOrder="Descending"
-                                                                 emptyMessage="No se encontraron Registros." rendered="true">
-                                                        
-                                                        <p:headerRow>
-                                                            <p:column colspan="2" style="background: #009c95">
-                                                                <h:outputLabel value="#{docencia.mesInicio} - #{docencia.msFin} -- #{docencia.anio}"/>
-                                                            </p:column>
-                                                        </p:headerRow>
-                                                        
-                                                        <p:column headerText="Programa" 
-                                                                  sortBy="#{docencia.programa}" 
-                                                                  filterBy="#{docencia.programa}" 
-                                                                  filterMatchMode="contains">
-                                                            <h:outputText value="#{docencia.programa}" />
-                                                        </p:column>
-                                                        <p:column headerText="Asignatura" 
-                                                                  sortBy="#{docencia.materia}" 
-                                                                  filterBy="#{docencia.materia}" 
-                                                                  filterMatchMode="contains">
-                                                            <h:outputText value="#{docencia.materia}" />
-                                                        </p:column>      
-                                                    </p:dataTable>  
-                                                </p:outputPanel>    
-                                            </h:form>
-                                        </p:tab>
-                                    </p:tabView>
-                                </div>
+                            <div class="col-sm-3">
+                                <p:commandButton id="plantillaPersonal" value="Descargar CV RIPPPA" actionListener="#{controladorComisionDictaminadora.unirPDFs()}" disabled="#{controladorComisionDictaminadora.contactoDestino eq 0}" icon="fa fa-download" class="btn-primary btn-block col-md-3"/> 
                             </div>
-                        </div>  
-                    </section>
+                        </div> 
+                        <section class="content">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="nav-tabs-custom">
+                                        <div class="row">
+                                            <div class="col-lg-10 col-xs-10"/>
+                                            <div class="col-lg-2 col-xs-2">
+                                                <p:link  href="/capitalHumano/perfilEmpleado.xhtml">
+                                                    <i class="fa fa-reply"></i>
+                                                    <span>Regresar a mi perfil</span>
+                                                </p:link>
+                                            </div>      
+                                        </div>
+                                        <p:tabView>
+                                            <p:tab title="RESUMEN">                                            
+                                                <p:outputPanel>
+                                                    <p:panelGrid >
+                                                        <p:row>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;">Apartado</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;">Encontrado</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"># de Evidencias</p:column>
+                                                        </p:row>
+                                                        <p:row><p:column colspan="3" style="font-weight: bold; text-align: center; font-size: x-large;">1.0 Curriculum Vitae</p:column></p:row>
+                                                        <p:row>
+                                                            <p:column>1.1 Resumen (podrá ser el que emite el Sii).</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.contactoDestino ne 0?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.contactoDestino ne 0 ?1:0}</p:column>
+                                                        </p:row>
+                                                        <p:row><p:column colspan="3" style="font-weight: bold; text-align: center; font-size: x-large;">2.0 DOCUMENTOS PERSONALES</p:column></p:row>
+                                                        <p:row>
+                                                            <p:column>2.1 Copia de acta de nacimiento. </p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.personales.cuentaA ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.personales.cuentaA ?1:0}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>2.2 Copia de credencial de elector.</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.personales.cuentaC ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.personales.cuentaC ?1:0}</p:column>
+                                                        </p:row>
+                                                        <p:row><p:column colspan="3" style="font-weight: bold; text-align: center; font-size: x-large;">3.0 ESCOLARIDAD</p:column></p:row>
+                                                        <p:row>
+                                                            <p:column>3.1 Copia de Titulo de Nivel Posgrado(s). </p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.escolaridad.cuentaTp ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.escolaridad.cuentaTp ?1:0}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>3.2 Copia de Cédula Profesional de Nivel Posgrado(s).</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.escolaridad.cuentaTp ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.escolaridad.cuentaCp ?1:0}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>3.3 Copia de Titulo de Licenciatura o Ingeniería.</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.escolaridad.cuentaTi ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.escolaridad.cuentaTi ?1:0}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>3.4 Copia de Cédula de Licenciatura o Ingeniería.</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.escolaridad.cuentaCi ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.escolaridad.cuentaCi ?1:0}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>3.5 Copia de Título Técnico Superior Universitario (aplica para TD en caso de no contar con un título de Lic. o Ing.)</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.escolaridad.cuentaTt ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.escolaridad.cuentaTt ?1:0}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>3.6 Copia de Cédula de Técnico Superior Universitario (aplica para TD en caso de no contar con un título de Lic. o Ing.)</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.escolaridad.cuentaCt ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.escolaridad.cuentaCt ?1:0}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>3.7 Copia de Titulo en una Carrera Técnica de nivel medio superior (aplica en caso de no contar con un título de nivel superior para TD)</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.escolaridad.cuentaTm ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.escolaridad.cuentaTm ?1:0}</p:column>
+                                                        </p:row>
+                                                        <p:row><p:column colspan="3" style="font-weight: bold; text-align: center; font-size: x-large;">4.0 EXPERIENCIA</p:column></p:row>
+                                                        <p:row>
+                                                            <p:column>4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado "B" y/o experiencia docente en el nivel superior.</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.experiencia.cuenta41 ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.experiencia.ruta41.size()}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito (aplica para el nivel PA Y PTC);</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.experiencia.cuenta42 ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.experiencia.ruta42.size()}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento. (aplica para el nivel PTC);</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.experiencia.cuenta43 ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.experiencia.ruta43.size()}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos (aplica para el nivel PTC);</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.experiencia.cuenta44 ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.experiencia.ruta44.size()}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>4.5 Constancia o evidencia en la dirección de estudiantes en estadías (aplica para el nivel PTC);</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.experiencia.cuenta45 ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.experiencia.ruta45.size()}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>4.6 Constancia o evidencia de haber producido material didáctico (aplica para el nivel PTC);</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.experiencia.cuenta46 ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.experiencia.ruta46.size()}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio;</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.experiencia.cuenta47 ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.experiencia.ruta47.size()}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores (aplica para el nivel PA).</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.experiencia.cuenta48 ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.experiencia.ruta48.size()}</p:column>
+                                                        </p:row>
+                                                        <p:row>
+                                                            <p:column>4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo (aplica para el nivel TD).</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.experiencia.cuenta49 ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.experiencia.ruta49.size()}</p:column>
+                                                        </p:row>
+                                                        <p:row><p:column colspan="3" style="font-weight: bold; text-align: center; font-size: x-large;">5.0 CAPACITACIÓN</p:column></p:row>
+                                                        <p:row>
+                                                            <p:column>5.1 Principales reconocimientos de cursos, talleres, conferencias o similar relacionadas a la acreditación pedagógica y didáctica (aplica para el nivel PA y PTC).</p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: x-large;"><i class="fa #{controladorComisionDictaminadora.capacitacion.cuentaEv ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
+                                                            <p:column style="font-weight: bold; text-align: center; font-size: large;">#{controladorComisionDictaminadora.capacitacion.rutasEv.size()}</p:column>
+                                                        </p:row>
+                                                    </p:panelGrid>
+                                                </p:outputPanel>
+                                            </p:tab>
+                                            <p:tab title="1.0 CURRICULUM VITAE">  
+                                                <p:tabView orientation="left">
+                                                    <p:tab title="1.1 Resumen" disabled="#{controladorComisionDictaminadora.contactoDestino eq 0? true:false}" >
+                                                        <p:commandButton value="Imprimir currículum vitae" icon="fa fa-print" class="btn-success" rendered="#{controladorComisionDictaminadora.contactoDestino ne 0? true:false}">                                        
+                                                            <p:printer target="CV" />
+                                                        </p:commandButton>
+                                                        <p:panel id="CV" style="overflow: hidden;" rendered="#{controladorComisionDictaminadora.contactoDestino ne 0? true:false}">
+                                                            <p:panelGrid >
+                                                                <!--p:panelGrid class="ui-noborder"-->
+                                                                <!--f:facet name="header"-->
+                                                                <p:row>
+                                                                    <p:column colspan="5">
+                                                                        <img src="../../resources/img/utxj.png" alt="" height="100px"/>
+                                                                    </p:column>
+                                                                    <p:column colspan="10" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h1><strong>Currículum vitae</strong></h1>
+                                                                        <h2>Universidad Tecnológica De Xicotepec de Juárez</h2>
+                                                                        <h3>Contenido de currículum para expedientes RIPPPA</h3>
+                                                                        <h4>Comisión Dictaminadora</h4>
+                                                                    </p:column>
+                                                                </p:row>
+                                                                <p:row>
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>DATOS PERSONALES</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row>
+                                                                    <p:column colspan="3" rowspan="4">
+                                                                        <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{controladorComisionDictaminadora.nuevoOBJListaPersonal.clave}.jpg" alt="#{controladorComisionDictaminadora.nuevoOBJListaPersonal.clave}" title="Personal #{controladorComisionDictaminadora.nuevoOBJListaPersonal.clave}" style="width: 140px; height: 140px; align-content: center;"/>
+                                                                    </p:column>   
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Nombre completo</p:column> 
+                                                                    <p:column colspan="4" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">CURP</p:column> 
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Edad</p:column> 
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Estado civil</p:column> 
+                                                                </p:row>
+                                                                <p:row>   
+                                                                    <p:column colspan="5" styleClass="subactiviades">#{controladorComisionDictaminadora.nuevoOBJListaPersonal.nombre}</p:column> 
+                                                                    <p:column colspan="4" styleClass="subactiviades">#{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.curp}</p:column> 
+                                                                    <p:column colspan="1" styleClass="subactiviades">#{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.edad} años</p:column> 
+                                                                    <p:column colspan="2" styleClass="subactiviades">#{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.estadoCivil}</p:column> 
+                                                                </p:row>
 
-                    <h:form id="frmPlantillaActiva" >
-                        <p:dialog id="dlgPlantillaActiva" modal="true" header="Plantilla activa" widgetVar="dlgPlantillaActiva" minimizable="true" maximizable="true" position="center">
+                                                                <p:row>
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Lugar de nacimiento</p:column> 
+                                                                    <p:column colspan="4" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">RFC</p:column> 
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Sexo</p:column> 
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Fecha de nacimiento</p:column> 
+                                                                </p:row>
+                                                                <p:row>
+                                                                    <p:column colspan="5" styleClass="subactiviades">#{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.lugarProcedencia}</p:column> 
+                                                                    <p:column colspan="4" styleClass="subactiviades">#{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.rfc}</p:column> 
+                                                                    <p:column colspan="1" styleClass="subactiviades">#{controladorComisionDictaminadora.nuevoOBJListaPersonal.generoNombre}</p:column> 
+                                                                    <p:column colspan="2" styleClass="subactiviades"><h:outputLabel value="#{controladorComisionDictaminadora.nuevoOBJListaPersonal.fechaNacimiento}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p:column> 
+                                                                </p:row>
+                                                                <p:row>
+                                                                    <p:column colspan="7" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Dirección</p:column> 
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Correo(s) electrónico(s)</p:column> 
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Número de teléfono</p:column> 
+                                                                </p:row>
+                                                                <p:row>
+                                                                    <p:column colspan="7" styleClass="subactiviades">#{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.direccion}</p:column> 
+                                                                    <p:column colspan="5" styleClass="subactiviades">
+                                                                        #{controladorComisionDictaminadora.nuevoOBJListaPersonal.correoElectronico}
+                                                                        <br/>
+                                                                        #{controladorComisionDictaminadora.nuevoOBJListaPersonal.correoElectronico2}
+                                                                    </p:column> 
+                                                                    <p:column colspan="3" styleClass="subactiviades">
+                                                                        Casa: #{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.numTelFijo}
+                                                                        <br/>
+                                                                        Cel.: #{controladorComisionDictaminadora.nuevoOBJInformacionAdicionalPersonal.numTelMovil}
+                                                                    </p:column> 
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaFormacionAcademica.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>FORMACIÓN ACADÉMICA</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaFormacionAcademica.size() != 0?true:false}">
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NIVEL</p:column>
+                                                                    <p:column colspan="7" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NOMBRE</p:column>
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">FEHA</p:column>
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">INTITUCIÓN</p:column>
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">CÉDULA</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaFormacionAcademica.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaFormacionAcademica.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaFormacionAcademica.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.nivelEscolaridad.nombre}</p:column>
+                                                                            <p:column colspan="7" styleClass="subactiviades">#{t.nombreCarrera}</p:column>
+                                                                            <p:column colspan="1" styleClass="subactiviades"><h:outputLabel value="#{t.fechaObtencion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p:column>
+                                                                            <p:column colspan="2" styleClass="subactiviades">#{t.institucion}</p:column>
+                                                                            <p:column colspan="2" styleClass="subactiviades">#{t.cedulaProfesional}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaExperienciasLaborales.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>EXPERIENCIA LABORAL</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaExperienciasLaborales.size() != 0?true:false}">
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">EMPRESA O INSTITUCIÓN</p:column>
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PERIODO</p:column>
+                                                                    <p:column colspan="6" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PUESTO</p:column>
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">FUNCIONES REALIZADAS</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaExperienciasLaborales.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaExperienciasLaborales.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaExperienciasLaborales.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="2" styleClass="subactiviades">#{t.institucionEmpresa}</p:column>
+                                                                            <p:column colspan="2" styleClass="subactiviades"><h:outputLabel value="#{t.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel> - <h:outputLabel value="#{t.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p:column>
+                                                                            <p:column colspan="6" styleClass="subactiviades">#{t.puestoDesepenado}</p:column>
+                                                                            <p:column colspan="5" styleClass="subactiviades">#{t.funcionesDesempenio}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>                                                        
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaCapacitacionespersonal.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>ACTUALIZACIÓN PROFESIONAL</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaCapacitacionespersonal.size() != 0?true:false}">
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">CAPACITACIÓN</p:column>
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PERIODO</p:column>
+                                                                    <p:column colspan="6" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">LUGAR</p:column>
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">OBJETIVO</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaCapacitacionespersonal.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaCapacitacionespersonal.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaCapacitacionespersonal.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="2" styleClass="subactiviades">#{t.nombre}</p:column>
+                                                                            <p:column colspan="2" styleClass="subactiviades"><h:outputLabel value="#{t.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel> - <h:outputLabel value="#{t.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p:column>                                                                    
+                                                                            <p:column colspan="6" styleClass="subactiviades">#{t.lugar}</p:column>
+                                                                            <p:column colspan="5" styleClass="subactiviades">#{t.objetivo}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>                                                        
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaIdiomas.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>IDIOMAS</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaIdiomas.size() != 0?true:false}">
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NOMBRE</p:column>
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NIVEL</p:column>
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">CONVERSACIÓN</p:column>
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">ESCRITURA</p:column>
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">LECTURA</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaIdiomas.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaIdiomas.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaIdiomas.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.idiomaHablado}</p:column>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.gradoDominio}</p:column>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.nivelConversacion}</p:column>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.nivelEscritura}</p:column>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.nivelLectura}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>                                                        
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaHabilidadesInformaticas.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>HABILIDADES INFORMÁTICAS</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaHabilidadesInformaticas.size() != 0?true:false}">
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">CONOCIMIENTO</p:column>
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PROGRAMA</p:column>
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">DOMINIO</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaHabilidadesInformaticas.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaHabilidadesInformaticas.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaHabilidadesInformaticas.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="5" styleClass="subactiviades">#{t.tipoConocimiento}</p:column>
+                                                                            <p:column colspan="5" styleClass="subactiviades">#{t.programaDominante}</p:column>
+                                                                            <p:column colspan="5" styleClass="subactiviades">#{t.nivelConocimiento}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>                                                        
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaLenguas.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>LENGUAS INDÍGENAS</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaLenguas.size() != 0?true:false}">
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NOMBRE</p:column>
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NIVEL</p:column>
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">CONVERSACIÓN</p:column>
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">ESCRITURA</p:column>
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">LECTURA</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaLenguas.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaLenguas.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaLenguas.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.tipoLengua}</p:column>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.gradoDominio}</p:column>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.nivelConversacion}</p:column>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.nivelEscritura}</p:column>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.nivelLectura}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>                                                        
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaDesarrollosTecnologicos.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>DESARROLLOS TECMOLÓGICOS</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaDesarrollosTecnologicos.size() != 0?true:false}">
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">TIPO</p:column>
+                                                                    <p:column colspan="7" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Objetivo</p:column>
+                                                                    <p:column colspan="6" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">Resumen</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaDesarrollosTecnologicos.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaDesarrollosTecnologicos.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaDesarrollosTecnologicos.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="2" styleClass="subactiviades">#{t.tipoDesarrollo}</p:column>
+                                                                            <p:column colspan="7" styleClass="subactiviades">#{t.objetivoDesarrollo}</p:column>
+                                                                            <p:column colspan="6" styleClass="subactiviades">#{t.resumenDesarrollo}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>
 
-                            <p:outputPanel >
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaInnovaciones.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>INNOVACIONES</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaInnovaciones.size() != 0?true:false}">
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">TIPO</p:column>
+                                                                    <p:column colspan="4" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">COBERTURA</p:column>
+                                                                    <p:column colspan="4" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">APLICACIÓN</p:column>
+                                                                    <p:column colspan="4" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PROTECCIÓN</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaInnovaciones.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaInnovaciones.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaInnovaciones.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.tipoInnovacion}</p:column>
+                                                                            <p:column colspan="4" styleClass="subactiviades">#{t.potencialCobertura}</p:column>
+                                                                            <p:column colspan="4" styleClass="subactiviades">#{t.aplicacionInnovacion}</p:column>
+                                                                            <p:column colspan="4" styleClass="subactiviades">#{t.mecanismoProteccion}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>                                                        
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaDesarrolloSoftwar.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>Desarrollo de Software</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaDesarrolloSoftwar.size() != 0?true:false}">
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">TIPO</p:column>
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">LUGAR</p:column>
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">HORAS INVERTIDAS</p:column>
+                                                                    <p:column colspan="7" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">LOGROS</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaDesarrolloSoftwar.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaDesarrolloSoftwar.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaDesarrolloSoftwar.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="2" styleClass="subactiviades">#{t.tipoDesarrollo}</p:column>
+                                                                            <p:column colspan="5" styleClass="subactiviades">#{t.lugar}</p:column>
+                                                                            <p:column colspan="1" styleClass="subactiviades">#{t.horasHombre}</p:column>
+                                                                            <p:column colspan="7" styleClass="subactiviades">#{t.logros}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>                                                        
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaDistinciones.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>PREMIOS Y DISTINCIONES</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaDistinciones.size() != 0?true:false}">
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">INTITUTO</p:column>
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NOMBRE</p:column>
+                                                                    <p:column colspan="7" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">MOTIVO</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaDistinciones.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaDistinciones.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaDistinciones.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.institucion}</p:column>
+                                                                            <p:column colspan="5" styleClass="subactiviades">#{t.nombreDistincion}</p:column>
+                                                                            <p:column colspan="7" styleClass="subactiviades">#{t.motivoDescripcion}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>
 
-                                <h:panelGrid columns="1"  class="col-md-12">
-                                    <h2 class="align-center"> 
-                                        <p:outputLabel value="Descargar Plantilla Activa"/>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{exelPlantillaPersonal.direccionDescarga}" target="_blank">
-                                            <i class="fa fa-download"></i>
-                                            <span>Descargar plantilla</span>
-                                        </p:link>
-                                    </h2>
-                                </h:panelGrid>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaLibrosPubs.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>LIBROS PUBLICADOS</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaLibrosPubs.size() != 0?true:false}">
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">ISBN</p:column>
+                                                                    <p:column colspan="7" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">TÍTULO</p:column>
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">IDIOMA</p:column>
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PAÍS</p:column>
+                                                                    <p:column colspan="4" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">EDITORIAL</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaLibrosPubs.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaLibrosPubs.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaLibrosPubs.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="2" styleClass="subactiviades">#{t.isbn}</p:column>
+                                                                            <p:column colspan="7" styleClass="subactiviades">#{t.titulo}</p:column>
+                                                                            <p:column colspan="1" styleClass="subactiviades">#{t.idioma}</p:column>
+                                                                            <p:column colspan="1" styleClass="subactiviades">#{t.pasi}</p:column>
+                                                                            <p:column colspan="4" styleClass="subactiviades">#{t.editorial}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>
 
-                            </p:outputPanel>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaArticulosp.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>ARTÍCULOS PUBLICADOS</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaArticulosp.size() != 0?true:false}">
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">ISBN ELECTRÓNICO</p:column>
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">ISBN IMPRESO</p:column>
+                                                                    <p:column colspan="7" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NOMBRE</p:column>
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">TÍTULO</p:column>
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PAÍS</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaArticulosp.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaArticulosp.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaArticulosp.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="1" styleClass="subactiviades">#{t.issnElectronico}</p:column>
+                                                                            <p:column colspan="1" styleClass="subactiviades">#{t.issnNimpreso}</p:column>
+                                                                            <p:column colspan="7" styleClass="subactiviades">#{t.nombre}</p:column>
+                                                                            <p:column colspan="5" styleClass="subactiviades">#{t.tituloArticulo}</p:column>
+                                                                            <p:column colspan="1" styleClass="subactiviades">#{t.pais}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>
 
-                        </p:dialog>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaMemoriaspub.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>MEMORIAS PUBLICADOS</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaMemoriaspub.size() != 0?true:false}">
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">TÍTULO DE MOMORIA</p:column>
+                                                                    <p:column colspan="6" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">TÍTULO DE PUBLICACIÓN</p:column>
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">TÍTULO DE OBRA</p:column>
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PAÍS</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaMemoriaspub.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaMemoriaspub.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaMemoriaspub.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.tituloDeMemoria}</p:column>
+                                                                            <p:column colspan="6" styleClass="subactiviades">#{t.tituloDePublicacion}</p:column>
+                                                                            <p:column colspan="5" styleClass="subactiviades">#{t.tituloDeObra}</p:column>
+                                                                            <p:column colspan="1" styleClass="subactiviades">#{t.pais}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>
+
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaCongresos.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>CONGRESOS</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaCongresos.size() != 0?true:false}">
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NOMBRE</p:column>
+                                                                    <p:column colspan="7" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PARTICIPACIÓN</p:column>
+                                                                    <p:column colspan="6" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">TÍTULO DE TABAJO</p:column>
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PAÍS</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaCongresos.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaCongresos.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaCongresos.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="1" styleClass="subactiviades">#{t.participacion}</p:column>
+                                                                            <p:column colspan="7" styleClass="subactiviades">#{t.nombreCongreso}</p:column>
+                                                                            <p:column colspan="6" styleClass="subactiviades">#{t.tituloTrabajo}</p:column>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.lugarPais}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>
+
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaInvestigacion.size() != 0?true:false}">
+                                                                    <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
+                                                                        <h3><strong>Investigación</strong></h3>
+                                                                    </p:column>                                                            
+                                                                </p:row>
+                                                                <p:row rendered="#{controladorComisionDictaminadora.listaInvestigacion.size() != 0?true:false}">
+                                                                    <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">TIPO</p:column>
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PERIODO</p:column>
+                                                                    <p:column colspan="5" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NOMBRE</p:column>
+                                                                    <p:column colspan="4" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">DESCRIPCIÓN</p:column>
+                                                                    <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">INSTITUCIÓN</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.listaInvestigacion.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.listaInvestigacion.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.listaInvestigacion.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column colspan="1" styleClass="subactiviades">#{t.tipo}</p:column>
+                                                                            <p:column colspan="2" styleClass="subactiviades"><h:outputLabel value="#{t.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel> - <h:outputLabel value="#{t.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p:column>
+                                                                            <p:column colspan="5" styleClass="subactiviades">#{t.nombreInvestigacion}</p:column>
+                                                                            <p:column colspan="4" styleClass="subactiviades">#{t.decripcion}</p:column>
+                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.institucion}</p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>
+                                                            </p:panelGrid>
+                                                        </p:panel>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </p:tab>
+                                            <p:tab title="2.0 DOCUMENTOS PERSONALES">  
+                                                <p:tabView orientation="left">
+                                                    <p:tab title="2.1 Acta de nacimiento" disabled="#{!controladorComisionDictaminadora.personales.cuentaA}">
+                                                        <p:outputPanel id="evidencias21" style="text-align:center;width: 100%;height: 100%" rendered="#{controladorComisionDictaminadora.personales.cuentaA}">
+                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorComisionDictaminadora.personales.rutaA)}" target="_blank">
+                                                                <i class="fa fa-book"></i>
+                                                                <span>Ver Acta de nacimiento</span>
+                                                            </p:link>
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                <embed type="application/pdf" src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.personales.rutaA)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:tab>
+                                                    <p:tab title="2.2 Credencial de elector" disabled="#{!controladorComisionDictaminadora.personales.cuentaC}">
+                                                        <p:outputPanel id="evidencias22" style="text-align:center;width: 100%;height: 100%" rendered="#{controladorComisionDictaminadora.personales.cuentaC}">
+                                                            <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(controladorComisionDictaminadora.personales.rutaC)}" target="_blank">
+                                                                <i class="fa fa-book"></i>
+                                                                <span>Ver INE</span>
+                                                            </p:link>
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.personales.rutaC)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </p:tab>
+                                            <p:tab title="3.0 ESCOLARIDAD">  
+                                                <p:tabView orientation="left">
+                                                    <p:tab title="3.1 Titulo de Nivel Posgrado(s)" disabled="#{!controladorComisionDictaminadora.escolaridad.cuentaTp}">
+                                                        <p:outputPanel id="evidencias31" style="text-align:center;width: 100%;height: 100%" rendered="#{controladorComisionDictaminadora.escolaridad.cuentaTp}">
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.escolaridad.rutaTp)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:tab>
+                                                    <p:tab title="3.2 Cédula Profesional de Nivel Posgrado(s)" disabled="#{!controladorComisionDictaminadora.escolaridad.cuentaCp}">
+                                                        <p:outputPanel id="evidencias32" style="text-align:center;width: 100%;height: 100%" rendered="#{controladorComisionDictaminadora.escolaridad.cuentaCp}">
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.escolaridad.rutaCp)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:tab>
+                                                    <p:tab title="3.3 Titulo de Licenciatura o Ingeniería" disabled="#{!controladorComisionDictaminadora.escolaridad.cuentaTi}">
+                                                        <p:outputPanel id="evidencias33" style="text-align:center;width: 100%;height: 100%" rendered="#{controladorComisionDictaminadora.escolaridad.cuentaTi}">
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.escolaridad.rutaTi)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:tab>
+                                                    <p:tab title="3.4 Cédula de Licenciatura o Ingeniería" disabled="#{!controladorComisionDictaminadora.escolaridad.cuentaCi}">
+                                                        <p:outputPanel id="evidencias34" style="text-align:center;width: 100%;height: 100%" rendered="#{controladorComisionDictaminadora.escolaridad.cuentaCi}">
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.escolaridad.rutaCi)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:tab>
+                                                    <p:tab title="3.5 Título Técnico Superior Universitario" disabled="#{!controladorComisionDictaminadora.escolaridad.cuentaTt}">
+                                                        <p:outputPanel id="evidencias35" style="text-align:center;width: 100%;height: 100%" rendered="#{controladorComisionDictaminadora.escolaridad.cuentaTt}">
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.escolaridad.rutaTt)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:tab>
+                                                    <p:tab title="3.6 Cédula de Técnico Superior Universitario" disabled="#{!controladorComisionDictaminadora.escolaridad.cuentaCt}">
+                                                        <p:outputPanel id="evidencias36" style="text-align:center;width: 100%;height: 100%" rendered="#{controladorComisionDictaminadora.escolaridad.cuentaCt}">
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.escolaridad.rutaCt)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:tab>
+                                                    <p:tab title="3.7 Titulo en una Carrera Técnica de nivel medio superior" disabled="#{!controladorComisionDictaminadora.escolaridad.cuentaTm}">
+                                                        <p:outputPanel id="evidencias37" style="text-align:center;width: 100%;height: 100%" rendered="#{controladorComisionDictaminadora.escolaridad.cuentaTm}">
+                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(controladorComisionDictaminadora.escolaridad.rutaTm)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </p:tab>
+                                            <p:tab title="4.0 EXPERIENCIA">  
+                                                <p:tabView orientation="left">
+                                                    <p:tab title="4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado 'B' y/o experiencia docente en el nivel superior" disabled="#{!controladorComisionDictaminadora.experiencia.cuenta41}">
+                                                        <p:tabView>
+                                                            <c:if test="#{controladorComisionDictaminadora.experiencia.cuenta41}">
+                                                                <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.experiencia.ruta41.size()-1}">
+                                                                    <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta41.get(i)}"/>
+                                                                    <p:tab title="Evidencia #{i+1}">
+                                                                        <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                            </p:panelGrid>
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                </c:forEach>
+                                                            </c:if>                                                            
+                                                        </p:tabView>
+                                                    </p:tab>
+                                                    <p:tab title="4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito" disabled="#{!controladorComisionDictaminadora.experiencia.cuenta42}">
+                                                        <p:tabView>
+                                                            <c:if test="#{controladorComisionDictaminadora.experiencia.cuenta42}">
+                                                                <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.experiencia.ruta42.size()-1}">
+                                                                    <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta42.get(i)}"/>
+                                                                    <p:tab title="Evidencia #{i+1}">
+                                                                        <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                            </p:panelGrid>
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                </c:forEach>
+                                                            </c:if>                                                            
+                                                        </p:tabView>
+                                                    </p:tab>
+                                                    <p:tab title="4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento" disabled="#{!controladorComisionDictaminadora.experiencia.cuenta43}">
+                                                        <p:tabView>
+                                                            <c:if test="#{controladorComisionDictaminadora.experiencia.cuenta43}">
+                                                                <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.experiencia.ruta43.size()-1}">
+                                                                    <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta43.get(i)}"/>
+                                                                    <p:tab title="Evidencia #{i+1}">
+                                                                        <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                            </p:panelGrid>
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                </c:forEach>
+                                                            </c:if>                                                            
+                                                        </p:tabView>
+                                                    </p:tab>
+                                                    <p:tab title="4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos" disabled="#{!controladorComisionDictaminadora.experiencia.cuenta44}">
+                                                        <p:tabView>
+                                                            <c:if test="#{controladorComisionDictaminadora.experiencia.cuenta44}">
+                                                                <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.experiencia.ruta44.size()-1}">
+                                                                    <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta44.get(i)}"/>
+                                                                    <p:tab title="Evidencia #{i+1}">
+                                                                        <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                            </p:panelGrid>
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                </c:forEach>
+                                                            </c:if>                                                            
+                                                        </p:tabView>
+                                                    </p:tab>
+                                                    <p:tab title="4.5 Constancia o evidencia en la dirección de estudiantes en estadías" disabled="#{!controladorComisionDictaminadora.experiencia.cuenta45}">
+                                                        <p:tabView>
+                                                            <c:if test="#{controladorComisionDictaminadora.experiencia.cuenta45}">
+                                                                <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.experiencia.ruta45.size()-1}">
+                                                                    <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta45.get(i)}"/>
+                                                                    <p:tab title="Evidencia #{i+1}">
+                                                                        <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                            </p:panelGrid>
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                </c:forEach>
+                                                            </c:if>                                                            
+                                                        </p:tabView>
+                                                    </p:tab>
+                                                    <p:tab title="4.6 Constancia o evidencia de haber producido material didáctico" disabled="#{!controladorComisionDictaminadora.experiencia.cuenta46}">
+                                                        <p:tabView>
+                                                            <c:if test="#{controladorComisionDictaminadora.experiencia.cuenta46}">
+                                                                <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.experiencia.ruta46.size()-1}">
+                                                                    <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta46.get(i)}"/>
+                                                                    <p:tab title="Evidencia #{i+1}">
+                                                                        <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                            </p:panelGrid>
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                </c:forEach>
+                                                            </c:if>                                                            
+                                                        </p:tabView>
+                                                    </p:tab>
+                                                    <p:tab title="4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio" disabled="#{!controladorComisionDictaminadora.experiencia.cuenta47}">
+                                                        <p:tabView>
+                                                            <c:if test="#{controladorComisionDictaminadora.experiencia.cuenta47}">
+                                                                <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.experiencia.ruta47.size()-1}">
+                                                                    <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta47.get(i)}"/>
+                                                                    <p:tab title="Evidencia #{i+1}">
+                                                                        <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                            </p:panelGrid>
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                </c:forEach>
+                                                            </c:if>                                                            
+                                                        </p:tabView>
+                                                    </p:tab>
+                                                    <p:tab title="4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores" disabled="#{!controladorComisionDictaminadora.experiencia.cuenta48}">
+                                                        <p:tabView>
+                                                            <c:if test="#{controladorComisionDictaminadora.experiencia.cuenta48}">
+                                                                <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.experiencia.ruta48.size()-1}">
+                                                                    <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta48.get(i)}"/>
+                                                                    <p:tab title="Evidencia #{i+1}">
+                                                                        <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                            </p:panelGrid>
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                </c:forEach>
+                                                            </c:if>                                                            
+                                                        </p:tabView>
+                                                    </p:tab>
+                                                    <p:tab title="4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo" disabled="#{!controladorComisionDictaminadora.experiencia.cuenta49}">
+                                                        <p:tabView>
+                                                            <c:if test="#{controladorComisionDictaminadora.experiencia.cuenta49}">
+                                                                <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.experiencia.ruta49.size()-1}">
+                                                                    <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta49.get(i)}"/>
+                                                                    <p:tab title="Evidencia #{i+1}">
+                                                                        <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                            </p:panelGrid>
+                                                                        </p:outputPanel>
+                                                                    </p:tab>
+                                                                </c:forEach>
+                                                            </c:if>                                                            
+                                                        </p:tabView>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </p:tab>
+                                            <p:tab title="5.0 CAPACITACIÓN">  
+                                                <p:tabView orientation="left">
+                                                    <p:tab title="5.1 Principales reconocimientos de cursos, talleres, conferencias o similar relacionadas a la acreditación pedagógica y didáctica" disabled="#{!controladorComisionDictaminadora.capacitacion.cuentaEv}">
+                                                        <p:outputPanel id="evidencias51" style="text-align:center;width: 100%;height: 100%" rendered="#{controladorComisionDictaminadora.capacitacion.cuentaEv}">
+                                                            <p:panelGrid style="width: 100%;height: 100%" >
+                                                                <p:row rendered="#{controladorComisionDictaminadora.capAceptadas.size() != 0?true:false}">
+                                                                    <p:column styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">CAPACITACIÓN</p:column>
+                                                                    <p:column styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">PERIODO</p:column>
+                                                                    <p:column styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">LUGAR</p:column>
+                                                                    <p:column styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">OBJETIVO</p:column>
+                                                                    <p:column styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">EVIDENCIA</p:column>
+                                                                </p:row>
+                                                                <c:if test="#{controladorComisionDictaminadora.capAceptadas.size() ne 0}">
+                                                                    <c:forEach var="i" begin="0" end="#{controladorComisionDictaminadora.capAceptadas.size()-1}">
+                                                                        <c:set var="t" value="#{controladorComisionDictaminadora.capAceptadas.get(i)}"/>
+                                                                        <p:row>
+                                                                            <p:column styleClass="subactiviades">#{t.nombre}</p:column>
+                                                                            <p:column styleClass="subactiviades"><h:outputLabel value="#{t.fechaInicio}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel> - <h:outputLabel value="#{t.fechaFin}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p:column>                                                                    
+                                                                            <p:column styleClass="subactiviades">#{t.lugar}</p:column>
+                                                                            <p:column styleClass="subactiviades" style="text-align: justify;">#{t.objetivo}</p:column>
+                                                                            <p:column styleClass="subactiviades"> 
+                                                                                <p:link href="http://siip.utxicotepec.edu.mx/archivos/#{utilidadesCH.convertirRuta(t.evidenciaCapacitacion)}" target="_blank">
+                                                                                    <i class="fa fa-search"></i>
+                                                                                    <span>Ver evidencia</span>
+                                                                                </p:link>
+                                                                            </p:column>
+                                                                        </p:row>
+                                                                    </c:forEach>
+                                                                </c:if>  
+                                                            </p:panelGrid>
+                                                        </p:outputPanel>
+                                                    </p:tab>
+                                                </p:tabView>
+                                            </p:tab>
+                                        </p:tabView>
+                                    </div>
+                                </div>
+                            </div>  
+                        </section>
                     </h:form>
-
-                    <h:form id="frmEvidencias" >
-                        <p:dialog id="dlgEvidencias" modal="true" header="Plantilla activa" widgetVar="dlgEvidencias" minimizable="true" maximizable="true" position="center">
-
-                            <p:outputPanel >
-
-                                <h:panelGrid columns="1"  class="col-md-12">
-                                    <h2 class="align-center"> 
-                                        <p:outputLabel value="Descargar Plantilla Activa"/>
-                                        <p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/zips/#{controladorComisionDictaminadora.contactoDestino}.zip" target="_blank">
-                                            <i class="fa fa-download"></i>
-                                            <span>Descargar plantilla</span>
-                                        </p:link>
-                                    </h2>
-                                </h:panelGrid>
-
-                            </p:outputPanel>
-
-                        </p:dialog>
-                    </h:form>
-
                 </c:if>
                 <c:if test="#{!(controladorEmpleado.nuevoOBJListaPersonal.areaOperativa eq 13 || controladorEmpleado.nuevoOBJListaPersonal.clave eq 564)}">
                     <h1>

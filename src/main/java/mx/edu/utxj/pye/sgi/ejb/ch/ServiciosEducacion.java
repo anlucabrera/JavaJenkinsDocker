@@ -129,6 +129,7 @@ public class ServiciosEducacion implements EjbEducacion {
                         c.setEstatus("Aceptado");
                         c.setTipoCapacitacion("Interna");
                         c.setCategoriaCapacitacion("profesional");
+                        c.setRipppa("No Aplica");
                         pr.add(c);
                         i++;
                     });
