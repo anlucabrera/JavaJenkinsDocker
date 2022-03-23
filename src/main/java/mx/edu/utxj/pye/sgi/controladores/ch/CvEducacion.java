@@ -84,7 +84,7 @@ public class CvEducacion implements Serializable {
         nuevaListaFormacionAcademica.clear();
         nuevaListaExperienciasLaborales.clear();
         nuevaListaCapacitaciones.clear();
-
+        mostrarCatalogos();
         mostrarListas();
     }
 
@@ -323,14 +323,25 @@ public class CvEducacion implements Serializable {
     /////////////////////////////////////////////////////////////////////////////////////Lista \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
     public void mostrarListas() {
         try {
-            //Las listas son llenadas con los catálogos existentes en la BD.
-            listaGrados = ejbEducacion.mostrarListaGrados();
-            listaCursos = ejbEducacion.mostrarListaCursosTipo();
-            listaModalidades = ejbEducacion.mostrarListaCursosModalidad();
+            nuevaListaFormacionAcademica = new ArrayList<>();
+            nuevaListaExperienciasLaborales = new ArrayList<>();
+            nuevaListaCapacitaciones = new ArrayList<>();
             //Las listas son llenadas con los registros existentes del usuario logeado en la BD, esto mediante la recepción de su clave.
             nuevaListaFormacionAcademica = ejbEducacion.mostrarFormacionAcademica(usuario);
             nuevaListaExperienciasLaborales = ejbEducacion.mostrarExperienciasLaborales(usuario);
             nuevaListaCapacitaciones = ejbEducacion.mostrarCapacitacionespersonal(usuario);
+        } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
+            Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+  
+    public void mostrarCatalogos() {
+        try {
+            //Las listas son llenadas con los catálogos existentes en la BD.
+            listaGrados = ejbEducacion.mostrarListaGrados();
+            listaCursos = ejbEducacion.mostrarListaCursosTipo();
+            listaModalidades = ejbEducacion.mostrarListaCursosModalidad();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
             Logger.getLogger(CvEducacion.class.getName()).log(Level.SEVERE, null, ex);

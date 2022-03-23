@@ -534,4 +534,21 @@ public class Caster {
         }
         return tipoEv;
     }
+    
+    public String siglaNombreProgramaEducativo(String sigla){
+        if(sigla == null) return "";
+        if("".equals(sigla)) return "";
+        if(sigla == "TIADSM") return "T.S.U. en Tecnologías de la Información Área Desarrollo de Software Multiplataforma";
+        if(sigla == "MECAA") return "T.S.U. en Mecatrónica Área Automatización";
+        if(sigla == "MAI") return "T.S.U. en Mantenimiento Área Industrial";
+        if(sigla == "TIEVND") return "T.S.U. en Tecnologías de la Información Área Entornos Virtuales y Negocios Digitales";
+        if(sigla == "GAS") return "T.S.U. en Gastronomía";
+        if(sigla == "TFAR") return "T.S.U. en Terapia Física Área Rehabilitación";
+        if(sigla == "PA") return "T.S.U. en Procesos Alimentarios";
+        if(sigla == "AACH") return "T.S.U. en Administración Área Capital Humano";
+        if(sigla == "QAB") return "T.S.U. en Química Área Biotecnología";
+        if(sigla == "MIAP") return "T.S.U. en Mantenimiento Área Petróleo";
+        if(sigla == "ASP") return "T.S.U. en Agricultura Sustentable Y Protegida";
+        return "";
+    }
 }

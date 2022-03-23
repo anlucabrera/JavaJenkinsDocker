@@ -70,7 +70,7 @@ public class FormacionAcademica implements Serializable {
     private String evidenciaCedula;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 200)
     @Column(name = "institucion")
     private String institucion;
     @Basic(optional = false)

@@ -176,6 +176,25 @@
                                     </div>
                                 </div>
                             </c:if>
+<!--                            <c:if test="# {estudiantesActivosCESaiiut.tieneAcceso}">
+                                <div class="# {claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-green">
+                                        <div class="inner" style="cursor: pointer;">
+                                            <h3>
+                                                <h:outputLabel value="Encuesta" style="cursor: pointer;" />
+                                                <sup style="font-size: 20px"></sup>
+                                            </h3>
+                                            <p>Cuestionario de ejemplo<br/></p>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-id-badge"></i>
+                                        </div>
+                                        <p:link href="http://www.utxicotepec.edu.mx/" class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                    </div>
+                                </div>
+                            </c:if>-->
                             <c:if test="#{evaluacionDesempenioAmbientalEstudiante19.tieneAcceso}">
                                 <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-xs-12'}" />
                                 <div class="#{claseResumen}" style="height: 100px;">
@@ -282,6 +301,29 @@
                                     </div>
                                 </div>
                             </c:if>
+                            
+                            <c:if test="#{testVocacionalC.tieneAcceso}">
+                                <div class="#{claseResumen}" style="max-height: 154px;">
+                                    <div class="small-box bg-aqua-active">
+                                        <div class="inner" style="cursor: pointer;">
+                                            <p:link outcome="encuestas/Estudiantes/testVocacional">
+                                                <h3>
+                                                    <h:outputLabel value="Test Vocacional" style="cursor: pointer; color: #ffffff"/>
+                                                    <sup style="font-size: 20px"></sup>
+                                                </h3>
+                                                <p style="color: #ffffff">Encuesta de Test Vocacional<br/></p>
+                                            </p:link>
+                                        </div>
+                                        <div class="icon">
+                                            <i class="fa fa-list-alt"></i>
+                                        </div>
+                                        <p:link outcome="encuestas/Estudiantes/testVocacional"  class="small-box-footer">
+                                            Entrar <i class="fa fa-arrow-circle-right"></i>
+                                        </p:link>
+                                    </div>
+                                </div>
+                            </c:if>
+                            
                             <!--Evaluacion Tutor -->
                             <c:if test="#{evaluacionTutorEstudiante.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
@@ -385,33 +427,6 @@
                                 </div>
                             </div>
                             -->
-                            
-                            <c:if test="#{validacionTutoriaGrupalEstudiante.tieneAcceso}">
-                                <div class="#{claseResumen}" style="max-height: 154px;">
-                                    <div class="small-box bg-blue">
-                                        <div class="inner" style="cursor: pointer;">
-                                            <p:link outcome="controlEscolar/estudiante/tutorias_grupales">
-                                                <h3>
-                                                    <c:if test="#{validacionTutoriaGrupalEstudiante.rol.firmasPendiente != null || validacionTutoriaGrupalEstudiante.rol.firmasPendiente != 0}">
-                                                        <h:outputLabel value="Tutorías Sin Firmar: #{validacionTutoriaGrupalEstudiante.rol.firmasPendiente}" style="cursor: pointer; color: #ffffff"/>
-                                                        <sup style="font-size: 20px"></sup>
-                                                    </c:if>
-                                                    <c:if test="#{validacionTutoriaGrupalEstudiante.rol.firmasPendiente == null || validacionTutoriaGrupalEstudiante.rol.firmasPendiente == 0}">
-                                                        <h:outputLabel value="Tutorías Firmadas al 100%" style="cursor: pointer; color: #ffffff" />
-                                                        <sup style="font-size: 20px"></sup>
-                                                    </c:if>
-                                                </h3>
-                                                <p style="color: #ffffff">Tutorías Grupales<br/></p>
-                                            </p:link>
-                                        </div>
-                                        <div class="icon"><i class="fa fa-slideshare"></i></div>
-                                        <p:link outcome="controlEscolar/estudiante/tutorias_grupales"  class="small-box-footer">
-                                            Firmar tutorías <i class="fa fa-arrow-circle-right"></i>
-                                        </p:link>
-                                    </div>
-                                </div>
-                            </c:if>
-                            
                             <div class="col-lg-4 col-md-6 col-xs-12">
                                 <div class="small-box bg-green">
                                     <div class="inner">
@@ -444,6 +459,66 @@
                                             </div>
                                             <p:link  outcome="controlEscolar/estudiante/CambioPwdEstudiante" class="small-box-footer">
                                                 Entrar <i class="fa fa-arrow-circle-right"></i>
+                                            </p:link>
+                                        </div>
+                                    </div>
+                                </c:if>
+                            </c:if>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="box box-primary">
+                <div class="box box-solid">
+                    <div class="box-header with-border">
+                        <h2 class="box-title">Tutorías Grupales</h2>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                            </button>
+                        </div>
+                        <div class="box-body">
+                        <c:if test="#{validacionTutoriaGrupalEstudiante.tieneAcceso}">
+                                <c:forEach items="#{validacionTutoriaGrupalEstudiante.rol.firmasPendiente}" var="firmaPendiente">
+                                    <div class="#{claseResumen}" style="max-height: 154px;">
+                                        <div class="small-box bg-blue">
+                                            <div class="inner" style="cursor: pointer;">
+                                                <p:link outcome="controlEscolar/estudiante/tutorias_grupales">
+                                                    <h3>
+                                                        <c:if test="#{firmaPendiente.numeroTutoriasPendintes != null || firmaPendiente.numeroTutoriasPendintes != 0}">
+                                                            <h:outputLabel value="Tutorías Sin Firmar: #{firmaPendiente.numeroTutoriasPendintes}" style="cursor: pointer; color: #ffffff"/>
+                                                            <sup style="font-size: 20px"></sup>
+                                                        </c:if>
+                                                        <c:if test="#{firmaPendiente.numeroTutoriasPendintes == null || firmaPendiente.numeroTutoriasPendintes == 0}">
+                                                            <h:outputLabel value="100%" style="cursor: pointer; color: #ffffff" />
+                                                            <sup style="font-size: 20px"></sup>
+                                                        </c:if>
+                                                    </h3>
+                                                    <p style="color: #ffffff">Tutorías del mes de: #{firmaPendiente.eventoRegistro.mes}<br/></p>
+                                                </p:link>
+                                            </div>
+                                            <div class="icon"><i class="fa fa-slideshare"></i></div>
+                                            <p:link outcome="controlEscolar/estudiante/tutorias_grupales"  class="small-box-footer">
+                                                Firmar tutorías <i class="fa fa-arrow-circle-right"></i>
+                                            </p:link>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                                <c:if test="#{validacionTutoriaGrupalEstudiante.rol.firmasPendiente == null || empty validacionTutoriaGrupalEstudiante.rol.firmasPendiente}">
+                                    <div class="#{claseResumen}" style="max-height: 154px;">
+                                        <div class="small-box bg-blue">
+                                            <div class="inner" style="cursor: pointer;">
+                                                <p:link outcome="controlEscolar/estudiante/tutorias_grupales">
+                                                    <h3>
+                                                        <h:outputLabel value="Tutorias Firmadas al: 100%" style="cursor: pointer; color: #ffffff"/>
+                                                        <sup style="font-size: 20px"></sup>
+                                                    </h3>
+                                                    <p style="color: #ffffff">Tutorías Grupales<br/></p>
+                                                </p:link>
+                                            </div>
+                                            <div class="icon"><i class="fa fa-slideshare"></i></div>
+                                            <p:link outcome="controlEscolar/estudiante/tutorias_grupales"  class="small-box-footer">
+                                                Consultar Tutorías <i class="fa fa-arrow-circle-right"></i>
                                             </p:link>
                                         </div>
                                     </div>

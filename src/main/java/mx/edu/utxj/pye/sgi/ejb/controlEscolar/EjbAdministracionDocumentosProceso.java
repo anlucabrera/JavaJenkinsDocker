@@ -86,6 +86,7 @@ public class EjbAdministracionDocumentosProceso {
                 listaProceso.add("EstadiaIngLic");
                 listaProceso.add("TitulacionTSU");
                 listaProceso.add("TitulacionIngLic");
+                listaProceso.add("ResponsivaCursosIMSS");
             } else if(areaPersonal.equals("ServiciosEscolares")){
                 listaProceso.add("Admision");
                 listaProceso.add("Inscripcion");
