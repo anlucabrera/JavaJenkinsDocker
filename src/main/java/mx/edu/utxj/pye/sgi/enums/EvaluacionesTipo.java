@@ -31,7 +31,8 @@ public enum EvaluacionesTipo {//Tutor, Control interno, Docente, Satisfacción d
     CUESTIONARIO_COMPLEMENTARIO_INFORMACION_PERSONAL(16,"Cuestionario complementario de información personal"),
     EVALUACION_PARES_ACADEMICOS(17,"Evaluación entre pares académicos"),
     TEST_DIAGNOSTICO_APRENDIZAJE(18, "Test de Diagnóstico de Estilos de Aprendizaje"),
-    EVALUACION_CODIGO_ETICA_CONDUCTA(19,"Evaluacion conocimientos de los código ética y conducta")
+    EVALUACION_CODIGO_ETICA_CONDUCTA(19,"Evaluacion conocimientos de los código ética y conducta"),
+    TEST_VOCACIONAL(20,"Test Vocacional")
     ;
     @Getter @NonNull private final Integer numero;
     @Getter @NonNull private final String label;

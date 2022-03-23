@@ -104,7 +104,7 @@ public class ValidacionSeguroFacultativoEstudiantiles extends ViewScopedRol impl
             if(verificarInvocacionMenu()) return;
             if(!validarIdentificacion()) return;
             if(!tieneAcceso){mostrarMensajeNoAcceso();return;}
-            rol.setNivelRol(NivelRol.OPERATIVO);
+            rol.setNivelRol(NivelRol.SUPERIOR);
             rol.setPeriodoEscolarActivo(ejbPeriodoEventoRegistro.getPeriodoEscolarActivo().getValor());
             rol.setListaPeriodosEscolares(resPeriodos.getValor());
             cambiarPeriodo();
