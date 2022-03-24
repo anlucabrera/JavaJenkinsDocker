@@ -101,7 +101,7 @@
                                                     <p:column>#{estudiante.programaEducativo.siglas}</p:column>
                                                     <p:ajax event="itemSelect" update="@this" process="@this"/>
                                                 </p:autoComplete>
-                                                <p:outputLabel value="Estudiante - Matricula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
+                                                <p:outputLabel value="Estudiante - Matrícula" for="estudiante" style="font-weight: bold; font-size: 14px;"/>
                                                 <p:message for="estudiante" /> 
                                             </div>
                                         </div>
@@ -127,7 +127,7 @@
                                                             <p:column headerText="Eliminar" style="width: 200px;"/>
                                                             <p:column headerText="Programa educativo" style="width: 250px;" sortBy="#{estudianteReg.programaEducativo.nombre}" filterBy="#{estudianteReg.programaEducativo.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Grupo" style="width: 150px;" sortBy="#{estudianteReg.estudiante.grupo.grado}° '#{estudianteReg.estudiante.grupo.literal}' #{estudianteReg.estudiante.grupo.idSistema.nombre}" filterBy="#{estudianteReg.estudiante.grupo.grado}° '#{estudianteReg.estudiante.grupo.literal}' #{estudianteReg.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Matricula" style="width: 100px;" sortBy="#{estudianteReg.estudiante.matricula}" filterBy="#{estudianteReg.estudiante.matricula}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Matrícula" style="width: 100px;" sortBy="#{estudianteReg.estudiante.matricula}" filterBy="#{estudianteReg.estudiante.matricula}" filterMatchMode="contains"/>
                                                             <p:column headerText="Nombre del estudiante" style="width: 300px;" sortBy="#{estudianteReg.estudiante.aspirante.idPersona.apellidoPaterno} #{estudianteReg.estudiante.aspirante.idPersona.apellidoMaterno} #{estudianteReg.estudiante.aspirante.idPersona.nombre}" filterBy="#{estudianteReg.estudiante.aspirante.idPersona.apellidoPaterno} #{estudianteReg.estudiante.aspirante.idPersona.apellidoMaterno} #{estudianteReg.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
                                                         </p:row>
                                                     </p:columnGroup>

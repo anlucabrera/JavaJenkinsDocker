@@ -343,9 +343,9 @@ public class EjbReportesAcademicos {
                 listaDistribucionMatricula.add(dtoDistribucionMatricula);
             });
             
-            return ResultadoEJB.crearCorrecto(listaDistribucionMatricula.stream().sorted(DtoDistribucionMatricula::compareTo).collect(Collectors.toList()), "Distribución de matricula del periodo y programa educativo seleccionado.");
+            return ResultadoEJB.crearCorrecto(listaDistribucionMatricula.stream().sorted(DtoDistribucionMatricula::compareTo).collect(Collectors.toList()), "Distribución de matrícula del periodo y programa educativo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la distrbución de matricula del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getDistribucionMatriculaPrograma)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la distrbución de matrícula del periodo y programa educativo seleccionado. (EjbReportesAcademicos.getDistribucionMatriculaPrograma)", e, null);
         }
     }
     
@@ -392,7 +392,7 @@ public class EjbReportesAcademicos {
             
             return ResultadoEJB.crearCorrecto(listaDistribucionMatricula.stream().sorted(DtoDistribucionMatricula::compareTo).collect(Collectors.toList()), "Distribución de matricula del periodo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la distrbución de matricula del periodo seleccionado. (EjbReportesAcademicos.getDistribucionMatricula)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la distrbución de matrícula del periodo seleccionado. (EjbReportesAcademicos.getDistribucionMatricula)", e, null);
         }
     }
     
@@ -1393,7 +1393,7 @@ public class EjbReportesAcademicos {
     }
     
      /**
-     * Permite obtener la matricula inicial del periodo, programa educativo y grado seleccionado
+     * Permite obtener la matrícula inicial del periodo, programa educativo y grado seleccionado
      * @param periodo
      * @param programa
      * @param grado
@@ -1411,9 +1411,9 @@ public class EjbReportesAcademicos {
                     .getResultStream()
                     .collect(Collectors.toList());
             
-            return ResultadoEJB.crearCorrecto(matriculaInicial, "Matricula inicial del periodo, programa educativo y grado seleccionado.");
+            return ResultadoEJB.crearCorrecto(matriculaInicial, "Matrícula inicial del periodo, programa educativo y grado seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la matricula inicial del periodo, programa educativo y grado seleccionado. (EjbReportesAcademicos.getMatriculaInicial)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la matrícula inicial del periodo, programa educativo y grado seleccionado. (EjbReportesAcademicos.getMatriculaInicial)", e, null);
         }
     }
     
@@ -1576,7 +1576,7 @@ public class EjbReportesAcademicos {
     }
     
       /**
-     * Permite generar reporte de matricula para servicios escolares del periodo escolar seleccionado
+     * Permite generar reporte de matrícula para servicios escolares del periodo escolar seleccionado
      * @param periodo Periodo Escolar
      * @param personal Personal
      * @return Resultado del proceso
@@ -1607,7 +1607,7 @@ public class EjbReportesAcademicos {
     }
     
       /**
-     * Permite generar reporte de distribución de matricula para servicios escolares del periodo escolar seleccionado
+     * Permite generar reporte de distribución de matrícula para servicios escolares del periodo escolar seleccionado
      * @param periodo Periodo Escolar
      * @param personal Personal
      * @return Resultado del proceso

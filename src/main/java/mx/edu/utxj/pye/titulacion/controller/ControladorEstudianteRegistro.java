@@ -110,9 +110,7 @@ public class ControladorEstudianteRegistro implements Serializable{
     public void init() {
         try {
             matricula = logonMB.getCurrentUser();
-            System.err.println("init - matricula " + matricula);
             estudiante = ejbEstudianteRegistro.obtenerInformacionAlumno(matricula);
-            System.err.println("init - estudiante " + estudiante.getAlumnosPK().getCveAlumno());
             selectGeneros();
 //            if (estudiante.getGradoActual() == 6 || estudiante.getGradoActual() == 11) {
 //                procesosIntexp = ejbEstudianteRegistro.obtenerClaveProcesoIntExp(estudiante);
@@ -746,11 +744,6 @@ public class ControladorEstudianteRegistro implements Serializable{
     }
     
     public void guardarExpedienteContinuacion(Egresados egresado, ProcesosIntexp procesoInt, Alumnos estudianteCont, ExpedientesTitulacion expedienteInicio) {
-        System.err.println("guardarExpedienteContinuacion - egresado " + egresado.getMatricula());
-        System.err.println("guardarExpedienteContinuacion - procesoInt " + procesoInt.getProceso());
-        System.err.println("guardarExpedienteContinuacion - estudianteCont " + estudianteCont.getAlumnosPK().getCveAlumno());
-        System.err.println("guardarExpedienteContinuacion - expedienteInicio " + expedienteInicio.getExpediente());
-        
         ProcesosGeneraciones procGen = ejbEstudianteRegistro.obtenerGeneracionProcIntExp(procesoInt.getProceso());
         nuevoOBJexpediente = new ExpedientesTitulacion();
         try {

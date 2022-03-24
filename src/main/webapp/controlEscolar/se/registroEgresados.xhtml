@@ -113,7 +113,7 @@
                                                                                                    itemValue="#{es.inscripcionActiva.inscripcion.matricula}" 
                                                                                                    itemLabel="#{es.inscripcionActiva.inscripcion.matricula} -- #{es.persona.nombre} 
                                                                                                    #{es.persona.apellidoPaterno} #{es.persona.apellidoMaterno}" />
-                                                                                    <p:ajax process="@this" update="contenedorDatosPersonales clave btnRefresh contenedorRegistros matricula generacion folio libro foja fecha"/>
+                                                                                    <p:ajax process="@this" update="contenedorDatosPersonales clave btnRefresh contenedorRegistros matrícula generacion folio libro foja fecha"/>
                                                                                 </p:selectOneMenu>  
                                                                                 <p:message for="clave"/>
 
@@ -145,7 +145,7 @@
                                                                                                 </td>
                                                                                             </tr>
                                                                                             <tr>
-                                                                                                <td style="font-size: x-small; font-weight: bold; width: 120px;">Matricula:</td>
+                                                                                                <td style="font-size: x-small; font-weight: bold; width: 120px;">Matrícula:</td>
                                                                                                 <td style="font-size: x-small; font-weight: bold; text-align: center; width: 270px;">#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.estudianteDto.inscripcionActiva.inscripcion.matricula}</td>
                                                                                                 <td rowspan="3" colspan="3" style="font-size: x-small; font-weight: bold; align-content: center">
 
@@ -290,7 +290,7 @@
                                                                             <div class="row">
                                                                                 <div class="#{casilla8}">
                                                                                     <div class="ui-material">
-                                                                                        <p:outputLabel for="matricula" value="Matricula"/>
+                                                                                        <p:outputLabel for="matricula" value="Matrícula"/>
                                                                                         <p:inputText id="matricula" value="#{registroEgresadoTerminacionEstudioServiciosEscolares.rol.matricula}"/>
                                                                                         <p:message for="matricula"/>
                                                                                     </div>
