@@ -1,7 +1,27 @@
 package mx.edu.utxj.pye.sgi.dto.ch;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.*;
+import mx.edu.utxj.pye.sgi.entity.ch.Articulosp;
+import mx.edu.utxj.pye.sgi.entity.ch.Capacitacionespersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.Congresos;
+import mx.edu.utxj.pye.sgi.entity.ch.DesarrolloSoftware;
+import mx.edu.utxj.pye.sgi.entity.ch.DesarrollosTecnologicos;
+import mx.edu.utxj.pye.sgi.entity.ch.Distinciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Docencias;
+import mx.edu.utxj.pye.sgi.entity.ch.ExperienciasLaborales;
+import mx.edu.utxj.pye.sgi.entity.ch.FormacionAcademica;
+import mx.edu.utxj.pye.sgi.entity.ch.HabilidadesInformaticas;
+import mx.edu.utxj.pye.sgi.entity.ch.Idiomas;
+import mx.edu.utxj.pye.sgi.entity.ch.InformacionAdicionalPersonal;
+import mx.edu.utxj.pye.sgi.entity.ch.Innovaciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
+import mx.edu.utxj.pye.sgi.entity.ch.Lenguas;
+import mx.edu.utxj.pye.sgi.entity.ch.LibrosPub;
+import mx.edu.utxj.pye.sgi.entity.ch.Memoriaspub;
+import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
 
 @RequiredArgsConstructor @ToString @EqualsAndHashCode
 public class CurriculumRIPPPA {    
@@ -69,5 +89,32 @@ public class CurriculumRIPPPA {
     public static class Capacitacion {
         @Getter        @Setter        @NonNull        List<String> rutasEv;
         @Getter        @Setter        @NonNull        Boolean cuentaEv;
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
+    public static class ResumenCV {
+        @Getter        @Setter        @NonNull        List<Idiomas> listaIdiomas;
+        @Getter        @Setter        @NonNull        List<Lenguas> listaLenguas;
+        @Getter        @Setter        @NonNull        List<Congresos> listaCongresos;
+        @Getter        @Setter        @NonNull        List<LibrosPub> listaLibrosPubs;
+        @Getter        @Setter        @NonNull        List<Articulosp> listaArticulosp;
+        @Getter        @Setter        @NonNull        List<Docencias> listaDocenciases;
+        @Getter        @Setter        @NonNull        List<Memoriaspub> listaMemoriaspub;
+        @Getter        @Setter        @NonNull        List<Innovaciones> listaInnovaciones;
+        @Getter        @Setter        @NonNull        List<Distinciones> listaDistinciones;
+        @Getter        @Setter        @NonNull        List<Investigaciones> listaInvestigacion;
+        @Getter        @Setter        @NonNull        List<DesarrolloSoftware> listaDesarrolloSoftwar;
+        @Getter        @Setter        @NonNull        List<FormacionAcademica> listaFormacionAcademica;
+        @Getter        @Setter        @NonNull        List<ExperienciasLaborales> listaExperienciasLaborales;
+        @Getter        @Setter        @NonNull        List<Capacitacionespersonal> listaCapacitacionespersonal;
+        @Getter        @Setter        @NonNull        List<HabilidadesInformaticas> listaHabilidadesInformaticas;
+        @Getter        @Setter        @NonNull        List<DesarrollosTecnologicos> listaDesarrollosTecnologicos;
+    }
+    
+    @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
+    public static class DatosPersonal {
+        @Getter        @Setter        @NonNull        Personal personal;
+        @Getter        @Setter        @NonNull        ListaPersonal listaPersonal;
+        @Getter        @Setter        @NonNull        InformacionAdicionalPersonal adicionalPersonal;
     }
 }
