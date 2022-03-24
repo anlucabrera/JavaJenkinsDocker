@@ -109,7 +109,7 @@
                                                              filteredValue="#{reinscripcionExtemporaneaSE.rol.filter}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
                                                              tableStyle="vertical-align: middle;">
-                                                    <p:column headerText="Matricula" style="width: 70px;" filterBy="#{reinscritos.estudiante.matricula}"  sortBy="#{reinscritos.estudiante.matricula}" filterMatchMode="contains"><h:outputText value="#{reinscritos.estudiante.matricula}"/></p:column>
+                                                    <p:column headerText="Matrícula" style="width: 70px;" filterBy="#{reinscritos.estudiante.matricula}"  sortBy="#{reinscritos.estudiante.matricula}" filterMatchMode="contains"><h:outputText value="#{reinscritos.estudiante.matricula}"/></p:column>
                                                     <p:column headerText="Nombre" style="width: 300px;"><h:outputText value="#{reinscritos.estudiante.aspirante.idPersona.nombre.concat(reinscritos.estudiante.aspirante.idPersona.apellidoPaterno).concat(' ').concat(reinscritos.estudiante.aspirante.idPersona.apellidoMaterno)}"/></p:column>
                                                     <p:column headerText="Carrera" style="width: 70px;" ><h:outputText value="#{reinscritos.carrera.siglas}"/></p:column>
                                                     <p:column headerText="Grupo actual" style="width: 70px;"><h:outputText value="#{reinscritos.grupoActual.grado} - #{reinscritos.grupoActual.literal}" /></p:column>
@@ -143,7 +143,7 @@
                                                                             fileName="estudiantes_faltantes"/>
                                                         </p:commandLink>
                                                     </f:facet>
-                                                    <p:column headerText="Matricula" style="width: 70px;" filterBy="#{faltantes.estudiante.matricula}"  sortBy="#{faltantes.estudiante.matricula}" filterMatchMode="contains"><h:outputText value="#{faltantes.estudiante.matricula}"/></p:column>
+                                                    <p:column headerText="Matrícula" style="width: 70px;" filterBy="#{faltantes.estudiante.matricula}"  sortBy="#{faltantes.estudiante.matricula}" filterMatchMode="contains"><h:outputText value="#{faltantes.estudiante.matricula}"/></p:column>
                                                     <p:column headerText="Nombre" style="width: 300px;"><h:outputText value="#{faltantes.estudiante.aspirante.idPersona.nombre.concat(faltantes.estudiante.aspirante.idPersona.apellidoPaterno).concat(' ').concat(faltantes.estudiante.aspirante.idPersona.apellidoMaterno)}"/></p:column>
                                                     <p:column headerText="Carrera" style="width: 70px;" ><h:outputText value="#{faltantes.carrera.siglas}"/></p:column>
                                                     <p:column headerText="Grupo actual" style="width: 70px;"><h:outputText value="#{faltantes.grupoActual.grado} - #{faltantes.grupoActual.literal}" /></p:column>

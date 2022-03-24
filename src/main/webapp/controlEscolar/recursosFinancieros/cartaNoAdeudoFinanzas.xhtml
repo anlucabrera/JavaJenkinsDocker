@@ -106,7 +106,7 @@
                                                          >
 
                                                              <p:ajax event="cellEdit" listener="#{cartaNoAdeudoFinanzas.onCellEdit}" process="@this" update="@this @(.estatus) @(.tabla)" oncomplete="actualizar();" />
-                                                             <p:column headerText="Matricula" style="width: 130px; text-align: center;" sortBy="#{est.estudiante.matricula}" filterBy="#{est.estudiante.matricula}" filterMatchMode="contains">
+                                                             <p:column headerText="Matrícula" style="width: 130px; text-align: center;" sortBy="#{est.estudiante.matricula}" filterBy="#{est.estudiante.matricula}" filterMatchMode="contains">
                                                                  <h:outputText value="#{est.estudiante.matricula}"/>
                                                              </p:column>
 
@@ -224,7 +224,7 @@
                                     <h:outputText value="#{listPag.fechaPago}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
                                 </p:column>
 
-                                <p:column headerText="Matricula" style="width: 150px; text-align: center;">
+                                <p:column headerText="Matrícula" style="width: 150px; text-align: center;">
                                     <h:outputText value="#{listPag.matricula}" />
                                 </p:column>
 
