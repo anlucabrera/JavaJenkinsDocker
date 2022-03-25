@@ -314,7 +314,7 @@
                                                                     <p:column colspan="3" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NIVEL</p:column>
                                                                     <p:column colspan="7" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">NOMBRE</p:column>
                                                                     <p:column colspan="1" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">FEHA</p:column>
-                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">INTITUCIÓN</p:column>
+                                                                    <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">INSTITUCIÓN</p:column>
                                                                     <p:column colspan="2" styleClass="tituloRipppa" style="font-weight: bold; text-align: center;">CÉDULA</p:column>
                                                                 </p:row>
                                                                 <c:if test="#{controladorComisionDictaminadora.listaFormacionAcademica.size() ne 0}">
@@ -486,7 +486,7 @@
                                                                 </c:if>                                                        
                                                                 <p:row rendered="#{controladorComisionDictaminadora.listaDesarrolloSoftwar.size() != 0?true:false}">
                                                                     <p:column colspan="15" style="font-weight: bold; text-align: center; font-size: x-large;">
-                                                                        <h3><strong>Desarrollo de Software</strong></h3>
+                                                                        <h3><strong>DESARROLLOS DE SOFTWARE</strong></h3>
                                                                     </p:column>                                                            
                                                                 </p:row>
                                                                 <p:row rendered="#{controladorComisionDictaminadora.listaDesarrolloSoftwar.size() != 0?true:false}">
@@ -618,7 +618,7 @@
                                                                             <p:column colspan="1" styleClass="subactiviades">#{t.participacion}</p:column>
                                                                             <p:column colspan="7" styleClass="subactiviades">#{t.nombreCongreso}</p:column>
                                                                             <p:column colspan="6" styleClass="subactiviades">#{t.tituloTrabajo}</p:column>
-                                                                            <p:column colspan="3" styleClass="subactiviades">#{t.lugarPais}</p:column>
+                                                                            <p:column colspan="1" styleClass="subactiviades">#{t.lugarPais}</p:column>
                                                                         </p:row>
                                                                     </c:forEach>
                                                                 </c:if>
