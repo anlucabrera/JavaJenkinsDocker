@@ -209,7 +209,7 @@ try {
                 tutores = false;
                 docente = true;
                 renderReportePersonal = false;
-                slectItemsEvaluacionDocentePeriodos = eJBSelectItems.itemPeriodosDocenteMateria();
+                slectItemsEvaluacionDocentePeriodos = eJBSelectItems.itemPeriodosDocenteMateria(tipoEvaluacion);
                 break;
         }
     }

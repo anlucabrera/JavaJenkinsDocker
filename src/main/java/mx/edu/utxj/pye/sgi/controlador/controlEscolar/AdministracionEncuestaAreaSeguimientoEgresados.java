@@ -362,7 +362,7 @@ public class AdministracionEncuestaAreaSeguimientoEgresados  extends ViewScopedR
                                 obtenerMejoras(dto.getEncuesta().getR21()), 
                                 obtenerOpciones(dto.getEncuesta().getR22()), 
                                 verificarValor(dto.getEncuesta().getR23()),
-                                verificarEstatus(dto.getEncuesta())};
+                                verificarEstatusE(dto.getEncuesta())};
                 gExcel.escribirDatosExcel(datos, i, 3, rol.getLibro());
             }
             gExcel.escribirLibro(rol.getCarpeta(), rol.getSubCarpeta(), rol.getExcelSalida());
@@ -524,7 +524,7 @@ public class AdministracionEncuestaAreaSeguimientoEgresados  extends ViewScopedR
         return estatus;
     }
     
-    public String verificarEstatus(EncuestaEmpleadores encuesta){
+    public String verificarEstatusE(EncuestaEmpleadores encuesta){
         Comparador<EncuestaEmpleadores> comparador = new ComparadorEncuestaEmpleadores();
         String estatus = "";
         if (comparador.isCompleto(encuesta)) {

@@ -207,6 +207,7 @@ public enum ControlEscolarVistaControlador {
     CUESTIONARIO_COMPLEMENTARIO_INF_PERSONAL("/cuestionarios/cuestionarioComplemenarioInfPersonal.xhtml", CuestionarioComplementarioInfPersonal.class),
     EVALUACION_CONOCIMIENTO_CODIGO_ETICA_CONDUCTA("/evaluaciones/evaluacion/evaluacionCodigoEyConducta.xhtml", EvaluacionCodigoEticaConducta.class),
     EVALUACION_360("/evaluaciones/evaluacion/360_1.xhtml", Evaluacion360Admin1.class),
+    EVALUACION_DESEMPENIO("/evaluaciones/evaluacion/desempenio.xhtml", EvaluacionDesempenioAdmin.class),
     
     EVALUACION_DESEMPENIO_AMBIENTAL("/encuestas/evaluacionDesempenioAmbiental.xhtml", EvaluacionDesempenioAmbiental.class),
 
@@ -219,6 +220,8 @@ public enum ControlEscolarVistaControlador {
     ADMINISTRACION_DESEMPENIO_AMBIENTAL("/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml", AdministracionEvaluacionAmbiental.class),
     SEGUIMIENTO_EVALUACION_ETICA("/encuestas/seguimiento/seguimientoEvaluacionEtica.xhtml", SeguimientoEvaluacionCodigoEticaDirectivos.class),
     SEGUIMIENTO_ENCUESTAS_SEGUIMIENTO_EGRESADOS("/controlEscolar/seguimientoEgresados/administracionEncuestaSeguimientoEgresados.xhtml",AdministracionEncuestaAreaSeguimientoEgresados.class),
+    ADMINISTRACION_EVALUACIONES("/evaluaciones/administracion/administracionPersonalSA.xhtml", AdministracionEvaluacionesPersonal.class),
+    ADMINISTRACION_EV_DIRECTIVOS("/evaluaciones/administracion/administracionDirectivos.xhtml", AdministracionDirectivos.class),
     /////////////////////////////////////////////////////////////////////////////
     SATISFACCION_SERVICIOS_CONSULTA("/encuestas/consulta/servicios.xhtml", ServiciosConsulta.class);
     /////////////////////////////////////////////////////////////////////////////

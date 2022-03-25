@@ -617,7 +617,7 @@ public class GenerateExcel implements Serializable{
         XWPFParagraph parrafoVacio4 = word.createParagraph(); XWPFRun runVacio4 = parrafoVacio4.createRun(); runVacio4.setBold(true); runVacio4.setText("");
         
         XWPFParagraph subtitulo5 = word.createParagraph(); XWPFRun runS5 = subtitulo5.createRun(); runS5.setBold(true); 
-        runS5.setText("2. Auditivo");
+        runS5.setText("2. Kinestésico");
         
         XWPFParagraph parrafoVacio5 = word.createParagraph(); XWPFRun runVacio5 = parrafoVacio5.createRun(); runVacio5.setBold(true); runVacio5.setText("");
         
@@ -629,7 +629,7 @@ public class GenerateExcel implements Serializable{
         XWPFParagraph parrafoVacio6 = word.createParagraph(); XWPFRun runVacio6 = parrafoVacio6.createRun(); runVacio6.setBold(true); runVacio6.setText("");
         
         XWPFParagraph subtitulo6 = word.createParagraph(); XWPFRun runS6 = subtitulo6.createRun(); runS6.setBold(true); 
-        runS6.setText("3. Kinestésico");
+        runS6.setText("3. Auditivo");
         
         XWPFParagraph parrafoVacio7 = word.createParagraph(); XWPFRun runVacio7 = parrafoVacio7.createRun(); runVacio7.setBold(true); runVacio7.setText("");
         

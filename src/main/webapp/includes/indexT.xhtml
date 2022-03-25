@@ -539,30 +539,28 @@
                                         </div>
                                     </div>
                                 </c:if>
-                                <c:if test="#{evaluacionDesempenioAdmin.cargada}">
-                                    <c:if test="#{evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 2 || evaluacionDesempenioAdmin.directivoSeleccionado.actividad eq 4 }">
-                                        <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
-                                        <div class="#{claseResumen}" style="max-height: 154px;">
-                                            <div class="small-box bg-blue">
-                                                <div class="inner" style="cursor: pointer;" onclick="desempenio();">
-                                                    <h3>
-                                                        <h:outputLabel value="#{evaluacionDesempenioAdmin.evaluados / evaluacionDesempenioAdmin.listaSubordinados.size() * 100}">
-                                                            <f:convertNumber pattern="###,###.##" />
-                                                        </h:outputLabel>
-                                                        <sup style="font-size: 20px">%</sup>
-                                                    </h3>
-                                                    <p>Evaluación del desempeño<br/>Periodo: #{evaluacionDesempenioAdmin.periodoEscolar.mesInicio.mes} - #{evaluacionDesempenioAdmin.periodoEscolar.mesFin.mes} #{evaluacionDesempenioAdmin.periodoEscolar.anio}</p>
-                                                </div>
-                                                <div class="icon">
-                                                    <i class="fa fa-calendar-check-o"></i>
-                                                </div>
-                                                <p:link outcome="evaluaciones/evaluacion/desempenio"  class="small-box-footer">
-                                                    Ingresar <i class="fa fa-arrow-circle-right"></i>
-                                                </p:link>
-                                                <h:form><p:remoteCommand name="desempenio" action="evaluaciones/evaluacion/desempenio" /></h:form>
+                                <c:if test="#{evaluacionDesempenioAdmin.tieneAcceso}">
+                                    <c:set var="claseResumen" value="#{'col-lg-3 col-md-6 col-sm-12'}" />
+                                    <div class="#{claseResumen}" style="max-height: 154px;">
+                                        <div class="small-box bg-blue">
+                                            <div class="inner" style="cursor: pointer;" onclick="desempenio();">
+                                                <h3>
+                                                    <h:outputLabel value="#{evaluacionDesempenioAdmin.evaluados / evaluacionDesempenioAdmin.listaEvaluados.size() * 100}">
+                                                        <f:convertNumber pattern="###,###.##" />
+                                                    </h:outputLabel>
+                                                    <sup style="font-size: 20px">%</sup>
+                                                </h3>
+                                                <p>Evaluación del desempeño<br/>Periodo: #{evaluacionDesempenioAdmin.periodoEscolar.mesInicio.mes} - #{evaluacionDesempenioAdmin.periodoEscolar.mesFin.mes} #{evaluacionDesempenioAdmin.periodoEscolar.anio}</p>
                                             </div>
+                                            <div class="icon">
+                                                <i class="fa fa-calendar-check-o"></i>
+                                            </div>
+                                            <p:link outcome="evaluaciones/evaluacion/desempenio"  class="small-box-footer">
+                                                Ingresar <i class="fa fa-arrow-circle-right"></i>
+                                            </p:link>
+                                            <h:form><p:remoteCommand name="desempenio" action="evaluaciones/evaluacion/desempenio" /></h:form>
                                         </div>
-                                    </c:if>
+                                    </div>
                                 </c:if>
                                 <c:if test="#{evaluacion360Admin1.tieneAcceso}">
                                     <div class="#{claseResumen}" style="max-height: 154px;">

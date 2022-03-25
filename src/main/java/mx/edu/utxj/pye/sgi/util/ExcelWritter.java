@@ -25,6 +25,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import mx.edu.utxj.pye.sgi.dto.Apartado;
+import mx.edu.utxj.pye.sgi.dto.ListaEvaluacion360Promedios;
+import mx.edu.utxj.pye.sgi.dto.ListaEvaluacionDesempenioPromedios;
+import mx.edu.utxj.pye.sgi.dto.ListadoGeneralEvaluacionesPersonal;
 import mx.edu.utxj.pye.sgi.entity.ch.DesempenioEvaluaciones;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones360;
 import mx.edu.utxj.pye.sgi.entity.ch.view.ListaPersonal;
@@ -60,9 +63,13 @@ public class ExcelWritter implements Serializable {
     @Getter EvaluacionesTipo tipo;
     @Getter DesempenioEvaluaciones desempenioEvaluacion;
     @Getter List<ListaPersonalDesempenioEvaluacion> resultadosDesempenio;
+    @Getter List<ListaEvaluacionDesempenioPromedios.DtoListaResultadosEvaluacionDesempenio> listaResultados;
+    @Getter List<ListadoGeneralEvaluacionesPersonal> listaResultadosGrales;
     @Getter Evaluaciones360 evaluaciones360;
     @Getter List<ListaPersonalEvaluacion360Promedios> listaPromedios;
     @Getter List<ListaPersonalEvaluacion360Reporte> listaResportes;
+    @Getter List<ListaEvaluacion360Promedios.DtoListaResultadosEvaluacion360> listaPromedios1;
+    @Getter List<ListaEvaluacion360Promedios.DtoListaReporteEvaluacion360> listaResportes1;
     @Getter Map<Short,Apartado> mapaHabilidades;
 
     InputStream in;
@@ -79,6 +86,19 @@ public class ExcelWritter implements Serializable {
         this.evaluacion = desempenioEvaluacion.getEvaluacion();
         tipo = EvaluacionesTipo.EVALUACION_DESEMPENIO;
     }
+    
+    public ExcelWritter(DesempenioEvaluaciones desempenioEvaluacion, List<ListaEvaluacionDesempenioPromedios.DtoListaResultadosEvaluacionDesempenio> resultadosDesempenio, PeriodosEscolares periodoEscolar) {
+        this.desempenioEvaluacion = desempenioEvaluacion;
+        this.listaResultados = resultadosDesempenio;
+        this.periodoEscolar = periodoEscolar;
+        this.evaluacion = desempenioEvaluacion.getEvaluacion();
+        tipo = EvaluacionesTipo.EVALUACION_DESEMPENIO;
+    }
+    
+    public ExcelWritter(List<ListadoGeneralEvaluacionesPersonal> resultados, PeriodosEscolares periodoEscolar) {
+        this.listaResultadosGrales = resultados;
+        this.periodoEscolar = periodoEscolar;
+    }
 
     public ExcelWritter(Evaluaciones360 evaluaciones360, List<ListaPersonalEvaluacion360Promedios> listaPromedios, List<ListaPersonalEvaluacion360Reporte> listaResportes, PeriodosEscolares periodoEscolar, Map<Short,Apartado> mapaHabilidades) {
         this.periodoEscolar = periodoEscolar;
@@ -88,6 +108,28 @@ public class ExcelWritter implements Serializable {
         this.evaluacion = evaluaciones360.getEvaluacion();
         this.mapaHabilidades = mapaHabilidades;
         tipo = EvaluacionesTipo.EVALUACION_360;
+    }
+
+    public ExcelWritter(PeriodosEscolares periodoEscolar, Evaluaciones360 evaluaciones360, List<ListaEvaluacion360Promedios.DtoListaResultadosEvaluacion360> listaPromedios1, List<ListaEvaluacion360Promedios.DtoListaReporteEvaluacion360> listaResportes1, Map<Short, Apartado> mapaHabilidades) {
+        this.periodoEscolar = periodoEscolar;
+        tipo = EvaluacionesTipo.EVALUACION_360;
+        this.evaluacion = evaluaciones360.getEvaluacion();
+        this.evaluaciones360 = evaluaciones360;
+        this.listaPromedios1 = listaPromedios1;
+        this.listaResportes1 = listaResportes1;
+        this.mapaHabilidades = mapaHabilidades;
+    }
+    
+    public void obtenerExcel() {
+        this.nombre = "plantilla_reporte_general.xlsx";
+        try {
+            in = new FileInputStream(ServicioArchivos.carpetaRaiz.concat(File.separator).concat(nombre));
+            libro = new XSSFWorkbook(in);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void obtenerLibro() {
@@ -113,7 +155,24 @@ public class ExcelWritter implements Serializable {
             Logger.getLogger(ExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+    public void editarExcel() {
+        int index = 1;
+        XSSFSheet hojaReporte = libro.getSheetAt(0);
+        for (ListadoGeneralEvaluacionesPersonal reporte : listaResultadosGrales) {
+            crearFila(hojaReporte, index);
+            escribirCelda(hojaReporte.getRow(index), 0, reporte.getClave());
+            escribirCelda(hojaReporte.getRow(index), 1, reporte.getNombre());
+            escribirCelda(hojaReporte.getRow(index), 2, reporte.getAreaOperativa());
+            escribirCelda(hojaReporte.getRow(index), 3, reporte.getCategoriaOperativa());
+            escribirCelda(hojaReporte.getRow(index), 4, reporte.getPromedioDesempenio());
+            escribirCelda(hojaReporte.getRow(index), 5, reporte.getPromedio360());
+            escribirCelda(hojaReporte.getRow(index), 6, reporte.getPromedioDocente());
+            escribirCelda(hojaReporte.getRow(index), 7, reporte.getPromediogeneral());
+            index++;
+        }
+    }
+    
     public void editarLibro() {
         int index = 1;
 //        System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() periodo escolar : " + periodoEscolar.getPeriodo());
@@ -263,13 +322,169 @@ public class ExcelWritter implements Serializable {
             }
         }
     }
+    
+    public void editarLibro1() {
+        int index = 1;
+//        System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() periodo escolar : " + periodoEscolar.getPeriodo());
+        if (tipo == EvaluacionesTipo.EVALUACION_DESEMPENIO) {
+            for (ListaEvaluacionDesempenioPromedios.DtoListaResultadosEvaluacionDesempenio rd : listaResultados.stream().filter(item -> item.getCompleto().equals("1")).collect(Collectors.toList())) {
+                libro.cloneSheet(0, String.valueOf(rd.getEvaluado().getClave()));
+                XSSFSheet hojaDesempenio = libro.getSheetAt(index);
+                escribirCelda(hojaDesempenio.getRow(3), 2, Datos.getPeriodoEscolarNombre(periodoEscolar));
+                escribirCelda(hojaDesempenio.getRow(5), 2, rd.getEvaluado().getNombre());
+                escribirCelda(hojaDesempenio.getRow(6), 2, String.valueOf(rd.getEvaluado().getClave()));
+                escribirCelda(hojaDesempenio.getRow(6), 7, rd.getEvaluado().getGenero().getNombre());
+                escribirCelda(hojaDesempenio.getRow(7), 2, rd.getEvaluadoAreaOp().getNombre());
+                escribirCelda(hojaDesempenio.getRow(8), 2, rd.getEvaluadoPersonalCat().getNombre());
+                escribirCelda(hojaDesempenio.getRow(9), 2, String.valueOf(rd.getEvaluado().getActividad().getNombre()));
+
+                escribirCelda(hojaDesempenio.getRow(11), 3, rd.getEvaluador().getNombre());
+                escribirCelda(hojaDesempenio.getRow(12), 3, rd.getEvaluadorPersonalCat().getNombre());
+
+                escribirCelda(hojaDesempenio.getRow(14), 13, rd.getR1());
+                escribirCelda(hojaDesempenio.getRow(16), 13, rd.getR2());
+                escribirCelda(hojaDesempenio.getRow(17), 13, rd.getR3());
+                escribirCelda(hojaDesempenio.getRow(19), 13, rd.getR4());
+                escribirCelda(hojaDesempenio.getRow(20), 13, rd.getR5());
+                escribirCelda(hojaDesempenio.getRow(22), 13, rd.getR6());
+                escribirCelda(hojaDesempenio.getRow(24), 13, rd.getR7());
+                escribirCelda(hojaDesempenio.getRow(26), 13, rd.getR8());
+                escribirCelda(hojaDesempenio.getRow(27), 13, rd.getR9());
+                escribirCelda(hojaDesempenio.getRow(29), 13, rd.getR10());
+                escribirCelda(hojaDesempenio.getRow(30), 13, rd.getR11());
+                escribirCelda(hojaDesempenio.getRow(32), 13, rd.getR12());
+                escribirCelda(hojaDesempenio.getRow(33), 13, rd.getR13());
+                escribirCelda(hojaDesempenio.getRow(34), 13, rd.getR14());
+                escribirCelda(hojaDesempenio.getRow(36), 13, rd.getR15());
+                escribirCelda(hojaDesempenio.getRow(38), 13, rd.getR16());
+                escribirCelda(hojaDesempenio.getRow(40), 13, rd.getR17());
+                escribirCelda(hojaDesempenio.getRow(42), 13, rd.getR18());
+                escribirCelda(hojaDesempenio.getRow(44), 13, rd.getR19());
+                escribirCelda(hojaDesempenio.getRow(45), 13, rd.getR20());
+                escribirCelda(hojaDesempenio.getRow(47), 1, rd.getR21());
+
+                escribirCelda(hojaDesempenio.getRow(48), 12, rd.getPromedio());
+
+                index++;
+            }
+            libro.removeSheetAt(0);
+        } else if (tipo == EvaluacionesTipo.EVALUACION_360) {
+            Map<Integer, List<String>> completos = new HashMap();
+            completos.put(0, Arrays.asList("0, 0, 0", "0, 0"));
+            completos.put(1, Arrays.asList("1, 0, 0", "0, 1, 0", "0, 0, 1", "1, 0", "0, 1"));
+            completos.put(2, Arrays.asList("1, 1, 0", "1, 0, 1", "0, 1, 1"));
+            completos.put(3, Arrays.asList("1, 1, 1", "1, 1"));
+
+            for (ListaEvaluacion360Promedios.DtoListaResultadosEvaluacion360 lpe : listaPromedios1) {
+//                System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() lpe: " + lpe);
+                libro.cloneSheet(0, String.valueOf(lpe.getEvaluado()));
+                XSSFSheet hoja = libro.getSheetAt(index + 2);
+                if (completos.get(0).contains(lpe.getCompleto())) {
+                    hoja.setTabColor(new XSSFColor(Color.red));
+                } else if (completos.get(1).contains(lpe.getCompleto())) {
+                    hoja.setTabColor(new XSSFColor(Color.yellow));
+                } else if (completos.get(2).contains(lpe.getCompleto())) {
+                    hoja.setTabColor(new XSSFColor(Color.orange));
+                } else if (completos.get(3).contains(lpe.getCompleto())) {
+                    hoja.setTabColor(new XSSFColor(Color.green));
+                }
+
+                escribirCelda(hoja.getRow(10), 2, (new Date()));
+                escribirCelda(hoja.getRow(10), 7, Datos.getPeriodoEscolarNombre(periodoEscolar));
+                escribirCelda(hoja.getRow(11), 4, lpe.getEvaluado());
+                escribirCelda(hoja.getRow(12), 4, lpe.getPersona().getNombre());
+                escribirCelda(hoja.getRow(12), 14, lpe.getPersona().getGenero().getNombre());
+                escribirCelda(hoja.getRow(13), 4, lpe.getAreaOp().getNombre());
+//                escribirCelda(hoja.getRow(14), 4, lpe.getCategoriaNombre()); // se reescribio para la impresion de cedulas 31/05/18
+                escribirCelda(hoja.getRow(14), 4, lpe.getPersonalCategoria().getNombre());
+                escribirCelda(hoja.getRow(15), 4, lpe.getPersona().getFechaIngreso());
+                escribirCelda(hoja.getRow(15), 10, lpe.getPersona().getActividad().getNombre());
+
+                escribirCelda(hoja.getRow(18), 7, redondear(lpe.getR1()));
+                escribirCelda(hoja.getRow(19), 7, redondear(lpe.getR2()));
+                escribirCelda(hoja.getRow(20), 7, redondear(lpe.getR3()));
+                escribirCelda(hoja.getRow(21), 7, redondear(lpe.getR4()));
+                escribirCelda(hoja.getRow(22), 7, redondear(lpe.getR5()));
+                escribirCelda(hoja.getRow(23), 7, redondear(lpe.getR6()));
+                escribirCelda(hoja.getRow(24), 7, redondear(lpe.getR7()));
+                escribirCelda(hoja.getRow(25), 7, redondear(lpe.getR8()));
+                escribirCelda(hoja.getRow(26), 7, redondear(lpe.getR9()));
+                escribirCelda(hoja.getRow(27), 7, redondear(lpe.getR10()));
+                escribirCelda(hoja.getRow(28), 7, redondear(lpe.getR11()));
+                escribirCelda(hoja.getRow(29), 7, redondear(lpe.getR12()));
+                escribirCelda(hoja.getRow(30), 7, redondear(lpe.getR13()));
+                escribirCelda(hoja.getRow(31), 7, redondear(lpe.getR14()));
+                escribirCelda(hoja.getRow(32), 7, redondear(lpe.getR15()));
+                escribirCelda(hoja.getRow(33), 7, redondear(lpe.getR16()));
+                // apartado de comentarios editado 29/08/2018
+                escribirCelda(hoja.getRow(39), 2, lpe.getR32());
+//                System.err.println("El comentario es r32: " + lpe.getR32());
+                escribirCelda(hoja.getRow(44), 2, lpe.getR33());
+//                System.err.println("El comentario es  r33: " + lpe.getR33());
+//                System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() lpe: " + lpe);
+                int index2 =18;
+                Apartado habilidades = mapaHabilidades.get(lpe.getPersonalCategoria().getCategoria());
+//                System.out.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro(" + lpe.getCategoria() + ") habilidades: " + habilidades);
+                for(Pregunta p : habilidades.getPreguntas()){
+                    escribirCelda(hoja.getRow(index2), 9, df.format(p.getNumero()).concat(") ").concat(p.getTitulo()));
+                    if (obtenerRespuestaPorPregunta1(lpe, p.getNumero()) != null) {
+                        escribirCelda(hoja.getRow(index2), 14, redondear(Double.valueOf(obtenerRespuestaPorPregunta1(lpe, p.getNumero()))));
+                    }
+                    index2++;
+                }
+                
+                escribirCelda(hoja.getRow(49), 12, lpe.getPromedio());
+
+                index++;
+            }
+            libro.removeSheetAt(0);
+
+            XSSFSheet hojaResumen = libro.getSheetAt(0);
+            index = 1;
+            for (ListaEvaluacion360Promedios.DtoListaResultadosEvaluacion360 lpe : listaPromedios1) {
+//                System.err.println("mx.edu.utxj.pye.sgi.util.ExcelWritter.editarLibro() index: " + index);
+                crearFila(hojaResumen, index);
+                escribirCelda(hojaResumen.getRow(index), 0, lpe.getEvaluado());
+                escribirCelda(hojaResumen.getRow(index), 1, lpe.getPersona().getNombre());
+                escribirCelda(hojaResumen.getRow(index), 2, lpe.getAreaOp().getNombre());
+                escribirCelda(hojaResumen.getRow(index), 3, lpe.getEvaluadores());
+                escribirCelda(hojaResumen.getRow(index), 4, lpe.getCompleto());
+                escribirCelda(hojaResumen.getRow(index), 5, lpe.getPromedio());
+                escribirCelda(hojaResumen.getRow(index), 6, lpe.getR32());
+//                System.err.println("Se ecribe el comentario r32 "+ lpe.getR32());
+                escribirCelda(hojaResumen.getRow(index), 7, lpe.getR33());
+//                System.err.println("Se ecribe el comentario r33 "+ lpe.getR33());
+                index++;
+            }
+            
+            XSSFSheet hojaReporte = libro.getSheetAt(1);
+            index = 1;
+            for(ListaEvaluacion360Promedios.DtoListaReporteEvaluacion360 reporte : listaResportes1){
+                crearFila(hojaReporte, index);
+                escribirCelda(hojaReporte.getRow(index), 0, reporte.getEvaluador());
+                escribirCelda(hojaReporte.getRow(index), 1, reporte.getPersona().getNombre());
+                escribirCelda(hojaReporte.getRow(index), 2, reporte.getAreaOp().getNombre());
+                escribirCelda(hojaReporte.getRow(index), 3, reporte.getCompleto());
+                escribirCelda(hojaReporte.getRow(index), 4, reporte.getResultado());
+                escribirCelda(hojaReporte.getRow(index), 5, reporte.getEvaluados());
+                escribirCelda(hojaReporte.getRow(index), 6, reporte.getEvaluadosNombre());
+                index++;
+            }
+        }
+    }
 
     public void escribirLibro() {
         try {
             String generador = "0";
+            String nombreArchivo = "";
             switch (tipo){
-                case EVALUACION_360: generador = "personal"; break;
-                case EVALUACION_DESEMPENIO: directivo.getClave().toString(); break;
+                case EVALUACION_360: 
+                    generador = "personal"; 
+                    nombreArchivo = "cedulas".concat(ServicioArchivos.sdf.format(new Date())).concat(".xlsx");
+                    break;
+                case EVALUACION_DESEMPENIO: 
+                    nombreArchivo = "cedulas_desempeño".concat(ServicioArchivos.sdf.format(new Date())).concat(".xlsx");
+                    break;
             }
             base = ServicioArchivos.carpetaRaiz
                     .concat("cedulas").concat(File.separator)
@@ -278,7 +493,28 @@ public class ExcelWritter implements Serializable {
                     .concat(generador).concat(File.separator);
 
             ServicioArchivos.addCarpetaRelativa(base);
-            salida = nombre;
+            salida = nombreArchivo;
+            ServicioArchivos.eliminarArchivo(base.concat(salida));
+
+            out = new FileOutputStream(new File(base.concat(salida)));
+            libro.write(out);
+            out.close();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ExcelWritter.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void escribirExcel() {
+        try {
+            String nombreArchivo = "reporte_general".concat(ServicioArchivos.sdf.format(new Date())).concat(".xlsx");
+            base = ServicioArchivos.carpetaRaiz
+                    .concat("cedulas").concat(File.separator)
+                    .concat("reporte").concat(File.separator);
+
+            ServicioArchivos.addCarpetaRelativa(base);
+            salida = nombreArchivo;
             ServicioArchivos.eliminarArchivo(base.concat(salida));
 
             out = new FileOutputStream(new File(base.concat(salida)));
@@ -373,6 +609,47 @@ public class ExcelWritter implements Serializable {
     }
     
     public String obtenerRespuestaPorPregunta(ListaPersonalEvaluacion360Promedios resultado, Float pregunta) {
+        String res = null;
+        switch (pregunta.toString()) {
+            case "1.0": res = resultado.getR1()!=null ? resultado.getR1().toString() : null; break;
+            case "2.0": res = resultado.getR2()!=null ? resultado.getR2().toString() : null; break;
+            case "3.0": res = resultado.getR3()!=null ? resultado.getR3().toString() : null; break;
+            case "4.0": res = resultado.getR4()!=null ? resultado.getR4().toString() : null; break;
+            case "5.0": res = resultado.getR5()!=null ? resultado.getR5().toString() : null; break;
+            case "6.0": res = resultado.getR6()!=null ? resultado.getR6().toString() : null; break;
+            case "7.0": res = resultado.getR7()!=null ? resultado.getR7().toString() : null; break;
+            case "8.0": res = resultado.getR8()!=null ? resultado.getR8().toString() : null; break;
+            case "9.0": res = resultado.getR9()!=null ? resultado.getR9().toString() : null; break;
+            case "10.0": res = resultado.getR10()!=null ? resultado.getR10().toString() : null; break;
+            case "11.0": res = resultado.getR11()!=null ? resultado.getR11().toString() : null; break;
+            case "12.0": res = resultado.getR12()!=null ? resultado.getR12().toString() : null; break;
+            case "13.0": res = resultado.getR13()!=null ? resultado.getR13().toString() : null; break;
+            case "14.0": res = resultado.getR14()!=null ? resultado.getR14().toString() : null; break;
+            case "15.0": res = resultado.getR15()!=null ? resultado.getR15().toString() : null; break;
+            case "16.0": res = resultado.getR16()!=null ? resultado.getR16().toString() : null; break;
+            case "17.0": res = resultado.getR17()!=null ? resultado.getR17().toString() : null; break;
+            case "18.0": res = resultado.getR18()!=null ? resultado.getR18().toString() : null; break;
+            case "19.0": res = resultado.getR19()!=null ? resultado.getR19().toString() : null; break;
+            case "20.0": res = resultado.getR20()!=null ? resultado.getR20().toString() : null; break;
+            case "21.0": res = resultado.getR21()!=null ? resultado.getR21().toString() : null; break;
+            case "22.0": res = resultado.getR22()!=null ? resultado.getR22().toString() : null; break;
+            case "23.0": res = resultado.getR23()!=null ? resultado.getR23().toString() : null; break;
+            case "24.0": res = resultado.getR24()!=null ? resultado.getR24().toString() : null; break;
+            case "25.0": res = resultado.getR25()!=null ? resultado.getR25().toString() : null; break;
+            case "26.0": res = resultado.getR26()!=null ? resultado.getR26().toString() : null; break;
+            case "27.0": res = resultado.getR27()!=null ? resultado.getR27().toString() : null; break;
+            case "28.0": res = resultado.getR28()!=null ? resultado.getR28().toString() : null; break;
+            case "29.0": res = resultado.getR29()!=null ? resultado.getR29().toString() : null; break;
+            case "30.0": res = resultado.getR30()!=null ? resultado.getR30().toString() : null; break;
+            case "31.0": res = resultado.getR31()!=null ? resultado.getR31().toString() : null; break;
+            case "32.0": res = resultado.getR32()!=null ? resultado.getR32() : null; break;
+            case "33.0": res = resultado.getR33()!=null ? resultado.getR33() : null; break;
+        }
+        
+        return res;
+    }
+    
+    public String obtenerRespuestaPorPregunta1(ListaEvaluacion360Promedios.DtoListaResultadosEvaluacion360 resultado, Float pregunta) {
         String res = null;
         switch (pregunta.toString()) {
             case "1.0": res = resultado.getR1()!=null ? resultado.getR1().toString() : null; break;
