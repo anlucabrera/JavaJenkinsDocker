@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -22,7 +21,6 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoNotificacionesAreas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.RegistroNotificacionRolGeneral;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroNotificaciones;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbValidacionRol;
@@ -38,7 +36,6 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.funcional.Desarrollable;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.cdi.ViewScoped;
-import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
 @Named
@@ -46,12 +43,13 @@ import org.omnifaces.util.Messages;
 public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desarrollable {
 
     private static final long serialVersionUID = -3552096699095522780L;
-    
+    @Getter @Setter private NotificacionesCe  notificacionCe = new NotificacionesCe();
     @Getter @Setter private RegistroNotificacionRolGeneral  rol;
-    @Getter @Setter private NotificacionesCe    notificacionCe = new NotificacionesCe();
+    @Getter @Setter private Integer    horasRestantes = 23;
     @Getter protected   List<String>    instrucciones = new ArrayList<>();
     @Getter private Boolean cargado = false;
-    @Getter private Boolean admin = false;
+    @Getter private Boolean puedeAgregar = false;
+    @Getter private Boolean puedeEliminar = false;
     @Getter Boolean tieneAcceso = false;
 
     @EJB    EjbRegistroNotificaciones ejb;
@@ -85,7 +83,12 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
                 tieneAcceso = true;
                 cargado = true;
                 if (logonMB.getPersonal().getClave() == 639) {
-                    admin = true;
+                    puedeAgregar = true;
+                    puedeEliminar = true;
+                }else if(logonMB.getPersonal().getClave()==714){
+                    puedeAgregar = true;
+                    puedeEliminar = false;
+                    
                 }
             }
 
@@ -100,9 +103,9 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             rol = new RegistroNotificacionRolGeneral(notifAcceso.getValor());
 //            obtenerListaNotificacionesActivas(logonMB.getPersonal().getClave());
             obtenerListaNotificacionesTotal();
-            instrucciones.add("Prueba 1");
-            instrucciones.add("Prueba 2");
-            instrucciones.add("Prueba 3");
+            instrucciones.add("Si el evento dura todo el dia, marcar como duracion 00:00");
+            instrucciones.add("Si el evento dura 1 solo dia, puedes omitir la fecha de fin");
+            instrucciones.add("Si falta algun dato por llenar no se podra registrar la notificacion");
             obtenerListaNotificacionesTrabajador();
 
         } catch (Exception e) {
@@ -124,15 +127,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
 
     public List<RolNotificacion> getListaNotificacionRol() {
         return RolNotificacion.ListaNotificacion();
-    }
-
-    public void cargaAreasParaAsignarNotificacion() {
-        ResultadoEJB<List<DtoNotificacionesAreas>> resDtoAreasParaNotificacion = ejb.consultarListadoAreasParaNotificacion();
-        if (resDtoAreasParaNotificacion.getCorrecto()) {
-            rol.setListaDtoNotificacionesAreas(resDtoAreasParaNotificacion.getValor());
-        } else {
-            mostrarMensajeResultadoEJB(resDtoAreasParaNotificacion);
-        }
     }
 
     public void inicializarNotificacionCe() {
@@ -237,6 +231,12 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             rol.setHoraInicio(null);
         }
     }
+    
+        public void obtenerHorasRestantes(ValueChangeEvent event){
+            if((Date) event.getNewValue() != null){
+                setHorasRestantes(24-obtenerHora((Date) event.getNewValue()));
+            }
+    }
 
     public void validaFechaInicioFiltro(ValueChangeEvent event) {
         if ((Date) event.getNewValue() != null && rol.getFechaFinFiltro() != null || rol.getFechaFinFiltro() != null) {
@@ -266,56 +266,12 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         }
     }
 
-    /**
-     * ********************************************* Filtros
-     * ********************************************************
-     */
-    public void abrirModalConsultaEnlaces(NotificacionesCe notificacion) {
-        rol.setNotificacionCe(notificacion);
-        inicializarNotificacionCeEnlace();
-        actualizarEnlacesNotificacion();
-        Ajax.update("frmEnlacesNotificaciones");
-        Ajax.oncomplete("skin();");
-        Ajax.oncomplete("PF('modalConsultaEnlacesNotificaciones').show();");
-    }
 
-    public void abrirModalConsultaImagenes(NotificacionesCe notificacion) {
-        rol.setNotificacionCe(notificacion);
-//        Considerar la actualización de la base de datos
-        Ajax.update("frmImagenesNotificaciones");
-        Ajax.oncomplete("skin();");
-        Ajax.oncomplete("PF('modalConsultaImagenesNotificaciones').show();");
-    }
-
-    public void abrirModalConsultaAreasAsignadas() {
-        Ajax.oncomplete("skin();");
-        Ajax.oncomplete("PF('modalConsultaAreasNotificaciones').show();");
-    }
 
     /**
      * ********************************************* Administración de datos
      * ********************************************************
      */
-//    public void guardarNotificacion() {
-//        if (rol.getAlcance().isEmpty() || rol.getAlcance() == null) {
-//            mostrarMensajeError("El alcance de la notificación debe contener al menos un dato");
-//        } else {
-//            List<String> listaAlcanceOrdenada = RolNotificacion.ListaValoresLabel();
-//            rol.getNotificacionCe().setHoraInicio(rol.getFechaInicio());
-//            rol.getNotificacionCe().setHoraFin(rol.getFechaFin());
-//            rol.getNotificacionCe().setGeneral(Boolean.FALSE);
-//            listaAlcanceOrdenada.retainAll(rol.getAlcance());
-//            rol.getNotificacionCe().setAlcance(String.join(",", listaAlcanceOrdenada));
-//            ResultadoEJB<NotificacionesCe> resNotificacion = ejb.guardaNotificacion(rol.getNotificacionCe());
-//            if (resNotificacion.getCorrecto()) {
-//                mostrarMensajeResultadoEJB(resNotificacion);
-//                inicializarGeneral();
-//                obtenerListaNotificacionesUltimosDiez();
-//            } else {
-//                mostrarMensajeResultadoEJB(resNotificacion);
-//            }
-//        }
-//    }
     
     public void guardarNotificacion() {
         try {
@@ -332,9 +288,15 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             duracionMinutos = Long.parseLong(obtenerMinuto(rol.getHoraDuracion()).toString());
             tiempoInicioMinutos = Long.parseLong(obtenerMinuto(rol.getHoraInicio()).toString());
             tiempoFinMinutos = tiempoInicioMinutos + duracionMinutos;
-
-            fechaInicio = utilidadesCH.castearLDTaD(inicio.plusHours(tiempoInicioHoras).plusMinutes(tiempoInicioMinutos));
-            fechaFin = utilidadesCH.castearLDTaD(fin.plusHours(tiempoFinHoras).plusMinutes(tiempoFinMinutos));
+            
+                fechaInicio = utilidadesCH.castearLDTaD(inicio.plusHours(tiempoInicioHoras).plusMinutes(tiempoInicioMinutos));
+            if (rol.getFechaFin() != null) {
+                System.out.println(rol.getFechaFin());
+                fechaFin = utilidadesCH.castearLDTaD(fin.plusHours(tiempoFinHoras).plusMinutes(tiempoFinMinutos));
+            } else {
+                System.out.println(rol.getFechaFin());
+                fechaFin = utilidadesCH.castearLDTaD(inicio.plusHours(tiempoFinHoras).plusMinutes(tiempoFinMinutos));
+            }
             duracionEvento = rol.getHoraDuracion();
             notificacionCe.setHoraInicio(fechaInicio);
             notificacionCe.setHoraFin(fechaFin);
@@ -382,25 +344,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(RegistroNotificacionesGeneral.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-//    public void editaFechaInicioDuracion(ValueChangeEvent event){
-//        
-//    }
-//    
-//    public void editaNotificacion(){
-//        
-//    }
-    public void guardarEnlaceNotificacion() {
-        ResultadoEJB<NotificacionesEnlaces> resNotificacionEnlace = ejb.guardaNotificacionEnlace(rol.getNotificacionEnlace());
-        if (resNotificacionEnlace.getCorrecto()) {
-            inicializarNotificacionCeEnlace();
-            inicializarListaNotificacionesEnlaces();
-            actualizarEnlacesNotificacion();
-            mostrarMensajeResultadoEJB(resNotificacionEnlace);
-        } else {
-            mostrarMensajeResultadoEJB(resNotificacionEnlace);
         }
     }
 
@@ -454,7 +397,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
             return true;
         }
     }
-
+    
     public boolean obtenerMes(Date horaInicio, Date horaFin) {
         LocalDate fechaI = utilidadesCH.castearDaLD(horaInicio);
         LocalDate fechaF = utilidadesCH.castearDaLD(horaFin);
@@ -480,7 +423,7 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
         minuto = horasFecha.getMinute();
         return minuto;
     }
-
+    
     public boolean mostrarNotificacion(int index, Date horaInicio, Date horaFin) {
         LocalDateTime horaActual = LocalDateTime.now();
         LocalDateTime horaComienzo = utilidadesCH.castearDaLDT(horaInicio);
@@ -500,15 +443,6 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
      * ********************************************* Llenado de listas
      * ********************************************************
      */
-    public void obtenerListaNotificacionesUltimosDiez() {
-        ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesUltimosDiez();
-        if (resNotificaciones.getCorrecto()) {
-            rol.setListaNotificacionesCe(resNotificaciones.getValor());
-            mostrarMensajeResultadoEJB(resNotificaciones);
-        } else {
-            inicializarListaNotificacionesCe();
-        }
-    }
 
     public void obtenerListaNotificacionesTotal() {
         ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarNotificacionesTotal();
@@ -558,48 +492,5 @@ public class RegistroNotificacionesGeneral extends ViewScopedRol implements Desa
     }
 
     public void metodoBase() {
-    }
-    
-    public void obtenerListaFechasNotificaciones() {
-        ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultarFechasNotificaciones();
-        if (resNotificaciones.getCorrecto()) {
-            rol.setListaNotificacionesCe(resNotificaciones.getValor());
-            mostrarMensajeResultadoEJB(resNotificaciones);
-        } else {
-            inicializarListaNotificacionesCe();
-        }
-    }
-
-    public void obtenerListaNotificacionesPorFechaRegistro() {
-        ResultadoEJB<List<NotificacionesCe>> resNotificaciones = ejb.consultaNotificacionesPorFechaRegistro(rol.getFechaInicioFiltro(), rol.getFechaFinFiltro());
-        if (resNotificaciones.getCorrecto()) {
-            rol.setListaNotificacionesCe(resNotificaciones.getValor());
-            mostrarMensajeResultadoEJB(resNotificaciones);
-        } else {
-            inicializarListaNotificacionesCe();
-        }
-    }
-
-    public void mostrarEnlacesPorNotificacion() {
-        rol.setListaNotificacionesEnlaces(rol.getNotificacionCe().getNotificacionesEnlacesList());
-    }
-
-    public void actualizarEnlacesNotificacion() {
-        ResultadoEJB<List<NotificacionesEnlaces>> resListaEnlaces = ejb.consultarEnlacesPorNotificacion(rol.getNotificacionCe());
-        if (resListaEnlaces.getCorrecto()) {
-            rol.setListaNotificacionesEnlaces(resListaEnlaces.getValor());
-            if (!rol.getListaNotificacionesEnlaces().isEmpty()) {
-                rol.setNotificacionCe(rol.getListaNotificacionesEnlaces().get(0).getNotificacion());
-                rol.getListaNotificacionesCe().removeIf(nce -> nce.getNotificacion().equals(rol.getNotificacionCe().getNotificacion()));
-                rol.getListaNotificacionesCe().stream().sorted((s1, s2) -> s2.getNotificacion().compareTo(s1.getNotificacion())).collect(Collectors.toList());
-                rol.getListaNotificacionesCe().add(rol.getNotificacionCe());
-            }
-        } else {
-            mostrarMensajeResultadoEJB(resListaEnlaces);
-        }
-    }
-
-    public void mostrarImagenesPorNotificacion() {
-        rol.setListaNotificacionesCeImagenes(rol.getNotificacionCe().getNotificacionesCeImagenesList());
     }
 }

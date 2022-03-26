@@ -72,24 +72,14 @@
 
                             <div class="box box-solid">
                                 <div class="box-body">
-                                    <h:form id="frmFiltros" prependId="false" class="form-inline">
-                                        <c:set var="panel" value="#{'col-sm-12 col-md-12 col-lg-12'}"/>
-                                        <c:set var="casilla" value="#{'col-sm-12 col-md-6 col-lg-2'}" />
-                                        <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-6'}" />
-                                        <c:set var="casilla3" value="#{'col-sm-12 col-md-3 col-lg-1'}" />
-                                        <c:set var="casilla4" value="#{'col-sm-3 col-md-3 col-lg-3'}"/>
-                                        <c:set var="casilla5" value="#{'col-sm-4 col-md-4 col-lg-4'}"/>
-                                        <c:set var="casilla6" value="#{'col-sm-8 col-md-8 col-lg-8'}"/>
-                                        <c:set var="casilla7" value="#{'col-sm-9 col-md-9 col-lg-9'}"/>
-                                        <div class="row margin-bottom" style="margin-top: 20px;">
-                                            <!--Verificar si aplican filtros en este apartado-->
-                                        </div>
-                                    </h:form>
-                                    <h:form id="frmRegistro" rendered="#{registroNotificacionesGeneral.admin}" prependId="false" class="form-inline">
+                                    <h:form id="frmRegistro" rendered="#{registroNotificacionesGeneral.puedeAgregar}" prependId="false" class="form-inline">
                                         <p:remoteCommand id="actualizarRegistroNotificaciones" name="actualizarRegistroNotificaciones" actionListener="#{registroNotificacionesGeneral.actualizar}" process="@this" update="contenedor" /><!-- TODO: Falta incluir modales de enlace, áreas e imágenes -->
                                         <div class="row">
                                             <div class="col-lg-12 col-md-12 text-info">
                                                 <p:outputPanel id="contenedor">
+                                                    <p:messages id="notificaciones" closable="true" redisplay="false">
+                                                        <p:autoUpdate/>
+                                                    </p:messages>
                                                     <div class="row margin-bottom">
 
                                                         <div class="col-sm-12 col-md-12 col-lg-12">
@@ -101,7 +91,7 @@
                                                                 <p:calendar id="rnFechaInicio"
                                                                             label="rnFechaInicio"
                                                                             required="true"
-                                                                            requiredMessage="Ingrese fecha de inicio de la notificación"
+                                                                            requiredMessage="Por favor, ingrese FECHA DE INICIO de la notificación."
                                                                             value="#{registroNotificacionesGeneral.rol.fechaInicio}"
                                                                             valueChangeListener="#{registroNotificacionesGeneral.validaFechaInicio}"
                                                                             pattern="yyyy-MM-dd"
@@ -115,15 +105,13 @@
                                                                     <p:ajax event="dateSelect" global="false" process="@this" update="rnFechaFin"/>
                                                                 </p:calendar>
                                                             </div>
-                                                            <p>Fecha de inicio (duración de la notificación</p>
+                                                            <p>Fecha de inicio (duración de la notificación)</p>
                                                         </div>
 
                                                         <div class="col-sm-12 col-md-6 col-lg-3" style="margin-top: 20px;">
                                                             <div class="ui-material">
                                                                 <p:calendar id="rnFechaFin"
                                                                             label="rnFechaFin"
-                                                                            required="true"
-                                                                            requiredMessage="Ingrese fecha de inicio de la notificación"
                                                                             value="#{registroNotificacionesGeneral.rol.fechaFin}"
                                                                             valueChangeListener="#{registroNotificacionesGeneral.validaFechaFin}"
                                                                             pattern="yyyy-MM-dd"
@@ -137,15 +125,16 @@
                                                                     <p:ajax event="dateSelect" global="false" process="@this" update="rnFechaInicio"/>
                                                                 </p:calendar>
                                                             </div>
-                                                            <p>Fecha de fin (duración de la notificación</p>
+                                                            <p>Fecha de fin (duración de la notificación)</p>
                                                         </div>
                                                         <div class="col-sm-12 col-md-6 col-lg-3" style="margin-top: 20px;">
                                                             <div class="ui-material">
                                                                 <p:calendar id="rnHoraInicio"
                                                                             label="rnHoraInicio"
                                                                             required="true"
-                                                                            requiredMessage="Ingrese fecha de inicio de la notificación"
+                                                                            requiredMessage="Por favor, ingrese la HORA DE INICIO del evento"
                                                                             value="#{registroNotificacionesGeneral.rol.horaInicio}"
+                                                                            valueChangeListener="#{registroNotificacionesGeneral.obtenerHorasRestantes}"
                                                                             style="width: 18em;"
                                                                             locale="es"
                                                                             showOn="both"
@@ -155,31 +144,33 @@
                                                                             timeOnly="true"
                                                                             stepMinute="5"
                                                                             >
-                                                                    <!--<p:ajax event="dateSelect" global="false" process="@this" update="rnHoraInicio"/>-->
+                                                                    <p:ajax event="dateSelect" global="false" process="@this" update="rnDuracion"/>
                                                                 </p:calendar>
                                                             </div>
-                                                            <p>Hora de Inicio(inicio del evento</p>
+                                                            <p>Hora de inicio del evento</p>
                                                         </div>
                                                         <div class="col-sm-12 col-md-6 col-lg-3" style="margin-top: 20px;">
                                                             <div class="ui-material">
                                                                 <p:calendar id="rnDuracion"
                                                                             label="rnDuracion"
                                                                             required="true"
-                                                                            requiredMessage="Ingrese fecha de inicio de la notificación"
+                                                                            requiredMessage="Por favor, ingrese la DURACIÓN del evento"
                                                                             value="#{registroNotificacionesGeneral.rol.horaDuracion}"
                                                                             style="width: 18em;"
                                                                             locale="es"
                                                                             showOn="both"
                                                                             readonlyInput="true"
                                                                             timeControlType="select"
+                                                                            maxHour="#{registroNotificacionesGeneral.horasRestantes}"
                                                                             pattern="HH:mm"
                                                                             timeOnly="true"
                                                                             stepMinute="10"
                                                                             >
-                                                                    <!--<p:ajax event="dateSelect" global="false" process="@this" update="rnDuracion"/>-->
+                                                                    <p:message for='rnDuracion' />
+                                                                    <p:ajax event="dateSelect" global="false" process="@this" update="rnDuracion"/>
                                                                 </p:calendar>
                                                             </div>
-                                                            <p>Duracion del evento (duración de la notificación</p>
+                                                            <p>Duracion del evento</p>
                                                         </div>
 
                                                         <!--style="margin-bottom: 20px;"-->
@@ -194,8 +185,9 @@
                                                                              style="width: 35em"
                                                                              class="form-control"
                                                                              required="true"
-                                                                             requiredMessage="Por favor ingrese el título principal de la notificación"
-                                                                             />
+                                                                             requiredMessage="Por favor, ingrese el TÍTULO PRINCIPAL de la notificación"
+                                                                             >
+                                                                </p:inputText>
                                                                 <p:outputLabel for="rnTituloPrincipal" value="Título principal de la notificación (este título identificará a la notificación): "/>
                                                             </div>
                                                         </div>
@@ -209,12 +201,13 @@
                                                                              style="width: 35em"
                                                                              class="form-control"
                                                                              required="true"
-                                                                             requiredMessage="Por favor ingrese el subtítulo de la notificación"
-                                                                             />
+                                                                             requiredMessage="Por favor, ingrese el LUGAR donde se realizara el evento"
+                                                                             >
+                                                                </p:inputText>
                                                                 <p:outputLabel for="rnLugar" value="Lugar donde se realizara el evento"/>
                                                             </div>
                                                         </div>
-                                                        
+
                                                         <div class="col-sm-12 col-md-12 col-lg-6" style="margin-top: 20px;">
                                                             <div class="ui-material">
                                                                 <p:inputText id="rnResponsable"
@@ -224,8 +217,9 @@
                                                                              style="width: 35em"
                                                                              class="form-control"
                                                                              required="true"
-                                                                             requiredMessage="Por favor ingrese el título principal de la notificación"
-                                                                             />
+                                                                             requiredMessage="Por favor, ingrese el nombre de la PERSONA RESPONSABLE del evento"
+                                                                             >
+                                                                </p:inputText>
                                                                 <p:outputLabel for="rnResponsable" value="Nombre de la persona responsable del evento"/>
                                                             </div>
                                                         </div>
@@ -239,8 +233,9 @@
                                                                              style="width: 35em"
                                                                              class="form-control"
                                                                              required="true"
-                                                                             requiredMessage="Por favor ingrese el subtítulo de la notificación"
-                                                                             />
+                                                                             requiredMessage="Por favor, ingrese el nombre del EXPOSITOR"
+                                                                             >
+                                                                </p:inputText>
                                                                 <p:outputLabel for="rnExpositor" value="Nombre del expositor"/>
                                                             </div>
                                                         </div>
@@ -262,7 +257,7 @@
                                                                                    itemValue="#{rnTipo.label}" 
                                                                                    itemLabel="#{rnTipo.label}" />
                                                                 </p:selectOneMenu>
-                                                                <p:message for="rnTipoN" ><p:autoUpdate/></p:message>
+                                                                <!--<p:message for="rnTipoN" ><p:autoUpdate/></p:message>-->
                                                             </div>
                                                             <p>Tipo de notificación</p>
                                                         </div>
@@ -290,13 +285,17 @@
                                                                 <p:inputTextarea id="rnSubtitulo"
                                                                                  rows="4" 
                                                                                  cols="95"
-                                                                                 counter="displayContenido" 
+                                                                                 counter="displayContenido"
+                                                                                 required="true"
+                                                                                 requiredMessage="Por favor, ingrese el CONTENIDO de la notificación"
                                                                                  maxlength="2000" 
                                                                                  counterTemplate="{0} caracteres en total." 
                                                                                  autoResize="true"
                                                                                  class="form-control"
                                                                                  value="#{registroNotificacionesGeneral.notificacionCe.subtitulo}"
-                                                                                 />
+                                                                                 >
+                                                                    <f:validateLength maximum="20" />
+                                                                </p:inputTextarea>
                                                                 <h:outputText id="displayContenido" />
                                                                 <p:message for="rnSubtitulo" />
                                                                 <p:outputLabel for="rnSubtitulo" value="Contenido de la notificación (en este campo puede agregar el contenido específico de la notificación): " />
@@ -307,12 +306,13 @@
                                                             <p:commandButton id="btnGuardarNotificacion" 
                                                                              value="Guardar Notificación" 
                                                                              actionListener="#{registroNotificacionesGeneral.guardarNotificacion}" 
-                                                                             oncomplete="actualizarTabla();"
                                                                              icon="fa fa-pencil-square-o" 
                                                                              class="btn-primary" 
                                                                              style="width:15em;" 
                                                                              title="Guardar Notificación"
-                                                                             />
+                                                                             >
+                                                                <!--<p:ajax oncomplete="" update="contenedor" resetValues="true" />-->
+                                                            </p:commandButton>
                                                         </div>
                                                     </div>
                                                 </p:outputPanel>
@@ -356,7 +356,7 @@
                                                             <p:autoUpdate/>
                                                             <p:column >
                                                                 <p:commandButton actionListener="#{registroNotificacionesGeneral.eliminarNotificacion(notificacion)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash"
-                                                                                 styleClass="btn-primary" title="Eliminar aviso" disabled="#{!registroNotificacionesGeneral.admin}" >
+                                                                                 styleClass="btn-danger" title="Eliminar aviso" disabled="#{!registroNotificacionesGeneral.puedeEliminar}" >
                                                                     <p:confirm header="Confirmación" message="¿Confirma la eliminación de la notificacion: #{notificacion.tituloPrincipal}?" icon="ui-icon-alert" />
                                                                 </p:commandButton>
                                                             </p:column>
@@ -419,7 +419,7 @@
                                                             <p:column >
                                                                 <p:cellEditor>
                                                                     <f:facet name="output">
-                                                                        <h:outputText value="#{notificacion.horaInicio}" ><f:convertDateTime pattern="dd 'de' MMMM 'a las' hh:mm a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
+                                                                        <h:outputText value="#{notificacion.horaInicio}" ><f:convertDateTime pattern="dd 'de' MMMM 'de' yyyy 'a las' hh:mm a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
                                                                     </f:facet>
                                                                     <f:facet name="input">
                                                                         <p:calendar value="#{notificacion.horaInicio}" stepMinute="15" pattern="dd-MM-yyyy hh:mm:ss a" 
@@ -434,7 +434,7 @@
                                                             <p:column >
                                                                 <p:cellEditor>
                                                                     <f:facet name="output">
-                                                                        <h:outputText value="#{notificacion.horaFin}" ><f:convertDateTime pattern="dd 'de' MMMM 'a las' hh:mm a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
+                                                                        <h:outputText value="#{notificacion.horaFin}" ><f:convertDateTime pattern="dd 'de' MMMM 'de' yyyy 'a las' hh:mm a" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
                                                                     </f:facet>
                                                                     <f:facet name="input">
                                                                         <p:calendar value="#{notificacion.horaFin}" stepMinute="15" pattern="dd-MM-yyyy hh:mm:ss a"
@@ -447,8 +447,8 @@
                                                                 </p:cellEditor>
                                                             </p:column> 
                                                             <p:column >
-                                                                <p:cellEditor>
 
+                                                                <p:cellEditor>
                                                                     <f:facet name="output">
                                                                         <h:outputText value="#{notificacion.duracionEvento}" ><f:convertDateTime pattern="HH:mm 'hora(s)'" locale="es-MX" timeZone="America/Mexico_City"/></h:outputText>
                                                                     </f:facet>
@@ -515,14 +515,16 @@
                 </c:if>
                 <!-- Zona de cuadros de diálogo -->
                 <p:dialog id="modalAyuda"
-                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
-                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                          widgetVar="modalAyuda" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" appendTo="@(body)" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="false">
                     <div class="box box-primary">
                         <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para el registro de notificaciones</h3></div>
                         <div class="box-body">
                             <ul class="todo-list">
-                                <c:forEach items="#{registroNotificacionesGeneral.instrucciones}" var="instruccion">
-                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                <c:set var="size" value="#{registroNotificacionesGeneral.instrucciones.size()-1}"/>
+                                <c:forEach var="index" begin="0" end="#{size}">
+                                    <c:set var="instruccion" value="#{registroNotificacionesGeneral.instrucciones.get(index)}"/>
+                                    <li><span class="text" style="text-align: justify;"><i class="fa-solid fa-#{index+1}"></i> <i class="fa fa-chevron-right fa-xs"></i> #{instruccion}</span></li>
                                 </c:forEach>
                             </ul>
                         </div>
