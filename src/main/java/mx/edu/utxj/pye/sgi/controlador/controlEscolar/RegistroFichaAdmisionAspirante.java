@@ -124,7 +124,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             else {mostrarMensajeResultadoEJB(resSistema);}
             getPaises();
             getEstadosMexico();
-            getAreasAcadémicas();
+            getAreasAcademicas();
             getGeneros();
 
         }catch (Exception e){mostrarExcepcion(e);}
@@ -308,7 +308,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                                             ResultadoEJB<DtoAspirante.EncuestaR> resEncuesta = ejbRegistroFicha.getEncuesta(rol.getAspirante().getAspirante());
                                             if(resEncuesta.getCorrecto()==true){
                                                 rol.setEncuesta(resEncuesta.getValor());
-                                                comprabarEncuesta(rol.getEncuesta().getEncuestaAspirante());
+                                                comprobarEncuesta(rol.getEncuesta().getEncuestaAspirante());
                                                 if(rol.getEncuesta().getEcontrado()==true){
                                                     if(rol.getFinalizado()==true){
                                                         rol.setTab9(false);
@@ -417,7 +417,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                                 rol.setTab7(false);
                                 rol.setStep(6);
                             }else {
-                                comprabarEncuesta(rol.getEncuesta().getEncuestaAspirante());
+                                comprobarEncuesta(rol.getEncuesta().getEncuestaAspirante());
                                 if(rol.getFinalizado()==true){
                                     rol.setTab7(false);
                                     rol.setTab8(false);
@@ -463,38 +463,67 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             rol.getDdomicilios().getDomicilio().setAsentamientoProcedencia(rol.getDdomicilios().getDomicilio().getIdAsentamiento());
         }  
     }
-    public void comprabarEncuesta(@NonNull EncuestaAspirante resultados){
+    public void comprobarEncuesta(@NonNull EncuestaAspirante resultados){
         if(rol.getEncuesta().getEcontrado()){
-            Integer tt=0;
-            if(rol.getEncuesta().getEncuestaAspirante().getR1Lenguaindigena()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR2tipoLenguaIndigena()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR3comunidadIndigena()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR4programaBienestar()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR5ingresoMensual()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR6dependesEconomicamnete()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR7ingresoFamiliar()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR8primerEstudiar()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR9nivelMaximoEstudios()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR10numeroDependientes()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR11situacionEconomica()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR12hijoPemex()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR13utxjPrimeraOpcion()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR14examenAdmisionOU()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR15medioImpacto()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR16segundaCarrera()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR17Alergia()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR18padecesEnfermedad()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR19tratamientoMedico()!= null){tt=tt+1;}
-            if(rol.getEncuesta().getEncuestaAspirante().getR20Hijos()!=null){
-                if(rol.getEncuesta().getEncuestaAspirante().getR20Hijos().equals("No")){ tt=tt+1;
-                }else if(rol.getEncuesta().getEncuestaAspirante().getR20Hijos().equals("Si")){
-                    if(rol.getEncuesta().getEncuestaAspirante().getR21noHijos()!=null){tt=tt+1;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR1Lenguaindigena() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR3comunidadIndigena() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR4programaBienestar() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR5ingresoMensual() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR6dependesEconomicamnete() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR7ingresoFamiliar() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR8primerEstudiar() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR9nivelMaximoEstudios() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR10numeroDependientes() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR11situacionEconomica() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR12hijoPemex() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR13utxjPrimeraOpcion() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR14examenAdmisionOU() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR15medioImpacto() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR16segundaCarrera() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR17Alergia() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR18padecesEnfermedad() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR19tratamientoMedico() == null){rol.setFinalizado(Boolean.FALSE);return;}
+            if(rol.getEncuesta().getEncuestaAspirante().getR20Hijos() == null){rol.setFinalizado(Boolean.FALSE);return;}           
+            if (rol.getEncuesta().getEncuestaAspirante().getR1Lenguaindigena().equals("Si")) {
+                if (rol.getEncuesta().getEncuestaAspirante().getR2tipoLenguaIndigena() == null) {
+                    rol.setFinalizado(Boolean.FALSE);
+                    return;
+                }
+            }       
+            if (rol.getEncuesta().getEncuestaAspirante().getR20Hijos().equals("Si")) {
+                if (rol.getEncuesta().getEncuestaAspirante().getR21noHijos() == null) {
+                    rol.setFinalizado(Boolean.FALSE);
+                    return;
                 }
             }
-            if(rol.getEncuesta().getEncuestaAspirante().getR1Lenguaindigena().equals("Si") && tt==20){
-                rol.setFinalizado(Boolean.TRUE);
-            }else if(rol.getEncuesta().getEncuestaAspirante().getR1Lenguaindigena().equals("No") && tt==19){
-                rol.setFinalizado(Boolean.TRUE);
+            
+            Boolean finalizado = !(rol.getEncuesta().getEncuestaAspirante().getR1Lenguaindigena() == null              
+                                    || rol.getEncuesta().getEncuestaAspirante().getR3comunidadIndigena() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR4programaBienestar() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR5ingresoMensual() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR6dependesEconomicamnete() == null    
+                                    || rol.getEncuesta().getEncuestaAspirante().getR7ingresoFamiliar() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR8primerEstudiar() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR9nivelMaximoEstudios() == null    
+                                    || rol.getEncuesta().getEncuestaAspirante().getR10numeroDependientes() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR11situacionEconomica() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR12hijoPemex() == null    
+                                    || rol.getEncuesta().getEncuestaAspirante().getR13utxjPrimeraOpcion() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR14examenAdmisionOU() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR15medioImpacto() == null    
+                                    || rol.getEncuesta().getEncuestaAspirante().getR16segundaCarrera() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR17Alergia() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR18padecesEnfermedad() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR19tratamientoMedico() == null
+                                    || rol.getEncuesta().getEncuestaAspirante().getR20Hijos() == null);
+            if(finalizado){
+                if(rol.getEncuesta().getEncuestaAspirante().getR1Lenguaindigena().equals("Si") || rol.getEncuesta().getEncuestaAspirante().getR20Hijos().equals("Si")){
+                    if (rol.getEncuesta().getEncuestaAspirante().getR2tipoLenguaIndigena() != null || rol.getEncuesta().getEncuestaAspirante().getR21noHijos() != null) {
+                        rol.setFinalizado(Boolean.TRUE);
+                    }
+                }else{
+                    rol.setFinalizado(Boolean.TRUE);
+                }
             }else{
                 rol.setFinalizado(Boolean.FALSE);
             }
@@ -635,7 +664,9 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             else {mostrarMensajeResultadoEJB(resDtoA);}
         }catch (Exception e){mostrarExcepcion(e);}
     }
+    
     public void saveEncuesta(ValueChangeEvent event) {
+//        try {
         Integer numeroP=0;
         String valor="";
         //System.out.println("valor"+event.getComponent().getId());
@@ -677,7 +708,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
         ResultadoEJB<DtoAspirante.EncuestaR> rejb =ejbRegistroFicha.operacionesEncuestaR(rol.getAspirante().getAspirante(),valor,numeroP);
         if(!rejb.getCorrecto()){ mostrarMensajeResultadoEJB(rejb);return;}
         rol.setEncuesta(rejb.getValor());
-        comprabarEncuesta(rol.getEncuesta().getEncuestaAspirante());
+        comprobarEncuesta(rol.getEncuesta().getEncuestaAspirante());
         if(rol.getFinalizado()==true){
             if(rol.getAspirante().getAspirante().getFolioAspirante()==null){
                 rol.setFolioAspirante(new Integer(0));
@@ -705,6 +736,10 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             getRegistro();
             //comprobarPaso();
         }
+        
+//        } catch (Exception e) {
+//            mostrarMensajeError(e.getMessage());
+//        }
     }
     /**
      * Guarda la respuesta de la encuesta vocacional
@@ -965,7 +1000,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
     /*
       Obtiene una lista de areas acadeicas
      */
-    public  void  getAreasAcadémicas(){
+    public void getAreasAcademicas(){
         try{
             ResultadoEJB<List<AreasUniversidad>> resAreasA = ejbRegistroFicha.getAreasAcademicas();
             if(resAreasA.getCorrecto() ==true){rol.setAreasAcademicas(resAreasA.getValor());}
@@ -1003,6 +1038,33 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             if(resGeneros.getCorrecto()==true){rol.setGeneros(resGeneros.getValor());}
             else {mostrarMensajeResultadoEJB(resGeneros);}
         }catch (Exception e){}
+    }
+    
+    public void actualizarElementoSeguroImss(ValueChangeEvent event){
+        try {
+            rol.getDmedico().getDatosMedicos().setNssVigente((Boolean) event.getNewValue());
+//            System.err.println("Seguro: " + cuentaSeguro);
+        } catch (Exception e) {
+            mostrarMensaje("Ha ocurrido un error al seleccionar 'Cuenta seguro médico del IMSS'");
+        }
+    }
+    
+    public void actualizarElementoTelefonoPadre(ValueChangeEvent event){
+        try {
+            rol.getDfamiliares().setOcupacionP((Ocupacion) event.getNewValue());
+//            System.err.println("Ocupacion; " + rol.getDfamiliares().getOcupacionP().getDescripcion());
+        } catch (Exception e) {
+            mostrarMensaje("Ha ocurrido un error al seleccionar la 'Ocupación' del Padre");
+        }
+    }
+    
+    public void actualizarElementoTelefonoMadre(ValueChangeEvent event){
+        try {
+            rol.getDfamiliares().setOcupacionM((Ocupacion) event.getNewValue());
+//            System.err.println("Ocupacion; " + rol.getDfamiliares().getOcupacionM().getDescripcion());
+        } catch (Exception e) {
+            mostrarMensaje("Ha ocurrido un error al seleccionar la 'Ocupación' de la Madre");
+        }
     }
     
     public void abrirFormularioAccesoInformacion(){

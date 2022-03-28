@@ -20,7 +20,10 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 
 /**
  * Consulta de registro de fichas de admisión  por carrera
@@ -875,5 +878,22 @@ public class EjbFichaAdmisionReporte {
                 }else {return ResultadoEJB.crearErroneo(3,reporte,"Error al obtener las fichas registradas");}
             }else {return ResultadoEJB.crearErroneo(2,reporte,"Error al obtener la lista de aspirantes");}
         }catch (Exception e){ return ResultadoEJB.crearErroneo(1, "Error al obtener el reporte (EjbFichaAdmisionReporte.getReporte)", e, null); }
+    }
+    
+    public ResultadoEJB<List<Persona>> consultarUsuariosContrasenias(String pista){
+        try {
+            List<Persona> aspirantes = em.createQuery("SELECT p FROM Persona p WHERE CONCAT(p.nombre, p.apellidoPaterno, p.apellidoMaterno, p.curp) LIKE CONCAT('%',:pista,'%') ORDER BY p.idpersona DESC", Persona.class)
+                    .setParameter("pista", pista)
+                    .setFirstResult(0)
+                    .setMaxResults(10)
+                    .getResultList();
+            if(!aspirantes.isEmpty()){
+                return ResultadoEJB.crearCorrecto(aspirantes, "Primeros dies resultados coincidentes con la búsqueda");
+            }else{
+                return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST, "No se han encontrado coincidencias con los resultados ingresados.");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se han podido encontrar aspirantes con los datos ingresados (EjbFichaAdmisionReporte.consultarUsuariosContrasenias)", e, null);
+        }
     }
 }

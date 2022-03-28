@@ -75,9 +75,55 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <br/>
+
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 text-info">
+                                    <div class="row margin-bottom">
+                                        <p:toolbar>
+                                            <f:facet name="left">
+                                                <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
+                                                <p:outputLabel value="Recuperación de contraseñas de aspirantes." style="padding-top: 5px;" />
+                                                <p></p>
+                                            </f:facet>
+                                        </p:toolbar>
+                                        <div class="col-sm-12 col-md-12 col-lg-12" style="margin-top: 20px;">
+                                            <div class="ui-material">
+                                                <p:autoComplete id="aspiranteAutocomplete" 
+                                                                value="#{fichaAdmisionReporte.rol.personaEncontrada}" 
+                                                                completeMethod="#{fichaAdmisionReporte.completeAspirantes}" 
+                                                                queryDelay="800"
+                                                                var="aspirante" 
+                                                                itemValue="#{aspirante}" 
+                                                                itemLabel="#{aspirante.nombre}" 
+                                                                converter="entityConverter" 
+                                                                forceSelection="true"
+                                                                minQueryLength="4"
+                                                                scrollHeight="300"
+                                                                size="80"
+                                                                >
+                                                    <!--disabled="# {registroTutoriaGrupal.rol.eventoSeleccionado ne registroTutoriaGrupal.rol.eventoRegistroActivo}"-->
+                                                    <p:column headerText="Contraseña">#{aspirante.idpersona}</p:column>
+                                                    <p:column headerText="Nombre">#{aspirante.nombre} #{aspirante.apellidoMaterno} #{aspirante.apellidoPaterno}</p:column>
+                                                    <p:column headerText="CURP">#{aspirante.curp}</p:column>
+                                                    <p:ajax event="itemSelect" update="@this" process="@this"/>
+                                                </p:autoComplete>
+                                            </div>
+                                            <p:watermark for="aspiranteAutocomplete" value="Nombre - Apellidos - CURP" />
+                                            <p:message for="aspiranteAutocomplete" />
+                                            <p style="font-weight: bolder">Ingrese el Nombre, Apellido Materno, Apellido Paterno ó CURP del aspirante a consultar *</p>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-12"><p:separator/></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <br/>
+
                             <p:dataTable var="concentrado" id="concentradoFichas" value="#{fichaAdmisionReporte.rol.concentradoFichas}" styleClass="box-primary 'no-border':''" reflow="true"
                                          paginator="false" rows="15" emptyMessage="No se encontraron registros" paginatorPosition="top"
-                            >
+                                         >
                                 <f:facet name="header">
                                     Aspirantes por programa educativo
                                     <br></br>
@@ -182,11 +228,11 @@
                                         <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
                                              aria-valuenow="#{concentrado.porcentajeAlcanceFichas}" aria-valuemin="0" aria-valuemax="100"
                                              style="background-color: #00a65a; width:#{concentrado.porcentajeAlcanceFichas}%">
-                                                        <span class="progress-completed">
-                                                        <h:outputText value="#{concentrado.porcentajeAlcanceFichas}" style="color: #0E0000; font-weight: bold">
-                                                            <f:convertNumber type="number" pattern="0.00"/>
-                                                        </h:outputText>
-                                                    </span>
+                                            <span class="progress-completed">
+                                                <h:outputText value="#{concentrado.porcentajeAlcanceFichas}" style="color: #0E0000; font-weight: bold">
+                                                    <f:convertNumber type="number" pattern="0.00"/>
+                                                </h:outputText>
+                                            </span>
                                         </div>
 
                                     </div>
@@ -196,11 +242,11 @@
                                         <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
                                              aria-valuenow="#{concentrado.porcentajeAlcanceMatricula}" aria-valuemin="0" aria-valuemax="100"
                                              style="background-color: #00a65a; width:#{concentrado.porcentajeAlcanceMatricula}%">
-                                                        <span class="progress-completed">
-                                                        <h:outputText value="#{concentrado.porcentajeAlcanceMatricula}" style="color: #0E0000; font-weight: bold">
-                                                            <f:convertNumber type="number" pattern="0.00"/>
-                                                        </h:outputText>
-                                                    </span>
+                                            <span class="progress-completed">
+                                                <h:outputText value="#{concentrado.porcentajeAlcanceMatricula}" style="color: #0E0000; font-weight: bold">
+                                                    <f:convertNumber type="number" pattern="0.00"/>
+                                                </h:outputText>
+                                            </span>
                                         </div>
 
                                     </div>
