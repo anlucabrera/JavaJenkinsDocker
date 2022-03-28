@@ -142,7 +142,8 @@ public enum ControlEscolarVistaControlador {
     SEGUIMIENTO_CUESTIONARIO_PSICOPEDAGOGICO_TUTOR("/controlEscolar/tutor/seguimientoCuestionarioPsicopedagogicoTutor.xhtml", SeguimientoCuestionariopsiTutor.class),
     SEGUIMIENTO_TEST_DIAGNOSTICO_APRENDIZAJE_TUTOR("/controlEscolar/seguimientoTestAprendizaje.xhtml", SeguimientoTestAprendizajeTutor.class),
     SEGUIMIENTO_EVALUACION_ESTADIA_TUTOR("/controlEscolar/tutor/seguimientoEvaluacionEstadiaTutor.xhtml", SeguimientoEvaluacionEstadiaTutor.class),
-
+    SEGUIMIENTO_TEST_VOCACIONAL_TUTOR("/controlEscolar/tutor/seguimientoTestVocacionalTutor.xhtml", SeguimientoTestVocacionalTutor.class),
+    
 
     CAPTURA_CALIFICACIONES("/controlEscolar/docente/captura_calificaciones.xhtml", CapturaCalificacionesDocente.class),
     CAPTURA_TAREA_INTEGRADORA("/controlEscolar/docente/captura_integradora.xhtml", CapturaTareaIntegradoraDocente.class),
