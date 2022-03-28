@@ -110,7 +110,7 @@
                                                                      >
                                                         <f:selectItems value="#{registroTutoriaGrupal.rol.listaSesionesGrupalesTutorias}"
                                                                        var="sesion"
-                                                                       itemLabel="P.#{sesion.planAccionTutoria.planAccionTutoria}-S.#{sesion.sesionGrupal}-No.#{sesion.noSesion}- #{fn:length(sesion.actividadProgramada) > 60 ? sesion.actividadProgramada.substring(1,60):sesion.actividadProgramada}..."
+                                                                       itemLabel="P.#{sesion.planAccionTutoria.planAccionTutoria}-S.#{sesion.sesionGrupal}-No.#{sesion.noSesion}- #{fn:length(sesion.actividadProgramada) > 60 ? sesion.actividadProgramada.substring(3,60):sesion.actividadProgramada}..."
                                                                        itemValue="#{sesion}"
                                                                        />
 

@@ -1367,27 +1367,31 @@ public class EjbRegistroFichaAdmision {
         try {
             DtoAspirante.AcademicosR dtoDa = new DtoAspirante.AcademicosR(new DatosAcademicos(), new AreasUniversidad(), new AreasUniversidad(), new Sistema(), new Sistema(), new Estado(), new Municipio(), new Localidad(), new Iems(), new EspecialidadCentro(), Operacion.PERSISTIR, Boolean.FALSE);
             if(a==null){return ResultadoEJB.crearErroneo(2,dtoDa,"El aspirante no debe ser nulo");}
-            System.out.println("EjbRegistroFichaAdmision.getAcademicos 1");
+//            System.out.println("EjbRegistroFichaAdmision.getAcademicos 1");
             DatosAcademicos da = new DatosAcademicos();
             da = em.createQuery("select d from DatosAcademicos d where d.aspirante=:idAspirante", DatosAcademicos.class)
                     .setParameter("idAspirante", a.getIdAspirante())
                     .getResultStream()
                     .findFirst()
                     .orElse(null);
-            System.out.println("EjbRegistroFichaAdmision.getAcademicos 2");
+//            System.out.println("EjbRegistroFichaAdmision.getAcademicos 2");
 
             if (da!=null) {
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 3");
+//                System.out.println("EjbRegistroFichaAdmision.getAcademicos 3");
                 dtoDa.setAcademicos(da);
                 dtoDa.setEspecialidad(da.getEspecialidadIems());
                 dtoDa.setSistemaPo(da.getSistemaPrimeraOpcion());
                 dtoDa.setSistemaSo(da.getSistemaSegundaOpcion());
                 dtoDa.setUniversidad1(getOpcionArea(da.getPrimeraOpcion()).getValor());
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 4");
+//                System.err.println("dtoDa.setUniversidad1(getOpcionArea(da.getPrimeraOpcion()).getValor()); " + dtoDa.getUniversidad1().getNombre() + " " + dtoDa.getUniversidad1().getSiglas());
+                
+//                System.out.println("EjbRegistroFichaAdmision.getAcademicos 4");
                 dtoDa.setUniversidad2(getOpcionArea(da.getSegundaOpcion()).getValor());
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 5");
+//                System.err.println("dtoDa.setUniversidad1(getOpcionArea(da.getSegundaOpcion()).getValor()); " + dtoDa.getUniversidad2().getNombre() + " " + dtoDa.getUniversidad2().getSiglas());
+                
+//                System.out.println("EjbRegistroFichaAdmision.getAcademicos 5");
                 ResultadoEJB<Iems> rejb = getIemsSeleccionada(da.getInstitucionAcademica());
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 6");
+//                System.out.println("EjbRegistroFichaAdmision.getAcademicos 6");
                 if (rejb.getCorrecto()) {
                     Iems i = rejb.getValor();
                     dtoDa.setIems(i);
@@ -1395,10 +1399,10 @@ public class EjbRegistroFichaAdmision {
                     dtoDa.setMunicipio(i.getLocalidad().getMunicipio());
                     dtoDa.setLocalidad(i.getLocalidad());
                 }
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 7");
+//                System.out.println("EjbRegistroFichaAdmision.getAcademicos 7");
                 dtoDa.setOperacion(Operacion.ACTUALIZAR);
                 dtoDa.setEcontrado(Boolean.TRUE);
-                System.out.println("EjbRegistroFichaAdmision.getAcademicos 8");
+//                System.out.println("EjbRegistroFichaAdmision.getAcademicos 8");
                 return ResultadoEJB.crearCorrecto(dtoDa, "DTOPersona Encontrados");
             }
             else {return ResultadoEJB.crearErroneo(3,dtoDa,"No se encontraron datos académicos");}
@@ -1912,11 +1916,13 @@ public class EjbRegistroFichaAdmision {
     public ResultadoEJB<AreasUniversidad> getOpcionArea(@NonNull Short clave) {
         try {
             if(clave==null){return ResultadoEJB.crearErroneo(2,new AreasUniversidad(),"La clave del área no debe ser nula");}
-            AreasUniversidad a = em.createQuery("select a from AreasUniversidad  a where a.area=:area", AreasUniversidad.class)
+            AreasUniversidad a = em.createQuery("select a.areaSuperior from AreasUniversidad  a where a.area=:area", Short.class)
                     .setParameter("area",clave)
                     .getResultStream()
+                    .map(areaSuperior -> em.find(AreasUniversidad.class, areaSuperior))
+                    .distinct()
                     .findFirst()
-                    .orElse(new AreasUniversidad());
+                    .orElse(null);
             if(a!=null){return ResultadoEJB.crearCorrecto(a,"Area encontrada");}
             else {return ResultadoEJB.crearErroneo(4,a,"Error");}
 
@@ -2029,6 +2035,6 @@ public class EjbRegistroFichaAdmision {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener el país de origen(EjbRegistroFichaAdmision.getPaisOrigenByEstado).", e, null);
         }
     }
-
+    
 
 }

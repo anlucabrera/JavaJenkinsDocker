@@ -793,7 +793,17 @@ public class EjbTestVocacional {
                                 )
                         );
                 
-                return ResultadoEJB.crearCorrecto(mapaOrdenado, "Obtención de resultados del Test Vocacional");
+                Map<String, Double> mapaLimitado = new HashMap<>();
+                int contador = 0;
+                for (Map.Entry<String, Double> i : mapaOrdenado.entrySet()) {
+                    contador++;
+                    if(contador <= 3){
+                        mapaLimitado.put(i.getKey(), i.getValue());
+                    }else{
+                    }
+                }
+                
+                return ResultadoEJB.crearCorrecto(mapaLimitado, "Obtención de resultados del Test Vocacional");
             }else{
                 return ResultadoEJB.crearErroneo(4, null, "Aún no ha completado su Test Vocacional");
             }

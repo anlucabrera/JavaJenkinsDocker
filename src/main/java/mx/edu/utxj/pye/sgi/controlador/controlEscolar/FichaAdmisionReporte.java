@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.cert.TrustAnchor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -87,6 +88,10 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             getConcentrado();
             //getReporte();
             getProcesos();
+            
+            Persona personaAuto = new Persona();
+            rol.setPersonaEncontrada(personaAuto);
+            
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -535,6 +540,16 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             }
         }catch (Exception e){mostrarExcepcion(e);
             return  new DtoReporteFichaAdmision();
+        }
+    }
+    
+    public List<Persona> completeAspirantes(String pista){
+        ResultadoEJB<List<Persona>> res = ejb.consultarUsuariosContrasenias(pista);
+        if(res.getCorrecto()){
+            return res.getValor();
+        }else{
+            mostrarMensajeResultadoEJB(res);
+            return Collections.emptyList();
         }
     }
 

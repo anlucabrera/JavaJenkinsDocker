@@ -14,6 +14,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 import mx.edu.utxj.pye.sgi.enums.rol.NivelRol;
 
 import java.util.List;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
 
 public class FichaAdmisionReporteRol {
 
@@ -46,6 +47,11 @@ public class FichaAdmisionReporteRol {
     @Getter @NonNull private  Double porcentajeFichasValidadasInstitucional, porcentajeInscritosInstitucional;
     //Reporte
     @Getter @NonNull List<DtoReporteProyeccionFichas> reporte;
+    
+    @Getter     @Setter     private     String              pistaAspirante;
+    @Getter     @Setter     private     Persona             personaEncontrada;
+    @Getter     @Setter     private     List<Persona>       listaEstudiantes;
+    
     public Boolean tieneAcceso(PersonalActivo personalActivo, UsuarioTipo usuarioTipo){
         if(personalActivo == null) return false;
         if(!usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) return false;
