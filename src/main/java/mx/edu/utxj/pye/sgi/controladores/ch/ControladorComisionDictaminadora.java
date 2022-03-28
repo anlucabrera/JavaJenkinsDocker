@@ -164,7 +164,7 @@ public class ControladorComisionDictaminadora implements Serializable {
             datosPersonal=new CurriculumRIPPPA.DatosPersonal(nuevOBJPersonalSubordinado, nuevoOBJListaPersonal, nuevoOBJInformacionAdicionalPersonal);
             inicializador();
             informacionCV();
-            unirPDFs();
+//            unirPDFs();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
@@ -210,60 +210,60 @@ public class ControladorComisionDictaminadora implements Serializable {
             
             rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\1.0.pdf");
             rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\resumenCv"+nuevoOBJListaPersonal.getClave()+"_"+nuevoOBJListaPersonal.getNombre()+".pdf");
-//            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\2.0.pdf");
+            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\2.0.pdf");
             if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa() != null) {
-//                rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
+                rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
                 personales.setCuentaA(Boolean.TRUE);
                 personales.setRutaA(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
             }
             if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne() != null) {
-//                rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
+                rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
                 personales.setCuentaC(Boolean.TRUE);
                 personales.setRutaC(nuevoOBJInformacionAdicionalPersonal.getEvidenciaIne());
             }
-//            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\3.0.pdf");
+            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\3.0.pdf");
             if (!listaFormacionAcademica.isEmpty()) {
                 listaFormacionAcademica.forEach((t) -> {
                     switch (t.getNivelEscolaridad().getGrado()) {
                         case 5:                        case 6:                            
                             if (t.getEvidenciaTitulo() != null) {
-//                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
+                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
                                 escolaridad.setCuentaTm(Boolean.TRUE);
                                 escolaridad.setRutaTm(t.getEvidenciaTitulo());
                             }
                             break;
                         case 7:                        case 8:                            
                             if (t.getEvidenciaCedula() != null) {
-//                                rutasEvidenciasBD.add(t.getEvidenciaCedula());
+                                rutasEvidenciasBD.add(t.getEvidenciaCedula());
                                 escolaridad.setCuentaCt(Boolean.TRUE);
                                 escolaridad.setRutaCt(t.getEvidenciaCedula());
                             }
                             if (t.getEvidenciaTitulo() != null) {
-//                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
+                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
                                 escolaridad.setCuentaTt(Boolean.TRUE);
                                 escolaridad.setRutaTt(t.getEvidenciaTitulo());
                             }
                             break;
                         case 9:                        case 10:                            
                             if (t.getEvidenciaCedula() != null) {
-//                                rutasEvidenciasBD.add(t.getEvidenciaCedula());
+                                rutasEvidenciasBD.add(t.getEvidenciaCedula());
                                 escolaridad.setCuentaCi(Boolean.TRUE);
                                 escolaridad.setRutaCi(t.getEvidenciaCedula());
                             }
                             if (t.getEvidenciaTitulo() != null) {
-//                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
+                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
                                 escolaridad.setCuentaTi(Boolean.TRUE);
                                 escolaridad.setRutaTi(t.getEvidenciaTitulo());
                             }
                             break;
                         case 13:                        case 14:                        case 15:                        case 16:
                             if (t.getEvidenciaCedula() != null) {
-//                                rutasEvidenciasBD.add(t.getEvidenciaCedula());
+                                rutasEvidenciasBD.add(t.getEvidenciaCedula());
                                 escolaridad.setCuentaCp(Boolean.TRUE);
                                 escolaridad.setRutaCp(t.getEvidenciaCedula());
                             }
                             if (t.getEvidenciaTitulo() != null) {
-//                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
+                                rutasEvidenciasBD.add(t.getEvidenciaTitulo());
                                 escolaridad.setCuentaTp(Boolean.TRUE);
                                 escolaridad.setRutaTp(t.getEvidenciaTitulo());
                             }
@@ -271,71 +271,71 @@ public class ControladorComisionDictaminadora implements Serializable {
                     }                    
                 });
             }
-//            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\4.0.pdf");
+            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\4.0.pdf");
             if (!listaExperienciasLaborales.isEmpty()) {
                 listaExperienciasLaborales.forEach((t) -> {
                     if (!t.getClaveRipppa().equals("No Aplica")) {
-//                        rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                        rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                         switch (t.getClaveRipppa()) {
                             case "41":
                                 if (t.getEvidenciaNombremiento() != null) {
-//                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta41(Boolean.TRUE);
                                     experiencia.getRuta41().add(t.getEvidenciaNombremiento());
                                 }
                                 break;
                             case "42":
                                 if (t.getEvidenciaNombremiento() != null) {
-//                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta42(Boolean.TRUE);
                                     experiencia.getRuta42().add(t.getEvidenciaNombremiento());
                                 }
                                 break;
                             case "43":
                                 if (t.getEvidenciaNombremiento() != null) {
-//                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta43(Boolean.TRUE);
                                     experiencia.getRuta43().add(t.getEvidenciaNombremiento());
                                 }
                                 break;
                             case "44":
                                 if (t.getEvidenciaNombremiento() != null) {
-//                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta44(Boolean.TRUE);
                                     experiencia.getRuta44().add(t.getEvidenciaNombremiento());
                                 }
                                 break;
                             case "45":
                                 if (t.getEvidenciaNombremiento() != null) {
-//                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta45(Boolean.TRUE);
                                     experiencia.getRuta45().add(t.getEvidenciaNombremiento());
                                 }
                                 break;
                             case "46":
                                 if (t.getEvidenciaNombremiento() != null) {
-//                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta46(Boolean.TRUE);
                                     experiencia.getRuta46().add(t.getEvidenciaNombremiento());
                                 }
                                 break;
                             case "47":
                                 if (t.getEvidenciaNombremiento() != null) {
-//                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta47(Boolean.TRUE);
                                     experiencia.getRuta47().add(t.getEvidenciaNombremiento());
                                 }
                                 break;
                             case "48":
                                 if (t.getEvidenciaNombremiento() != null) {
-//                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta48(Boolean.TRUE);
                                     experiencia.getRuta48().add(t.getEvidenciaNombremiento());
                                 }
                                 break;
                             case "49":
                                 if (t.getEvidenciaNombremiento() != null) {
-//                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
+                                    rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta49(Boolean.TRUE);
                                     experiencia.getRuta49().add(t.getEvidenciaNombremiento());
                                 }
@@ -344,7 +344,7 @@ public class ControladorComisionDictaminadora implements Serializable {
                     }
                 });
             }
-//            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\5.0.pdf");
+            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\5.0.pdf");
             if (!listaCapacitacionespersonal.isEmpty()) {
                 listaCapacitacionespersonal.forEach((t) -> {
                     if (t.getEvidenciaCapacitacion() != null) {
@@ -356,7 +356,7 @@ public class ControladorComisionDictaminadora implements Serializable {
                                 capAceptadas.add(t);
                                 capacitacion.setCuentaEv(Boolean.TRUE);
                                 capacitacion.getRutasEv().add(t.getEvidenciaCapacitacion());
-//                                rutasEvidenciasBD.add(t.getEvidenciaCapacitacion());
+                                rutasEvidenciasBD.add(t.getEvidenciaCapacitacion());
                             }
                         }
                     }
@@ -371,73 +371,63 @@ public class ControladorComisionDictaminadora implements Serializable {
     
     public void unirPDFs() {
         try {
-            
             pu.generarPdf(resumenCV, datosPersonal);
-//            nombreArchivo="";
-//            nombreArchivo = "CVRIPPPA " + nuevoOBJListaPersonal.getClave() +" - "+ nuevoOBJListaPersonal.getNombre();
+            nombreArchivo="";
+            nombreArchivo = "CVRIPPPA " + nuevoOBJListaPersonal.getClave() +" - "+ nuevoOBJListaPersonal.getNombre();
 //            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorComisionDictaminadora.unirPDFs()"+rutasEvidenciasBD);
-//            List<InputStream> inputPdfList = new ArrayList<InputStream>();
-//            rutasEvidenciasBD.forEach((t) -> {
-//                FileInputStream fis;
-//                try {
-//                    fis = new FileInputStream(t);
-//                    inputPdfList.add(fis);
-//                } catch (FileNotFoundException ex) {
-//                    Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            });
-//            OutputStream outputStream = new FileOutputStream("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\"+nombreArchivo+".pdf");
-//
-//            Document document = new Document();
-//            List<PdfReader> readers = new ArrayList<PdfReader>();
-//            int totalPages = 0;
-//
-//            //Create pdf Iterator object using inputPdfList. 
-//            Iterator<InputStream> pdfIterator = inputPdfList.iterator();
-//
-//            // Create reader list for the input pdf files. 
-//            while (pdfIterator.hasNext()) {
-//                InputStream pdf = pdfIterator.next();
-//                PdfReader pdfReader = new PdfReader(pdf);
-//                readers.add(pdfReader);
-//                totalPages = totalPages + pdfReader.getNumberOfPages();
-//            }
-//
-//            // Create writer for the outputStream 
-//            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-//
-//            //Open document. 
-//            document.open();
-//
-//            //Contain the pdf data. 
-//            PdfContentByte pageContentByte = writer.getDirectContent();
-//            PdfImportedPage pdfImportedPage;
-//            int currentPdfReaderPage = 1;
-//            Iterator<PdfReader> iteratorPDFReader = readers.iterator();
-//
-//            // Iterate and process the reader list. 
-//            while (iteratorPDFReader.hasNext()) {
-//                PdfReader pdfReader = iteratorPDFReader.next();
-//                //Create page and add content. 
-//                while (currentPdfReaderPage <= pdfReader.getNumberOfPages()) {
-//                    document.newPage();
-//                    pdfImportedPage = writer.getImportedPage(pdfReader, currentPdfReaderPage);
-//                    pageContentByte.addTemplate(pdfImportedPage, 0, 0);
-//                    currentPdfReaderPage++;
-//                }
-//                currentPdfReaderPage = 1;
-//            }
-//
-//            //Close document and outputStream. 
-//            outputStream.flush();
-//            document.close();
-//            outputStream.close();
-//            System.out.println("Pdf files merged successfully.");
-//            
-//            if (!rutasEvidenciasBD.isEmpty()) {
-//                Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/RIPPPA/" + nombreArchivo + ".pdf" + "');");
-//            }
-//
+            List<InputStream> inputPdfList = new ArrayList<InputStream>();
+            rutasEvidenciasBD.forEach((t) -> {
+                FileInputStream fis;
+                try {
+                    fis = new FileInputStream(t);
+                    inputPdfList.add(fis);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            OutputStream outputStream = new FileOutputStream("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\"+nombreArchivo+".pdf");
+            Document document = new Document();
+            List<PdfReader> readers = new ArrayList<PdfReader>();
+            int totalPages = 0;
+            //Create pdf Iterator object using inputPdfList. 
+            Iterator<InputStream> pdfIterator = inputPdfList.iterator();
+            // Create reader list for the input pdf files. 
+            while (pdfIterator.hasNext()) {
+                InputStream pdf = pdfIterator.next();
+                PdfReader pdfReader = new PdfReader(pdf);
+                readers.add(pdfReader);
+                totalPages = totalPages + pdfReader.getNumberOfPages();
+            }
+            // Create writer for the outputStream 
+            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+            //Open document. 
+            document.open();
+            //Contain the pdf data. 
+            PdfContentByte pageContentByte = writer.getDirectContent();
+            PdfImportedPage pdfImportedPage;
+            int currentPdfReaderPage = 1;
+            Iterator<PdfReader> iteratorPDFReader = readers.iterator();
+            // Iterate and process the reader list. 
+            while (iteratorPDFReader.hasNext()) {
+                PdfReader pdfReader = iteratorPDFReader.next();
+                //Create page and add content. 
+                while (currentPdfReaderPage <= pdfReader.getNumberOfPages()) {
+                    document.newPage();
+                    pdfImportedPage = writer.getImportedPage(pdfReader, currentPdfReaderPage);
+                    pageContentByte.addTemplate(pdfImportedPage, 0, 0);
+                    currentPdfReaderPage++;
+                }
+                currentPdfReaderPage = 1;
+            }
+            //Close document and outputStream. 
+            outputStream.flush();
+            document.close();
+            outputStream.close();
+            System.out.println("Pdf files merged successfully.");
+            
+            if (!rutasEvidenciasBD.isEmpty()) {
+                Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/RIPPPA/" + nombreArchivo + ".pdf" + "');");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
