@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:adm="http://github.com/adminfaces"
+                xmlns:jsf="http://xmlns.jcp.org/jsf"
+                template="#{layoutMB.template}"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:pe="http://primefaces.org/ui/extensions"
+                xmlns:o="http://omnifaces.org/ui"
+                xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions">
+
+    <ui:define name="head-end">
+        <h:outputStylesheet library="css" name="tablaDatos.css"/>
+        <h:outputScript library="js" name="dialogs.js"/>
+        <h:outputScript library="js" name="calendario.js" />
+        <!-- Inicio estilos par proceso electoral -->
+        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
+            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen"/>
+        </c:if>
+        <!-- Fin estilos par proceso electoral -->
+    </ui:define>
+
+    <ui:define name="title">
+        Seguimiento Carta Responsiva y Curso IMMS
+    </ui:define>
+
+    <ui:define name="body">
+        <c:if test="#{seguimientoCartaResponsivaCursoIMSSVinculacion.cargado}">
+        <adm:breadcrumb title="Seguimiento Carta Responsiva y Curso IMMS"/>
+        <adm:sidebar collapsed="true"/>
+        <div class="contenedor">
+            <c:if test="#{seguimientoCartaResponsivaCursoIMSSVinculacion.tieneAcceso}">
+                <c:if test="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.generaciones ne null}">
+                <!-- zona de importación de enums -->
+                <h:form id="frm" prependId="false" class="form-inline">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                                <p:toolbar id="tb">
+                                    <f:facet name="left">
+                                        <p:spacer width="5" />
+
+                                    </f:facet>
+                                    <f:facet name="right">
+                                        <p:commandLink
+                                                class="btn btn-info"
+                                                rendered="#{true}"
+                                                disabled="#{false}"
+                                                onclick="PF('modalAyuda').show();"
+                                                title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
+                                                class="fa fa-question"/>
+                                        </p:commandLink>
+                                    </f:facet>
+                                </p:toolbar>
+                            </div>
+                            <div class="box box-solid">
+                                <div class="box-body">
+                                    <c:set var="casilla" value="#{'col-sm-12 col-md-2 col-lg-1'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
+                                    <div class="row margin-bottom" style="margin-top: 20px;">
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="generacion" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.generacion}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.cambiarGeneracion}">
+                                                    <f:selectItems value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.generaciones}" var="generacion" itemValue="#{generacion}" itemLabel="#{caster.generacionToString(generacion)}" />
+                                                    <p:ajax process="@this"/>
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Generación" for="generacion"/>
+                                                <p:message for="generacion" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="nivel" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.nivelEducativo}" converter="entityConverter" valueChangeListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.cambiarNivelEducativo}">
+                                                    <f:selectItems value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.nivelesEducativos}" var="nivel" itemValue="#{nivel}" itemLabel="#{nivel.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Nivel" for="nivel"/>
+                                                <p:message for="nivel" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla4}">
+                                            <div class="ui-material">
+                                                <p:selectOneMenu id="programa" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.programaEducativo}" converter="entityConverter" valueChangeListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.cambiarProgramaEducativo}">
+                                                    <f:selectItems value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.programasEducativos}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
+                                                    <p:ajax update="@this" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:selectOneMenu>
+                                                <p:outputLabel value="Programa" for="programa"/>
+                                                <p:message for="programa" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:inputSwitch id="mostrarSegValVinc" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.mostrarSegValVinc}" valueChangeListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.cambiarMostrarSegValVinc}"> 
+                                                    <p:ajax update="tbListaSeguimientos" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="mostrarSegValVinc" value="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.rol.mostrarSegValVinc?'Todos los seguimientos':'Validados por dirección'}" />
+                                                <p:message for="mostrarSegValVinc" display="tooltip" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla2}">
+                                            <div class="ui-material">
+                                                <p:inputSwitch id="ocultarColumnas" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.ocultarColumnas}" valueChangeListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.cambiarOcultarColumnas}"> 
+                                                    <p:ajax update="tbListaSeguimientos" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="ocultarColumnas" value="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.rol.ocultarColumnas?'Todas las columnas':'Ocultar columnas'}" />
+                                                <p:message for="ocultarColumnas" display="tooltip" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                            <center>
+                                                <p:remoteCommand name="actualizar" update="@form:tbListaSeguimientos" />
+                                                <p:dataTable id="tbListaSeguimientos" var="segEst" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.estudiantesSeguimiento}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No hay seguimientos registrados para esta generación"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50,60" resizeMode="expand"
+                                                             editable="true" editMode="cell" expandableRowGroups="true"
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <c:if test="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.ocultarColumnas}">
+                                                    <f:facet name="header">
+                                                        <p:commandButton id="toggler" type="button" value="Seleccionar columnas" icon="pi pi-align-justify" class="btn btn-info"/>
+                                                        <p:columnToggler datasource="tbListaSeguimientos" trigger="toggler"/>
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Matricula" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Estudiante" style="width: 100px;" sortBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Situación académica" style="width: 100px;" sortBy="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterBy="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Programa educativo" style="width: 100px;" sortBy="#{segEst.dtoEstudiante.programaEducativo.siglas}"/>
+                                                            <p:column headerText="Carta Responsiva" style="width: 100px;"/>
+                                                            <p:column headerText="Comentarios" style="width: 150px;"/>
+                                                            <p:column headerText="Curso IMSS" style="width: 100px;"/>
+                                                            <p:column headerText="Comentarios" style="width: 150px;"/>
+                                                            <p:column headerText="Validación" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify; height: 150px;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.programaEducativo.siglas}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoCartaResponsivaCursoIMSSVinculacion.descargarDocumento(46, segEst)}" target="_blank" title="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                        <br />
+                                                        <h:outputText value="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(46, segEst)?'Sin validar':'Validado'}" rendered="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}"/>
+                                                        <br />
+                                                        <p:commandLink actionListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.validarDocumento(46, segEst)}" rendered="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}"
+                                                                        class="btn btn-sm #{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(46, segEst)?'btn-danger':'btn-success'}"
+                                                                        title="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(46, segEst)?'De clic para validar documento.':'De clic para invalidar documento.'}"
+                                                                        onsuccess="actualizar();"><i class="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(46, segEst)?'fa fa-close':'fa fa-check'}"/>
+                                                        </p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                       <h:outputText value="No hay documento" rendered="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}"/>
+                                                       <p:inputTextarea class="form-control" rows="2" cols="35" style="text-align: justify;" maxlength="255" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.comentariosDocumento(46, segEst).observaciones}" valueChangeListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}">
+                                                            <p:ajax process="@this" update="@this" global="false" /> 
+                                                            <f:attribute name="documento" value="46" />
+                                                            <f:attribute name="seguimiento" value="#{segEst}" />
+                                                       </p:inputTextarea>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoCartaResponsivaCursoIMSSVinculacion.descargarDocumento(47, segEst)}" target="_blank" title="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                        <br />
+                                                        <h:outputText value="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(47, segEst)?'Sin validar':'Validado'}" rendered="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}"/>
+                                                        <br />
+                                                        <p:commandLink actionListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.validarDocumento(47, segEst)}" rendered="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}"
+                                                                        class="btn btn-sm #{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(47, segEst)?'btn-danger':'btn-success'}"
+                                                                        title="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(47, segEst)?'De clic para validar documento.':'De clic para invalidar documento.'}"
+                                                                        onsuccess="actualizar();"><i class="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(47, segEst)?'fa fa-close':'fa fa-check'}"/>
+                                                        </p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                       <h:outputText value="No hay documento" rendered="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}"/>
+                                                       <p:inputTextarea class="form-control" rows="2" cols="35" style="text-align: justify;" maxlength="255" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.comentariosDocumento(47, segEst).observaciones}" valueChangeListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}">
+                                                            <p:ajax process="@this" update="@this" global="false" /> 
+                                                            <f:attribute name="documento" value="47" />
+                                                            <f:attribute name="seguimiento" value="#{segEst}" />
+                                                       </p:inputTextarea>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.seguimientoVinculacionEstudiante.validado?'Si':'No'}"/>
+                                                    </p:column>
+                                                    </c:if>
+                                                    <c:if test="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.rol.ocultarColumnas}">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column rowspan="2" headerText="Matricula" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Estudiante" style="width: 180px;" sortBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Situación académica" style="width: 100px;" sortBy="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterBy="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Grupo" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column rowspan="2" headerText="Programa educativo" style="width: 200px;" sortBy="#{segEst.dtoEstudiante.programaEducativo.nombre}"/>
+                                                            <p:column colspan="3" headerText="Carta Responsiva" style="width: 220px;"/>
+                                                            <p:column rowspan="2" headerText="Comentarios" style="width: 300px;"/>
+                                                            <p:column colspan="3" headerText="Curso IMMS" style="width: 220px;"/>
+                                                            <p:column rowspan="2" headerText="Comentarios" style="width: 300px;"/>
+                                                            <p:column rowspan="2" headerText="Validación" style="width: 100px;"/>
+                                                        </p:row>
+                                                        <p:row class="success">
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Situación" style="width: 120px;"/>
+                                                            <p:column headerText="Acción" style="width: 100px;"/>
+                                                            <p:column headerText="Archivo" style="width: 100px;"/>
+                                                            <p:column headerText="Situación" style="width: 120px;"/>
+                                                            <p:column headerText="Acción" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoCartaResponsivaCursoIMSSVinculacion.descargarDocumento(46, segEst)}" target="_blank" title="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(46, segEst)?'No validado':'Validado'}" rendered="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink actionListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.validarDocumento(46, segEst)}" disabled="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}"
+                                                                        class="btn btn-sm #{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(46, segEst)?'btn-danger':'btn-success'}"
+                                                                        title="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(46, segEst)?'De clic para validar documento.':'De clic para invalidar documento.'}"
+                                                                        onsuccess="actualizar();"><i class="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(46, segEst)?'fa fa-close':'fa fa-check'}"/>
+                                                        </p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                       <h:outputText value="No hay documento" rendered="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}"/>
+                                                       <p:inputTextarea class="form-control" rows="2" cols="40" style="text-align: justify;" maxlength="255" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.comentariosDocumento(46, segEst).observaciones}" valueChangeListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(46, segEst)}">
+                                                            <p:ajax process="@this" update="@this" global="false" /> 
+                                                            <f:attribute name="documento" value="46" />
+                                                            <f:attribute name="seguimiento" value="#{segEst}" />
+                                                       </p:inputTextarea>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink class="btn btn-sm #{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoCartaResponsivaCursoIMSSVinculacion.descargarDocumento(47, segEst)}" target="_blank" title="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}"><i class="fa fa-download" /></p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(47, segEst)?'No validado':'Validado'}" rendered="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}"/>
+                                                        <h:outputText value="No hay documento" rendered="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <p:commandLink actionListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.validarDocumento(47, segEst)}" disabled="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}"
+                                                                        class="btn btn-sm #{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(47, segEst)?'btn-danger':'btn-success'}"
+                                                                        title="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(47, segEst)?'De clic para validar documento.':'De clic para invalidar documento.'}"
+                                                                        onsuccess="actualizar();"><i class="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.buscarValidacionDocumento(47, segEst)?'fa fa-close':'fa fa-check'}"/>
+                                                        </p:commandLink>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                       <h:outputText value="No hay documento" rendered="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}"/>
+                                                       <p:inputTextarea class="form-control" rows="2" cols="40" style="text-align: justify;" maxlength="255" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.comentariosDocumento(47, segEst).observaciones}" valueChangeListener="#{seguimientoCartaResponsivaCursoIMSSVinculacion.guardarComentarioDocumento}" rendered="#{seguimientoCartaResponsivaCursoIMSSVinculacion.consultarExisteDocumento(47, segEst)}">
+                                                            <p:ajax process="@this" update="@this" global="false" /> 
+                                                            <f:attribute name="documento" value="47" />
+                                                            <f:attribute name="seguimiento" value="#{segEst}" />
+                                                       </p:inputTextarea>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.seguimientoVinculacionEstudiante.validado?'Si':'No'}"/>
+                                                    </p:column>
+                                                    </c:if>
+                                                </p:dataTable>
+                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                </p:confirmDialog> 
+                                            </center>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </h:form>
+                <c:if test="#{!empty seguimientoCartaResponsivaCursoIMSSVinculacion.alertas || true}">
+                    <div class="box box-info">
+                        <div class="box-header">
+                            <ui:include src="/includes/alertas.xhtml">
+                                <ui:param name="alertas" value="#{seguimientoCartaResponsivaCursoIMSSVinculacion.alertas}"></ui:param>
+                            </ui:include>
+                        </div>
+                    </div>
+                </c:if>
+                <!-- Zona de cuadros de diálogo -->
+                <p:dialog id="modalAyuda"
+                          widgetVar="modalAyuda" width="700" height="auto" closeOnEscape="true" visible="#{false}" showEffect="fade" hideEffect="fade"
+                          modal="true" draggable="true" header="Ayuda" styleClass="panel panel-primary" responsive="true" resizable="false" closable="false" maximizable="true">
+                    <div class="box box-primary">
+                        <div class="box-header"><i class="ion ion-clipboard"></i><h3 class="box-title">Elementos necesarios para Seguimiento de Carta Responsiva y Curso IMMS por Coordinador(a) de Estadías</h3></div>
+                        <div class="box-body">
+                            <ul class="todo-list">
+                                <c:forEach items="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.instrucciones}" var="instruccion">
+                                    <li><span class="text" style="text-align: justify;"><i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i> #{instruccion}</span></li>
+                                </c:forEach>
+                            </ul>
+                        </div>
+                        <div class="box-footer clearfix no-border"><button type="button" class="btn btn-primary pull-right" onclick="PF('modalAyuda').hide();"><i class="fa fa-times"></i> Cerrar</button></div>
+                    </div>
+                </p:dialog>
+                </c:if>
+                <c:if test="#{seguimientoCartaResponsivaCursoIMSSVinculacion.rol.generaciones eq null}">
+                    <p:panel id="box-colors-panel" header="Sin información" styleClass="box-fatal box-solid">
+                        <h:panelGrid columns="2" cellpadding="10">
+                            <h:outputText value="Actualmente no hay eventos registrados."/>
+                        </h:panelGrid>
+                        <f:facet name="footer"></f:facet>
+                    </p:panel>
+                </c:if>
+            </c:if>
+            <c:if test="#{!seguimientoCartaResponsivaCursoIMSSVinculacion.tieneAcceso}">
+                <p:panel id="box-colors-panel" header="Acceso no autorizado" styleClass="box-fatal box-solid">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <h:outputText value="El acceso solo está autorizado para coordinador(a) de estadías."/>
+                    </h:panelGrid>
+                    <f:facet name="footer"></f:facet>
+                </p:panel>
+            </c:if>
+        </div>
+        <script>
+            //collapseSidebar(); activar para colapsar barra lateral
+        </script>
+        </c:if>
+    </ui:define>
+</ui:composition>
