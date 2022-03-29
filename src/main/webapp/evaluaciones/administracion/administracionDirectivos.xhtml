@@ -5,21 +5,62 @@
                 xmlns:adm="http://github.com/adminfaces"
                 xmlns:jsf="http://xmlns.jcp.org/jsf"
                 template="#{layoutMB.template}"
-                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:hf="http://highfaces.org" 
+                xmlns:pe="http://primefaces.org/ui/extensions">
 
     <ui:define name="head-end">
-        <!-- Inicio estilos par proceso electoral -->
-        <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
-            <link rel="stylesheet" type="text/css" href="../../resources/css/procesoElectoral.css" media="screen" />
-        </c:if>
-        <!-- Fin estilos par proceso electoral -->
         <style type="text/css">
             .ui-datatable .ui-datatable-header {
                 text-align: right !important;
             }
+            .description-block{
+                text-align: justify;
+            }
 
+            .description-header{
+                text-align: center;
+            }
 
+            .ui-selectonemenu-panel .ui-selectonemenu-filter-container{
+                width: 100%;
+            }
+            .aceptado {
+                background-color: #00a7d0  !important;
+                text-align: left !important;
+            }
+            .denegado{
+                background-color: #f39c12 !important;
+            }
+            .progress{
+                margin-bottom: 0px !important;
+            }
+            .ui-progressbar{
+                position: relative;
+                height: 2em;
+            }
+
+            .ui-progressbar .ui-progressbar-label {
+                color: #000000;
+                text-align: center;
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                display: none;
+                font-weight: bold;
+            }
         </style>
+    </ui:define>
+
+    <ui:define name="title">
+        Consulta de resultados del persona a su cargo
+    </ui:define>
+
+    <ui:define name="description">
+
+    </ui:define>
+
+    <ui:define name="body">
         <script>
             function descargar(ruta) {
                 var win = window.open(ruta, '_blank');
@@ -28,311 +69,141 @@
                 }
             }
         </script>
-    </ui:define>
-
-    <ui:define name="title">
-        Administración de evaluaciones 
-    </ui:define>
-
-    <ui:define name="description">
-
-    </ui:define>
-
-    <ui:define name="body">
-        <adm:breadcrumb title="Grupo : tutorado"/>
-        <h:form>
-            <p:outputPanel >
-                <p:autoUpdate/>
-                <div id="main-buttons"  >
-                    <p:toolbar id="tb">
-                        <f:facet name="left"><p:spacer width="15px"/>
-                            <p:commandButton value="Descargar Cedulas Desempeño" id="btnDescargar" 
-                                             title="Descarga las cedulas de desempeño de la ultima evaluación aplicada"
-                                             actionListener="#{evaluacionDesempenioAdmin.descargarCedulasDestiempo()}" 
-                                             process="@this" icon="fa fa-sign-in" styleClass="btn-primary"  update="@this"
-                                             rendered="#{administrativoEvaluacion.utilAdmin.desempenio}"/>
-                            <!--<p:outputLabel value="Administracion de Evaluaciones" />-->                            
-                        </f:facet>
-                        <f:facet name="right">
-                            <h:panelGrid columns="12" style="margin-bottom:10px" cellpadding="5" >
-                                <h:outputText value="Selección de evaluaciones " />
-                                <p:spacer width="10"/>
-                                <f:ajax execute="selectDirectivo">
-                                    <p:selectOneButton value="#{administrativoEvaluacion.utilAdmin.evaluacionSeleccionada}" id="sobEncuestaDirectivo"  style="margin-top: 4px; margin-bottom: -3px;"
-                                                       rendered="#{administrativoEvaluacion.utilAdmin.directivo}" required="true">
-                                        <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemEvaluacionesDirectivo}" var="selectDirectivo" 
-                                                       itemValue="#{selectDirectivo.value}" itemLabel="#{selectDirectivo.label}" itemDescription="#{selectDirectivo.description}" />
-                                        <p:ajax  listener="#{administrativoEvaluacion.utilAdmin.obtenerPeriodosPorEvaluacion()}" process="sobEncuestaDirectivo" />
-                                    </p:selectOneButton>
-                                </f:ajax>
-                                <p:spacer width="10"/>
-                                <f:ajax execute="sobEncuestaDirector">
-                                    <p:selectOneButton value="#{administrativoEvaluacion.utilAdmin.evaluacionSeleccionada}" id="sobEncuestaDirector" style="margin-top: 4px; margin-bottom: -3px;"
-                                                       rendered="#{administrativoEvaluacion.utilAdmin.directorDeCarrera}"  required="true">
-                                        <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemEvaluacionesDirectorCarrera}" var="selectDirectorCarrera" 
-                                                       itemValue="#{selectDirectorCarrera.value}" itemLabel="#{selectDirectorCarrera.label}" itemDescription="#{selectDirectorCarrera.description}"  />
-                                        <p:ajax  listener="#{administrativoEvaluacion.utilAdmin.obtenerPeriodosPorEvaluacion()}" process="sobEncuestaDirector" />
-                                    </p:selectOneButton>
-                                </f:ajax>
-                                <!--<h:outputText value="Seleccione un periodo:  " />-->
-                                <p:spacer width="10"/>
-                                <f:ajax execute="somPeriodo360">
-                                    <p:selectOneMenu id="somPeriodo360" value="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado}"  autoWidth="true" effect="fade" rendered="#{administrativoEvaluacion.utilAdmin.e360}" >
-                                        <f:selectItem itemLabel="Elija un periodo: " itemValue="" />
-                                        <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemPeriodo360}" 
-                                                       var="periodo" itemValue="#{periodo.value}" itemLabel="#{periodo.label}" 
-                                                       itemDescription="#{periodo.description}"  >
-                                        </f:selectItems>
-                                    </p:selectOneMenu>
-                                </f:ajax>
-                                <f:ajax execute="somPeriodoDesempenio">
-
-
-                                    <p:selectOneMenu id="somPeriodoDesempenio" value="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado}"  autoWidth="true" effect="fade" rendered="#{administrativoEvaluacion.utilAdmin.desempenio}">
-                                        <f:selectItem itemLabel="Elija un periodo:  " itemValue="" />
-                                        <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemPeriodoDesempenio}" 
-                                                       var="periodo" itemValue="#{periodo.value}" itemLabel="#{periodo.label}" 
-                                                       itemDescription="#{periodo.description}"  >
-                                        </f:selectItems>
-                                    </p:selectOneMenu>
-                                </f:ajax>
-                                <f:ajax execute="somPeriodoTutores">
-                                    <p:selectOneMenu id="somPeriodoTutores" value="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado}"  autoWidth="true" effect="fade" rendered="#{administrativoEvaluacion.utilAdmin.tutores}">
-                                        <f:selectItem itemLabel="Elija un periodo:  " itemValue="" />
-                                        <f:selectItems value="#{administrativoEvaluacion.utilAdmin.selectItemsEvaluacionesPeriodo}" 
-                                                       var="periodo" itemValue="#{periodo.value}" itemLabel="#{periodo.label}" 
-                                                       itemDescription="#{periodo.description}"  >
-                                        </f:selectItems>
-                                    </p:selectOneMenu>
-                                </f:ajax>
-                                <f:ajax execute="somPeriodoDocente">
-                                    <p:selectOneMenu id="somPeriodoocente" value="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado}"  autoWidth="true" effect="fade" rendered="#{administrativoEvaluacion.utilAdmin.docente}">
-                                        <f:selectItem itemLabel="Elija un periodo:  " itemValue="" />
-                                        <f:selectItems value="#{administrativoEvaluacion.utilAdmin.slectItemsEvaluacionDocentePeriodos}" 
-                                                       var="periodo" itemValue="#{periodo.value}" itemLabel="#{periodo.label}" 
-                                                       itemDescription="#{periodo.description}"  >
-                                        </f:selectItems>
-                                    </p:selectOneMenu>
-                                </f:ajax>
-                                <p:spacer width="10"/>
-                                <p:remoteCommand name="rc" update="@form" actionListener="#{administrativoEvaluacion.utilAdmin.reload()}"  />
-                                <p:commandButton value="Mostrar resultados" id="btnResultado" actionListener="#{administrativoEvaluacion.utilAdmin.renderizarEncuestas()}" process="@this" icon="fa fa-refresh" styleClass="btn-primary"  update="@form" rendered="#{administrativoEvaluacion.utilAdmin.periodoSeleccionado > 0}" oncomplete="rc()"/>
-                            </h:panelGrid> 
-
-                        </f:facet>
-                    </p:toolbar>
-                    <p:sticky target="tb" />
+        <section>
+            <c:if test="#{administracionDirectivos.cargado}">
+                <div class="contenedor">
+                    <c:if test="#{administracionDirectivos.tieneAcceso}">
+                        <h:form id="frm" prependId="false" class="form-inline">
+                            <div class="col-md-12">
+                                <div class="box box-primary">
+                                    <div class="box-header with-border">
+                                        <div id="main-buttons" class="hidden-sm hidden-xs">
+                                            <p:toolbar id="tb">
+                                                <f:facet name="left">
+                                                </f:facet>
+                                                <f:facet name="right">
+                                                    <!--p:commandButton value="Descargar cédulas 360°" id="btnResultadoPersonal" 
+                                                                     rendered="# {administracionDirectivos.rol.renderBtnDownloadCedulas360}"
+                                                                     title="Clic para generar las cédulas de la evaluación de 360°" disabled="true"
+                                                                     actionListener="# {administracionDirectivos.descargarCedulas()}" 
+                                                                     process="@this" icon="fa fa-download" styleClass="btn-primary"/-->
+                                                    <p:commandButton value="Descargar cédulas Desempeño" id="btnResultadoDesempenio" 
+                                                                     rendered="#{administracionDirectivos.rol.renderBtnDownloadCedulasDes}"
+                                                                     title="Clic para generar las cédulas de Desempeño"
+                                                                     actionListener="#{administracionDirectivos.descargarCedulasDesempenio()}" 
+                                                                     process="@this" icon="fa fa-download" styleClass="btn-primary"/>
+                                                </f:facet>
+                                            </p:toolbar>
+                                        </div>
+                                    </div>
+                                    <div class="box box-body">
+                                        <div class="row">
+                                            <div class="col-sm-4" >
+                                                <div class="ui-material">
+                                                    <h:outputText value="Evaluaciones:" class=" hidden-sm hidden-xs"/>
+                                                    <p:selectOneMenu value="#{administracionDirectivos.rol.evSelect}" id="evaluacion" required="true">
+                                                        <f:selectItem itemLabel="Elija una evaluacion: " itemValue="#{null}" />
+                                                        <f:selectItems value="#{administracionDirectivos.obtenerEvaluaciones()}" var="tipo" 
+                                                                       itemValue="#{tipo.value}" itemLabel="#{tipo.label}" itemDescription="#{tipo.description}"/>
+                                                        <p:ajax  listener="#{administracionDirectivos.obtenerPeriodosEvaluacion()}" process="evaluacion" 
+                                                                 update="@form"/>
+                                                    </p:selectOneMenu>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4" >
+                                                <div class="ui-material">
+                                                    <h:outputText value="Periodo de la evaluación:" class=" hidden-sm hidden-xs"/>
+                                                    <p:selectOneMenu id="periodoEv" value="#{administracionDirectivos.rol.peSelect}"  autoWidth="true" effect="fade">
+                                                        <f:selectItem itemLabel="Elija un periodo: " itemValue="#{null}" />
+                                                        <f:selectItems value="#{administracionDirectivos.rol.listaEvaluaciones}" 
+                                                                       var="periodo" itemValue="#{periodo.evaluacion}" itemLabel="#{periodo.evaluacion} - #{caster.clavePeriodoToString(periodo.periodo)}" 
+                                                                       itemDescription="#{periodo.tipo}"/>
+                                                        <p:ajax  process="@this" update="@form" listener="#{administracionDirectivos.generarResultados()}"/>
+                                                    </p:selectOneMenu>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p:separator/>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p:dataTable var="persona" value="#{administracionDirectivos.rol.dtoListaEv360}" 
+                                                             rendered="#{administracionDirectivos.rol.renderDTB360}"
+                                                             paginator="true" rows="10"
+                                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} 
+                                                             {NextPageLink} {LastPageLink}"
+                                                             rowsPerPageTemplate="5,10,15" id="tblResEv360" lazy="true" paginatorPosition="top">
+                                                    <f:facet name="footer">
+                                                        Total de registros: #{administracionDirectivos.rol.dtoListaEv360.size()}
+                                                    </f:facet>
+                                                    <p:column headerText="Clave" width="50" style="font-size: small; border: 0">
+                                                        <h:outputText value="#{persona.clave}" />
+                                                    </p:column>
+                                                    <p:column headerText="Nombre" width="150" style="font-size: small; border: 0">
+                                                        <h:outputText value="#{persona.nombre}" />
+                                                    </p:column>
+                                                    <p:column headerText="Área" width="150" style="font-size: small; border: 0">
+                                                        <h:outputText value="#{persona.areaOperativa}" />
+                                                    </p:column>
+                                                    <p:column headerText="Puesto" width="150" style="font-size: small; border: 0">
+                                                        <h:outputText value="#{persona.categoriaOperativa}" />
+                                                    </p:column>
+                                                    <p:column headerText="Promedio de la evaluación" width="150" style="font-size: small; border: 0">
+                                                        <div class="progress">
+                                                            <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                                                 aria-valuenow="#{persona.promedio * 25}" aria-valuemin="0" aria-valuemax="100"
+                                                                 style="background-color: #00a65a; width:#{persona.promedio * 25}%">
+                                                                <h:outputText value="#{persona.promedio}" style="color: #0E0000; font-weight: bold">
+                                                                    <f:convertNumber type="number" groupingUsed="true" minFractionDigits="6" pattern="#0.000000"/>
+                                                                </h:outputText> 
+                                                                <h:outputText value=" de 4.0" style="color: #0E0000; font-weight: bold"/>
+                                                            </div>
+                                                        </div>
+                                                    </p:column>
+                                                </p:dataTable>
+                                                <p:dataTable var="desempenio" value="#{administracionDirectivos.rol.dtoListaEvDes}" 
+                                                             rendered="#{administracionDirectivos.rol.renderDTBDesempenio}"
+                                                             paginator="true" rows="10"
+                                                             paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} 
+                                                             {NextPageLink} {LastPageLink}"
+                                                             rowsPerPageTemplate="5,10,15" id="tblResEvDes" lazy="true" paginatorPosition="top">
+                                                    <f:facet name="footer">
+                                                        Total de registros: #{administracionEvaluacionesPersonal.rol.dtoListaEvDes.size()}
+                                                    </f:facet>
+                                                    <p:column headerText="Clave" width="50" style="font-size: small; border: 0">
+                                                        <h:outputText value="#{desempenio.clave}" />
+                                                    </p:column>
+                                                    <p:column headerText="Nombre" width="150" style="font-size: small; border: 0">
+                                                        <h:outputText value="#{desempenio.nombre}" />
+                                                    </p:column>
+                                                    <p:column headerText="Área" width="150" style="font-size: small; border: 0">
+                                                        <h:outputText value="#{desempenio.areaOperativa}" />
+                                                    </p:column>
+                                                    <p:column headerText="Puesto" width="150" style="font-size: small; border: 0">
+                                                        <h:outputText value="#{desempenio.categoriaOperativa}" />
+                                                    </p:column>
+                                                    <p:column headerText="Promedio de la evaluación" width="150" style="font-size: small; border: 0">
+                                                        <div class="progress">
+                                                            <div class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                                                                 aria-valuenow="#{desempenio.promedio * 20}" aria-valuemin="0" aria-valuemax="100"
+                                                                 style="background-color: #00a65a; width:#{desempenio.promedio * 20}%">
+                                                                <h:outputText value="#{desempenio.promedio}" style="color: #0E0000; font-weight: bold">
+                                                                    <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>
+                                                                </h:outputText> 
+                                                                <h:outputText value=" de 5.0" style="color: #0E0000; font-weight: bold"/>
+                                                            </div>
+                                                        </div>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </h:form>
+                    </c:if>
                 </div>
-            </p:outputPanel>
-            <p:outputPanel>
-                <p:panel header="" toggleable="true" rendered="#{administrativoEvaluacion.utilAdmin.e360}">
-                    <p:dataTable id="tblEvaluacionesDirectivo360" lazy="false" value="#{administrativoEvaluacion.utilAdmin.lista360Promedios}"   var="evaluacion" filterDelay="700" 
-                                 paginator="true" rows="10"
-                                 rowsPerPageTemplate="10,20,30,40,50"
-                                 emptyMessage="No se encontrarono registros"  >
-                        <f:facet name="footer">
-                            Total de registros: #{administrativoEvaluacion.utilAdmin.lista360Promedios.size()}
-                        </f:facet>
-                        <f:facet name="header">
-                            <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa-file-excel-o">
-                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="csv" target="tblEvaluacionesDirectivo360" fileName="ReporteEvaluacion360DelPeriodo#{administrativoEvaluacion.utilAdmin.periodoSeleccionado}"/>
-                            </p:commandButton>
-                        </f:facet>
-                        <p:column headerText="Nombre" filterBy="#{evaluacion.nombre}" filterMatchMode="contains" sortBy="#{evaluacion.nombre}"   >                           
-                            <h:outputText value="#{evaluacion.nombre}" />
-                        </p:column>
-                        <p:column headerText="Area" filterBy="#{evaluacion.areaOperativa}" filterMatchMode="contains" sortBy="#{evaluacion.areaOperativa}"   >                           
-                            <h:outputText value="#{evaluacion.areaOperativa}" />
-                        </p:column>
-                        <p:column headerText="Puesto" filterBy="#{evaluacion.categoriaOperativa}" filterMatchMode="contains" sortBy="#{evaluacion.categoriaOperativa}"   >                           
-                            <h:outputText value="#{evaluacion.categoriaOperativa}" />
-                        </p:column>
-                        <p:column headerText="Promedio de evaluación" filterBy="#{evaluacion.promedio}" filterMatchMode="contains" sortBy="#{evaluacion.promedio}"   >                           
+            </c:if>
+        </section>
 
-                            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="#{evaluacion.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{evaluacion.promedio * 25}%">
-                                <h:outputText value="#{evaluacion.promedio}" >
-                                    <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>
-                                </h:outputText> de 4.0
-                            </div>
-                        </p:column>
-                    </p:dataTable>
-                </p:panel>
-
-                <p:panel header="" toggleable="true" rendered="#{administrativoEvaluacion.utilAdmin.desempenio}">
-                    <p:dataTable id="tblEvaluacionesDirectivoDesempeño" lazy="false" value="#{administrativoEvaluacion.utilAdmin.listaDesempenioPromedios}"   var="evaluacion" filterDelay="700" 
-                                 paginator="true" rows="10"
-                                 rowsPerPageTemplate="10,20,30,40,50"
-                                 emptyMessage="No se encontrarono registros"  >
-                        <f:facet name="footer">
-                            Total de registros: #{administrativoEvaluacion.utilAdmin.listaDesempenioPromedios.size()}
-                        </f:facet>
-                        <f:facet name="header">
-                            <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa-file-excel-o">
-                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="csv" target="tblEvaluacionesDirectivoDesempeño" fileName="ReporteEvaluacionDesempeiodelPeriodo#{administrativoEvaluacion.utilAdmin.periodoSeleccionado}"/>
-                            </p:commandButton>
-                        </f:facet>
-                        <p:column headerText="Nombre" filterBy="#{evaluacion.nombre}" filterMatchMode="contains" sortBy="#{evaluacion.nombre}"   >                           
-                            <h:outputText value="#{evaluacion.nombre}" />
-                        </p:column>
-                        <p:column headerText="Area" filterBy="#{evaluacion.areaOperativa}" filterMatchMode="contains" sortBy="#{evaluacion.areaOperativa}"   >                           
-                            <h:outputText value="#{evaluacion.areaOperativa}" />
-                        </p:column>
-                        <p:column headerText="Puesto" filterBy="#{evaluacion.categoriaOperativa}" filterMatchMode="contains" sortBy="#{evaluacion.categoriaOperativa}"   >                           
-                            <h:outputText value="#{evaluacion.categoriaOperativa}" />
-                        </p:column>
-                        <p:column headerText="Promedio de evaluación" filterBy="#{evaluacion.promedio}" filterMatchMode="contains" sortBy="#{evaluacion.promedio}"   >                           
-                            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="#{evaluacion.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{evaluacion.promedio * 20}%">
-                                <h:outputText value="#{evaluacion.promedio}" >
-                                    <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>
-                                </h:outputText> de 5.0
-                            </div>
-                        </p:column>
-                    </p:dataTable>
-                </p:panel>
-
-                <p:panel header="" toggleable="true" rendered="#{administrativoEvaluacion.utilAdmin.tutores}">
-                    <p:dataTable id="tblEvaluacionTutores" lazy="false" value="#{administrativoEvaluacion.utilAdmin.listaTutoresPromedios}"   var="evaluacion" filterDelay="700" 
-                                 paginator="true" rows="10"
-                                 rowsPerPageTemplate="10,20,30,40,50"
-                                 emptyMessage="No se encontrarono registros"  >
-                        <f:facet name="footer">
-                            Total de registros: #{administrativoEvaluacion.utilAdmin.listaTutoresPromedios.size()}
-                        </f:facet>
-                        <f:facet name="header">
-                            <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa-file-excel-o">
-                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="csv" target="tblEvaluacionTutores" fileName="ReporteEvaluacionTutordelPeriodo#{administrativoEvaluacion.utilAdmin.periodoSeleccionado}"/>
-                            </p:commandButton>
-                        </f:facet>
-                        <p:column headerText="Nombre" filterBy="#{evaluacion.nombre}" filterMatchMode="contains" sortBy="#{evaluacion.nombre}"   >                           
-                            <h:outputText value="#{evaluacion.nombre}" />
-                        </p:column>
-                        <p:column headerText="Area" filterBy="#{evaluacion.areaOperativa}" filterMatchMode="contains" sortBy="#{evaluacion.areaOperativa}"   >                           
-                            <h:outputText value="#{evaluacion.areaOperativa}" />
-                        </p:column>
-                        <p:column headerText="Puesto" filterBy="#{evaluacion.categoriaOperativa}" filterMatchMode="contains" sortBy="#{evaluacion.categoriaOperativa}"   >                           
-                            <h:outputText value="#{evaluacion.categoriaOperativa}" />
-                        </p:column>
-                        <p:column headerText="Promedio de evaluación" filterBy="#{evaluacion.promedio}" filterMatchMode="contains" sortBy="#{evaluacion.promedio}"   >                           
-                            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="#{evaluacion.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{evaluacion.promedio * 33.3}%">
-                                <h:outputText value="#{evaluacion.promedio}" >
-                                    <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>
-                                </h:outputText> de 3.0
-                            </div>
-                        </p:column>
-                    </p:dataTable>
-                </p:panel>
-
-                <p:panel header="" toggleable="true" rendered="#{administrativoEvaluacion.utilAdmin.docente}">
-                    <p:dataTable id="tblEvaluacionDocente" lazy="false" value="#{administrativoEvaluacion.utilAdmin.listaDocentesPromedioGeneral}"   var="evaluacion" filterDelay="700" 
-                                 paginator="true" rows="10"
-                                 rowsPerPageTemplate="10,20,30,40,50"
-                                 emptyMessage="No se encontrarono registros"  >
-                        <f:facet name="footer">
-                            Total de registros: #{administrativoEvaluacion.utilAdmin.listaDocentesPromedioGeneral.size()}
-                        </f:facet>
-                        <f:facet name="header">
-                            <f:ajax execute="btn_modalB">
-                                <p:commandButton id="btn_modalB" value="Detalle" class="btn btn-primary"  icon="fa fa-window-restore" process="@this" update="@this" 
-                                                 onclick="PF('modalDetalleEvaluacionDocente').show()" />
-                            </f:ajax>
-                            <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa-file-excel-o">
-                                <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="csv" target="tblEvaluacionDocente" fileName="ReporteEvaluacionDocentedelPeriodo#{administrativoEvaluacion.utilAdmin.periodoSeleccionado}"/>
-                            </p:commandButton>
-                        </f:facet>
-                        <p:column headerText="Nombre"    sortBy="#{evaluacion.promedio}"  >                           
-                            <h:outputText value="#{evaluacion.nombre}" />
-                        </p:column>
-                        <p:column headerText="Area"   >                           
-                            <h:outputText value="#{evaluacion.areaOperativa}" />
-                        </p:column>
-                        <p:column headerText="Puesto"  >                           
-                            <h:outputText value="#{evaluacion.categoriaOperativa}" />
-                        </p:column>
-                        <p:column headerText="Promedio de evaluación"  sortBy="#{evaluacion.promedio}"   >                           
-                            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="#{evaluacion.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{evaluacion.promedio * 20}%">
-                                <h:outputText value="#{evaluacion.promedio}" >
-                                    <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>
-                                </h:outputText> de 5.0
-                            </div>
-                        </p:column>
-                        <p:column headerText="Evaluacion Materias" width="140" >  
-                            <p:commandButton value="Detalle" class="btn btn-primary"  icon="fa fa-window-restore" process="@this" update="@this" actionListener="#{administrativoEvaluacion.utilAdmin.obtenerResultadoEvaluacionDocentePorMateria(evaluacion)}" onclick="PF('modalPromedioMaterias').show()" />
-                        </p:column>
-                    </p:dataTable>
-                </p:panel>
-            </p:outputPanel>
-        </h:form>
-        <!--modal de promedio por materias--> 
-        <f:ajax execute="modalB">
-            <p:dialog resizable="false"  widgetVar="modalDetalleEvaluacionDocente" showEffect="explode"  id="modalB" header="Resultado General de evaluacion docente">
-                <h:form>
-                    <p:outputPanel > 
-                        <p:dataTable id="tblEvaluacionesCompletas" lazy="false" value="#{administrativoEvaluacion.utilAdmin.listaDeResultadosEvaluacionDocente}"  
-                                     var="encuestaDocente" filterDelay="700" 
-                                     paginator="true" rows="10"
-                                     rowsPerPageTemplate="10,20,30,40,50"
-                                     emptyMessage="No se encontrarono registros"  style="width:  1000px">
-                            <f:facet name="footer">
-                                Total de registros: #{administrativoEvaluacion.utilAdmin.listaDeResultadosEvaluacionDocente.size()}
-                            </f:facet>
-                            <f:facet name="header">
-                                <p:commandButton value="Exportar Excel" ajax="false" class="btn btn-primary " icon="fa-file-excel-o">
-                                    <p:dataExporter pageOnly="false" encoding="ISO-8859-1"  type="csv" target="tblEvaluacionesCompletas" fileName="Reporte_evaluaciones_completas"/>
-                                </p:commandButton>
-                            </f:facet>
-                            <p:column headerText="Matricula" filterBy="#{encuestaDocente.matricula}" filterMatchMode="contains" sortBy="#{encuestaDocente.matricula}"   >                           
-                                <h:outputText value="#{encuestaDocente.matricula}" />
-                            </p:column>
-                            <p:column headerText="Nombre" filterBy="#{encuestaDocente.nombre}" filterMatchMode="contains" sortBy="#{encuestaDocente.nombre}">                           
-                                <h:outputText value="#{encuestaDocente.nombre}" />
-                            </p:column>
-                            <p:column headerText="Grado"  filterBy="#{encuestaDocente.cuatrimestre}" filterMatchMode="contains" sortBy="#{encuestaDocente.cuatrimestre}"  >                           
-                                <h:outputText value="#{encuestaDocente.cuatrimestre}" />
-                            </p:column>
-                            <p:column headerText="Grupo" filterBy="#{encuestaDocente.grupo}" filterMatchMode="contains" sortBy="#{encuestaDocente.grupo}"  >                           
-                                <h:outputText value="#{encuestaDocente.grupo}" />
-                            </p:column>
-                            <p:column headerText="Carrera" filterBy="#{encuestaDocente.siglas}" filterMatchMode="contains"    sortBy="#{encuestaDocente.siglas}"  >                           
-                                <h:outputText value="#{encuestaDocente.siglas}" title="#{encuestaDocente.siglas}" />
-                            </p:column>
-                            <p:column headerText="Estatus" filterBy="#{encuestaDocente.estatus}" filterMatchMode="contains" sortBy="#{encuestaDocente.estatus}">                           
-                                <h:outputText value="#{encuestaDocente.estatus}" />
-                            </p:column>
-                        </p:dataTable>
-                    </p:outputPanel>
-                </h:form>
-            </p:dialog>
-        </f:ajax>
-        <p:dialog resizable="false"  widgetVar="modalPromedioMaterias" showEffect="explode"   id="modalA" header="Resultado de evaluaciones por materia">
-            <p:outputPanel >
-                <p:autoUpdate/>
-                <center> 
-                    <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{administrativoEvaluacion.utilAdmin.subordinadoSeleccionado.clave}.jpg" width="150" alt="#{administrativoEvaluacion.utilAdmin.subordinadoSeleccionado.clave}" title="Personal #{administrativoEvaluacion.utilAdmin.subordinadoSeleccionado.clave}" style="border-color: black; border-style: solid; border-width: 2px;" />
-                    <br/>
-                    <h:outputText value="#{administrativoEvaluacion.utilAdmin.subordinadoSeleccionado.nombre}" style=" font-weight: bold; font-size: medium;"/>
-                </center>
-                <p:dataTable id="tblModalPromedioMateria" lazy="false" value="#{administrativoEvaluacion.utilAdmin.listaDocentesPromedioMateria}"   var="evaluacion" filterDelay="700" 
-                             paginator="false" rows="10"
-                             rowsPerPageTemplate="10,20,30,40,50"
-                             emptyMessage="No se encontrarono registros" style="width: 600px;" >
-                    <p:column headerText="Nombre"   >                           
-                        <h:outputText value="#{evaluacion.nombre}" />
-                    </p:column>
-                    <p:column headerText="clave materia"   >                           
-                        <h:outputText value="#{evaluacion.materia}" />
-                    </p:column>
-                    <p:column headerText="Materia"   >                           
-                        <h:outputText value="#{evaluacion.materiaNombre}" />
-                    </p:column>
-                    <p:column headerText="Promedio de evaluación">                           
-                        <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="#{evaluacion.promedio * 25}" aria-valuemin="0" aria-valuemax="100" style="width:#{evaluacion.promedio * 20}%">
-                            <h:outputText value="#{evaluacion.promedio}" >
-                                <f:convertNumber type="number" groupingUsed="true" minFractionDigits="2" pattern="#0.00"/>
-                            </h:outputText> de 5.0
-                        </div>
-                    </p:column>
-                </p:dataTable>
-            </p:outputPanel>
-        </p:dialog>
     </ui:define>
 </ui:composition>

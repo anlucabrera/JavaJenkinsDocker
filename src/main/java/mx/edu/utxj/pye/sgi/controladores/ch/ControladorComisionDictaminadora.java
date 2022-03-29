@@ -54,7 +54,7 @@ import mx.edu.utxj.pye.sgi.entity.ch.Memoriaspub;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.ch.Investigaciones;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
-import org.apache.commons.collections4.list.AbstractLinkedList;
+import mx.edu.utxj.pye.sgi.util.PdfUtilidades;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Messages;
 
@@ -93,6 +93,9 @@ public class ControladorComisionDictaminadora implements Serializable {
     @Getter    @Setter    private CurriculumRIPPPA.Escolaridad escolaridad;
     @Getter    @Setter    private CurriculumRIPPPA.Experiencia experiencia;  
     @Getter    @Setter    private CurriculumRIPPPA.Capacitacion capacitacion; 
+    
+    @Getter    @Setter    private CurriculumRIPPPA.ResumenCV resumenCV;     
+    @Getter    @Setter    private CurriculumRIPPPA.DatosPersonal datosPersonal; 
 ////////////////////////////////////////////////////////////////////////////////Subordinados
     @Getter    @Setter    private List<Personal> listaPersonal = new ArrayList<>();
 ////////////////////////////////////////////////////////////////////////////////Variables de apoyo
@@ -108,6 +111,7 @@ public class ControladorComisionDictaminadora implements Serializable {
     @EJB    private EjbProduccionProfecional ejbProduccionProfecional;
      
     @Inject LogonMB logonMB;
+    @Inject PdfUtilidades pu;
     @Getter private Boolean cargado = false;
     
     @PostConstruct
@@ -157,6 +161,7 @@ public class ControladorComisionDictaminadora implements Serializable {
             }
             nuevoOBJInformacionAdicionalPersonal = ejbPersonal.mostrarInformacionAdicionalPersonalLogeado(contactoDestino);
             nuevoOBJListaPersonal = ejbPersonal.mostrarListaPersonal(contactoDestino);
+            datosPersonal=new CurriculumRIPPPA.DatosPersonal(nuevOBJPersonalSubordinado, nuevoOBJListaPersonal, nuevoOBJInformacionAdicionalPersonal);
             inicializador();
             informacionCV();
 //            unirPDFs();
@@ -204,7 +209,7 @@ public class ControladorComisionDictaminadora implements Serializable {
             listaHabilidadesInformaticas = ejbHabilidades.mostrarHabilidadesInformaticas(contactoDestino);   
             
             rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\1.0.pdf");
-            
+            rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\resumenCv"+nuevoOBJListaPersonal.getClave()+"_"+nuevoOBJListaPersonal.getNombre()+".pdf");
             rutasEvidenciasBD.add("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\2.0.pdf");
             if (nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa() != null) {
                 rutasEvidenciasBD.add(nuevoOBJInformacionAdicionalPersonal.getEvidenciaActa());
@@ -357,6 +362,7 @@ public class ControladorComisionDictaminadora implements Serializable {
                     }
                 });
             }
+            resumenCV= new CurriculumRIPPPA.ResumenCV(listaIdiomas, listaLenguas, listaCongresos, listaLibrosPubs, listaArticulosp, listaDocenciases, listaMemoriaspub, listaInnovaciones, listaDistinciones, listaInvestigacion, listaDesarrolloSoftwar, listaFormacionAcademica, listaExperienciasLaborales, listaCapacitacionespersonal, listaHabilidadesInformaticas, listaDesarrollosTecnologicos);
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);
@@ -365,9 +371,10 @@ public class ControladorComisionDictaminadora implements Serializable {
     
     public void unirPDFs() {
         try {
+            pu.generarPdf(resumenCV, datosPersonal);
             nombreArchivo="";
             nombreArchivo = "CVRIPPPA " + nuevoOBJListaPersonal.getClave() +" - "+ nuevoOBJListaPersonal.getNombre();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorComisionDictaminadora.unirPDFs()"+rutasEvidenciasBD);
+//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.ControladorComisionDictaminadora.unirPDFs()"+rutasEvidenciasBD);
             List<InputStream> inputPdfList = new ArrayList<InputStream>();
             rutasEvidenciasBD.forEach((t) -> {
                 FileInputStream fis;
@@ -379,14 +386,11 @@ public class ControladorComisionDictaminadora implements Serializable {
                 }
             });
             OutputStream outputStream = new FileOutputStream("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\"+nombreArchivo+".pdf");
-
             Document document = new Document();
             List<PdfReader> readers = new ArrayList<PdfReader>();
             int totalPages = 0;
-
             //Create pdf Iterator object using inputPdfList. 
             Iterator<InputStream> pdfIterator = inputPdfList.iterator();
-
             // Create reader list for the input pdf files. 
             while (pdfIterator.hasNext()) {
                 InputStream pdf = pdfIterator.next();
@@ -394,19 +398,15 @@ public class ControladorComisionDictaminadora implements Serializable {
                 readers.add(pdfReader);
                 totalPages = totalPages + pdfReader.getNumberOfPages();
             }
-
             // Create writer for the outputStream 
             PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-
             //Open document. 
             document.open();
-
             //Contain the pdf data. 
             PdfContentByte pageContentByte = writer.getDirectContent();
             PdfImportedPage pdfImportedPage;
             int currentPdfReaderPage = 1;
             Iterator<PdfReader> iteratorPDFReader = readers.iterator();
-
             // Iterate and process the reader list. 
             while (iteratorPDFReader.hasNext()) {
                 PdfReader pdfReader = iteratorPDFReader.next();
@@ -419,7 +419,6 @@ public class ControladorComisionDictaminadora implements Serializable {
                 }
                 currentPdfReaderPage = 1;
             }
-
             //Close document and outputStream. 
             outputStream.flush();
             document.close();
@@ -429,7 +428,6 @@ public class ControladorComisionDictaminadora implements Serializable {
             if (!rutasEvidenciasBD.isEmpty()) {
                 Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/evidenciasCapitalHumano/RIPPPA/" + nombreArchivo + ".pdf" + "');");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

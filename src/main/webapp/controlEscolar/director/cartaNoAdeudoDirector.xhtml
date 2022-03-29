@@ -106,7 +106,7 @@
                                                          >
 
                                                              <p:ajax event="cellEdit" listener="#{cartaNoAdeudoDireccionCarrera.onCellEdit}" process="@this" update="@this @(.estatus) @(.tabla)" oncomplete="actualizar();"/>
-                                                             <p:column headerText="Matricula" style="width: 130px; text-align: center;" sortBy="#{est.estudiante.matricula}" filterBy="#{est.estudiante.matricula}" filterMatchMode="contains">
+                                                             <p:column headerText="Matrícula" style="width: 130px; text-align: center;" sortBy="#{est.estudiante.matricula}" filterBy="#{est.estudiante.matricula}" filterMatchMode="contains">
                                                                  <h:outputText value="#{est.estudiante.matricula}"/>
                                                              </p:column>
 

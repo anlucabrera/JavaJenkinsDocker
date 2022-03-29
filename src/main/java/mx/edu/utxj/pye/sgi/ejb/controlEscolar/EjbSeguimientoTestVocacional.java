@@ -40,6 +40,7 @@ public class EjbSeguimientoTestVocacional {
     @EJB            EjbPropiedades                                      ejbPropiedades;
     @EJB            EjbValidacionRol                                    ejbValidacionRol;
     @EJB            EjbTestVocacional                                   ejbTestVocacionalEstudiante;
+    @EJB            EjbValidadorDocente                                 ejbValidadorDocente;
     
     private EntityManager em;
     
@@ -55,6 +56,10 @@ public class EjbSeguimientoTestVocacional {
      */
     public ResultadoEJB<Filter<PersonalActivo>> validarPsicopedagogia(Integer clave){
         return ejbValidacionRol.validarPsicopedagogia(clave);
+    }
+    
+    public ResultadoEJB<Filter<PersonalActivo>> validarTutor(Integer clave){
+        return ejbValidadorDocente.validarTutor(clave);
     }
     
     /**
@@ -76,6 +81,30 @@ public class EjbSeguimientoTestVocacional {
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares con registros de tipo Test Vocacional (EjbSeguimientoTestVocacional.obtenerPeriodosEscolaresGruposTests)", e, null);
+        }
+    }
+    
+    /**
+     * Obtiene únicamente los periodos escolares que contienen información ya registrada de la aplicación de Test Vocacional - Para tutores
+     * @param claveTutor
+     * @return 
+     */
+    public ResultadoEJB<List<PeriodosEscolares>> obtenerPeriodosEscolaresGruposTestsTutores(Integer claveTutor){
+        try {
+            List<PeriodosEscolares> periodosEscolares = em.createQuery("SELECT tv.periodoEscolar FROM TestVocacional tv INNER JOIN FETCH tv.persona p INNER JOIN FETCH p.aspiranteList a INNER JOIN FETCH a.estudianteList e INNER JOIN FETCH e.grupo g WHERE g.tutor = :tutor GROUP BY tv.periodoEscolar ORDER BY tv.periodoEscolar DESC", Integer.class)
+                    .setParameter("tutor", claveTutor)
+                    .getResultStream()
+                    .map(periodo -> em.find(PeriodosEscolares.class, periodo))
+                    .distinct()
+                    .sorted(Comparator.comparingInt(PeriodosEscolares::getPeriodo).reversed())
+                    .collect(Collectors.toList());
+            if(periodosEscolares.isEmpty()){
+                return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST, "No se han encontrado periodos escolares con infomación registrada en sistema");
+            }else{
+                return ResultadoEJB.crearCorrecto(periodosEscolares, "Lista de periodos escolares que cuenta con información registrada");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de periodos escolares con registros de tipo Test Vocacional (EjbSeguimientoTestVocacional.obtenerPeriodosEscolaresGruposTestsTutores)", e, null);
         }
     }
     
@@ -104,6 +133,32 @@ public class EjbSeguimientoTestVocacional {
     }
     
     /**
+     * Obtiene los programas educativos filtrados por periodo escolar que de igual manera solo tengan información de tipo Test Vocacional - Para tutores
+     * @param periodoEscolar
+     * @param claveTutor
+     * @return 
+     */
+    public ResultadoEJB<List<AreasUniversidad>> obtenerProgramasEducativosTestsPorPeriodoTutores(PeriodosEscolares periodoEscolar, Integer claveTutor){
+        try {
+            List<AreasUniversidad> programasEducativos = em.createQuery("SELECT e.carrera FROM Estudiante e INNER JOIN FETCH e.aspirante a INNER JOIN FETCH a.idPersona p INNER JOIN FETCH p.testVocacional tv INNER JOIN FETCH e.grupo g WHERE e.periodo = :periodoEscolar AND tv.periodoEscolar = :periodoEscolar AND g.periodo = :periodoEscolar AND g.tutor = :claveTutor GROUP BY e.carrera ORDER BY e.carrera ASC", Short.class)
+                    .setParameter("periodoEscolar", periodoEscolar.getPeriodo())
+                    .setParameter("claveTutor", claveTutor)
+                    .getResultStream()
+                    .map(programaEducativo -> em.find(AreasUniversidad.class, programaEducativo))
+                    .distinct()
+                    .sorted(Comparator.comparing(programaEducativo -> programaEducativo.getNivelEducativo().getNivel()))
+                    .collect(Collectors.toList());
+            if(programasEducativos.isEmpty()){
+                return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST, "No se han encontrado programas educativo con informacion registrada en sistema");
+            }else{
+                return ResultadoEJB.crearCorrecto(programasEducativos, "Lista de programas educativos que cuentan con información registrada");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de programas educativos con registros de tipo Test Vocacional (EjbSeguimientoTestVocacional.obtenerProgramasEducativosTestsPorPeriodoTutores)", e, null);
+        }
+    }
+    
+    /**
      * Obtiene los grupos del periodo y programa educativos que contienen información de registros de Test Vocacional.
      * El listado de grupos no se filtra para obtener la información de estudiantes que cuentan o no con al menos un registro.
      * @param periodoEscolar
@@ -123,6 +178,31 @@ public class EjbSeguimientoTestVocacional {
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de grupos con registros de tipo Test Vocacional (EjbSeguimientoTestVocacional.obtenerGruposTestsPorPeriodoPrograma)", e, null);
+        }
+    }
+    
+    /**
+     * Obtiene los grupos del periodo y programa educativos que contienen información de registros de Test Vocacional - Para tutores.
+     * El listado de grupos no se filtra para obtener la información de estudiantes que cuentan o no con al menos un registro.
+     * @param periodoEscolar
+     * @param programaEducativo
+     * @param claveTutor
+     * @return 
+     */
+    public ResultadoEJB<List<Grupo>> obtenerGruposTestsPorPeriodoProgramaTutor(PeriodosEscolares periodoEscolar, AreasUniversidad programaEducativo, Integer claveTutor){
+        try {
+            List<Grupo> grupos = em.createQuery("SELECT g FROM Estudiante e INNER JOIN FETCH e.aspirante a INNER JOIN FETCH a.idPersona p INNER JOIN FETCH p.testVocacional tv INNER JOIN FETCH e.grupo g WHERE e.periodo = :periodoEscolar AND tv.periodoEscolar = :periodoEscolar AND g.periodo = :periodoEscolar AND g.idPe = :programaEducativo AND g.tutor = :claveTutor GROUP BY g.idGrupo ORDER BY g.grado, g.literal ASC", Grupo.class)
+                    .setParameter("periodoEscolar", periodoEscolar.getPeriodo())
+                    .setParameter("programaEducativo", programaEducativo.getArea())
+                    .setParameter("claveTutor", claveTutor)
+                    .getResultList();
+            if(grupos.isEmpty()){
+                return ResultadoEJB.crearErroneo(2, Collections.EMPTY_LIST, "No se han encontrado grupos en el periodo y programa educativo seleccionados");
+            }else{
+                return ResultadoEJB.crearCorrecto(grupos, "Lista de grupos obtenida correctamente");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de grupos con registros de tipo Test Vocacional (EjbSeguimientoTestVocacional.obtenerGruposTestsPorPeriodoProgramaTutor)", e, null);
         }
     }
     

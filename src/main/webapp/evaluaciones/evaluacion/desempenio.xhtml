@@ -38,15 +38,14 @@
     </ui:define>
 
     <ui:define name="body">
-        <c:if test="#{evaluacionDesempenioAdmin.cargado}">
-        <adm:breadcrumb title="Evaluación del Desempeño - Formulario"/>
+        <c:if test="#{evaluacionDesempenioAdmin.tieneAcceso}">
         <h:form id="frm" prependId="false" class="form-inline">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <div id="main-buttons" class="hidden-sm hidden-xs" >
                         <p:toolbar id="tb">
                             <f:facet name="left">
-                                <p:outputLabel value="Total a evualuar: #{evaluacionDesempenioAdmin.listaSubordinados.size()}" />
+                                <p:outputLabel value="Total a evualuar: #{evaluacionDesempenioAdmin.listaPersonal.size()}" />
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
                                 <p:outputLabel value="Evaluados: #{evaluacionDesempenioAdmin.evaluados}" />
                                 <span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical" /></span>
@@ -91,7 +90,7 @@
                             <c:if test="#{!empty evaluacionDesempenioAdmin.desempenioEvaluacion}">
                                 <div jsf:id="filaHeader" class="row hidden-sm hidden-md hidden-sm hidden-xs" style="background-color: white;">
                                     <div class="col-lg-4 text-center text-info" style="height: 230px; vertical-align: middle;">
-                                        <c:if test="#{evaluacionDesempenioAdmin.listaSubordinados.size() eq evaluacionDesempenioAdmin.evaluados}">
+                                        <c:if test="#{evaluacionDesempenioAdmin.listaPersonal.size() eq evaluacionDesempenioAdmin.evaluados}">
                                             <div>
                                                 <h2 style="background-color: aliceblue;">Evaluación terminada</h2>
                                                 <p:graphicImage library="img" name="ok_azul.png" height="150" />
@@ -99,29 +98,29 @@
                                         </c:if>
                                     </div>
                                     <c:set var="index" value="#{caster.toInt(0)}" />
-                                    <c:forEach items="#{evaluacionDesempenioAdmin.listaPersonalEvaluando}" var="evaluado">                                                                                
+                                    <c:forEach items="#{evaluacionDesempenioAdmin.listaEvaluando}" var="evaluado">                                                                                
                                         <div class="col-lg-2 text-center" style="padding-left: 2px; padding-right: 2px; background-color: aliceblue;">                                            
                                             <p:outputPanel >
                                                 <p:autoUpdate/>
-                                                <h4 class="#{evaluado.completo?'text-info':'text-warn'} " style="margin: 0px;">#{evaluado.completo?'Finalizado':'Pendiente'}</h4>
-                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{evaluado.pk.evaluado}.jpg" width="150" alt="#{evaluado.pk.evaluado}" title="Personal #{evaluado.pk.evaluado}" style="border-color: black; border-style: solid; border-width: 2px;" />
+                                                <h4 class="#{evaluado.completo eq '1'?'text-info':'text-warn'} " style="margin: 0px;">#{evaluado.completo eq '1'?'Finalizado':'Pendiente'}</h4>
+                                                <img src="http://siip.utxicotepec.edu.mx/archivos/evidencias2/personal/#{evaluado.evaluado.clave}.jpg" width="150" alt="#{evaluado.evaluado.clave}" title="Personal #{evaluado.evaluado.clave}" style="border-color: black; border-style: solid; border-width: 2px;" />
                                                 <br/>
-                                                <h4 class="#{evaluado.completo?'text-info':'text-warn'} " style="margin: 0px;">Promedio: #{evaluado.promedio}</h4>
+                                                <h4 class="#{evaluado.completo eq '1'?'text-info':'text-warn'} " style="margin: 0px;">Promedio: #{evaluado.promedio}</h4>
                                             </p:outputPanel>
                                             <p:selectOneMenu id="opcion#{index}" class="form-control" autoWidth="false" 
                                                              var="s" panelStyle="width:380px" effect="fade"
                                                              valueChangeListener="#{evaluacionDesempenioAdmin.cambiarOpciones}">
-                                                <f:selectItems value="#{evaluacionDesempenioAdmin.opciones[index]}" var="subordinados" itemValue="#{subordinados}" itemLabel="#{subordinados.nombre}" itemDescription="#{subordinados.categoriaOperativaNombre}"  />
+                                                <f:selectItems value="#{evaluacionDesempenioAdmin.opciones[index]}" var="subordinados" itemValue="#{subordinados}" itemLabel="#{subordinados.nombre}" itemDescription="#{subordinados.categoriaOperativa.nombre}"  />
                                                 <p:ajax update="@form" />
                                                 <p:column>
-                                                    <h:outputText value="#{s.categoriaOperativaNombre}" />
+                                                    <h:outputText value="#{s.categoriaOperativa.nombre}" />
                                                 </p:column>
                                                 <p:column>
                                                     <h:outputText value="#{s.nombre}" />
                                                 </p:column>
                                             </p:selectOneMenu>
                                             <br/>
-                                            #{evaluado.evaluadoCategoriaOperativaNombre}
+                                            #{evaluado.evaluadoPersonalCat.nombre}
                                         </div>
                                         <c:set var="index" value="#{caster.toInt(index+1)}" />
                                     </c:forEach>
@@ -152,13 +151,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <c:forEach items="#{evaluacionDesempenioAdmin.listaPersonalEvaluando}" var="evaluado2">
+                                            <c:forEach items="#{evaluacionDesempenioAdmin.listaEvaluando}" var="evaluado2">
                                                 <div class="col-lg-2 col-md-6 text-center" style="padding-top: 10px; padding-left: 2px; padding-right: 2px; font-weight: bold;">
-                                                    <c:set var="id" value="#{'r'.concat(pregunta.numero).replace('.','-').concat('_').concat(evaluado2.pk.evaluado.toString())}" />
-                                                    <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.evaluadoNombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
+                                                    <c:set var="id" value="#{'r'.concat(pregunta.numero).replace('.','-').concat('_').concat(evaluado2.evaluado.clave.toString())}" />
+                                                    <p:outputLabel id="lbl#{id}" for="#{id}" value="#{evaluado2.evaluado.nombre}" class="hidden-lg" style="vertical-align: top;padding-top: 5px;" />
                                                     <c:if test="#{pregunta.tipo == 3}">
                                                         <f:ajax id="ajx#{id}" execute="#{id}">
-                                                            <p:selectOneButton id="#{id}" value="#{evaluacionDesempenioAdmin.respuestas[caster.toInt(evaluado2.pk.evaluado)][pregunta.numero]}"
+                                                            <p:selectOneButton id="#{id}" value="#{evaluacionDesempenioAdmin.respuestas[caster.toInt(evaluado2.evaluado.clave)][pregunta.numero]}"
                                                                                required="true" requiredMessage="Falta respuesta"
                                                                                valueChangeListener="#{evaluacionDesempenioAdmin.guardarRespuesta}"
                                                                                style="font-size: small;" >
@@ -169,7 +168,7 @@
                                                     </c:if>
                                                     <c:if test="#{pregunta.tipo == 1}">
                                                         <f:ajax execute="#{id}">
-                                                            <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacionDesempenioAdmin.respuestas[caster.toInt(evaluado2.pk.evaluado)][pregunta.numero]}"
+                                                            <p:inputTextarea id="#{id}" class="form-control" value="#{evaluacionDesempenioAdmin.respuestas[caster.toInt(evaluado2.evaluado.clave)][pregunta.numero]}"
                                                                              rows="6" placeholder="Ingrese sus comentarios aquí..." maxlength="500"
                                                                              valueChangeListener="#{evaluacionDesempenioAdmin.guardarRespuesta}" queryDelay="1500" />
                                                         </f:ajax>

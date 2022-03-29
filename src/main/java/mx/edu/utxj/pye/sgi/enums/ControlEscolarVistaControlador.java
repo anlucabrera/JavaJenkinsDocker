@@ -142,7 +142,8 @@ public enum ControlEscolarVistaControlador {
     SEGUIMIENTO_CUESTIONARIO_PSICOPEDAGOGICO_TUTOR("/controlEscolar/tutor/seguimientoCuestionarioPsicopedagogicoTutor.xhtml", SeguimientoCuestionariopsiTutor.class),
     SEGUIMIENTO_TEST_DIAGNOSTICO_APRENDIZAJE_TUTOR("/controlEscolar/seguimientoTestAprendizaje.xhtml", SeguimientoTestAprendizajeTutor.class),
     SEGUIMIENTO_EVALUACION_ESTADIA_TUTOR("/controlEscolar/tutor/seguimientoEvaluacionEstadiaTutor.xhtml", SeguimientoEvaluacionEstadiaTutor.class),
-
+    SEGUIMIENTO_TEST_VOCACIONAL_TUTOR("/controlEscolar/tutor/seguimientoTestVocacionalTutor.xhtml", SeguimientoTestVocacionalTutor.class),
+    
 
     CAPTURA_CALIFICACIONES("/controlEscolar/docente/captura_calificaciones.xhtml", CapturaCalificacionesDocente.class),
     CAPTURA_TAREA_INTEGRADORA("/controlEscolar/docente/captura_integradora.xhtml", CapturaTareaIntegradoraDocente.class),
@@ -207,6 +208,7 @@ public enum ControlEscolarVistaControlador {
     CUESTIONARIO_COMPLEMENTARIO_INF_PERSONAL("/cuestionarios/cuestionarioComplemenarioInfPersonal.xhtml", CuestionarioComplementarioInfPersonal.class),
     EVALUACION_CONOCIMIENTO_CODIGO_ETICA_CONDUCTA("/evaluaciones/evaluacion/evaluacionCodigoEyConducta.xhtml", EvaluacionCodigoEticaConducta.class),
     EVALUACION_360("/evaluaciones/evaluacion/360_1.xhtml", Evaluacion360Admin1.class),
+    EVALUACION_DESEMPENIO("/evaluaciones/evaluacion/desempenio.xhtml", EvaluacionDesempenioAdmin.class),
     
     EVALUACION_DESEMPENIO_AMBIENTAL("/encuestas/evaluacionDesempenioAmbiental.xhtml", EvaluacionDesempenioAmbiental.class),
 
@@ -219,6 +221,8 @@ public enum ControlEscolarVistaControlador {
     ADMINISTRACION_DESEMPENIO_AMBIENTAL("/encuestas/seguimiento/administracionEvaluacionAmbiental.xhtml", AdministracionEvaluacionAmbiental.class),
     SEGUIMIENTO_EVALUACION_ETICA("/encuestas/seguimiento/seguimientoEvaluacionEtica.xhtml", SeguimientoEvaluacionCodigoEticaDirectivos.class),
     SEGUIMIENTO_ENCUESTAS_SEGUIMIENTO_EGRESADOS("/controlEscolar/seguimientoEgresados/administracionEncuestaSeguimientoEgresados.xhtml",AdministracionEncuestaAreaSeguimientoEgresados.class),
+    ADMINISTRACION_EVALUACIONES("/evaluaciones/administracion/administracionPersonalSA.xhtml", AdministracionEvaluacionesPersonal.class),
+    ADMINISTRACION_EV_DIRECTIVOS("/evaluaciones/administracion/administracionDirectivos.xhtml", AdministracionDirectivos.class),
     /////////////////////////////////////////////////////////////////////////////
     SATISFACCION_SERVICIOS_CONSULTA("/encuestas/consulta/servicios.xhtml", ServiciosConsulta.class);
     /////////////////////////////////////////////////////////////////////////////
