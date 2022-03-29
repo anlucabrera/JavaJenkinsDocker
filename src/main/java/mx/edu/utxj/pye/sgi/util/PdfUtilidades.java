@@ -13,6 +13,7 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfTemplate;
@@ -26,6 +27,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.annotation.ManagedBean;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -37,7 +39,11 @@ import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.controlEscolar.ConcentradoCalificacionesTutor;
 import mx.edu.utxj.pye.sgi.dto.ch.CurriculumRIPPPA;
+import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbConsultaCalificacion;
+import mx.edu.utxj.pye.sgi.entity.ch.Procesopoa;
+import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+import mx.edu.utxj.pye.sgi.entity.pye2.EjerciciosFiscales;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -1117,6 +1123,373 @@ public class PdfUtilidades implements Serializable {
         document.add(logoUT);
         document.add(fotoPer);
         document.add(tableEscalas);
+        //Se cierra el documento
+        document.close();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Su documento se ha generado correctamente", ""));
+        File file = new File(base.concat(nombrePdf));
+
+        try {
+            InputStream input = new FileInputStream(file);
+            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+            setDownload(new DefaultStreamedContent(input, externalContext.getMimeType(file.getName()), file.getName()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void reportePOA(List<DTOreportePoa.EjeListaEstrategias> poa, EjerciciosFiscales ef, AreasUniversidad au,Procesopoa procesopoa) throws IOException, DocumentException {
+        Document document = new Document(PageSize.LETTER, 15, 15, 15, 15);
+        Paragraph parrafo, parrafo2, parrafo3;
+
+        String nombrePdf = au.getArea()+ " - " + au.getNombre()+ ".pdf";
+        //String ruta = ServicioArchivos.carpetaRaiz.concat(File.separator).concat("acta_final").concat(File.separator).concat(nombrePdf);
+        Image logoSii = Image.getInstance("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\sii.png");
+        Image logoUT = Image.getInstance("C:\\archivos\\evidenciasCapitalHumano\\RIPPPA\\logoUT.jpg");
+
+        Font fontBold = new Font(Font.FontFamily.HELVETICA, 13, Font.BOLD);
+        Font fontCursive = new Font(Font.FontFamily.HELVETICA, 10);
+        Font fontEje = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
+        Font fontEst = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
+        Font fontLin = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
+        Font fontEncabazados = new Font(Font.FontFamily.HELVETICA, 7, Font.BOLD);
+        fontEncabazados.setColor(BaseColor.WHITE);        
+        Font fontContenido = new Font(Font.FontFamily.HELVETICA, 6, Font.NORMAL);
+//        Font fontEncabazadosTabla = new Font(Font.FontFamily.HELVETICA, 8, Font.BOLD);
+//        Font fontContenidoTabla = new Font(Font.FontFamily.HELVETICA, 7, Font.NORMAL);
+        String base = ServicioArchivos.carpetaRaiz.concat("archivos\\"+ef.getAnio()).concat(File.separator);
+
+        ServicioArchivos.addCarpetaRelativa(base);
+        ServicioArchivos.eliminarArchivo(base.concat(nombrePdf));
+        OutputStream out = new FileOutputStream(new File(base.concat(nombrePdf)));
+
+        PdfWriter.getInstance(document, out);
+        PdfWriter.getInstance(document, new FileOutputStream("C:\\archivos\\"+ef.getAnio()+"\\reportes\\"+nombrePdf));
+        //PdfWriter.getInstance(document, new FileOutputStream("C:\\Users\\"+usuario+"\\Downloads\\acta_final_"+grupo.getLiteral()+"_"+grupo.getTutor()+".pdf"));
+//        PdfPTable table = new PdfPTable(2 + titulos.size());
+        PdfPTable tableEscalas = new PdfPTable(26);        
+        PdfPTable tableFirma = new PdfPTable(1);
+
+        //Se abre el pdf para iniciar a darle formato
+        document.open();
+        //Se coloca los elementos necesarios que contendra el pdf
+        logoUT.scaleToFit(70, 95);
+        logoUT.setAbsolutePosition(60f, 735f);
+        logoUT.setAlignment(Element.ALIGN_LEFT);
+        parrafo = new Paragraph("PROGRAMA ANUAL DE TRABAJO "+ef.getAnio(), fontBold);
+        parrafo.setAlignment(Element.ALIGN_CENTER);
+        parrafo.setLeading(15, 0);
+        parrafo2 = new Paragraph("UNIVERSIDAD TECNÓLOGICA DE XICOTEPEC DE JUÁREZ", fontCursive);
+        parrafo2.setLeading(15, 0);
+        parrafo2.setAlignment(Element.ALIGN_CENTER);
+        parrafo3 = new Paragraph(au.getNombre(), fontBold);
+        parrafo3.setAlignment(Element.ALIGN_CENTER);
+        parrafo3.setLeading(15, 0);
+
+        logoSii.scaleToFit(70, 95);
+        logoSii.setAbsolutePosition(480f, 735);
+        logoSii.setAlignment(Element.ALIGN_RIGHT);        
+
+        tableEscalas.setSpacingBefore(10);
+        tableEscalas.setWidthPercentage(100);        
+        
+        poa.forEach((ej) -> {
+            PdfPCell eje = new PdfPCell(new Paragraph(ej.getEjeA().getEje() + " " + ej.getEjeA().getNombre(), fontEje));
+            eje.setColspan(26);
+            eje.setBackgroundColor(BaseColor.GREEN);
+            eje.setHorizontalAlignment(Element.ALIGN_CENTER);
+            tableEscalas.addCell(eje);
+            ej.getListaLineasAccions().forEach((et) -> {
+                PdfPCell estrategia = new PdfPCell(new Paragraph(ej.getEjeA().getEje() + "." + et.getEtra().getNumero() + " " + et.getEtra().getNombre(), fontEst));
+                estrategia.setColspan(26);
+                estrategia.setBackgroundColor(BaseColor.GRAY);
+                estrategia.setHorizontalAlignment(Element.ALIGN_CENTER);
+                tableEscalas.addCell(estrategia);
+                et.getListalistaEstrategiaLaAp().forEach((ln) -> {
+                    PdfPCell lineas = new PdfPCell(new Paragraph(ej.getEjeA().getEje() + "." + et.getEtra().getNumero()+ "." + ln.getLineasAccion().getNumero() + " " + ln.getLineasAccion().getNombre(), fontLin));
+                    lineas.setColspan(26);
+                    lineas.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                    lineas.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    tableEscalas.addCell(lineas);
+                    
+                    PdfPCell no = new PdfPCell(new Paragraph("NO.", fontEncabazados));
+                    no.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    no.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    no.setBackgroundColor(BaseColor.DARK_GRAY);
+                    no.setColspan(1);
+                    no.setRowspan(2);
+                    tableEscalas.addCell(no);
+                    PdfPCell act = new PdfPCell(new Paragraph("ACTIVIDAD", fontEncabazados));
+                    act.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    act.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    act.setBackgroundColor(BaseColor.DARK_GRAY);
+                    act.setColspan(4);
+                    act.setRowspan(2);
+                    tableEscalas.addCell(act);
+                    PdfPCell udm = new PdfPCell(new Paragraph("UNIDAD DE MEDIDA", fontEncabazados));
+                    udm.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    udm.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    udm.setBackgroundColor(BaseColor.DARK_GRAY);
+                    udm.setColspan(2);
+                    udm.setRowspan(2);
+                    tableEscalas.addCell(udm);
+                    PdfPCell cal = new PdfPCell(new Paragraph("CALENDARIZACIÓN DE METAS", fontEncabazados));
+                    cal.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    cal.setBackgroundColor(BaseColor.DARK_GRAY);
+                    cal.setColspan(12);
+                    cal.setRowspan(1);
+                    tableEscalas.addCell(cal);
+                    PdfPCell tot = new PdfPCell(new Paragraph("TOTAL", fontEncabazados));
+                    tot.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    tot.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    tot.setBackgroundColor(BaseColor.DARK_GRAY);
+                    tot.setColspan(1);
+                    tot.setRowspan(2);
+                    tableEscalas.addCell(tot);
+                    PdfPCell jus = new PdfPCell(new Paragraph("JUSTIFICACIÓN", fontEncabazados));
+                    jus.setHorizontalAlignment(Element.ALIGN_CENTER);
+                    jus.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    jus.setBackgroundColor(BaseColor.DARK_GRAY);
+                    jus.setColspan(6);
+                    jus.setRowspan(2);
+                    tableEscalas.addCell(jus);
+                    PdfPCell ene = new PdfPCell(new Paragraph("Ene.", fontEncabazados)); ene.setHorizontalAlignment(Element.ALIGN_CENTER); ene.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(ene);
+                    PdfPCell feb = new PdfPCell(new Paragraph("Feb.", fontEncabazados)); feb.setHorizontalAlignment(Element.ALIGN_CENTER); feb.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(feb);
+                    PdfPCell mar = new PdfPCell(new Paragraph("Mar.", fontEncabazados)); mar.setHorizontalAlignment(Element.ALIGN_CENTER); mar.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(mar);
+                    PdfPCell abr = new PdfPCell(new Paragraph("Abr.", fontEncabazados)); abr.setHorizontalAlignment(Element.ALIGN_CENTER); abr.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(abr);
+                    PdfPCell may = new PdfPCell(new Paragraph("May.", fontEncabazados)); may.setHorizontalAlignment(Element.ALIGN_CENTER); may.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(may);
+                    PdfPCell jun = new PdfPCell(new Paragraph("Jun.", fontEncabazados)); jun.setHorizontalAlignment(Element.ALIGN_CENTER); jun.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(jun);
+                    PdfPCell jul = new PdfPCell(new Paragraph("Jul.", fontEncabazados)); jul.setHorizontalAlignment(Element.ALIGN_CENTER); jul.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(jul);
+                    PdfPCell ago = new PdfPCell(new Paragraph("Ago.", fontEncabazados)); ago.setHorizontalAlignment(Element.ALIGN_CENTER); ago.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(ago);
+                    PdfPCell sep = new PdfPCell(new Paragraph("Sep.", fontEncabazados)); sep.setHorizontalAlignment(Element.ALIGN_CENTER); sep.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(sep);
+                    PdfPCell oct = new PdfPCell(new Paragraph("Oct.", fontEncabazados)); oct.setHorizontalAlignment(Element.ALIGN_CENTER); oct.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(oct);
+                    PdfPCell nov = new PdfPCell(new Paragraph("Nov.", fontEncabazados)); nov.setHorizontalAlignment(Element.ALIGN_CENTER); nov.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(nov);
+                    PdfPCell dic = new PdfPCell(new Paragraph("Dic.", fontEncabazados)); dic.setHorizontalAlignment(Element.ALIGN_CENTER); dic.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(dic);
+                    ln.getListaRecursoActividadeses().forEach((ac) -> {
+                        PdfPCell numBd = new PdfPCell(new Paragraph(ac.getActividadesPoa1().getNumeroP() + "." + ac.getActividadesPoa1().getNumeroS(), fontContenido));
+                        numBd.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        numBd.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            numBd.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        no.setColspan(1);
+                        tableEscalas.addCell(numBd);
+                        PdfPCell actBD = new PdfPCell(new Paragraph(ac.getActividadesPoa1().getDenominacion(), fontContenido));
+                        actBD.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+                        actBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            actBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        actBD.setColspan(4);
+                        tableEscalas.addCell(actBD);
+                        PdfPCell udmBD = new PdfPCell(new Paragraph(ac.getActividadesPoa1().getUnidadMedida().getNombre(), fontContenido));
+                        udmBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        udmBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            udmBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        udmBD.setColspan(2);
+                        tableEscalas.addCell(udmBD);
+                        PdfPCell eneBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPEnero()), fontContenido));
+                        eneBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        eneBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            eneBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        eneBD.setColspan(1);
+                        tableEscalas.addCell(eneBD);
+                        PdfPCell febBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPFebrero()), fontContenido));
+                        febBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        febBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            febBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        febBD.setColspan(1);
+                        tableEscalas.addCell(febBD);
+                        PdfPCell marBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPMarzo()), fontContenido));
+                        marBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        marBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            marBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        marBD.setColspan(1);
+                        tableEscalas.addCell(marBD);
+                        PdfPCell abrBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPAbril()), fontContenido));
+                        abrBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        abrBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            abrBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        abrBD.setColspan(1);
+                        tableEscalas.addCell(abrBD);
+                        PdfPCell mayBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPMayo()), fontContenido));
+                        mayBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        mayBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            mayBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        mayBD.setColspan(1);
+                        tableEscalas.addCell(mayBD);
+                        PdfPCell junBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPJunio()), fontContenido));
+                        junBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        junBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            junBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        junBD.setColspan(1);
+                        tableEscalas.addCell(junBD);
+                        PdfPCell julBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPJulio()), fontContenido));
+                        julBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        julBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            julBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        julBD.setColspan(1);
+                        tableEscalas.addCell(julBD);
+                        PdfPCell agoBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPAgosto()), fontContenido));
+                        agoBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        agoBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            agoBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        agoBD.setColspan(1);
+                        tableEscalas.addCell(agoBD);
+                        PdfPCell sepBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPSeptiembre()), fontContenido));
+                        sepBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        sepBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            sepBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        sepBD.setColspan(1);
+                        tableEscalas.addCell(sepBD);
+                        PdfPCell octBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPOctubre()), fontContenido));
+                        octBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        octBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            octBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        octBD.setColspan(1);
+                        tableEscalas.addCell(octBD);
+                        PdfPCell novBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPNoviembre()), fontContenido));
+                        novBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        novBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            novBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        novBD.setColspan(1);
+                        tableEscalas.addCell(novBD);
+                        PdfPCell dicBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getNPDiciembre()), fontContenido));
+                        dicBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        dicBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            dicBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        dicBD.setColspan(1);
+                        tableEscalas.addCell(dicBD);
+                        PdfPCell totBD = new PdfPCell(new Paragraph(String.valueOf(ac.getActividadesPoa1().getTotal()), fontContenido));
+                        totBD.setHorizontalAlignment(Element.ALIGN_CENTER);
+                        totBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            totBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        totBD.setColspan(1);
+                        tableEscalas.addCell(totBD);
+                        PdfPCell jusBD = new PdfPCell(new Paragraph(ac.getActividadesPoa1().getDescripcion(), fontContenido));
+                        jusBD.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+                        jusBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+                            jusBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+                        }
+                        jusBD.setColspan(6);
+                        tableEscalas.addCell(jusBD);
+                        if (!ac.getRecacts().isEmpty()) {
+                            PdfPCell pro = new PdfPCell(new Paragraph("PRODUCTO", fontEncabazados));
+                            pro.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            pro.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                            pro.setBackgroundColor(BaseColor.DARK_GRAY);
+                            pro.setColspan(6);
+                            pro.setRowspan(2);
+                            tableEscalas.addCell(pro);
+                            PdfPCell udmp = new PdfPCell(new Paragraph("UNIDAD DE MEDIDA", fontEncabazados));
+                            udmp.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            udmp.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                            udmp.setBackgroundColor(BaseColor.DARK_GRAY);
+                            udmp.setColspan(2);
+                            udmp.setRowspan(2);
+                            tableEscalas.addCell(udmp);
+                            PdfPCell cap = new PdfPCell(new Paragraph("CAPITULO DESCUENTO", fontEncabazados));
+                            cap.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            cap.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                            cap.setBackgroundColor(BaseColor.DARK_GRAY);
+                            cap.setColspan(4);
+                            cap.setRowspan(2);
+                            tableEscalas.addCell(cap);
+                            PdfPCell calre = new PdfPCell(new Paragraph("CALENDARIZACIÓN DE METAS", fontEncabazados));
+                            calre.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            calre.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                            calre.setBackgroundColor(BaseColor.DARK_GRAY);
+                            calre.setColspan(12);
+                            calre.setRowspan(1);
+                            tableEscalas.addCell(calre);
+                            PdfPCell totRec = new PdfPCell(new Paragraph("TOTAL", fontEncabazados));
+                            totRec.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            totRec.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                            totRec.setBackgroundColor(BaseColor.DARK_GRAY);
+                            totRec.setColspan(2);
+                            totRec.setRowspan(2);
+                            tableEscalas.addCell(totRec);                            
+                            PdfPCell eneR = new PdfPCell(new Paragraph("Ene.", fontEncabazados)); eneR.setHorizontalAlignment(Element.ALIGN_CENTER); eneR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(eneR);
+                            PdfPCell febR = new PdfPCell(new Paragraph("Feb.", fontEncabazados)); febR.setHorizontalAlignment(Element.ALIGN_CENTER); febR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(febR);
+                            PdfPCell marR = new PdfPCell(new Paragraph("Mar.", fontEncabazados)); marR.setHorizontalAlignment(Element.ALIGN_CENTER); marR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(marR);
+                            PdfPCell abrR = new PdfPCell(new Paragraph("Abr.", fontEncabazados)); abrR.setHorizontalAlignment(Element.ALIGN_CENTER); abrR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(abrR);
+                            PdfPCell mayR = new PdfPCell(new Paragraph("May.", fontEncabazados)); mayR.setHorizontalAlignment(Element.ALIGN_CENTER); mayR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(mayR);
+                            PdfPCell junR = new PdfPCell(new Paragraph("Jun.", fontEncabazados)); junR.setHorizontalAlignment(Element.ALIGN_CENTER); junR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(junR);
+                            PdfPCell julR = new PdfPCell(new Paragraph("Jul.", fontEncabazados)); julR.setHorizontalAlignment(Element.ALIGN_CENTER); julR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(julR);
+                            PdfPCell agoR = new PdfPCell(new Paragraph("Ago.", fontEncabazados)); agoR.setHorizontalAlignment(Element.ALIGN_CENTER); agoR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(agoR);
+                            PdfPCell sepR = new PdfPCell(new Paragraph("Sep.", fontEncabazados)); sepR.setHorizontalAlignment(Element.ALIGN_CENTER); sepR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(sepR);
+                            PdfPCell octR = new PdfPCell(new Paragraph("Oct.", fontEncabazados)); octR.setHorizontalAlignment(Element.ALIGN_CENTER); octR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(octR);
+                            PdfPCell novR = new PdfPCell(new Paragraph("Nov.", fontEncabazados)); novR.setHorizontalAlignment(Element.ALIGN_CENTER); novR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(novR);
+                            PdfPCell dicR = new PdfPCell(new Paragraph("Dic.", fontEncabazados)); dicR.setHorizontalAlignment(Element.ALIGN_CENTER); dicR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(dicR);
+                    
+                            ac.getRecacts().forEach((re) -> {
+                                PdfPCell proRBD = new PdfPCell(new Paragraph(re.getProductoArea().getProductos().getProductosPK().getProducto()+", "+re.getProductoArea().getProductos().getDescripcion(), fontContenido)); proRBD.setHorizontalAlignment(Element.ALIGN_JUSTIFIED); proRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); proRBD.setColspan(6); tableEscalas.addCell(proRBD);
+                                PdfPCell udmRBD = new PdfPCell(new Paragraph(re.getProductoArea().getProductos().getUnidadMedida(), fontContenido)); udmRBD.setHorizontalAlignment(Element.ALIGN_CENTER); udmRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); udmRBD.setColspan(2); tableEscalas.addCell(udmRBD);
+                                PdfPCell capRBD = new PdfPCell(new Paragraph(re.getProductoArea().getCapitulo().getNumero()+", "+re.getProductoArea().getCapitulo().getNombre(), fontContenido)); capRBD.setHorizontalAlignment(Element.ALIGN_CENTER); capRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); capRBD.setColspan(4); tableEscalas.addCell(capRBD);
+                                PdfPCell eneRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPEnero()), fontContenido)); eneRBD.setHorizontalAlignment(Element.ALIGN_CENTER); eneRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); eneRBD.setColspan(1); tableEscalas.addCell(eneRBD);
+                                PdfPCell febRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPFebero()), fontContenido)); febRBD.setHorizontalAlignment(Element.ALIGN_CENTER); febRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); febRBD.setColspan(1); tableEscalas.addCell(febRBD);
+                                PdfPCell marRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPMarzo()), fontContenido)); marRBD.setHorizontalAlignment(Element.ALIGN_CENTER); marRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); marRBD.setColspan(1); tableEscalas.addCell(marRBD);
+                                PdfPCell abrRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPAbril()), fontContenido)); abrRBD.setHorizontalAlignment(Element.ALIGN_CENTER); abrRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); abrRBD.setColspan(1); tableEscalas.addCell(abrRBD);
+                                PdfPCell mayRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPMayo()), fontContenido)); mayRBD.setHorizontalAlignment(Element.ALIGN_CENTER); mayRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); mayRBD.setColspan(1); tableEscalas.addCell(mayRBD);
+                                PdfPCell junRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPJunio()), fontContenido)); junRBD.setHorizontalAlignment(Element.ALIGN_CENTER); junRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); junRBD.setColspan(1); tableEscalas.addCell(junRBD);
+                                PdfPCell julRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPJulio()), fontContenido)); julRBD.setHorizontalAlignment(Element.ALIGN_CENTER); julRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); julRBD.setColspan(1); tableEscalas.addCell(julRBD);
+                                PdfPCell agoRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPAgosto()), fontContenido)); agoRBD.setHorizontalAlignment(Element.ALIGN_CENTER); agoRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); agoRBD.setColspan(1); tableEscalas.addCell(agoRBD);
+                                PdfPCell sepRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPSeptiembre()), fontContenido)); sepRBD.setHorizontalAlignment(Element.ALIGN_CENTER); sepRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); sepRBD.setColspan(1); tableEscalas.addCell(sepRBD);
+                                PdfPCell octRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPOctubre()), fontContenido)); octRBD.setHorizontalAlignment(Element.ALIGN_CENTER); octRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); octRBD.setColspan(1); tableEscalas.addCell(octRBD);
+                                PdfPCell novRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPNoviembre()), fontContenido)); novRBD.setHorizontalAlignment(Element.ALIGN_CENTER); novRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); novRBD.setColspan(1); tableEscalas.addCell(novRBD);
+                                PdfPCell dicRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPDiciembre()), fontContenido)); dicRBD.setHorizontalAlignment(Element.ALIGN_CENTER); dicRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); dicRBD.setColspan(1); tableEscalas.addCell(dicRBD);
+                                PdfPCell totRBD = new PdfPCell(new Paragraph(String.valueOf(re.getTotal()), fontContenido)); totRBD.setHorizontalAlignment(Element.ALIGN_CENTER); totRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); totRBD.setColspan(2); tableEscalas.addCell(totRBD);
+                            });
+                        }
+                    });
+                });
+            });
+        });
+        
+        tableFirma.setSpacingBefore(50);
+        tableFirma.setWidthPercentage(60);
+        PdfPCell nombreRes = new PdfPCell(new Paragraph(con.buscarPersonal(procesopoa.getResponsable()), fontCursive));
+        nombreRes.setHorizontalAlignment(Element.ALIGN_CENTER);
+        nombreRes.setBorder(Rectangle.TOP);
+        tableFirma.addCell(nombreRes);
+        
+        //Se agregan los elementos creados
+        document.add(parrafo);
+        document.add(parrafo2);
+        document.add(parrafo3);
+        document.add(logoSii);
+        document.add(logoUT);
+//        document.add(fotoPer);
+        document.add(tableEscalas);
+        document.add(tableFirma);
         //Se cierra el documento
         document.close();
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Su documento se ha generado correctamente", ""));

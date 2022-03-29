@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
+import mx.edu.utxj.pye.sgi.dto.poa.DTOreportePoa;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.ejb.poa.EjbCatalogosPoa;
 import mx.edu.utxj.pye.sgi.entity.ch.Calendarioevaluacionpoa;
@@ -44,13 +45,13 @@ public class AdministracionPOA implements Serializable {
     
     @Getter    @Setter    private Integer calendario;     
     @Getter    @Setter    private Date fechF=new Date();     
-    @Getter    @Setter    private ProcesoDetallePoa poa;   
+    @Getter    @Setter    private DTOreportePoa.ProcesoDetallePoa poa;   
     @Getter    @Setter    private Short ejerciciosFiscalesBusqueda; 
     @Getter    @Setter    private EjerciciosFiscales fiscales;
     @Getter    @Setter    private EjerciciosFiscales ef; 
     @Getter    @Setter    private Short anioB;
 
-    @Getter    @Setter    private List<ProcesoDetallePoa> detallePoas = new ArrayList<>(); 
+    @Getter    @Setter    private List<DTOreportePoa.ProcesoDetallePoa> detallePoas = new ArrayList<>(); 
     @Getter    @Setter    private List<Calendarioevaluacionpoa> calendarioevaluacionpoas = new ArrayList<>();
     @Getter    @Setter    private List<Calendarioevaluacionpoa> calendarioPoaActivo = new ArrayList<>();
     @Getter    @Setter    private List<Boolean> estatus = new ArrayList<>();
@@ -147,7 +148,7 @@ public class AdministracionPOA implements Serializable {
                         p1 = ejbPersonal.mostrarListaPersonal(t.getResponsable());
                     }                    
                     au = areasLogeo.mostrarAreasUniversidad(t.getArea()); 
-                    detallePoas.add(new ProcesoDetallePoa(au, p1, t, t.getPermisosevaluacionpoaexList(),t.getRegistroAFinalizado(),t.getAsiganacionRFinalizado(),t.getRegistroJustificacionFinalizado(),t.getValidacionRegistroA(),t.getValidacionRFFinalizado(),t.getValidacionJustificacion()));                    
+                    detallePoas.add(new DTOreportePoa.ProcesoDetallePoa(au, p1, t, t.getPermisosevaluacionpoaexList(),t.getRegistroAFinalizado(),t.getAsiganacionRFinalizado(),t.getRegistroJustificacionFinalizado(),t.getValidacionRegistroA(),t.getValidacionRFFinalizado(),t.getValidacionJustificacion()));                    
                 } catch (Throwable ex) {
                     Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
                     Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
@@ -251,7 +252,7 @@ public class AdministracionPOA implements Serializable {
   
     public void actualizarProcesosPOA(RowEditEvent event) {
         try {
-            ProcesoDetallePoa ef = (ProcesoDetallePoa) event.getObject();
+            DTOreportePoa.ProcesoDetallePoa ef = (DTOreportePoa.ProcesoDetallePoa) event.getObject();
             Procesopoa e = ef.getProcesopoa();
             e.setResponsable(ef.getPersonal().getClave());
             e.setRegistroAFinalizado(ef.getRact());
@@ -269,15 +270,7 @@ public class AdministracionPOA implements Serializable {
             Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void actualizarPresupuestos(RowEditEvent event) {
-        try {
-            
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+   
     public void actualizarPermiso(RowEditEvent event) {
         try {
             Permisosevaluacionpoaex p= (Permisosevaluacionpoaex) event.getObject();
@@ -294,14 +287,6 @@ public class AdministracionPOA implements Serializable {
         Messages.addGlobalInfo("¡Operación cancelada!");
     }
 // -----------------------------------------------------------------------------Eliminacion
-  public void eliminarPresupuestos(PresupuestoPOA ppoa) {
-        try {
-            
-        } catch (Throwable ex) {
-            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
-            Logger.getLogger(AdministracionPOA.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     public void eliminarPermiso(Permisosevaluacionpoaex permisosevaluacionpoaex) {
         try {
             administrador.eliminarPermisosevaluacionpoaex(permisosevaluacionpoaex);
@@ -333,54 +318,5 @@ public class AdministracionPOA implements Serializable {
         }else{
             return Boolean.FALSE;
         }
-    }
-    
-    public static class PresupuestoPOA {
-        
-        @Getter        @Setter        private Short areaID;
-        @Getter        @Setter        private String area;
-        @Getter        @Setter        private String responsable;
-        @Getter        @Setter        private PretechoFinanciero cap2000;
-        @Getter        @Setter        private PretechoFinanciero cap3000;        
-        @Getter        @Setter        private PretechoFinanciero cap4000;
-        @Getter        @Setter        private PretechoFinanciero capdder;
-
-        public PresupuestoPOA(Short areaID, String area, String responsable, PretechoFinanciero cap2000, PretechoFinanciero cap3000, PretechoFinanciero cap4000, PretechoFinanciero capdder) {
-            this.areaID = areaID;
-            this.area = area;
-            this.responsable = responsable;
-            this.cap2000 = cap2000;
-            this.cap3000 = cap3000;
-            this.cap4000 = cap4000;
-            this.capdder = capdder;
-        }        
-    }
-    
-    public static class ProcesoDetallePoa {
-        
-        @Getter        @Setter        private AreasUniversidad universidad;
-        @Getter        @Setter        private ListaPersonal personal;
-        @Getter        @Setter        private Procesopoa procesopoa;        
-        @Getter        @Setter        private List<Permisosevaluacionpoaex> permisosevaluacionpoaexs;
-        @Getter        @Setter        private Boolean ract;
-        @Getter        @Setter        private Boolean rrec;
-        @Getter        @Setter        private Boolean rjus;
-        @Getter        @Setter        private Boolean vact;
-        @Getter        @Setter        private Boolean vrec;
-        @Getter        @Setter        private Boolean vjus;
-
-        public ProcesoDetallePoa(AreasUniversidad universidad, ListaPersonal personal, Procesopoa procesopoa, List<Permisosevaluacionpoaex> permisosevaluacionpoaexs, Boolean ract, Boolean rrec, Boolean rjus, Boolean vact, Boolean vrec, Boolean vjus) {
-            this.universidad = universidad;
-            this.personal = personal;
-            this.procesopoa = procesopoa;
-            this.permisosevaluacionpoaexs = permisosevaluacionpoaexs;
-            this.ract = ract;
-            this.rrec = rrec;
-            this.rjus = rjus;
-            this.vact = vact;
-            this.vrec = vrec;
-            this.vjus = vjus;
-        }       
-        
     }
 }
