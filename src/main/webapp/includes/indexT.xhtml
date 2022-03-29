@@ -768,7 +768,12 @@
                                             </span>
                                             <div class="info-box-content">
                                                 <span class="info-box-text"><span class="info-box-number">#{notificacionCe.tipo} - <h:outputLabel value="#{notificacionCe.horaInicio}"><f:convertDateTime pattern="E, dd 'de' MMMM" locale="es-MX" timeZone="America/Mexico_City"/></h:outputLabel></span></span>
-                                                <span class="info-box-text">#{notificacionCe.tituloPrincipal}</span>
+                                                <c:if test="#{notificacionCe.tituloPrincipal eq 0 or notificacionCe.tituloPrincipal eq null}">
+                                                    <span class="info-box-text">Por confirmar</span>
+                                                </c:if>
+                                                <c:if test="#{notificacionCe.tituloPrincipal ne 0 and notificacionCe.tituloPrincipal ne null}">
+                                                    <span class="info-box-text">#{notificacionCe.tituloPrincipal}</span>
+                                                </c:if>
                                                 <div class="progress">
                                                     <div class="progress-bar" style="width: ${100-porcentaje}%"></div>
                                                 </div>
@@ -802,7 +807,12 @@
                                 <!--Ventanas Modal-->
                                 <p:dialog styleClass="avisoModal" width="" appendTo="@(body)" blockScroll="true" responsive="true" modal="true" widgetVar="modal#{index}" draggable="false" resizable="false" showEffect="fade" hideEffect="fade" header="#{notificacionCe.tituloPrincipal}" showHeader="false">
                                     <div class="modal-header" style="background-color: #374850">
-                                        <h3 class="modal-title" style="color: #ffffff">#{notificacionCe.tituloPrincipal}</h3>
+                                        <c:if test="#{notificacionCe.tituloPrincipal eq 0 or notificacionCe.tituloPrincipal eq null}">
+                                            <h3 class="modal-title" style="color: #ffffff">Por confirmar</h3>
+                                        </c:if>
+                                        <c:if test="#{notificacionCe.tituloPrincipal ne 0 and notificacionCe.tituloPrincipal ne null}">
+                                            <h3 class="modal-title" style="color: #ffffff">#{notificacionCe.tituloPrincipal}</h3>
+                                        </c:if>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         </button>
                                     </div>    
@@ -850,23 +860,23 @@
                                                 <c:if test="#{tieneVariosDias}">
                                                     <c:if test="#{mismoMes}">
                                                         <c:if test="#{notificacionCe.duracionEvento eq 'Thu Jan 01 00:00:00 CST 1970'}">
-                                                        Todo el dia.
-                                                    </c:if>
-                                                    <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
-                                                        <h:outputLabel value="#{notificacionCe.duracionEvento}">
-                                                            <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> horas
-                                                    </c:if>
+                                                            Todo el dia.
+                                                        </c:if>
+                                                        <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                            <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                                <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                            </h:outputLabel> horas
+                                                        </c:if>
                                                     </c:if>
                                                     <c:if test="#{!mismoMes}">
                                                         <c:if test="#{notificacionCe.duracionEvento eq 'Thu Jan 01 00:00:00 CST 1970'}">
-                                                        Todo el dia.
-                                                    </c:if>
-                                                    <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
-                                                        <h:outputLabel value="#{notificacionCe.duracionEvento}">
-                                                            <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
-                                                        </h:outputLabel> horas
-                                                    </c:if>
+                                                            Todo el dia.
+                                                        </c:if>
+                                                        <c:if test="#{notificacionCe.duracionEvento ne 'Thu Jan 01 00:00:00 CST 1970'}">
+                                                            <h:outputLabel value="#{notificacionCe.duracionEvento}">
+                                                                <f:convertDateTime pattern="HH:mm" timeZone="America/Mexico_City"/>
+                                                            </h:outputLabel> horas
+                                                        </c:if>
                                                     </c:if>
                                                 </c:if>
                                                 <c:if test="#{!tieneVariosDias}">
