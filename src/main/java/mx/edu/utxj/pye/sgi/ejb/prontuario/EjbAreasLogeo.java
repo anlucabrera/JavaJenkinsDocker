@@ -32,4 +32,6 @@ public interface EjbAreasLogeo {
     
     public List<ProgramasEducativosContinuidad> listaProgramasEducativosContinuidad(Short clave);
     
+    public List<ProgramasEducativosContinuidad> listaProgramasEducativosContinuidadAlineaciones(Short clave);
+    
 }

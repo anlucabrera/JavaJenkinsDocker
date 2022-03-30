@@ -295,7 +295,7 @@ public class ServicioRegAliEdu {
                     if (fila.getCell(2).getNumericCellValue() != 0d) {
                         estudio = new PlanEstudio();
                         estudioMateria = new PlanEstudioMateria();
-                        materia= new Materia();
+                        materia = new Materia();
                         objetivos = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
                         criterio = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
                         atributo = new DtoAlineacionAcedemica.Presentacion(0, "", "", "", 0D, new PlanEstudio(), new PlanEstudioMateria(), new AreasUniversidad(), "");
@@ -320,30 +320,39 @@ public class ServicioRegAliEdu {
                                 break;
                         }
                         switch (fila.getCell(6).getCellTypeEnum()) {
+//                        switch (fila.getCell(7).getCellTypeEnum()) {
                             case NUMERIC:
                                 estudioMateria.setGrado((int) fila.getCell(6).getNumericCellValue());
+//                                estudioMateria.setGrado((int) fila.getCell(7).getNumericCellValue());
                                 break;
                             default:
                                 break;
                         }
                         switch (fila.getCell(7).getCellTypeEnum()) {
+//                        switch (fila.getCell(8).getCellTypeEnum()) {
                             case STRING:
                                 materia.setNombre(fila.getCell(7).getStringCellValue());
+//                                materia.setNombre(fila.getCell(8).getStringCellValue());
                                 break;
                             default:
                                 break;
                         }
                         switch (fila.getCell(8).getCellTypeEnum()) {
+//                        switch (fila.getCell(9).getCellTypeEnum()) {
                             case FORMULA:
                                 estudioMateria.setClaveMateria(fila.getCell(8).getStringCellValue());
+//                                estudioMateria.setClaveMateria(fila.getCell(9).getStringCellValue());
                                 break;
                             default:
                                 break;
                         }
                         switch (fila.getCell(9).getCellTypeEnum()) {
+//                        switch (fila.getCell(10).getCellTypeEnum()) {
                             case FORMULA:
                                 estudioMateria.setIdPlanMateria((int) fila.getCell(9).getNumericCellValue());
+//                                estudioMateria.setIdPlanMateria((int) fila.getCell(10).getNumericCellValue());
                                 materia.setIdMateria((int) fila.getCell(9).getNumericCellValue());
+//                                materia.setIdMateria((int) fila.getCell(10).getNumericCellValue());
                                 estudioMateria.setIdMateria(new Materia());
                                 estudioMateria.setIdMateria(materia);
                                 objetivos.setPlanEstudioMateria(estudioMateria);
@@ -355,106 +364,134 @@ public class ServicioRegAliEdu {
                                 break;
                         }
                         switch (fila.getCell(12).getCellTypeEnum()) {
+//                        switch (fila.getCell(14).getCellTypeEnum()) {
                             case STRING:
                                 objetivos.setClave(fila.getCell(12).getStringCellValue());
+//                                objetivos.setClave(fila.getCell(14).getStringCellValue());
                                 break;
                             default:
                                 break;
                         }
                         switch (fila.getCell(13).getCellTypeEnum()) {
+//                        switch (fila.getCell(15).getCellTypeEnum()) {
                             case FORMULA:
                                 objetivos.setDescripcion(fila.getCell(13).getStringCellValue());
+//                                objetivos.setDescripcion(fila.getCell(15).getStringCellValue());
                                 break;
                             default:
                                 break;
                         }
                         switch (fila.getCell(14).getCellTypeEnum()) {
+//                        switch (fila.getCell(17).getCellTypeEnum()) {
                             case STRING:
                                 objetivos.setNivelA(fila.getCell(14).getStringCellValue());
+//                                objetivos.setNivelA(fila.getCell(17).getStringCellValue()); Se verificas para la decion de a que taba se almacenara
                                 break;
                             default:
                                 break;
                         }
-                       switch (fila.getCell(15).getCellTypeEnum()) {
+                        switch (fila.getCell(15).getCellTypeEnum()) {
+//                       switch (fila.getCell(18).getCellTypeEnum()) {
                             case FORMULA:
                                 objetivos.setIde((int) fila.getCell(15).getNumericCellValue());
+//                                objetivos.setIde((int) fila.getCell(18).getNumericCellValue());
                                 break;
                             default:
                                 break;
                         }
-                       
-                       switch (fila.getCell(18).getCellTypeEnum()) {
+
+                        switch (fila.getCell(18).getCellTypeEnum()) {
+//                       switch (fila.getCell(22).getCellTypeEnum()) {
                             case STRING:
                                 atributo.setClave(fila.getCell(18).getStringCellValue());
+//                                atributo.setClave(fila.getCell(22).getStringCellValue());
                                 break;
                             default:
                                 break;
                         }
                         switch (fila.getCell(19).getCellTypeEnum()) {
+//                       switch (fila.getCell(23).getCellTypeEnum()) {
                             case FORMULA:
                                 atributo.setDescripcion(fila.getCell(19).getStringCellValue());
+//                                atributo.setDescripcion(fila.getCell(23).getStringCellValue());
                                 break;
                             default:
                                 break;
                         }
-                       switch (fila.getCell(20).getCellTypeEnum()) {
+                        switch (fila.getCell(20).getCellTypeEnum()) {
+//                       switch (fila.getCell(25).getCellTypeEnum()) {
                             case FORMULA:
                                 atributo.setIde((int) fila.getCell(20).getNumericCellValue());
+//                                atributo.setIde((int) fila.getCell(25).getNumericCellValue());
                                 break;
                             default:
                                 break;
                         }
-                       
-                       switch (fila.getCell(23).getCellTypeEnum()) {
+
+                        switch (fila.getCell(23).getCellTypeEnum()) {
+//                       switch (fila.getCell(29).getCellTypeEnum()) {
                             case STRING:
                                 criterio.setClave(fila.getCell(23).getStringCellValue());
+//                                criterio.setClave(fila.getCell(29).getStringCellValue());
                                 break;
                             default:
                                 break;
                         }
                         switch (fila.getCell(24).getCellTypeEnum()) {
+//                       switch (fila.getCell(30).getCellTypeEnum()) {
                             case FORMULA:
                                 criterio.setDescripcion(fila.getCell(24).getStringCellValue());
+//                                criterio.setDescripcion(fila.getCell(30).getStringCellValue());
                                 break;
                             default:
                                 break;
                         }
-                       switch (fila.getCell(25).getCellTypeEnum()) {
+                        switch (fila.getCell(25).getCellTypeEnum()) {
+//                       switch (fila.getCell(32).getCellTypeEnum()) {
                             case FORMULA:
                                 criterio.setIde((int) fila.getCell(25).getNumericCellValue());
+//                                criterio.setIde((int) fila.getCell(32).getNumericCellValue());
                                 break;
                             default:
                                 break;
                         }
-                       
-                       switch (fila.getCell(28).getCellTypeEnum()) {
+
+                        switch (fila.getCell(28).getCellTypeEnum()) {
+//                       switch (fila.getCell(36).getCellTypeEnum()) {
                             case STRING:
                                 indicador.setClave(fila.getCell(28).getStringCellValue());
+//                                indicador.setClave(fila.getCell(36).getStringCellValue());
                                 break;
                             default:
                                 break;
                         }
                         switch (fila.getCell(29).getCellTypeEnum()) {
+//                        switch (fila.getCell(37).getCellTypeEnum()) {
                             case FORMULA:
                                 indicador.setDescripcion(fila.getCell(29).getStringCellValue());
+//                                indicador.setDescripcion(fila.getCell(37).getStringCellValue());
                                 break;
                             default:
                                 break;
                         }
                         switch (fila.getCell(30).getCellTypeEnum()) {
+//                       switch (fila.getCell(38).getCellTypeEnum()) {
                             case NUMERIC:
                                 indicador.setMeta((double) fila.getCell(30).getNumericCellValue());
+//                                indicador.setMeta((double) fila.getCell(38).getNumericCellValue());
                                 break;
                             default:
                                 break;
                         }
-                       switch (fila.getCell(31).getCellTypeEnum()) {
+                        switch (fila.getCell(31).getCellTypeEnum()) {
+//                       switch (fila.getCell(40).getCellTypeEnum()) {
                             case FORMULA:
                                 indicador.setIde((int) fila.getCell(31).getNumericCellValue());
+//                                indicador.setIde((int) fila.getCell(40).getNumericCellValue());
                                 break;
                             default:
                                 break;
-                       }
+                        }
                         
                         objetivos.setTipoR("Ob");
                         criterio.setTipoR("Cr");

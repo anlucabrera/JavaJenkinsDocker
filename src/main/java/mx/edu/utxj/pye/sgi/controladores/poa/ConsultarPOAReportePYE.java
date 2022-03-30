@@ -123,10 +123,20 @@ public class ConsultarPOAReportePYE implements Serializable {
     }
 
     public void consultarListasValidacionFinal() {
-        listaListaEjeEstrategia = new ArrayList<>();
-        listaListaEjeEstrategia.clear();
         ejesEsLaAp = new ArrayList<>();
+        listaEstrategiases = new ArrayList<>();
+        listaLineasAccions = new ArrayList<>();
+        accionListaActividads = new ArrayList<>();
+        listaListaEjeEstrategia = new ArrayList<>();
+        listaRecursoActividadeses = new ArrayList<>();
+        
         ejesEsLaAp.clear();
+        listaEstrategiases.clear();
+        listaLineasAccions.clear();
+        accionListaActividads.clear();
+        listaListaEjeEstrategia.clear();
+        listaRecursoActividadeses.clear();             
+        
         List<EjesRegistro> ers = new ArrayList<>();
         ers = ejbCatalogosPoa.mostrarEjesRegistrosAreas(claveArea, ejercicioFiscal);
         if (!ers.isEmpty()) {
@@ -202,7 +212,7 @@ public class ConsultarPOAReportePYE implements Serializable {
             pu.reportePOA(listaEstrategiases, ef, areaPOASeleccionada,procesopoa);
             nombreArchivo = "";
             nombreArchivo = areaPOASeleccionada.getArea() + " - " + areaPOASeleccionada.getNombre();
-//            Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/" + ef.getAnio() + "/reportes/" + nombreArchivo + ".pdf" + "');");
+            Ajax.oncomplete("descargar('" + "http://siip.utxicotepec.edu.mx/archivos/evidencias2/" + ef.getAnio() + "/reportes/" + nombreArchivo + ".pdf" + "');");
         } catch (Exception e) {
             e.printStackTrace();
         }

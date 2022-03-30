@@ -1222,7 +1222,7 @@ public class PdfUtilidades implements Serializable {
                     act.setHorizontalAlignment(Element.ALIGN_CENTER);
                     act.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     act.setBackgroundColor(BaseColor.DARK_GRAY);
-                    act.setColspan(4);
+                    act.setColspan(9);
                     act.setRowspan(2);
                     tableEscalas.addCell(act);
                     PdfPCell udm = new PdfPCell(new Paragraph("UNIDAD DE MEDIDA", fontEncabazados));
@@ -1242,16 +1242,16 @@ public class PdfUtilidades implements Serializable {
                     tot.setHorizontalAlignment(Element.ALIGN_CENTER);
                     tot.setVerticalAlignment(Element.ALIGN_MIDDLE);
                     tot.setBackgroundColor(BaseColor.DARK_GRAY);
-                    tot.setColspan(1);
+                    tot.setColspan(2);
                     tot.setRowspan(2);
                     tableEscalas.addCell(tot);
-                    PdfPCell jus = new PdfPCell(new Paragraph("JUSTIFICACIÓN", fontEncabazados));
-                    jus.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    jus.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                    jus.setBackgroundColor(BaseColor.DARK_GRAY);
-                    jus.setColspan(6);
-                    jus.setRowspan(2);
-                    tableEscalas.addCell(jus);
+//                    PdfPCell jus = new PdfPCell(new Paragraph("JUSTIFICACIÓN", fontEncabazados));
+//                    jus.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                    jus.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                    jus.setBackgroundColor(BaseColor.DARK_GRAY);
+//                    jus.setColspan(6);
+//                    jus.setRowspan(2);
+//                    tableEscalas.addCell(jus);
                     PdfPCell ene = new PdfPCell(new Paragraph("Ene.", fontEncabazados)); ene.setHorizontalAlignment(Element.ALIGN_CENTER); ene.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(ene);
                     PdfPCell feb = new PdfPCell(new Paragraph("Feb.", fontEncabazados)); feb.setHorizontalAlignment(Element.ALIGN_CENTER); feb.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(feb);
                     PdfPCell mar = new PdfPCell(new Paragraph("Mar.", fontEncabazados)); mar.setHorizontalAlignment(Element.ALIGN_CENTER); mar.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(mar);
@@ -1279,7 +1279,7 @@ public class PdfUtilidades implements Serializable {
                         if (ac.getActividadesPoa1().getNumeroS() == 0) {
                             actBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
                         }
-                        actBD.setColspan(4);
+                        actBD.setColspan(9);
                         tableEscalas.addCell(actBD);
                         PdfPCell udmBD = new PdfPCell(new Paragraph(ac.getActividadesPoa1().getUnidadMedida().getNombre(), fontContenido));
                         udmBD.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -1391,22 +1391,22 @@ public class PdfUtilidades implements Serializable {
                         if (ac.getActividadesPoa1().getNumeroS() == 0) {
                             totBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
                         }
-                        totBD.setColspan(1);
+                        totBD.setColspan(2);
                         tableEscalas.addCell(totBD);
-                        PdfPCell jusBD = new PdfPCell(new Paragraph(ac.getActividadesPoa1().getDescripcion(), fontContenido));
-                        jusBD.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
-                        jusBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
-                            jusBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
-                        }
-                        jusBD.setColspan(6);
-                        tableEscalas.addCell(jusBD);
+//                        PdfPCell jusBD = new PdfPCell(new Paragraph(ac.getActividadesPoa1().getDescripcion(), fontContenido));
+//                        jusBD.setHorizontalAlignment(Element.ALIGN_JUSTIFIED);
+//                        jusBD.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                        if (ac.getActividadesPoa1().getNumeroS() == 0) {
+//                            jusBD.setBackgroundColor(BaseColor.LIGHT_GRAY);
+//                        }
+//                        jusBD.setColspan(6);
+//                        tableEscalas.addCell(jusBD);
                         if (!ac.getRecacts().isEmpty()) {
                             PdfPCell pro = new PdfPCell(new Paragraph("PRODUCTO", fontEncabazados));
                             pro.setHorizontalAlignment(Element.ALIGN_CENTER);
                             pro.setVerticalAlignment(Element.ALIGN_MIDDLE);
                             pro.setBackgroundColor(BaseColor.DARK_GRAY);
-                            pro.setColspan(6);
+                            pro.setColspan(10);
                             pro.setRowspan(2);
                             tableEscalas.addCell(pro);
                             PdfPCell udmp = new PdfPCell(new Paragraph("UNIDAD DE MEDIDA", fontEncabazados));
@@ -1416,13 +1416,20 @@ public class PdfUtilidades implements Serializable {
                             udmp.setColspan(2);
                             udmp.setRowspan(2);
                             tableEscalas.addCell(udmp);
-                            PdfPCell cap = new PdfPCell(new Paragraph("CAPITULO DESCUENTO", fontEncabazados));
-                            cap.setHorizontalAlignment(Element.ALIGN_CENTER);
-                            cap.setVerticalAlignment(Element.ALIGN_MIDDLE);
-                            cap.setBackgroundColor(BaseColor.DARK_GRAY);
-                            cap.setColspan(4);
-                            cap.setRowspan(2);
-                            tableEscalas.addCell(cap);
+//                            PdfPCell cap = new PdfPCell(new Paragraph("CAPITULO DESCUENTO", fontEncabazados));
+//                            cap.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                            cap.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                            cap.setBackgroundColor(BaseColor.DARK_GRAY);
+//                            cap.setColspan(4);
+//                            cap.setRowspan(2);
+//                            tableEscalas.addCell(cap);
+//                            PdfPCell uni = new PdfPCell(new Paragraph("UNIDADES", fontEncabazados));
+//                            uni.setHorizontalAlignment(Element.ALIGN_CENTER);
+//                            uni.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//                            uni.setBackgroundColor(BaseColor.DARK_GRAY);
+//                            uni.setColspan(2);
+//                            uni.setRowspan(2);
+//                            tableEscalas.addCell(uni);
                             PdfPCell calre = new PdfPCell(new Paragraph("CALENDARIZACIÓN DE METAS", fontEncabazados));
                             calre.setHorizontalAlignment(Element.ALIGN_CENTER);
                             calre.setVerticalAlignment(Element.ALIGN_MIDDLE);
@@ -1451,9 +1458,9 @@ public class PdfUtilidades implements Serializable {
                             PdfPCell dicR = new PdfPCell(new Paragraph("Dic.", fontEncabazados)); dicR.setHorizontalAlignment(Element.ALIGN_CENTER); dicR.setBackgroundColor(BaseColor.DARK_GRAY); tableEscalas.addCell(dicR);
                     
                             ac.getRecacts().forEach((re) -> {
-                                PdfPCell proRBD = new PdfPCell(new Paragraph(re.getProductoArea().getProductos().getProductosPK().getProducto()+", "+re.getProductoArea().getProductos().getDescripcion(), fontContenido)); proRBD.setHorizontalAlignment(Element.ALIGN_JUSTIFIED); proRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); proRBD.setColspan(6); tableEscalas.addCell(proRBD);
+                                PdfPCell proRBD = new PdfPCell(new Paragraph(re.getProductoArea().getProductos().getProductosPK().getProducto()+", "+re.getProductoArea().getProductos().getDescripcion(), fontContenido)); proRBD.setHorizontalAlignment(Element.ALIGN_JUSTIFIED); proRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); proRBD.setColspan(10); tableEscalas.addCell(proRBD);
                                 PdfPCell udmRBD = new PdfPCell(new Paragraph(re.getProductoArea().getProductos().getUnidadMedida(), fontContenido)); udmRBD.setHorizontalAlignment(Element.ALIGN_CENTER); udmRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); udmRBD.setColspan(2); tableEscalas.addCell(udmRBD);
-                                PdfPCell capRBD = new PdfPCell(new Paragraph(re.getProductoArea().getCapitulo().getNumero()+", "+re.getProductoArea().getCapitulo().getNombre(), fontContenido)); capRBD.setHorizontalAlignment(Element.ALIGN_CENTER); capRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); capRBD.setColspan(4); tableEscalas.addCell(capRBD);
+//                                PdfPCell capRBD = new PdfPCell(new Paragraph(String.valueOf(re.getCantidad()), fontContenido)); capRBD.setHorizontalAlignment(Element.ALIGN_CENTER); capRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); capRBD.setColspan(2); tableEscalas.addCell(capRBD);
                                 PdfPCell eneRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPEnero()), fontContenido)); eneRBD.setHorizontalAlignment(Element.ALIGN_CENTER); eneRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); eneRBD.setColspan(1); tableEscalas.addCell(eneRBD);
                                 PdfPCell febRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPFebero()), fontContenido)); febRBD.setHorizontalAlignment(Element.ALIGN_CENTER); febRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); febRBD.setColspan(1); tableEscalas.addCell(febRBD);
                                 PdfPCell marRBD = new PdfPCell(new Paragraph(String.valueOf(re.getRPMarzo()), fontContenido)); marRBD.setHorizontalAlignment(Element.ALIGN_CENTER); marRBD.setVerticalAlignment(Element.ALIGN_MIDDLE); marRBD.setColspan(1); tableEscalas.addCell(marRBD);
@@ -1474,8 +1481,8 @@ public class PdfUtilidades implements Serializable {
             });
         });
         
-        tableFirma.setSpacingBefore(50);
-        tableFirma.setWidthPercentage(60);
+        tableFirma.setSpacingBefore(100);
+        tableFirma.setWidthPercentage(50);
         PdfPCell nombreRes = new PdfPCell(new Paragraph(con.buscarPersonal(procesopoa.getResponsable()), fontCursive));
         nombreRes.setHorizontalAlignment(Element.ALIGN_CENTER);
         nombreRes.setBorder(Rectangle.TOP);

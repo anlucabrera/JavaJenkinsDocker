@@ -17,6 +17,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.ObjetivoEducacional;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudio;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
+//import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosContinuidad;
 
 /**
  *
@@ -59,7 +60,7 @@ public class DtoAlineacionAcedemica implements Serializable {
                     .concat(p.getTipoR().concat(" "))
                     .concat(p.getClave());
         }
-        
+
         public int compareToALC(Presentacion o) {
             return toLabelALC(this).compareTo(toLabelALC(o));
         }
@@ -71,7 +72,7 @@ public class DtoAlineacionAcedemica implements Serializable {
                     .concat(p.getClave());
         }
     }
-    
+
     @ToString    @EqualsAndHashCode
     public static class LecturaAlineacion {
         @Getter        @Setter        private PlanEstudioMateria planEstudioMateria;
@@ -88,29 +89,39 @@ public class DtoAlineacionAcedemica implements Serializable {
             this.criterioDesempenio = criterioDesempenio;
         }
     }
-    
+
     @ToString    @EqualsAndHashCode
     public static class PlanesEstudioDto {
         @Getter        @Setter        private PlanEstudio planEstudio;
         @Getter        @Setter        private AreasUniversidad universidad;
+//        @Getter        @Setter        private ProgramasEducativosContinuidad continuidad;
 
         public PlanesEstudioDto(PlanEstudio planEstudio, AreasUniversidad universidad) {
+//        public PlanesEstudioDto(PlanEstudio planEstudio, AreasUniversidad universidad, ProgramasEducativosContinuidad continuidad) {
             this.planEstudio = planEstudio;
             this.universidad = universidad;
+//            this.continuidad = continuidad;
         }
     }
-    
+
     @ToString    @EqualsAndHashCode
     public static class PlanesEstudioObjtivo {
         @Getter        @Setter        private PlanEstudio planEstudio;
         @Getter        @Setter        private ObjetivoEducacional educacional;
+//        @Getter        @Setter        private String continuidad;
+//        @Getter        @Setter        private String nivel;
+//        @Getter        @Setter        private String cvl;
 
         public PlanesEstudioObjtivo(PlanEstudio planEstudio, ObjetivoEducacional educacional) {
+//        public PlanesEstudioObjtivo(PlanEstudio planEstudio, ObjetivoEducacional educacional, String continuidad, String nivel, String cvl) {
             this.planEstudio = planEstudio;
             this.educacional = educacional;
+//            this.continuidad = continuidad;
+//            this.nivel = nivel;
+//            this.cvl = cvl;
         }
     }
-    
+
     @ToString    @EqualsAndHashCode
     public static class PlanesEstudioMateriaCatalogo {
         @Getter        @Setter        private PlanEstudio planEstudio;
@@ -123,37 +134,58 @@ public class DtoAlineacionAcedemica implements Serializable {
             this.filtro = filtro;
         }
     }
-    
+
     @ToString    @EqualsAndHashCode
     public static class PlanesEstudioAtributo {
         @Getter        @Setter        private PlanEstudio planEstudio;
         @Getter        @Setter        private AtributoEgreso egreso;
+//        @Getter        @Setter        private String continuidad;
+//        @Getter        @Setter        private String nivel;
+//        @Getter        @Setter        private String cvl;
 
         public PlanesEstudioAtributo(PlanEstudio planEstudio, AtributoEgreso egreso) {
+//        public PlanesEstudioAtributo(PlanEstudio planEstudio, AtributoEgreso egreso, String continuidad, String nivel, String cvl) {
             this.planEstudio = planEstudio;
             this.egreso = egreso;
+//            this.continuidad = continuidad;
+//            this.nivel = nivel;
+//            this.cvl = cvl;
         }
     }
-    
+
     @ToString    @EqualsAndHashCode
     public static class PlanesEstudioCriterio {
         @Getter        @Setter        private PlanEstudio planEstudio;
         @Getter        @Setter        private CriterioDesempenio desempenio;
+//        @Getter        @Setter        private String continuidad;
+//        @Getter        @Setter        private String nivel;
+//        @Getter        @Setter        private String cvl;
 
         public PlanesEstudioCriterio(PlanEstudio planEstudio, CriterioDesempenio desempenio) {
+//        public PlanesEstudioCriterio(PlanEstudio planEstudio, CriterioDesempenio desempenio, String continuidad, String nivel, String cvl) {
             this.planEstudio = planEstudio;
             this.desempenio = desempenio;
+//            this.continuidad = continuidad;
+//            this.nivel = nivel;
+//            this.cvl = cvl;
         }
     }
-    
+
     @ToString    @EqualsAndHashCode
     public static class PlanesEstudioIndicador {
         @Getter        @Setter        private PlanEstudio planEstudio;
         @Getter        @Setter        private IndicadorAlineacion alineacion;
+//        @Getter        @Setter        private String continuidad;
+//        @Getter        @Setter        private String nivel;
+//        @Getter        @Setter        private String cvl;
 
         public PlanesEstudioIndicador(PlanEstudio planEstudio, IndicadorAlineacion alineacion) {
+//        public PlanesEstudioIndicador(PlanEstudio planEstudio, IndicadorAlineacion alineacion, String continuidad, String nivel, String cvl) {
             this.planEstudio = planEstudio;
             this.alineacion = alineacion;
+//            this.continuidad = continuidad;
+//            this.nivel = nivel;
+//            this.cvl = cvl;
         }
     }
 }

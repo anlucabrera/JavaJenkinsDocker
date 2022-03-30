@@ -176,21 +176,23 @@ public class ControladorSubordinados implements Serializable {
             
             LocalDateTime fechaMi = utilidadesCH.castearDaLDT(modulosRegistro.getFechaInicio());
             LocalDateTime fechaMF = utilidadesCH.castearDaLDT(modulosRegistro.getFechaFin());
-
-            if (fechaMF.getDayOfMonth() > 15) {
-                fechaIR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 01);
-                fechaFR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 15);
-            } else {
-                if (fechaMF.getMonthValue() == 1) {
+         
+            if ((fechaActual.isAfter(fechaMi) || fechaActual.equals(fechaMi)) && (fechaActual.isBefore(fechaMF) || fechaActual.equals(fechaMF))) {
+                fechaReportesActiva = true;
+                if (fechaMF.getMonthValue() == 1 && fechaMF.getDayOfMonth() < 15) {
                     fechaIR = LocalDate.of(fechaMF.getYear() - 1, 12, 01);
                     fechaFR = LocalDate.of(fechaMF.getYear() - 1, 12, 31);
+                } else if (fechaMF.getDayOfMonth() > 15) {
+                    fechaIR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 01);
+                    fechaFR = LocalDate.of(fechaMF.getYear(), fechaMF.getMonthValue(), 15);
                 } else {
                     fechaIR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), 16);
                     fechaFR = LocalDate.of(fechaMF.getYear(), (fechaMF.getMonthValue() - 1), LocalDate.of(anioNumero, (fechaMF.getMonthValue() - 1), 01).lengthOfMonth());
                 }
+            }else{
+                return;
             }
-            fechaReportesActiva = true;
-
+            
             listaIncidenciasReporteImpresion = new ArrayList<>();
             listaIncidenciasReporteImpresion.clear();
             incidenciases = ejbNotificacionesIncidencias.mostrarIncidenciasReporte(utilidadesCH.castearLDaD(fechaIR), utilidadesCH.castearLDaD(fechaFR));

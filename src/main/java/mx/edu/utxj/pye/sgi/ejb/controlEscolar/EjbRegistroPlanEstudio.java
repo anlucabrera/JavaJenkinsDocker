@@ -7,6 +7,7 @@ package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosContinuidad;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import net.sf.jxls.transformer.XLSTransformer;
@@ -84,6 +86,7 @@ public class EjbRegistroPlanEstudio {
     CriterioDesempenio desempenio;
     AtributoEgreso egreso;
     IndicadorAlineacion indicadorAlineacion;
+    AreasUniversidad areaAlineacion;
 
     public static final String ALINEACION_CATALOGOS_PLANTILLA = "alineacionEducativaCatalogos.xlsx";
     public static final String ALINEACION_CATALOGOS_ACTUALIZADO = "alineacionEducativaCatalogos.xlsx";
@@ -971,21 +974,40 @@ public class EjbRegistroPlanEstudio {
                 oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "OE"));
                 oe.setDescripcion("No aplica");
                 daas.add(new DtoAlineacionAcedemica.PlanesEstudioObjtivo(estudio, oe));
+//                try {
+//                    areaAlineacion = new AreasUniversidad();
+//                    areaAlineacion = ejbAreasLogeo.mostrarAreasUniversidad(estudio.getIdPe());
+//                } catch (Throwable ex) {
+//                    Logger.getLogger(EjbRegistroPlanEstudio.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                List<ProgramasEducativosContinuidad> pec = ejbAreasLogeo.listaProgramasEducativosContinuidadAlineaciones(estudio.getIdPe());
                 List<ObjetivoEducacional> oes = em.createQuery("SELECT pem FROM ObjetivoEducacional pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", ObjetivoEducacional.class)
                         .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                         .getResultList();
+//                if (pec.isEmpty()) {
+//                    daas.add(new DtoAlineacionAcedemica.PlanesEstudioObjtivo(estudio, oe, estudio.getIdPe() + "-0", areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+oe.getClave()));
                 oes.forEach((ob) -> {
                     daas.add(new DtoAlineacionAcedemica.PlanesEstudioObjtivo(estudio, ob));
+//                        daas.add(new DtoAlineacionAcedemica.PlanesEstudioObjtivo(estudio, ob, estudio.getIdPe() + "-0", areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+ob.getClave()));
                 });
+//                } else {
+//                    pec.forEach((ct) -> {
+//                        daas.add(new DtoAlineacionAcedemica.PlanesEstudioObjtivo(estudio, oe, ct.getProgramaTSU().getArea() + "-" + ct.getProgramaContinuidad(), areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+oe.getClave()));
+//                        oes.forEach((ob) -> {
+//                            daas.add(new DtoAlineacionAcedemica.PlanesEstudioObjtivo(estudio, ob, ct.getProgramaTSU().getArea() + "-" + ct.getProgramaContinuidad(), areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+ob.getClave()));
+//                        });
+//                    });
+//                }
             }
         });
 
+//        Collections.sort(daas, (x, y) -> x.getContinuidad().compareTo(y.getContinuidad()));
         return daas;
     }
-    
+
     public List<DtoAlineacionAcedemica.PlanesEstudioCriterio> generarCatalogogeneralCr(Map<AreasUniversidad, List<PlanEstudio>> map) {
         final List<DtoAlineacionAcedemica.PlanesEstudioCriterio> daas = new ArrayList<>();
-         map.forEach((t, u) -> {
+        map.forEach((t, u) -> {
 //            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
             if (!u.isEmpty()) {
                 PlanEstudio estudio = u.get(0);
@@ -994,17 +1016,38 @@ public class EjbRegistroPlanEstudio {
                 oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "CD"));
                 oe.setDescripcion("No aplica");
                 daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, oe));
+//                daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, oe));
+//                try {
+//                    areaAlineacion = new AreasUniversidad();
+//                    areaAlineacion = ejbAreasLogeo.mostrarAreasUniversidad(estudio.getIdPe());
+//                } catch (Throwable ex) {
+//                    Logger.getLogger(EjbRegistroPlanEstudio.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                List<ProgramasEducativosContinuidad> pec = ejbAreasLogeo.listaProgramasEducativosContinuidadAlineaciones(estudio.getIdPe());
+//                daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, oe, estudio.getIdPlanEstudio() + "-0", areaAlineacion.getNivelEducativo().getNombre()));
                 List<CriterioDesempenio> cds = em.createQuery("SELECT pem FROM CriterioDesempenio pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", CriterioDesempenio.class)
                         .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                         .getResultList();
+//                if (pec.isEmpty()) {
+//                    daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, oe, estudio.getIdPe() + "-0", areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+oe.getClave()));
                 cds.forEach((ob) -> {
                     daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, ob));
+//                        daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, ob, estudio.getIdPe() + "-0", areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+ob.getClave()));
                 });
+//                } else {
+//                    pec.forEach((ct) -> {
+//                        daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, oe, ct.getProgramaTSU().getArea() + "-" + ct.getProgramaContinuidad(), areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+oe.getClave()));
+//                        cds.forEach((ob) -> {
+//                            daas.add(new DtoAlineacionAcedemica.PlanesEstudioCriterio(estudio, ob, ct.getProgramaTSU().getArea() + "-" + ct.getProgramaContinuidad(), areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+ob.getClave()));
+//                        });
+//                    });
+//                }
             }
         });
+//        Collections.sort(daas, (x, y) -> x.getContinuidad().compareTo(y.getContinuidad()));
         return daas;
     }
-    
+
     public List<DtoAlineacionAcedemica.PlanesEstudioAtributo> generarCatalogogeneralAt(Map<AreasUniversidad, List<PlanEstudio>> map) {
         final List<DtoAlineacionAcedemica.PlanesEstudioAtributo> daas = new ArrayList<>();
         map.forEach((t, u) -> {
@@ -1016,20 +1059,41 @@ public class EjbRegistroPlanEstudio {
                 oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "AE"));
                 oe.setDescripcion("No aplica");
                 daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, oe));
+//                daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, oe));
+//                try {
+//                    areaAlineacion = new AreasUniversidad();
+//                    areaAlineacion = ejbAreasLogeo.mostrarAreasUniversidad(estudio.getIdPe());
+//                } catch (Throwable ex) {
+//                    Logger.getLogger(EjbRegistroPlanEstudio.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                List<ProgramasEducativosContinuidad> pec = ejbAreasLogeo.listaProgramasEducativosContinuidadAlineaciones(estudio.getIdPe());
+//                daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, oe, estudio.getIdPlanEstudio() + "-0", areaAlineacion.getNivelEducativo().getNombre()));
                 List<AtributoEgreso> aes = em.createQuery("SELECT pem FROM AtributoEgreso pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", AtributoEgreso.class)
                         .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                         .getResultList();
+//                if (pec.isEmpty()) {
+//                    daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, oe, estudio.getIdPe() + "-0", areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+oe.getClave()));
                 aes.forEach((ob) -> {
                     daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, ob));
+//                        daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, ob, estudio.getIdPe() + "-0", areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+ob.getClave()));
                 });
+//                } else {
+//                    pec.forEach((ct) -> {
+//                        daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, oe, ct.getProgramaTSU().getArea() + "-" + ct.getProgramaContinuidad(), areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+oe.getClave()));
+//                        aes.forEach((ob) -> {
+//                            daas.add(new DtoAlineacionAcedemica.PlanesEstudioAtributo(estudio, ob, ct.getProgramaTSU().getArea() + "-" + ct.getProgramaContinuidad(), areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+ob.getClave()));
+//                        });
+//                    });
+//                }
             }
         });
+//        Collections.sort(daas, (x, y) -> x.getContinuidad().compareTo(y.getContinuidad()));
         return daas;
     }
-    
+
     public List<DtoAlineacionAcedemica.PlanesEstudioIndicador> generarCatalogogeneralIn(Map<AreasUniversidad, List<PlanEstudio>> map) {
         final List<DtoAlineacionAcedemica.PlanesEstudioIndicador> daas = new ArrayList<>();
-         map.forEach((t, u) -> {
+        map.forEach((t, u) -> {
 //            System.out.println("Area " + t.getNombre() + " PEs " + u.size());
             if (!u.isEmpty()) {
                 PlanEstudio estudio = u.get(0);
@@ -1038,14 +1102,35 @@ public class EjbRegistroPlanEstudio {
                 oe.setClave(generaClave(t.getNivelEducativo().getNivel(), "I"));
                 oe.setDescripcion("No aplica");
                 daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, oe));
+//                daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, oe));
+//                try {
+//                    areaAlineacion = new AreasUniversidad();
+//                    areaAlineacion = ejbAreasLogeo.mostrarAreasUniversidad(estudio.getIdPe());
+//                } catch (Throwable ex) {
+//                    Logger.getLogger(EjbRegistroPlanEstudio.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                List<ProgramasEducativosContinuidad> pec = ejbAreasLogeo.listaProgramasEducativosContinuidadAlineaciones(estudio.getIdPe());
+//                daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, oe, estudio.getIdPlanEstudio() + "-0", areaAlineacion.getNivelEducativo().getNombre()));
                 List<IndicadorAlineacion> ias = em.createQuery("SELECT pem FROM IndicadorAlineacion pem INNER JOIN pem.planEstudio plan WHERE plan.idPlanEstudio = :idPlanEstudio", IndicadorAlineacion.class)
                         .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
                         .getResultList();
+//                if (pec.isEmpty()) {
+//                    daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, oe, estudio.getIdPe() + "-0", areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+oe.getClave()));
                 ias.forEach((ob) -> {
                     daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, ob));
+//                        daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, ob, estudio.getIdPe() + "-0", areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+ob.getClave()));
                 });
+//                } else {
+//                    pec.forEach((ct) -> {
+//                        daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, oe, ct.getProgramaTSU().getArea() + "-" + ct.getProgramaContinuidad(), areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+oe.getClave()));
+//                        ias.forEach((ob) -> {
+//                            daas.add(new DtoAlineacionAcedemica.PlanesEstudioIndicador(estudio, ob, ct.getProgramaTSU().getArea() + "-" + ct.getProgramaContinuidad(), areaAlineacion.getNivelEducativo().getNombre(),estudio.getIdPlanEstudio()+"-"+ob.getClave()));
+//                        });
+//                    });
+//                }
             }
         });
+//        Collections.sort(daas, (x, y) -> x.getContinuidad().compareTo(y.getContinuidad()));
         return daas;
     }
 
@@ -1369,6 +1454,18 @@ public class EjbRegistroPlanEstudio {
             try {
                 AreasUniversidad auPe = ejbAreasLogeo.mostrarAreasUniversidad(t.getIdPe());
                 planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t,auPe));
+//                if (auPe.getProgramasEducativosContinuidadList().isEmpty()) {
+//                    ProgramasEducativosContinuidad continuidad = new ProgramasEducativosContinuidad();
+//                    continuidad.setActivo(Boolean.FALSE);
+//                    continuidad.setContinuidad(0);
+//                    continuidad.setProgramaContinuidad(Short.valueOf("0"));
+//                    continuidad.setProgramaTSU(auPe);
+//                    planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t, auPe, continuidad));
+//                } else {
+//                    auPe.getProgramasEducativosContinuidadList().forEach((c) -> {
+//                        planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t, auPe, c));
+//                    });
+//                }
             } catch (Throwable ex) {
                 Logger.getLogger(EjbRegistroPlanEstudio.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1399,6 +1496,18 @@ public class EjbRegistroPlanEstudio {
             try {
                 AreasUniversidad auPe = ejbAreasLogeo.mostrarAreasUniversidad(t.getIdPe());
                 planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t,auPe));
+//                if (auPe.getProgramasEducativosContinuidadList().isEmpty()) {
+//                    ProgramasEducativosContinuidad continuidad = new ProgramasEducativosContinuidad();
+//                    continuidad.setActivo(Boolean.FALSE);
+//                    continuidad.setContinuidad(0);
+//                    continuidad.setProgramaContinuidad(Short.valueOf("0"));
+//                    continuidad.setProgramaTSU(auPe);
+//                    planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t, auPe, continuidad));
+//                } else {
+//                    auPe.getProgramasEducativosContinuidadList().forEach((c) -> {
+//                        planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t, auPe, c));
+//                    });
+//                }
             } catch (Throwable ex) {
                 Logger.getLogger(EjbRegistroPlanEstudio.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1434,6 +1543,18 @@ public class EjbRegistroPlanEstudio {
             try {
                 AreasUniversidad auPe = ejbAreasLogeo.mostrarAreasUniversidad(t.getIdPe());
                 planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t,auPe));
+//                if (auPe.getProgramasEducativosContinuidadList().isEmpty()) {
+//                    ProgramasEducativosContinuidad continuidad = new ProgramasEducativosContinuidad();
+//                    continuidad.setActivo(Boolean.FALSE);
+//                    continuidad.setContinuidad(0);
+//                    continuidad.setProgramaContinuidad(Short.valueOf("0"));
+//                    continuidad.setProgramaTSU(auPe);
+//                    planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t, auPe, continuidad));
+//                } else {
+//                    auPe.getProgramasEducativosContinuidadList().forEach((c) -> {
+//                        planesEstudioDto.add(new DtoAlineacionAcedemica.PlanesEstudioDto(t, auPe, c));
+//                    });
+//                }
             } catch (Throwable ex) {
                 Logger.getLogger(EjbRegistroPlanEstudio.class.getName()).log(Level.SEVERE, null, ex);
             }

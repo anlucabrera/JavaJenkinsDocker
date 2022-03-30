@@ -119,4 +119,10 @@ public class ServiciosAreasLogeo implements EjbAreasLogeo {
         return facade.getEntityManager().createQuery("SELECT au FROM ProgramasEducativosContinuidad au WHERE au.programaContinuidad =:clave AND au.activo = 1", ProgramasEducativosContinuidad.class).setParameter("clave", clave)
                 .getResultList();
     }
+    
+    @Override
+    public List<ProgramasEducativosContinuidad> listaProgramasEducativosContinuidadAlineaciones(Short clave){
+        return facade.getEntityManager().createQuery("SELECT au FROM ProgramasEducativosContinuidad au WHERE (au.programaContinuidad =:clave OR au.programaTSU.area=:clave ) AND au.activo = 1", ProgramasEducativosContinuidad.class).setParameter("clave", clave)
+                .getResultList();
+    }
 }
