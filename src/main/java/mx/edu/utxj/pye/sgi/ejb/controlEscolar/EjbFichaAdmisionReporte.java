@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Persona;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProyeccionAreasPK;
 
 /**
  * Consulta de registro de fichas de admisión  por carrera
@@ -508,7 +509,7 @@ public class EjbFichaAdmisionReporte {
      */
     public ResultadoEJB<ProyeccionAreas> getProyeccionbyArea(@NonNull ProcesosInscripcion procesosInscripcion,@NonNull AreasUniversidad area){
         try{
-            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,new ProyeccionAreas(),"El proceso de inscripci+on no debe ser nulo");}
+            if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,new ProyeccionAreas(),"El proceso de inscripción no debe ser nulo");}
             if(area==null){return  ResultadoEJB.crearErroneo(3,new ProyeccionAreas(),"El programa educativo no debe ser nulo");}
             ProyeccionAreas pa= new ProyeccionAreas();
             pa= em.createQuery("select p from ProyeccionAreas p where p.proyeccionAreasPK.procesoInscripcion=:proceso and p.proyeccionAreasPK.pe=:pe",ProyeccionAreas.class)
@@ -894,6 +895,43 @@ public class EjbFichaAdmisionReporte {
             }
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se han podido encontrar aspirantes con los datos ingresados (EjbFichaAdmisionReporte.consultarUsuariosContrasenias)", e, null);
+        }
+    }
+    
+    public ResultadoEJB<Boolean> registroProyeccionMatricula(Integer procesoInscripcion, Short programaEducativo, Long proyeccionValidadas, Long proyeccionMatricula){
+        try {
+            ProyeccionAreas proyeccionAreaBD = em.createQuery("SELECT p FROM ProyeccionAreas p WHERE p.proyeccionAreasPK.procesoInscripcion = :procesoInscripcion AND p.proyeccionAreasPK.pe = :programaEducativo", ProyeccionAreas.class)
+                    .setParameter("procesoInscripcion", procesoInscripcion)
+                    .setParameter("programaEducativo", programaEducativo)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            if(proyeccionAreaBD == null){
+                ProyeccionAreasPK claveProyeccion = new ProyeccionAreasPK(procesoInscripcion, programaEducativo);
+                ProyeccionAreas proyeccion = new ProyeccionAreas(claveProyeccion);
+                proyeccion.setProcesosInscripcion(em.find(ProcesosInscripcion.class, procesoInscripcion));
+                proyeccion.setProyeccionValidadas(proyeccionValidadas.intValue());
+                proyeccion.setProyeccionMatricula(proyeccionMatricula.intValue());
+                em.persist(proyeccion);
+                proyeccionAreaBD = em.createQuery("SELECT p FROM ProyeccionAreas p WHERE p.proyeccionAreasPK.procesoInscripcion = :procesoInscripcion AND p.proyeccionAreasPK.pe = :programaEducativo", ProyeccionAreas.class)
+                    .setParameter("procesoInscripcion", procesoInscripcion)
+                    .setParameter("programaEducativo", programaEducativo)
+                    .getResultStream()
+                    .findFirst()
+                    .orElse(null);
+            }else{
+                proyeccionAreaBD.setProyeccionMatricula(proyeccionMatricula.intValue());
+                proyeccionAreaBD.setProyeccionValidadas(proyeccionValidadas.intValue());
+                em.merge(proyeccionAreaBD);
+            }
+            
+            if(proyeccionAreaBD != null){
+                return ResultadoEJB.crearCorrecto(Boolean.TRUE, "El regisro se ha guardado correctamente");
+            }else{
+                return ResultadoEJB.crearErroneo(2, null, "No se ha podido guardar ó actualizar la proyección del área seleccionada");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "No se ha podido crear o modificar el registro de la proyeccion de matricula (EjbFichaAdmisionReporte.registroProyeccionMatricula)", e, null);
         }
     }
 }

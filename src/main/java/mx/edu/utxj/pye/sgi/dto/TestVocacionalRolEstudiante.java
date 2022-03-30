@@ -29,7 +29,7 @@ public class TestVocacionalRolEstudiante implements Serializable{
     @Getter             @NonNull                private             List<SelectItem>                                    respuestasPosibles;
     @Getter             @NonNull                private             TestVocacional                                      resultado;
     @Getter             @Setter                 private             String                                              carreraInteres;
-    @Getter             @Setter                 private             Boolean                                             carreraInteresSeleccion;
+    @Getter             @Setter                 private             Boolean                                             carreraInteresSeleccion,mostrarIndexProduccion;
     @Getter             @Setter                 private             Map<String, Double>                                 resultadosCarreras;
     
     @Getter             @Setter                 protected           NivelRol                                            nivelRol = NivelRol.OPERATIVO;

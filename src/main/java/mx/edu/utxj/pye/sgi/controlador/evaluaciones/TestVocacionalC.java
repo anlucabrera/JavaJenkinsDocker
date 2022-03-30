@@ -58,6 +58,7 @@ public class TestVocacionalC extends ViewScopedRol implements Desarrollable{
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
         String valor = "test vocacional";
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
+        rol.setMostrarIndexProduccion(mostrar(request, map.containsValue(valor)));
         return mostrar(request, map.containsValue(valor));
     }
     
@@ -120,7 +121,10 @@ public class TestVocacionalC extends ViewScopedRol implements Desarrollable{
             if (!actualizarCompleto.getCorrecto()) {
                 mostrarMensajeResultadoEJB(actualizarCompleto);
             }
-            rol.setCarreraInteres(ejbTestVocacional.obtenerResultadosTestVocacional(rol.getResultado()).getValor());
+            rol.setCarreraInteresSeleccion(rol.getResultado().getCarreraInteresOu()); 
+            if(rol.getResultado().getRespuestaCarreraInteresOu() != null){
+                rol.setCarreraInteres(rol.getResultado().getRespuestaCarreraInteresOu());
+            }
             rol.setResultadosCarreras(ejbTestVocacional.obtenerResultadosCompletosTestVocacional(rol.getResultado()).getValor());
             Ajax.update("frmPrincipal");
         }
@@ -142,6 +146,7 @@ public class TestVocacionalC extends ViewScopedRol implements Desarrollable{
         if(event == null){mostrarMensaje("No se ha enviado ningún dato para actualizar");return;}
         if(event.getNewValue() == null){mostrarMensaje("Favor de seleccionar un valor, verdadero o falso");return;}
         rol.getResultado().setCarreraInteresOu((Boolean)event.getNewValue());
+        rol.setCarreraInteresSeleccion((Boolean)event.getNewValue());
         finalizado = ejbTestVocacional.actualizarResultado(rol.getResultado());
     }
     
@@ -150,6 +155,7 @@ public class TestVocacionalC extends ViewScopedRol implements Desarrollable{
         if(event.getNewValue() == null){mostrarMensaje("Favor de ingresar una carrera de interés nueva");return;}
         if("".equals((String) event.getNewValue())) {mostrarMensaje("Ha enviado un campo vacío");return;}
         rol.getResultado().setRespuestaCarreraInteresOu((String) event.getNewValue());
+        rol.setCarreraInteres((String) event.getNewValue());
         finalizado = ejbTestVocacional.actualizarResultado(rol.getResultado());
     }
     

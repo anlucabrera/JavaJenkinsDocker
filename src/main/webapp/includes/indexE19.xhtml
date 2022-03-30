@@ -302,7 +302,7 @@
                                 </div>
                             </c:if>
                             
-                            <c:if test="#{testVocacionalC.tieneAcceso}">
+                            <c:if test="#{testVocacionalC.tieneAcceso and testVocacionalC.rol.mostrarIndexProduccion}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-aqua-active">
                                         <div class="inner" style="cursor: pointer;">
