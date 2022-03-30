@@ -52,6 +52,8 @@ public class FichaAdmisionReporteRol {
     @Getter     @Setter     private     Persona             personaEncontrada;
     @Getter     @Setter     private     List<Persona>       listaEstudiantes;
     
+    @Getter     @Setter     private     Boolean             personalEscolares;
+    
     public Boolean tieneAcceso(PersonalActivo personalActivo, UsuarioTipo usuarioTipo){
         if(personalActivo == null) return false;
         if(!usuarioTipo.equals(UsuarioTipo.TRABAJADOR)) return false;

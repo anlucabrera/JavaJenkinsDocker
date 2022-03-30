@@ -194,7 +194,7 @@
                                                                                offLabel="No"
                                                                                onIcon="ui-icon-check"
                                                                                offIcon="ui-icon-close"
-                                                                               style="width:6rem;text-align: left" 
+                                                                               style="width:6em;text-align: left" 
                                                                                title="¿Hay alguna otra carrera que te interese en otra universidad?"
                                                                                required="true"
                                                                                requiredMessage="Es necesario elegir una opción. *"
@@ -239,11 +239,11 @@
                                                         <p:watermark for="tvCarreraInteres" value="Ing. Electrónico en Instrumentación *" />
 
                                                         <c:if test="#{testVocacionalC.rol.carreraInteresSeleccion == true}">
-                                                            <p:outputLabel for="tvCarreraInteres" value="¿Cual? (mínimo 10 caracterés)*: "/>
+                                                            <p:outputLabel for="tvCarreraInteres" value="¿Cual? (mínimo 10 caracterés) *: "/>
                                                         </c:if>
 
                                                         <c:if test="#{testVocacionalC.rol.carreraInteresSeleccion == false}">
-                                                            <p:outputLabel for="tvCarreraInteres" value="¿Por qué? (mínimo 10 caracterés)*: "/>
+                                                            <p:outputLabel for="tvCarreraInteres" value="¿Por qué? (mínimo 10 caracterés) *: "/>
                                                         </c:if>
                                                         <p:message for="tvCarreraInteres" />
                                                     </div>

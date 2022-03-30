@@ -1,6 +1,5 @@
 package mx.edu.utxj.pye.sgi.controlador.controlEscolar;
 
-import com.github.adminfaces.starter.infra.model.Filter;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,10 +9,8 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteFichaAdmision;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteProyeccionFichas;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.FichaAdmisionReporteRol;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.ProcesoInscripcionRolServiciosEscolares;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbFichaAdmisionReporte;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.*;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -29,11 +26,11 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.security.cert.TrustAnchor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.faces.event.ValueChangeEvent;
 
 @Named(value = "fichaAdmisionReporte")
 @ViewScoped
@@ -88,6 +85,13 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             getConcentrado();
             //getReporte();
             getProcesos();
+            
+            ResultadoEJB<PersonalActivo> resJefeEscolares = ejb.validarJefeEscolares(rol.getPersonalActivo());
+            if(resJefeEscolares.getCorrecto()){
+                rol.setPersonalEscolares(Boolean.TRUE);
+            }else{
+                rol.setPersonalEscolares(Boolean.FALSE);
+            }
             
             Persona personaAuto = new Persona();
             rol.setPersonaEncontrada(personaAuto);
@@ -550,6 +554,56 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
         }else{
             mostrarMensajeResultadoEJB(res);
             return Collections.emptyList();
+        }
+    }
+    
+    public void mostrarUltimoMensaje(){
+        repetirUltimoMensaje();
+    }
+    
+    public void editarValoresProyeccionFichasValidadas(ValueChangeEvent event){
+        try {
+            if(event == null){mostrarMensaje("No se ha enviado ningún dato para actualizar");return;}
+            if(event.getNewValue() == null){mostrarMensaje("Favor de seleccionar un valor, verdadero o falso");return;}
+            DtoReporteFichaAdmision dtoInterfaz = (DtoReporteFichaAdmision) event.getComponent().getAttributes().get("concentrado");
+            dtoInterfaz.setProyeccionFichasValidadas((long)event.getNewValue());
+            actualizarConcentrado(dtoInterfaz);
+        } catch (Exception e) {
+            mostrarMensaje("Mensaje de sistema: " + e.getMessage() + " Causa de error: " + e.getCause());
+        }
+    }
+    
+    public void editarValoresProyeccionMatricula(ValueChangeEvent event){
+        try {
+            if(event == null){mostrarMensaje("No se ha enviado ningún dato para actualizar");return;}
+            if(event.getNewValue() == null){mostrarMensaje("Favor de seleccionar un valor, verdadero o falso");return;}
+            DtoReporteFichaAdmision dtoInterfaz = (DtoReporteFichaAdmision) event.getComponent().getAttributes().get("concentrado");
+            dtoInterfaz.setProyeccionMatricula((long)event.getNewValue());
+            actualizarConcentrado(dtoInterfaz);
+        } catch (Exception e) {
+            mostrarMensaje("Mensaje de sistema: " + e.getMessage());
+        }
+    }
+    
+    public void actualizarConcentrado(DtoReporteFichaAdmision dtoReporteFicha){
+        try {
+            ResultadoEJB<Boolean> resultadoEdicionProyeccionArea = ejb.registroProyeccionMatricula(rol.getProcesoSelect().getIdProcesosInscripcion(), dtoReporteFicha.getPe().getArea(), dtoReporteFicha.getProyeccionFichasValidadas(), dtoReporteFicha.getProyeccionMatricula());
+            if(resultadoEdicionProyeccionArea.getCorrecto()){
+                if(rol.getTipoReporte().equals("NI")){
+                    rol.setProcesosInscripcion(rol.getProcesoSelect());
+                    getPE();
+                    getConcentrado();
+                }else if(rol.getTipoReporte().equals("ING")){
+                    rol.setProcesosInscripcion(rol.getProcesoSelect());
+                    getPEIng();
+                    getConcentradoIng();
+                }
+                mostrarMensajeResultadoEJB(resultadoEdicionProyeccionArea);
+            }else{
+                mostrarMensajeResultadoEJB(resultadoEdicionProyeccionArea);
+            }
+        } catch (Exception e) {
+            mostrarMensaje("Mensaje de sistema: " + e.getMessage());
         }
     }
 
