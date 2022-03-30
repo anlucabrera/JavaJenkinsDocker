@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +25,7 @@ import org.omnifaces.util.Messages;
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.cdi.ViewScoped;
 
 
 /**
@@ -33,7 +33,7 @@ import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
  * @author Planeacion
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class AdministracionEvaluacionEstadia implements Serializable{
 
     private static final long serialVersionUID = 4320030263170989982L;
@@ -66,30 +66,21 @@ public class AdministracionEvaluacionEstadia implements Serializable{
 
                     if (listaCompletaRes != null) {
                         if (dto.comparadorEE.isCompleto(listaCompletaRes)) {
-                            String tutorAsignado = "No hay tutor asignado";
-                            if (x.getNombreTutor() != null) {
-                                tutorAsignado = x.getNombreTutor() + " " + x.getApellidoPatTutor()+ " " + x.getApellidoMatTutor();
-                            }
+                            String tutorAsignado = x.getNombreAsesorAcademico()+ " " + x.getApellidoPaternoAsesorAcademico()+ " " + x.getApellidoMaternoAsesorAcademico();
                             ListadoEvaluacionEgresados encuestasCompletas = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
                             dto.listaEvaCompleta.add(encuestasCompletas);
                         }
                         if (!dto.comparadorEE.isCompleto(listaCompletaRes)) {
-                            String tutorAsignado = "No hay tutor asignado";
-                            if (x.getNombreTutor() != null) {
-                                tutorAsignado = x.getNombreTutor() + " " + x.getApellidoPatTutor()+ " " + x.getApellidoMatTutor();
-                            }
+                            String tutorAsignado = x.getNombreAsesorAcademico()+ " " + x.getApellidoPaternoAsesorAcademico()+ " " + x.getApellidoMaternoAsesorAcademico();
                             ListadoEvaluacionEgresados encuestasIncompletas = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
                             dto.listaEvaIncompleta.add(encuestasIncompletas);
                         }
                     } else {
-                        String tutorAsignado = "No hay tutor asignado";
-                        if (x.getNombreTutor() != null) {
-                            tutorAsignado = x.getNombreTutor() + " " + x.getApellidoPatTutor()+ " " + x.getApellidoMatTutor();
-                        }
+                        String tutorAsignado = x.getNombreAsesorAcademico()+ " " + x.getApellidoPaternoAsesorAcademico()+ " " + x.getApellidoMaternoAsesorAcademico();
                         ListadoEvaluacionEgresados sinIngresar = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
@@ -114,30 +105,21 @@ public class AdministracionEvaluacionEstadia implements Serializable{
                         EvaluacionEstadiaResultados encuestasCompletas = ejbAdminAES.obtenerResultadosEvaluacionPorAlumno(x.getMatricula());
                         if (encuestasCompletas != null) {
                             if (dto.comparadorEE.isCompleto(encuestasCompletas)) {
-                                String tutorAsignado = "No hay tutor asignado";
-                                if (x.getNombreTutor() != null) {
-                                    tutorAsignado = x.getNombreTutor() + " " + x.getApellidoPatTutor()+ " " + x.getApellidoMatTutor();
-                                }
+                                String tutorAsignado = x.getNombreAsesorAcademico()+ " " + x.getApellidoPaternoAsesorAcademico()+ " " + x.getApellidoMaternoAsesorAcademico();
                                 ListadoEvaluacionEgresados encuestaCOmpleta = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
                                 dto.listaEvaCompleta.add(encuestaCOmpleta);
                             }
                             if (!dto.comparadorEE.isCompleto(encuestasCompletas)) {
-                                String tutorAsignado = "No hay tutor asignado";
-                                if (x.getNombreTutor() != null) {
-                                    tutorAsignado = x.getNombreTutor() + " " + x.getApellidoPatTutor()+ " " + x.getApellidoMatTutor();
-                                }
+                                String tutorAsignado = x.getNombreAsesorAcademico()+ " " + x.getApellidoPaternoAsesorAcademico()+ " " + x.getApellidoMaternoAsesorAcademico();
                                 ListadoEvaluacionEgresados encuestaIncompleta = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);
                                 dto.listaEvaIncompleta.add(encuestaIncompleta);
                             }
                         } else {
-                            String tutorAsignado = "No hay tutor asignado";
-                            if (x.getNombreTutor() != null) {
-                                tutorAsignado = x.getNombreTutor() + " " + x.getApellidoPatTutor()+ " " + x.getApellidoMatTutor();
-                            }
+                            String tutorAsignado = x.getNombreAsesorAcademico()+ " " + x.getApellidoPaternoAsesorAcademico()+ " " + x.getApellidoMaternoAsesorAcademico();
                             ListadoEvaluacionEgresados sinAccesar = new ListadoEvaluacionEgresados(Integer.parseInt(x.getMatricula()),
                                     x.getNombreAlumno()+ " " + x.getApellidoPaternoAlumno()+ " " + x.getApellidoMaternoAlumno(), 
                                     x.getAbreviatura(), x.getGrado(), x.getIdGrupo(), tutorAsignado);

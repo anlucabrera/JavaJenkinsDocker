@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import javax.ejb.Stateless;
 import mx.edu.utxj.pye.sgi.entity.ch.Evaluaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
@@ -35,7 +36,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
  *
  * @author Planeación
  */
-@Stateful
+@Stateless
 public class EjbAdministracionEncuesta {
 
     @EJB
@@ -53,7 +54,7 @@ public class EjbAdministracionEncuesta {
     }
 
     public List<Personal> esDirectorDeCarrera(Integer areaSup, Integer actividad, Integer catOp, Integer catOp1, Integer clave){
-        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and " +
+        TypedQuery<Personal> q = em.createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and " +
                 " (p.categoriaOperativa.categoria= :categoria or p.categoriaOperativa.categoria = :categoria1) AND p.clave = :clave", Personal.class);
         q.setParameter("areaSuperior", areaSup);
         q.setParameter("actividad", actividad);
@@ -64,7 +65,7 @@ public class EjbAdministracionEncuesta {
     }
 
     public List<Personal> esSecretarioAcademico(Integer areaSup, Short actividad, Short catOp, Integer clave){
-        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and  p.categoriaOperativa.categoria= :categoria AND p.clave = :clave", Personal.class);
+        TypedQuery<Personal> q = em.createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and  p.categoriaOperativa.categoria= :categoria AND p.clave = :clave", Personal.class);
         q.setParameter("areaSuperior", areaSup);
         q.setParameter("actividad", actividad);
         q.setParameter("categoria", catOp);
@@ -73,7 +74,7 @@ public class EjbAdministracionEncuesta {
     }
 
     public List<Personal> esPlaneacion(Integer areaSup, Short actividad, Short catOp, Short catOp1, Integer clave){
-        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and  (p.categoriaOperativa.categoria= :categoria or p.categoriaOperativa.categoria= :categoria1) AND p.clave = :clave", Personal.class);
+        TypedQuery<Personal> q = em.createQuery("SELECT p FROM Personal p WHERE  p.areaSuperior = :areaSuperior and p.actividad.actividad = :actividad and  (p.categoriaOperativa.categoria= :categoria or p.categoriaOperativa.categoria= :categoria1) AND p.clave = :clave", Personal.class);
         q.setParameter("areaSuperior", areaSup);
         q.setParameter("actividad", actividad);
         q.setParameter("categoria", catOp);
@@ -83,19 +84,19 @@ public class EjbAdministracionEncuesta {
     }
 
     public List<Personal> esPsicopedagogia(Short areaOp, Integer clave){
-        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaOperativa= :areaOp AND p.clave = :clave", Personal.class);
+        TypedQuery<Personal> q = em.createQuery("SELECT p FROM Personal p WHERE  p.areaOperativa= :areaOp AND p.clave = :clave", Personal.class);
         q.setParameter("areaOp", areaOp);
         q.setParameter("clave", clave);
         return q.getResultList();
     }
     public List<Personal> esFda(Short areaOp, Integer clave){
-        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.areaOperativa= :areaOp AND p.clave = :clave", Personal.class);
+        TypedQuery<Personal> q = em.createQuery("SELECT p FROM Personal p WHERE  p.areaOperativa= :areaOp AND p.clave = :clave", Personal.class);
         q.setParameter("areaOp", areaOp);
         q.setParameter("clave", clave);
         return q.getResultList();
     }
     public List<Personal> esRector(Short cat, Integer clave){
-        TypedQuery<Personal> q = f.getEntityManager().createQuery("SELECT p FROM Personal p WHERE  p.categoriaOperativa.categoria=:cat AND p.clave = :clave", Personal.class);
+        TypedQuery<Personal> q = em.createQuery("SELECT p FROM Personal p WHERE  p.categoriaOperativa.categoria=:cat AND p.clave = :clave", Personal.class);
         q.setParameter("cat", cat);
         q.setParameter("clave", clave);
         return q.getResultList();
@@ -105,7 +106,7 @@ public class EjbAdministracionEncuesta {
         String periodoEncuesta = Objects.requireNonNull(em.createQuery("select v from VariablesProntuario as v where v.nombre = :nombre", VariablesProntuario.class)
                 .setParameter("nombre", "periodoEncuestaServicios")
                 .getResultStream().findFirst().orElse(null)).getValor();
-        return f2.getEntityManager().createQuery("SELECT g FROM Grupos as g WHERE (g.gruposPK.cvePeriodo = :periodo) "
+        return em2.createQuery("SELECT g FROM Grupos as g WHERE (g.gruposPK.cvePeriodo = :periodo) "
                 + "AND g.cveMaestro = :cvePersona", Grupos.class)
                 .setParameter("periodo",Integer.parseInt(periodoEncuesta))
                 .setParameter("cvePersona", cvePersona)
@@ -113,13 +114,13 @@ public class EjbAdministracionEncuesta {
     }
     public List<AlumnosEvaluacionTutor> estTutor(Integer cvePersona){
 
-        return f2.getEntityManager().createQuery("SELECT a FROM AlumnosEvaluacionTutor as a WHERE a.cveMaestro = :clave")
+        return em2.createQuery("SELECT a FROM AlumnosEvaluacionTutor as a WHERE a.cveMaestro = :clave")
                 .setParameter("clave", cvePersona)
                 .getResultList();
     }
 
     public Grupo esTutorCE (Integer clave){
-        List<Periodos> periodos = f2.getEntityManager().createQuery("select p from Periodos as p", Periodos.class).getResultStream().collect(Collectors.toList());
+        List<Periodos> periodos = em2.createQuery("select p from Periodos as p", Periodos.class).getResultStream().collect(Collectors.toList());
         periodos.forEach(x -> {
             Boolean activo = true;
             Boolean acv = x.getActivo().equals(true);
@@ -127,7 +128,7 @@ public class EjbAdministracionEncuesta {
                 periodo = x.getPeriodosPK().getCvePeriodo();
             }
         });
-        Grupo tutorCE = f.getEntityManager().createQuery("select g from Grupo g where g.periodo=:periodo and g.tutor=:tutor", Grupo.class)
+        Grupo tutorCE = em.createQuery("select g from Grupo g where g.periodo=:periodo and g.tutor=:tutor", Grupo.class)
                 .setParameter("periodo",periodo)
                 .setParameter("tutor",clave)
                 .getResultStream()
@@ -138,8 +139,7 @@ public class EjbAdministracionEncuesta {
     }
 
     public boolean aperturaVisualizacionEncuesta(String tipo){
-        List<AperturaVisualizacionEncuestas> ave = f.getEntityManager()
-                .createQuery("select a from AperturaVisualizacionEncuestas as a where a.encuesta = :tipo and :fecha BETWEEN a.fechaInicial AND a.fechaFinal", AperturaVisualizacionEncuestas.class)
+        List<AperturaVisualizacionEncuestas> ave = em.createQuery("select a from AperturaVisualizacionEncuestas as a where a.encuesta = :tipo and :fecha BETWEEN a.fechaInicial AND a.fechaFinal", AperturaVisualizacionEncuestas.class)
                 .setParameter("tipo", tipo)
                 .setParameter("fecha", new Date())
                 .getResultStream().collect(Collectors.toList());
@@ -151,7 +151,7 @@ public class EjbAdministracionEncuesta {
     }
 
     public List<AlumnosEncuestas> obtenerListaAlumnosNoAccedieron(){
-        TypedQuery<AlumnosEncuestas> q=f2.getEntityManager().createQuery("SELECT a FROM AlumnosEncuestas a", AlumnosEncuestas.class);
+        TypedQuery<AlumnosEncuestas> q=em2.createQuery("SELECT a FROM AlumnosEncuestas a", AlumnosEncuestas.class);
         List<AlumnosEncuestas> pr=q.getResultList();
         if(!pr.isEmpty()){
             return pr;
@@ -161,7 +161,7 @@ public class EjbAdministracionEncuesta {
     }
 
     public Grupos obtenerCuatriPorTutor(Integer cveMaestro){
-        TypedQuery<Grupos> q=f2.getEntityManager().createQuery("SELECT g FROM Grupos g where g.gruposPK.cvePeriodo=47 AND g.cveMaestro=:cveMaestro", Grupos.class);
+        TypedQuery<Grupos> q=em2.createQuery("SELECT g FROM Grupos g where g.gruposPK.cvePeriodo=47 AND g.cveMaestro=:cveMaestro", Grupos.class);
         q.setParameter("cveMaestro", cveMaestro);
         List<Grupos> l=q.getResultList();
         if(l.isEmpty()){
@@ -173,7 +173,7 @@ public class EjbAdministracionEncuesta {
     // ejb´s nuevos
 
     public EncuestaServiciosResultados getEncuestaporevaluador(Integer matricula) {
-        TypedQuery<EncuestaServiciosResultados> q = f.getEntityManager().createQuery("SELECT e FROM EncuestaServiciosResultados e WHERE e.encuestaServiciosResultadosPK.evaluador = :matricula", EncuestaServiciosResultados.class);
+        TypedQuery<EncuestaServiciosResultados> q = em.createQuery("SELECT e FROM EncuestaServiciosResultados e WHERE e.encuestaServiciosResultadosPK.evaluador = :matricula", EncuestaServiciosResultados.class);
         q.setParameter("matricula", matricula);
         List<EncuestaServiciosResultados> l = q.getResultList();
         if (l.isEmpty()) {
@@ -184,7 +184,7 @@ public class EjbAdministracionEncuesta {
     }
 
     public EncuestaSatisfaccionEgresadosIng getEncuestaEgreporEvaluador(Integer matricula){
-        TypedQuery<EncuestaSatisfaccionEgresadosIng> q = f.getEntityManager().createQuery("SELECT e FROM EncuestaSatisfaccionEgresadosIng e WHERE e.encuestaSatisfaccionEgresadosIngPK.evaluador=:matricula ", EncuestaSatisfaccionEgresadosIng.class);
+        TypedQuery<EncuestaSatisfaccionEgresadosIng> q = em.createQuery("SELECT e FROM EncuestaSatisfaccionEgresadosIng e WHERE e.encuestaSatisfaccionEgresadosIngPK.evaluador=:matricula ", EncuestaSatisfaccionEgresadosIng.class);
         q.setParameter("matricula", matricula);
         List<EncuestaSatisfaccionEgresadosIng> l = q.getResultList();
         if (l.isEmpty()) {
