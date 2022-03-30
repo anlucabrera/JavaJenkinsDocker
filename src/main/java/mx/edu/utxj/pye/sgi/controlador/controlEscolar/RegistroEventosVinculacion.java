@@ -102,7 +102,6 @@ public class RegistroEventosVinculacion extends ViewScopedRol implements Desarro
             rol.getInstrucciones().add("Ubique la fila que corresponda al evento que desea eliminar, dará clic en el icono de la columna ELIMINAR.");
             rol.getInstrucciones().add("NOTA: No se pueden eliminar eventos que tengan expedientes de vinculación registrados.");
             
-            listaEventosRegistrados();
             listaGeneraciones();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -162,6 +161,7 @@ public class RegistroEventosVinculacion extends ViewScopedRol implements Desarro
         if(res.getCorrecto()){
             rol.setNiveles(res.getValor());
             rol.setNivel(rol.getNiveles().get(0));
+            listaEventosRegistrados();
             listaActividades();
             inicializarFechas();
             Ajax.update("frm");

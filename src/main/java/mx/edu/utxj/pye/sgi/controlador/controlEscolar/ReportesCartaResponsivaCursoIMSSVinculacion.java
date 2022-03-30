@@ -24,7 +24,9 @@ import lombok.Setter;
 import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCartaResponsivaCursoIMMSEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCumplimientoCartaResponsivaCursoIMSS;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteSituacionCartaResponsivaCursoIMSS;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteDocumentosVinculacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReportesCartaResponsivaCursoIMSSRolVinculacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroEventosVinculacion;
@@ -142,6 +144,7 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
         List<String> listaReportes = new ArrayList<>();
         listaReportes.add("Cumplimiento estudiante documentos");
         listaReportes.add("Porcentaje de cumplimiento y validación");
+        listaReportes.add("Listado de estudiantes");
         rol.setReportes(listaReportes);
         rol.setReporte(rol.getReportes().get(0));
         generarReportes();
@@ -156,6 +159,8 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
            generarCumpDocumentoPrograma();
         }else if("Porcentaje de cumplimiento y validación".equals(rol.getReporte())){
            generarReporteDocumentosVinculacion();
+        }else if("Listado de estudiantes".equals(rol.getReporte())){
+           generarListaEstudiantes();
         }
     }
     
@@ -186,6 +191,17 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
              rol.setPorcentajeValidacion(String.format("%.2f", rol.getListaReporteVinculacion().stream().mapToDouble(p->p.getPorcentajeValidacion()).average().getAsDouble()));
              Ajax.update("tbPorCumplVal");
          }else mostrarMensajeResultadoEJB(res);
+    }
+    
+     /**
+     * Permite generar el listado de estudiantes con la situación de validación de los documentos
+     */
+    public void generarListaEstudiantes(){
+        ResultadoEJB<List<DtoEstudianteSituacionCartaResponsivaCursoIMSS>> res = ejb.getListaEstudiantes(rol.getGeneracion(), rol.getNivelEducativo());
+        if(res.getCorrecto()){
+            rol.setListaEstudiantes(res.getValor());
+            Ajax.update("tbListaEstudiantes");
+        }else mostrarMensajeResultadoEJB(res);
     }
     
     /**
@@ -234,7 +250,8 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
      public void descargarReportes() throws IOException, Throwable{
          generarCumpDocumentoPrograma();
          generarReporteDocumentosVinculacion();
-         File f = new File(ejb.getReportes(rol.getCumplimientoEstDocumento(), rol.getListaReporteVinculacion(), rol.getGeneracion(), rol.getNivelEducativo()));
+         generarListaEstudiantes();
+         File f = new File(ejb.getReportes(rol.getCumplimientoEstDocumento(), rol.getListaReporteVinculacion(), rol.getListaEstudiantes(), rol.getGeneracion(), rol.getNivelEducativo()));
          Faces.sendFile(f, true);
         
     }

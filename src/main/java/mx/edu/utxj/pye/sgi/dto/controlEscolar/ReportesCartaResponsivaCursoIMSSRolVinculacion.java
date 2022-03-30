@@ -105,6 +105,11 @@ public class ReportesCartaResponsivaCursoIMSSRolVinculacion extends AbstractRol{
      */
     @Getter @NonNull private List<DtoReporteDocumentosVinculacion> listaReporteVinculacion;
     
+     /**
+     * Reporte de lista de estudiantes
+     */
+    @Getter @NonNull private List<DtoEstudianteSituacionCartaResponsivaCursoIMSS> listaEstudiantes;
+    
     public ReportesCartaResponsivaCursoIMSSRolVinculacion(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
         this.usuario = usuario;
@@ -176,5 +181,9 @@ public class ReportesCartaResponsivaCursoIMSSRolVinculacion extends AbstractRol{
 
     public void setListaReporteVinculacion(List<DtoReporteDocumentosVinculacion> listaReporteVinculacion) {
         this.listaReporteVinculacion = listaReporteVinculacion;
+    }
+
+    public void setListaEstudiantes(List<DtoEstudianteSituacionCartaResponsivaCursoIMSS> listaEstudiantes) {
+        this.listaEstudiantes = listaEstudiantes;
     }
 }

@@ -1005,6 +1005,8 @@ public class EjbReportesEstadia {
         String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_ESTADIA);
         
         Map beans = new HashMap();
+        beans.put("generacion", gen);
+        beans.put("nivel", nivelEducativo.getNombre());
         beans.put("segActEst", listaSegActEstadia);
         beans.put("asigAsesor", listaAsigAsesorAcad);
         beans.put("cumpDoc", listaCumplimientoEstudiante);
@@ -1040,6 +1042,8 @@ public class EjbReportesEstadia {
         String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_ESTADIA_DIRECCION);
         
         Map beans = new HashMap();
+        beans.put("generacion", gen);
+        beans.put("nivel", nivelEducativo.getNombre());
         beans.put("segActEst", listaSegActEstadia);
         beans.put("asigAsesor", listaAsigAsesorAcad);
         beans.put("cumpDoc", listaCumplimientoEstudiante);
@@ -1074,6 +1078,8 @@ public class EjbReportesEstadia {
         String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_ESTADIA_VINCULACION);
         
         Map beans = new HashMap();
+        beans.put("generacion", gen);
+        beans.put("nivel", nivelEducativo.getNombre());
         beans.put("cumpDoc", listaCumplimientoEstudiante);
         beans.put("cumpVal", listaReporteVinculacion);
         beans.put("efiEst", listaEficienciaEstadia);

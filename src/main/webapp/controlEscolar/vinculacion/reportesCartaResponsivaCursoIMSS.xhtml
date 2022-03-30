@@ -211,6 +211,47 @@
                                                 </div>
                                             </center>
                                         </c:if>
+                                        <c:if test="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.reporte eq 'Listado de estudiantes'}">
+                                            <center>
+                                                 <p:remoteCommand name="actualizar" update="@form:tbListaEstudiantes" />
+                                                 <p:dataTable id="tbListaEstudiantes" var="est" value="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.listaEstudiantes}" emptyMessage="No hay información en la generación y nivel educativo seleccionado"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="100" rowsPerPageTemplate="100,200,300,400,500,600,700,800,900,1000" 
+                                                             paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
+                                                    <f:facet name="header">
+                                                        #{fn:length(reportesCartaResponsivaCursoIMSSVinculacion.rol.listaEstudiantes)} resultados obtenidos.
+                                                    </f:facet>
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Programa educativo" style="width: 200px;" sortBy="#{est.dtoEstudiante.programaEducativo.nombre}" filterBy="#{est.dtoEstudiante.programaEducativo.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Matrícula" style="width: 100px;" sortBy="#{est.dtoEstudiante.estudiante.matricula}" filterBy="#{est.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Estudiante" style="width: 250px;" sortBy="#{est.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{est.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 150px;" sortBy="#{est.dtoEstudiante.estudiante.grupo.grado}° #{est.dtoEstudiante.estudiante.grupo.literal} #{est.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{est.dtoEstudiante.estudiante.grupo.grado}° #{est.dtoEstudiante.estudiante.grupo.literal} #{est.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Situación académica" style="width: 150px;" sortBy="#{est.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterBy="#{est.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Validación" style="width: 150px;" sortBy="#{est.situacionValidacion}" filterBy="#{est.situacionValidacion}" filterMatchMode="contains"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{est.dtoEstudiante.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{est.dtoEstudiante.estudiante.matricula}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{est.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{est.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{est.dtoEstudiante.estudiante.aspirante.idPersona.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{est.dtoEstudiante.estudiante.grupo.grado}° #{est.dtoEstudiante.estudiante.grupo.literal} #{est.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{est.dtoEstudiante.estudiante.tipoEstudiante.descripcion}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{est.situacionValidacion}"/>
+                                                    </p:column>
+                                                </p:dataTable>
+                                            </center>
+                                        </c:if>
                                     </div>
                                 </div>
                             </div>

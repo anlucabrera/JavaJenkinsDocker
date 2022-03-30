@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.ejb.controlEscolar;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,9 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCumplimientoCartaResponsivaCursoIMSS;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDatosEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteDocumentosVinculacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEstudianteSituacionCartaResponsivaCursoIMSS;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
@@ -27,6 +30,7 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoVinculacionEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
+import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import net.sf.jxls.transformer.XLSTransformer;
@@ -40,6 +44,7 @@ public class EjbReportesCartaResponsivaCursoIMSS {
     @EJB EjbPropiedades ep;
     @EJB EjbPacker ejbPacker;
     @EJB EjbCargaCartaResponsivaCursoIMSS ejbCargaCartaResponsivaCursoIMSS;
+    @EJB EjbAperturaExtCartaResponsivaCursoIMSS ejbAperturaExtCartaResponsivaCursoIMSS;
     @EJB Facade f;
     private EntityManager em;
     
@@ -51,7 +56,7 @@ public class EjbReportesCartaResponsivaCursoIMSS {
     public  void init(){
         em = f.getEntityManager();
     }
-    
+   
      /**
      * Permite obtener el cumplimiento de carga de documentos de seguimientos de vinculación por programa educativo, de la generación y nivel seleccionado
      * @param generacion
@@ -292,17 +297,79 @@ public class EjbReportesCartaResponsivaCursoIMSS {
         }
     }
     
+    /**
+     * Permite obtener la lista de estudiantes con situación de validación de los documentos de la generación y nivel educativo seleccionado
+     * @param generacion
+     * @param nivelEducativo
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<List<DtoEstudianteSituacionCartaResponsivaCursoIMSS>> getListaEstudiantes(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
+        try{
+            List<DtoEstudianteSituacionCartaResponsivaCursoIMSS> listaEstudiantes = new ArrayList<>();
+            
+            List<Short> programasNivel = em.createQuery("SELECT a FROM AreasUniversidad a WHERE a.nivelEducativo=:nivel", AreasUniversidad.class)
+                    .setParameter("nivel", nivelEducativo)
+                    .getResultStream()
+                    .map(p->p.getArea())
+                    .collect(Collectors.toList());
+            
+            List<Short> tipos = new ArrayList<>(); tipos.add((short)1); tipos.add((short)4);
+            
+            Integer gradoMaximo = em.createQuery("SELECT g FROM Grupo g WHERE g.generacion=:generacion AND g.idPe IN :programas ORDER BY g.grado DESC", Grupo.class)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("programas", programasNivel)
+                    .getResultStream()
+                    .map(p->p.getGrado())
+                    .findFirst().orElse(null);
+            
+            
+            List<Estudiante> estudiantes = em.createQuery("SELECT e FROM Estudiante e WHERE e.grupo.generacion=:generacion AND e.grupo.idPe IN :programas AND e.tipoEstudiante.idTipoEstudiante IN :tipos AND e.grupo.grado=:grado", Estudiante.class)
+                    .setParameter("generacion", generacion.getGeneracion())
+                    .setParameter("programas", programasNivel)
+                    .setParameter("tipos", tipos)
+                    .setParameter("grado", gradoMaximo)
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            estudiantes.forEach(est -> {
+                AreasUniversidad programaEducativo = em.find(AreasUniversidad.class, est.getGrupo().getIdPe());
+                PeriodosEscolares periodoEscolar = em.find(PeriodosEscolares.class, est.getPeriodo());
+                DtoDatosEstudiante dtoDatosEstudiante = new DtoDatosEstudiante(est, programaEducativo, periodoEscolar);
+                
+                String situacionValidacion = "Sin seguimiento";
+                
+                SeguimientoVinculacionEstudiante seguimientoEstudiante = ejbAperturaExtCartaResponsivaCursoIMSS.buscarSeguimientoEstudiante(generacion, nivelEducativo, est).getValor();
+                
+                if(seguimientoEstudiante != null){
+                    if(seguimientoEstudiante.getValidado()){
+                        situacionValidacion = "Validado";
+                    }else{
+                        situacionValidacion = "Sin validar";
+                    }
+                }
+                
+                DtoEstudianteSituacionCartaResponsivaCursoIMSS dtoEstudianteSituacionCartaResponsivaCursoIMSS = new DtoEstudianteSituacionCartaResponsivaCursoIMSS(dtoDatosEstudiante, situacionValidacion);
+                listaEstudiantes.add(dtoEstudianteSituacionCartaResponsivaCursoIMSS);
+            });
+            
+            return ResultadoEJB.crearCorrecto(listaEstudiantes.stream().sorted(DtoEstudianteSituacionCartaResponsivaCursoIMSS::compareTo).collect(Collectors.toList()), "Lista de estudiantes con situación de validación de los documentos de la generación y nivel educativo seleccionado.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de estudiantes con situación de validación de los documentos de la generación y nivel educativo seleccionado. (EjbReportesCartaResponsivaCursoIMSS.getListaEstudiantes)", e, null);
+        }
+    }
+    
      /**
      * Permite generar el archivo de excel con los reportes de vinculación de la generación y nivel educativo seleccionado
      * @param listaCumplimientoEstudiante
      * @param listaReporteVinculacion
+     * @param listaEstudiantes
      * @param generacion
      * @param nivelEducativo
      * @return Resultado del proceso
      * @throws java.lang.Throwable
      */
     
-    public String getReportes(List<DtoCumplimientoCartaResponsivaCursoIMSS> listaCumplimientoEstudiante, List<DtoReporteDocumentosVinculacion> listaReporteVinculacion, Generaciones generacion, ProgramasEducativosNiveles nivelEducativo) throws Throwable {
+    public String getReportes(List<DtoCumplimientoCartaResponsivaCursoIMSS> listaCumplimientoEstudiante, List<DtoReporteDocumentosVinculacion> listaReporteVinculacion, List<DtoEstudianteSituacionCartaResponsivaCursoIMSS> listaEstudiantes, Generaciones generacion, ProgramasEducativosNiveles nivelEducativo) throws Throwable {
         String gen = generacion.getInicio()+ "-" + generacion.getFin();
         String nivel= "";
         
@@ -329,8 +396,11 @@ public class EjbReportesCartaResponsivaCursoIMSS {
         String plantillaC = rutaPlantillaC.concat(ACTUALIZADO_VINCULACION);
         
         Map beans = new HashMap();
+        beans.put("generacion", gen);
+        beans.put("nivel", nivelEducativo.getNombre());
         beans.put("cumpDoc", listaCumplimientoEstudiante);
         beans.put("cumpVal", listaReporteVinculacion);
+        beans.put("info", listaEstudiantes);
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 

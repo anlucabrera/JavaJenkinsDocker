@@ -63,6 +63,7 @@
             <c:if test="#{cargaCartaResponsivaCursoIMSSEstudiante.mostrarEnDesarrollo(request) and cargaCartaResponsivaCursoIMSSEstudiante.tieneAcceso}">
             <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold;">Carta Responsiva y Curso IMSS</li>
             <c:if test="#{cargaCartaResponsivaCursoIMSSEstudiante.mostrarEnDesarrollo(request) and cargaCartaResponsivaCursoIMSSEstudiante.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/estudiante/cartaResponsivaCursoIMSS.xhtml"><i class="fa fa-upload"></i><span>Carga de documentos</span></p:link></li></c:if>
+            <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/cartaResponsivaCursoIMSS/Carta_Responsiva_2022.docx#toolbar=0" target="_blank"><i class="fa fa-file-text-o"></i><span>Carta Responsiva</span></p:link></li>
             </c:if>
             
             <c:if test="#{(seguimientoEstadiaPorEstudiante.mostrarEnDesarrollo(request) and seguimientoEstadiaPorEstudiante.tieneAcceso) or (letreroFotografiasEstudiante.mostrarEnDesarrollo(request) and letreroFotografiasEstudiante.tieneAcceso)}">
@@ -78,10 +79,10 @@
                     </a>
                     <ul class="treeview-menu" style="display: none;">
                         <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><span>Reporte mensual</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
-                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2022.docx#toolbar=0" target="_blank"><span>Carta de aceptación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2022.docx#toolbar=0" target="_blank"><span>Carta de liberación</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2022.docx#toolbar=0" target="_blank"><span>Evaluación empresarial</span></p:link></li>
+                        <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2022.pdf#toolbar=0" target="_blank"><span>Presentación estadías 2021</span></p:link></li>
                     </ul>
                     </li>
             </c:if>
