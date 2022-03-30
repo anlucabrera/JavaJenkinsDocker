@@ -386,7 +386,7 @@ public class EjbReportesEstadia {
                                 
                                 List<DocumentoSeguimientoEstadia> listaDocumento = new ArrayList<>();
                                 
-                                Integer conDocumento = 0, sinDocumento = 0, docValidado = 0;
+                                Integer conDocumento = 0, sinDocumento = 0, docValidado = 0, docNoValidado = 0;
                                 
                                 if (!listaSeguimientoEstadia.isEmpty()) {
                                     
@@ -402,6 +402,7 @@ public class EjbReportesEstadia {
                                 
                                     sinDocumento = listaEstudiantes.size()-listaDocumento.size();
                                     docValidado = (int) (long) listaDocumento.stream().filter(d->d.getValidado()).count();
+                                    docNoValidado = (int) (long) listaDocumento.stream().filter(d->!d.getValidado()).count();
                                  
                                 Double div1 = (double)listaDocumento.size()/listaEstudiantes.size();
                                 Double porcentajeCumplimiento = div1 * 100;
@@ -416,6 +417,7 @@ public class EjbReportesEstadia {
                                 dtoCumplimientoEstDocEstadia.setConDocumento(conDocumento);
                                 dtoCumplimientoEstDocEstadia.setSinDocumento(sinDocumento);
                                 dtoCumplimientoEstDocEstadia.setDocumentoValidado(docValidado);
+                                dtoCumplimientoEstDocEstadia.setDocumentoNoValidado(docNoValidado);
                                 dtoCumplimientoEstDocEstadia.setPorcentajeCumplimiento(porcentajeCumplimiento);
                                 dtoCumplimientoEstDocEstadia.setPorcentajeValidacion(procentajeValidacion);
                                 listaCumplimientoDocumentos.add(dtoCumplimientoEstDocEstadia);
@@ -506,7 +508,7 @@ public class EjbReportesEstadia {
                                 
                                 List<DocumentoSeguimientoEstadia> listaDocumento = new ArrayList<>();
                                 
-                                Integer conDocumento = 0, sinDocumento = 0, docValidado = 0;
+                                Integer conDocumento = 0, sinDocumento = 0, docValidado = 0, docNoValidado = 0;
                                 
                                 if (!listaSeguimientoEstadia.isEmpty()) {
                                     
@@ -522,6 +524,7 @@ public class EjbReportesEstadia {
                                 
                                     sinDocumento = listaEstudiantes.size()-listaDocumento.size();
                                     docValidado = (int) (long) listaDocumento.stream().filter(d->d.getValidado()).count();
+                                    docNoValidado = (int) (long) listaDocumento.stream().filter(d->!d.getValidado()).count();
                                  
                                 Double div1 = (double)listaDocumento.size()/listaEstudiantes.size();
                                 Double porcentajeCumplimiento = div1 * 100;
@@ -536,6 +539,7 @@ public class EjbReportesEstadia {
                                 dtoCumplimientoEstDocEstadia.setConDocumento(conDocumento);
                                 dtoCumplimientoEstDocEstadia.setSinDocumento(sinDocumento);
                                 dtoCumplimientoEstDocEstadia.setDocumentoValidado(docValidado);
+                                dtoCumplimientoEstDocEstadia.setDocumentoNoValidado(docNoValidado);
                                 dtoCumplimientoEstDocEstadia.setPorcentajeCumplimiento(porcentajeCumplimiento);
                                 dtoCumplimientoEstDocEstadia.setPorcentajeValidacion(procentajeValidacion);
                                 listaCumplimientoDocumentos.add(dtoCumplimientoEstDocEstadia);

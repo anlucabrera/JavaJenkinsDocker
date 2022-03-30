@@ -6,7 +6,6 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +27,7 @@ public class DtoCumplimientoEstDocEstadia implements Serializable, Comparable<Dt
     @Getter @Setter Integer conDocumento;
     @Getter @Setter Integer sinDocumento;
     @Getter @Setter Integer documentoValidado;
+    @Getter @Setter Integer documentoNoValidado;
     @Getter @Setter Double porcentajeCumplimiento;
     @Getter @Setter Double porcentajeValidacion;
 
