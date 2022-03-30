@@ -317,7 +317,7 @@ public class EjbCargaCartaResponsivaCursoIMSS {
            
             return ResultadoEJB.crearCorrecto(dtoCartaResponsivaCursoIMMSEstudiante, "Información del seguimiento de vinculación del estudiante de la generación y nivel educativo seleccionado.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la del seguimiento de vinculación del estudiante de la generación y nivel educativo seleccionado. (EjbCargaCartaResponsivaCursoIMSS.getSeguimientosEstudiante)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la información del seguimiento de vinculación del estudiante de la generación y nivel educativo seleccionado. (EjbCargaCartaResponsivaCursoIMSS.getSeguimientosEstudiante)", e, null);
         }
     }
     
@@ -673,7 +673,7 @@ public class EjbCargaCartaResponsivaCursoIMSS {
      * Permite registrar comentarios a un documento del estudiante
      * @param comentario
      * @param claveDocumento
-     * @param seguimientoEstadiaEstudiante
+     * @param seguimientoVinculacionEstudiante
      * @return Resultado del proceso
      */
     public ResultadoEJB<DocumentoSeguimientoVinculacion> guardarComentarioDocumento(String comentario, Integer claveDocumento, SeguimientoVinculacionEstudiante seguimientoVinculacionEstudiante){
@@ -697,7 +697,6 @@ public class EjbCargaCartaResponsivaCursoIMSS {
     
      /**
      * Permite validar o invalidar un documento del seguimiento de estadía del estudiante
-     * @param documento
      * @param seguimientoVinculacionEstudiante
      * @return Resultado del proceso
      */

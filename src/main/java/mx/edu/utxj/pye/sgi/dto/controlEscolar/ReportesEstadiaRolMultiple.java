@@ -220,7 +220,7 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
       /**
      * Reporte de validación de vinculación y cumplimiento de los estudiantes por documento por programa educativo 
      */
-    @Getter @NonNull private List<DtoReporteEstadiaVinculacion> listaReporteVinculacion;
+    @Getter @NonNull private List<DtoReporteDocumentosVinculacion> listaReporteVinculacion;
     
      /**
      * Total de estudiantes con documentos de vinculación cargados
@@ -403,7 +403,7 @@ public class ReportesEstadiaRolMultiple extends AbstractRol{
         this.listaCumplimientoEstudiante = listaCumplimientoEstudiante;
     }
 
-    public void setListaReporteVinculacion(List<DtoReporteEstadiaVinculacion> listaReporteVinculacion) {
+    public void setListaReporteVinculacion(List<DtoReporteDocumentosVinculacion> listaReporteVinculacion) {
         this.listaReporteVinculacion = listaReporteVinculacion;
     }
 

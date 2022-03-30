@@ -18,7 +18,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
  * @author UTXJ
  */
 @RequiredArgsConstructor @ToString
-public class DtoReporteEstadiaVinculacion implements Serializable, Comparable<DtoReporteEstadiaVinculacion>{
+public class DtoReporteDocumentosVinculacion implements Serializable, Comparable<DtoReporteDocumentosVinculacion>{
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
     @Getter @Setter @NonNull Integer estudiantesActivos;
     @Getter @Setter Integer estudiantesEvidencia;
@@ -28,7 +28,7 @@ public class DtoReporteEstadiaVinculacion implements Serializable, Comparable<Dt
     @Getter @Setter Double porcentajeCumplimiento;
     @Getter @Setter Double porcentajeValidacion;
 
-    public DtoReporteEstadiaVinculacion(AreasUniversidad programaEducativo, Integer estudiantesActivos, Integer estudiantesEvidencia, Integer estudiantesSinEvidencia, Integer estudiantesEvidenciaValidada, Integer estudiantesEvidenciaNoValidada, Double porcentajeCumplimiento, Double porcentajeValidacion) {
+    public DtoReporteDocumentosVinculacion(AreasUniversidad programaEducativo, Integer estudiantesActivos, Integer estudiantesEvidencia, Integer estudiantesSinEvidencia, Integer estudiantesEvidenciaValidada, Integer estudiantesEvidenciaNoValidada, Double porcentajeCumplimiento, Double porcentajeValidacion) {
         this.programaEducativo = programaEducativo;
         this.estudiantesActivos = estudiantesActivos;
         this.estudiantesEvidencia = estudiantesEvidencia;
@@ -40,12 +40,12 @@ public class DtoReporteEstadiaVinculacion implements Serializable, Comparable<Dt
     }
     
     @Override
-    public int compareTo(DtoReporteEstadiaVinculacion o) {
+    public int compareTo(DtoReporteDocumentosVinculacion o) {
         return toLabel(this).compareTo(toLabel(o));
     }
 
-    public static String toLabel(DtoReporteEstadiaVinculacion dtoReporteEstadiaVinculacion){
-         return dtoReporteEstadiaVinculacion.getProgramaEducativo().getNombre();
+    public static String toLabel(DtoReporteDocumentosVinculacion dtoReporteDocumentosVinculacion){
+         return dtoReporteDocumentosVinculacion.getProgramaEducativo().getNombre();
     }
     
 }

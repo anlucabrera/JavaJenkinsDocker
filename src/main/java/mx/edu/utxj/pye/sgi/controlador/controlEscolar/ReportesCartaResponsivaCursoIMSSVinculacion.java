@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.event.ValueChangeEvent;
@@ -26,12 +25,12 @@ import mx.edu.utxj.pye.sgi.controlador.ViewScopedRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCumplimientoCartaResponsivaCursoIMSS;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteDocumentosVinculacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ReportesCartaResponsivaCursoIMSSRolVinculacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroEventosVinculacion;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCargaCartaResponsivaCursoIMSS;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbReportesCartaResponsivaCursoIMSS;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoVinculacion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.Generaciones;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.ControlEscolarVistaControlador;
@@ -109,7 +108,7 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
     }
     
      /**
-     * Permite obtener la lista de generaciones en los que existen eventos de estadía registrados
+     * Permite obtener la lista de generaciones en los que existen eventos de vinculación registrados
      */
     public void generacionesEventosRegistrados(){
         ResultadoEJB<List<Generaciones>> res =  ejbCargaCartaResponsivaCursoIMSS.getGeneracionesSeguimientoRegistrados();
@@ -123,7 +122,7 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
     }
     
     /**
-     * Permite obtener la lista de nivele educativos registradas en la generación seleccionada
+     * Permite obtener la lista de niveles educativos en los que existen eventos de vinculación registrados de la generación seleccionada
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
@@ -137,12 +136,12 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
     }
     
     /**
-     * Permite obtener la lista de reportes de estadía
+     * Permite obtener la lista de reportes disponibles
      */
     public void listaReportes(){
         List<String> listaReportes = new ArrayList<>();
-        
         listaReportes.add("Cumplimiento estudiante documentos");
+        listaReportes.add("Porcentaje de cumplimiento y validación");
         rol.setReportes(listaReportes);
         rol.setReporte(rol.getReportes().get(0));
         generarReportes();
@@ -155,6 +154,8 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
     public void generarReportes(){
         if("Cumplimiento estudiante documentos".equals(rol.getReporte())){
            generarCumpDocumentoPrograma();
+        }else if("Porcentaje de cumplimiento y validación".equals(rol.getReporte())){
+           generarReporteDocumentosVinculacion();
         }
     }
     
@@ -170,7 +171,25 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
     }
     
     /**
-     * Permite que al cambiar o seleccionar una generación se pueda actualizar la lista de ´niveles educativos
+     * Permite generar el reporte de cumplimiento y validación de los documentos
+     */
+    public void generarReporteDocumentosVinculacion(){
+        ResultadoEJB<List<DtoReporteDocumentosVinculacion>> res = ejb.getReporteDocumentosVinculacion(rol.getGeneracion(), rol.getNivelEducativo());
+        if(res.getCorrecto()){
+             rol.setListaReporteVinculacion(res.getValor());
+             rol.setTotalEstudiantesActivos(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesActivos()).sum());
+             rol.setTotalCargados(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesEvidencia()).sum());
+             rol.setTotalSinCargar(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesSinEvidencia()).sum());
+             rol.setTotalValidados(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesEvidenciaValidada()).sum());
+             rol.setTotalNoValidados(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesEvidenciaNoValidada()).sum());
+             rol.setPorcentajeCumplimiento(String.format("%.2f", rol.getListaReporteVinculacion().stream().mapToDouble(p->p.getPorcentajeCumplimiento()).average().getAsDouble()));
+             rol.setPorcentajeValidacion(String.format("%.2f", rol.getListaReporteVinculacion().stream().mapToDouble(p->p.getPorcentajeValidacion()).average().getAsDouble()));
+             Ajax.update("tbPorCumplVal");
+         }else mostrarMensajeResultadoEJB(res);
+    }
+    
+    /**
+     * Permite que al cambiar o seleccionar una generación se pueda actualizar la lista de niveles educativos y la información del reporte seleccionado
      * @param e Evento del cambio de valor
      */
     public void cambiarGeneracion(ValueChangeEvent e){
@@ -183,7 +202,7 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
     }
     
     /**
-     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la información
+     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la información del reporte seleccionado
      * @param e Evento del cambio de valor
      */
     public void cambiarNivelEducativo(ValueChangeEvent e){
@@ -196,7 +215,7 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
     }
     
     /**
-     * Permite que al cambiar o seleccionar un reporte se pueda actualizar la información
+     * Permite que al cambiar o seleccionar un reporte se pueda actualizar el valor del reporte
      * @param e Evento del cambio de valor
      */
     public void cambiarReporte(ValueChangeEvent e){
@@ -207,28 +226,17 @@ public class ReportesCartaResponsivaCursoIMSSVinculacion extends ViewScopedRol i
             Ajax.update("frm");
         }else mostrarMensaje("");
     }
-//    
-//    /**
-//     * Método que permite descargar en excel los reportes de la generación y nivel educativo seleccionado
-//     * @throws java.io.IOException
-//     */
-//     public void descargarReportesEstadia() throws IOException, Throwable{
-//        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48){
-//            generarEficienciaEstadiaAreaAcademica();
-//            generarListadoEstudiantesPromediosAreaAcademica();
-//            File f = new File(ejb.getReportesEstadiaAreaAcademica(rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getGeneracion(), rol.getNivelEducativo()));
-//            Faces.sendFile(f, true);
-//        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){     
-//            generarSeguimientoActEstadia();
-//            generarAsigProgramaAsesor();
-//            generarCumpDocumentoPrograma();
-//            generarEficienciaEstadia();
-//            generarListadoEstudiantesPromedios();
-//            generarZonaInfluenciaIns();
-//            generarZonaInfluenciaPrograma();
-//            File f = new File(ejb.getReportesEstadia(rol.getListaSegActEstadia(), rol.getListaAsigAsesorAcad(), rol.getListaCumplimientoEstudiante(), rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getListaZonaInfluenciaIns(), rol.getListaZonaInfluenciaPrograma(), rol.getGeneracion(), rol.getNivelEducativo()));
-//            Faces.sendFile(f, true);
-//        }
-//    }
+    
+    /**
+     * Método que permite descargar en excel los reportes de la generación y nivel educativo seleccionado
+     * @throws java.io.IOException
+     */
+     public void descargarReportes() throws IOException, Throwable{
+         generarCumpDocumentoPrograma();
+         generarReporteDocumentosVinculacion();
+         File f = new File(ejb.getReportes(rol.getCumplimientoEstDocumento(), rol.getListaReporteVinculacion(), rol.getGeneracion(), rol.getNivelEducativo()));
+         Faces.sendFile(f, true);
+        
+    }
      
 }

@@ -29,7 +29,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCumplimientoEstDocEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadiaDatosComplementarios;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteActividadesEstadia;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteEstadiaVinculacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteDocumentosVinculacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstIns;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstPrograma;
@@ -321,7 +321,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
      * Permite generar el reporte de cumplimiento y validación de documentos de vinculación
      */
     public void generarReporteDocumentosVinculacion(){
-        ResultadoEJB<List<DtoReporteEstadiaVinculacion>> res = ejb.getReporteDocumentosVinculacion(rol.getGeneracion(), rol.getNivelEducativo());
+        ResultadoEJB<List<DtoReporteDocumentosVinculacion>> res = ejb.getReporteDocumentosVinculacion(rol.getGeneracion(), rol.getNivelEducativo());
         if(res.getCorrecto()){
              rol.setListaReporteVinculacion(res.getValor());
              rol.setTotalActivos(rol.getListaReporteVinculacion().stream().mapToInt(p->p.getEstudiantesActivos()).sum());

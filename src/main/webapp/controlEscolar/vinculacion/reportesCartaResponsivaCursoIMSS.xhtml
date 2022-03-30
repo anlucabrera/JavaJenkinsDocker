@@ -53,7 +53,7 @@
                                                 title="Presione el botón para obtener ayuda sobre la operación de ésta herramienta."><i
                                                 class="fa fa-question"/>
                                         </p:commandLink>
-                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesCartaResponsivaCursoIMSSVinculacion.descargarReportesEstadia()}" 
+                                        <p:commandLink class="btn btn-info btn-sm" ajax="false" action="#{reportesCartaResponsivaCursoIMSSVinculacion.descargarReportes()}" 
                                                        target="_blank" title="Descargar Reporte en Excel"><i class="fa fa-file-excel-o" />
                                         </p:commandLink>
                                     </f:facet>
@@ -146,6 +146,69 @@
                                                          <h:outputText value="#{cumpDoc.porcentajeValidacion}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>
                                                     </p:column>
                                                 </p:dataTable>
+                                            </center>
+                                        </c:if>
+                                        <c:if test="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.reporte eq 'Porcentaje de cumplimiento y validación'}">
+                                            <center>
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                    <p:dataTable id="tbPorCumplVal" var="cumpVal" value="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.listaReporteVinculacion}"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive"
+                                                             tableStyle="vertical-align: middle;" emptyMessage="Sin información">
+                                                    <p:columnGroup type="header">
+                                                        <p:row class="success">
+                                                            <p:column headerText="Programa educativo" style="width: 400px;"/>
+                                                            <p:column headerText="Total de estudiantes activos" style="width: 100px;"/>
+                                                            <p:column headerText="Con evidencia" style="width: 100px;"/>
+                                                            <p:column headerText="Sin evidencia" style="width: 100px;"/>
+                                                            <p:column headerText="Con evidencia validada" style="width: 100px;"/>
+                                                            <p:column headerText="Evidencia no validada derivado a alguna situación" style="width: 100px;"/>
+                                                            <p:column headerText="% Cumplimiento" style="width: 100px;"/>
+                                                            <p:column headerText="% Validación correcta" style="width: 100px;"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{cumpVal.programaEducativo.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{cumpVal.estudiantesActivos}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{cumpVal.estudiantesEvidencia}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{cumpVal.estudiantesSinEvidencia}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{cumpVal.estudiantesEvidenciaValidada}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{cumpVal.estudiantesEvidenciaNoValidada}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{cumpVal.porcentajeCumplimiento}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{cumpVal.porcentajeValidacion}"><f:convertNumber pattern="0.0" type="number" maxFractionDigits="2"/></h:outputText>
+                                                    </p:column>
+                                                    <p:columnGroup type="footer">
+                                                        <p:row>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="Totales:"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.totalEstudiantesActivos}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.totalCargados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.totalSinCargar}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.totalValidados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.totalNoValidados}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.porcentajeCumplimiento}"/>
+                                                            <p:column style="text-align:center;font-weight: bold;" footerText="#{reportesCartaResponsivaCursoIMSSVinculacion.rol.porcentajeValidacion}"/>
+                                                        </p:row>
+                                                    </p:columnGroup>
+                                                </p:dataTable>
+                                                </div>
+                                                <br/> 
+                                                <div class="col-lg-8 col-md-12 text-info text-center" style="float: none;"> 
+                                                    <h4 style="text-align: center; color: red;">Notas Importantes:</h4>
+                                                    <h4 style="text-align: justify;">Se consideran ambos documentos: Carta Responsiva y Curso(s) IMSS.</h4>
+                                                </div>
                                             </center>
                                         </c:if>
                                     </div>

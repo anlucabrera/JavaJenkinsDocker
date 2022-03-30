@@ -22,7 +22,7 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCumplimientoEstDocEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEficienciaEstadiaDatosComplementarios;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteActividadesEstadia;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteEstadiaVinculacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoReporteDocumentosVinculacion;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstIns;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoZonaInfluenciaEstPrograma;
@@ -871,7 +871,7 @@ public class EjbReportesEstadia {
      * @param nivelEducativo
      * @return Resultado del proceso
      */
-    public ResultadoEJB<List<DtoReporteEstadiaVinculacion>> getReporteDocumentosVinculacion(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
+    public ResultadoEJB<List<DtoReporteDocumentosVinculacion>> getReporteDocumentosVinculacion(Generaciones generacion, ProgramasEducativosNiveles nivelEducativo){
         try{
             EventoEstadia eventoSeleccionado = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(generacion, nivelEducativo, "Asignacion estudiantes").getValor();
             
@@ -889,7 +889,7 @@ public class EjbReportesEstadia {
                     .distinct()
                     .collect(Collectors.toList());
            
-            List<DtoReporteEstadiaVinculacion> listaRepDocVinculacion = new ArrayList<>();
+            List<DtoReporteDocumentosVinculacion> listaRepDocVinculacion = new ArrayList<>();
             
                 if (!listaProgramasGeneracion.isEmpty()) {
                     
@@ -897,7 +897,7 @@ public class EjbReportesEstadia {
                         .setParameter("lista", listaProgramasGeneracion)
                         .getResultStream()
                         .map(e -> packReporteDocumentosPrograma(e, eventoSeleccionado).getValor())
-                        .sorted(DtoReporteEstadiaVinculacion::compareTo)
+                        .sorted(DtoReporteDocumentosVinculacion::compareTo)
                         .collect(Collectors.toList());
                 }
             return ResultadoEJB.crearCorrecto(listaRepDocVinculacion, "Lista de seguimiento de actividades de estadía por programa educativo.");
@@ -912,15 +912,15 @@ public class EjbReportesEstadia {
      * @param eventoSeleccionado
      * @return Seguimiento de actividades de estadía empaquetada
      */
-    public ResultadoEJB<DtoReporteEstadiaVinculacion> packReporteDocumentosPrograma(AreasUniversidad programaEducativo, EventoEstadia eventoSeleccionado){
+    public ResultadoEJB<DtoReporteDocumentosVinculacion> packReporteDocumentosPrograma(AreasUniversidad programaEducativo, EventoEstadia eventoSeleccionado){
         try{
             evidencias = 0; evidenciasValidadas = 0; evidenciasSinValidar = 0;
             
-            if(programaEducativo == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar programa educativo nulo.", DtoReporteEstadiaVinculacion.class);
-            if(programaEducativo.getArea()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar programa educativo con clave nula.", DtoReporteEstadiaVinculacion.class);
+            if(programaEducativo == null) return ResultadoEJB.crearErroneo(2, "No se puede empaquetar programa educativo nulo.", DtoReporteDocumentosVinculacion.class);
+            if(programaEducativo.getArea()== null) return ResultadoEJB.crearErroneo(3, "No se puede empaquetar programa educativo con clave nula.", DtoReporteDocumentosVinculacion.class);
 
             AreasUniversidad programaBD = em.find(AreasUniversidad.class, programaEducativo.getArea());
-            if(programaBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar programa educativo no registrado previamente en base de datos.", DtoReporteEstadiaVinculacion.class);
+            if(programaBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar programa educativo no registrado previamente en base de datos.", DtoReporteDocumentosVinculacion.class);
             
             List<Integer> grados = new ArrayList<>();
             grados.add(6);
@@ -971,11 +971,11 @@ public class EjbReportesEstadia {
             
             Double porcentajeValidacion = (double) evidenciasValidadas/listaActivos.size() * 100;
             
-            DtoReporteEstadiaVinculacion  dtoReporteEstadiaVinculacion = new DtoReporteEstadiaVinculacion(programaBD, listaActivos.size(), evidencias, estudiantesSinEvidencia, evidenciasValidadas, evidenciasSinValidar, porcentajeCumplimiento, porcentajeValidacion);
+            DtoReporteDocumentosVinculacion  dtoReporteDocumentosVinculacion = new DtoReporteDocumentosVinculacion(programaBD, listaActivos.size(), evidencias, estudiantesSinEvidencia, evidenciasValidadas, evidenciasSinValidar, porcentajeCumplimiento, porcentajeValidacion);
             
-            return ResultadoEJB.crearCorrecto(dtoReporteEstadiaVinculacion, "Seguimiento de actividades de estadía empaquetada.");
+            return ResultadoEJB.crearCorrecto(dtoReporteDocumentosVinculacion, "Seguimiento de actividades de estadía empaquetada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el seguimiento de actividades de estadía. (EjbReportesEstadia.packReporteDocumentosPrograma).", e, DtoReporteEstadiaVinculacion.class);
+            return ResultadoEJB.crearErroneo(1, "No se pudo empaquetar el seguimiento de actividades de estadía. (EjbReportesEstadia.packReporteDocumentosPrograma).", e, DtoReporteDocumentosVinculacion.class);
         }
     }
     
@@ -1065,7 +1065,7 @@ public class EjbReportesEstadia {
      * @throws java.lang.Throwable
      */
     
-    public String getReportesEstadiaVinculacion(List<DtoCumplimientoEstDocEstadia> listaCumplimientoEstudiante, List<DtoReporteEstadiaVinculacion> listaReporteVinculacion, List<DtoEficienciaEstadia> listaEficienciaEstadia, List<DtoSeguimientoEstadia> listaEstudiantesPromedio, List<DtoZonaInfluenciaEstIns> listaZonaInfluenciaEstIns, List<DtoZonaInfluenciaEstPrograma> listaZonaInfluenciaEstPrograma, Generaciones generacion, ProgramasEducativosNiveles nivelEducativo) throws Throwable {
+    public String getReportesEstadiaVinculacion(List<DtoCumplimientoEstDocEstadia> listaCumplimientoEstudiante, List<DtoReporteDocumentosVinculacion> listaReporteVinculacion, List<DtoEficienciaEstadia> listaEficienciaEstadia, List<DtoSeguimientoEstadia> listaEstudiantesPromedio, List<DtoZonaInfluenciaEstIns> listaZonaInfluenciaEstIns, List<DtoZonaInfluenciaEstPrograma> listaZonaInfluenciaEstPrograma, Generaciones generacion, ProgramasEducativosNiveles nivelEducativo) throws Throwable {
         String gen = generacion.getInicio()+ "-" + generacion.getFin();
         String niv = nivelEducativo.getNivel();
         String rutaPlantilla = "C:\\archivos\\seguimientoEstadia\\reportesEstadiaVinculacion.xlsx";

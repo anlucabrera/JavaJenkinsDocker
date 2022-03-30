@@ -40,6 +40,7 @@ import javax.servlet.http.Part;
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadia;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CalificacionCriterioEstadia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
@@ -75,7 +76,7 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
 
     @Inject LogonMB logonMB;
     @Getter private Boolean cargado = false;
-    @Getter private SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante;
+    @Getter private DtoSeguimientoEstadia dtoSeguimientoEstadia;
 
     /**
      * Inicializa:<br/>
@@ -272,8 +273,8 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
         Ajax.update("frm");
     }
     
-    public void seleccionarDocumento(DtoSeguimientoEstadia dtoSeguimientoEstadia) {
-        seguimientoEstadiaEstudiante = dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante();
+    public void seleccionarDocumento(DtoSeguimientoEstadia dto) {
+        dtoSeguimientoEstadia = dto;
     }
     
     
@@ -283,14 +284,17 @@ public class SeguimientoEstadiaDirector extends ViewScopedRol implements Desarro
             EventoEstadia eventoEstadia = ejbAsignacionRolesEstadia.buscarEventoSeleccionado(rol.getGeneracion(), rol.getNivelEducativo(), "Registro cedula evaluacion y acreditacion estadia").getValor();
             Documento documento = ejb.getDocumentoEstadia("Carta de Acreditación").getValor();
             DocumentoProceso documentoProceso = ejb.getDocumentoProcesoEstadia(documento).getValor();
-            DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante = ejb.packDocumento(documentoProceso, seguimientoEstadiaEstudiante).getValor();
+            DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante = ejb.packDocumento(documentoProceso, dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante()).getValor();
+            
+            DtoSeguimientoEstadiaEstudiante dtoSeguimientoEstadiaEstudiante = ejb.getSeguimientoEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), dtoSeguimientoEstadia.getDtoEstudiante().getEstudiante().getMatricula()).getValor();
+            
             
             DocumentoSeguimientoEstadia nuevoDocumento = new DocumentoSeguimientoEstadia();
 
-            nuevoDocumento.setSeguimientoEstadia(seguimientoEstadiaEstudiante);
+            nuevoDocumento.setSeguimientoEstadia(dtoSeguimientoEstadia.getSeguimientoEstadiaEstudiante());
             nuevoDocumento.setEvento(eventoEstadia);
             nuevoDocumento.setDocumento(documento);
-            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoEstadia(file, seguimientoEstadiaEstudiante, dtoDocumentoEstadiaEstudiante));
+            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoEstadia(file, dtoSeguimientoEstadiaEstudiante, dtoDocumentoEstadiaEstudiante));
             nuevoDocumento.setFechaCarga(new Date());
             nuevoDocumento.setObservaciones("Sin observaciones");
             nuevoDocumento.setValidado(false);

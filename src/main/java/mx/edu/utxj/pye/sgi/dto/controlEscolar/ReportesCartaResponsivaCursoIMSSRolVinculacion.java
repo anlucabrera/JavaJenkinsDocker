@@ -60,25 +60,50 @@ public class ReportesCartaResponsivaCursoIMSSRolVinculacion extends AbstractRol{
      */
     @Getter @NonNull private List<DtoCumplimientoCartaResponsivaCursoIMSS> cumplimientoEstDocumento;
     
-     /**
-     * Total de estudiantes acreditados
+    /**
+     * Total de estudiantes que iniciaron el cuatrimestre
      */
-    @Getter @NonNull private Integer totalAcreditados;
+    @Getter @NonNull private Integer totalEstudiantesIniciaron;
     
      /**
-     * Total de estudiantes no acreditados
+     * Total de estudiantes activos (regulares o egresados no titulados)
      */
-    @Getter @NonNull private Integer totalNoAcreditados;
+    @Getter @NonNull private Integer totalEstudiantesActivos;
     
      /**
-     * Total de estudiantes
+     * Total de estudiantes que cargaron documento
      */
-    @Getter @NonNull private Integer total;
+    @Getter @NonNull private Integer totalCargados;
     
      /**
-     * Porcentaje total de eficiencia de estadía
+     * Total de estudiantes que no cargaron documento
      */
-    @Getter @NonNull private String porcentajeEficiencia;
+    @Getter @NonNull private Integer totalSinCargar;
+    
+     /**
+     * Total de estudiantes con documento validado
+     */
+    @Getter @NonNull private Integer totalValidados;
+    
+     /**
+     * Total de estudiantes con documento sin validar
+     */
+    @Getter @NonNull private Integer totalNoValidados;
+    
+     /**
+     * Porcentaje total de cumplimiento de carga de documento
+     */
+    @Getter @NonNull private String porcentajeCumplimiento;
+    
+     /**
+     * Porcentaje total de validación de docuemnto
+     */
+    @Getter @NonNull private String porcentajeValidacion;
+    
+     /**
+     * Reporte de validación y cumplimiento de los estudiantes por documento por programa educativo 
+     */
+    @Getter @NonNull private List<DtoReporteDocumentosVinculacion> listaReporteVinculacion;
     
     public ReportesCartaResponsivaCursoIMSSRolVinculacion(Filter<PersonalActivo> filtro, PersonalActivo usuario) {
         super(filtro);
@@ -117,21 +142,39 @@ public class ReportesCartaResponsivaCursoIMSSRolVinculacion extends AbstractRol{
         this.cumplimientoEstDocumento = cumplimientoEstDocumento;
     }
 
-    public void setTotalAcreditados(Integer totalAcreditados) {
-        this.totalAcreditados = totalAcreditados;
+    public void setTotalEstudiantesIniciaron(Integer totalEstudiantesIniciaron) {
+        this.totalEstudiantesIniciaron = totalEstudiantesIniciaron;
     }
 
-    public void setTotalNoAcreditados(Integer totalNoAcreditados) {
-        this.totalNoAcreditados = totalNoAcreditados;
+    public void setTotalEstudiantesActivos(Integer totalEstudiantesActivos) {
+        this.totalEstudiantesActivos = totalEstudiantesActivos;
     }
 
-    public void setTotal(Integer total) {
-        this.total = total;
+    public void setTotalCargados(Integer totalCargados) {
+        this.totalCargados = totalCargados;
     }
 
-    public void setPorcentajeEficiencia(String porcentajeEficiencia) {
-        this.porcentajeEficiencia = porcentajeEficiencia;
+    public void setTotalSinCargar(Integer totalSinCargar) {
+        this.totalSinCargar = totalSinCargar;
     }
 
+    public void setTotalValidados(Integer totalValidados) {
+        this.totalValidados = totalValidados;
+    }
+
+    public void setTotalNoValidados(Integer totalNoValidados) {
+        this.totalNoValidados = totalNoValidados;
+    }
     
+    public void setPorcentajeCumplimiento(String porcentajeCumplimiento) {
+        this.porcentajeCumplimiento = porcentajeCumplimiento;
+    }
+
+    public void setPorcentajeValidacion(String porcentajeValidacion) {
+        this.porcentajeValidacion = porcentajeValidacion;
+    }
+
+    public void setListaReporteVinculacion(List<DtoReporteDocumentosVinculacion> listaReporteVinculacion) {
+        this.listaReporteVinculacion = listaReporteVinculacion;
+    }
 }

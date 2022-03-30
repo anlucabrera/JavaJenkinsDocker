@@ -176,10 +176,11 @@ public interface EjbCarga extends Serializable {
      *
      * @param file Archivo de excel
      * @param tipoDoc Parámetro que clasifica el tipo de documento del archivo
+     * @param matricula
      * @param rutaRelativa Parámetro de la ruta relativa del archivo
      * @return Devuelve la ruta completa del archivo
      */
-    public String subirDocumentoEstadia(Part file, String tipoDoc, File rutaRelativa);
+    public String subirDocumentoEstadia(Part file, String tipoDoc, String matricula, File rutaRelativa);
     
      /**
      * Método que crea o comprueba si el directorio de los reportes de seguimiento de estadía en control escolar
@@ -251,4 +252,24 @@ public interface EjbCarga extends Serializable {
     public String crearDirectorioReportePOA();
     
     public String crearDirectorioReportePOACompleto(String area);
+    
+     /**
+     * Método de subida de archivos en el servidor para el módulo de seguimiento de vinculación del estudiante
+     * el cual recibe los siguiente parámetros:
+     *
+     * @param file Archivo de excel
+     * @param tipoDoc Parámetro que clasifica el tipo de documento del archivo
+     * @param matricula
+     * @param rutaRelativa Parámetro de la ruta relativa del archivo
+     * @return Devuelve la ruta completa del archivo
+     */
+    public String subirCartaResponsivaCursoIMSS(Part file, String tipoDoc, String matricula, File rutaRelativa);
+    
+     /**
+     * Método que crea o comprueba si el directorio de los reportes de seguimiento de vinculación
+     * @param generacion Es ocupado para crear o comprobar de que generación es el reporte que se está generando
+     * @param nivel Es ocupado para crear o comprobar de que nivel educativo es el reporte que se está generando
+     * @return Retorna la ruta del directorio
+     */
+    public String crearDirectorioReportesCartaResponsivaCursoIMSS(String generacion, String nivel);
 }

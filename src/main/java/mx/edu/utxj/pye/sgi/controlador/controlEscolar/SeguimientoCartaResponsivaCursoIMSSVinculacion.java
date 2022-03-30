@@ -99,7 +99,7 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
             rol.getInstrucciones().add("Seleccione generación.");
             rol.getInstrucciones().add("Seleccione nivel educativo.");
             rol.getInstrucciones().add("Seleccione programa educativo");
-            rol.getInstrucciones().add("En la tabla podrá visualizar la información de estadía de los estudiantes.");
+            rol.getInstrucciones().add("En la tabla podrá visualizar la información de seguimiento de los estudiantes.");
             rol.getInstrucciones().add("Los datos indicados con * son aquellos en los que interviene.");
             rol.getInstrucciones().add("Dar clic en botón que se habilita para validar o invalidar los documentos.");
             rol.getInstrucciones().add("Dar clic en el campo del comentario para capturar las observaciones, en caso contrario dejar con el texto predeterminado.");
@@ -120,7 +120,7 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
     }
     
      /**
-     * Permite obtener la lista de generaciones en los que existen eventos de estadía registrados
+     * Permite obtener la lista de generaciones en los que existen eventos de vinculación registrados
      */
     public void generacionesEventosRegistrados(){
         ResultadoEJB<List<Generaciones>> res = ejb.getGeneracionesSeguimientoRegistrados();
@@ -134,7 +134,7 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
     }
     
     /**
-     * Permite obtener la lista de niveles educativos que existen en eventos de estadía registrados dependiendo de la generación seleccionada
+     * Permite obtener la lista de niveles educativos en los que existen eventos de vinculación registrados de la generación seleccionada
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
@@ -148,7 +148,7 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
     }
     
      /**
-     * Permite obtener la lista de niveles educativos que existen en eventos de estadía registrados dependiendo de la generación seleccionada
+     * Permite obtener la lista de programas educativos en los que existen eventos de vinculación registrados de la generación y nivel educativos seleccionados
      */
     public void listaProgramasNivelGeneracion(){
         if(rol.getNivelEducativo()== null) return;
@@ -162,7 +162,7 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
     }
     
     /**
-     * Permite obtener la lista de estudiantes con seguimiento de estadía de la generación, nivel y programa educativo seleccionado
+     * Permite obtener la lista de estudiantes con seguimiento de vinculación de la generación, nivel y programa educativo seleccionado
      */
     public void listaEstudiantesSeguimiento(){
         ResultadoEJB<List<DtoCartaResponsivaCursoIMMSEstudiante>> res = ejb.getListaSeguimientosVinculacion(rol.getGeneracion(), rol.getNivelEducativo(), rol.getProgramaEducativo());
@@ -177,7 +177,7 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
     }
     
     /**
-     * Permite que al cambiar o seleccionar una generación se pueda actualizar la lista de estudiantes asignados
+     * Permite que al cambiar o seleccionar una generación se pueda actualizar la lista de niveles, programas educativos y seguimientos de vinculación 
      * @param e Evento del cambio de valor
      */
     public void cambiarGeneracion(ValueChangeEvent e){
@@ -190,7 +190,7 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
     }
     
     /**
-     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la lista de estudiantes asignados
+     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la lista de programas educativos y seguimientos de vinculación 
      * @param e Evento del cambio de valor
      */
     public void cambiarNivelEducativo(ValueChangeEvent e){
@@ -203,7 +203,7 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
     }
     
     /**
-     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la lista de estudiantes asignados
+     * Permite que al cambiar o seleccionar un nivel educativo se pueda actualizar la lista de eguimientos de vinculación 
      * @param e Evento del cambio de valor
      */
     public void cambiarProgramaEducativo(ValueChangeEvent e){
@@ -239,6 +239,12 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
         Faces.sendFile(f, false);
     }
     
+    /**
+     * Método que busca si el documento ha sido validado
+     * @param claveDocumento
+     * @param dtoCartaResponsivaCursoIMMSEstudiante
+     * @return 
+     */
     public Boolean buscarValidacionDocumento(Integer claveDocumento,  DtoCartaResponsivaCursoIMMSEstudiante  dtoCartaResponsivaCursoIMMSEstudiante){
         ResultadoEJB<DocumentoSeguimientoVinculacion> resBuscarDoc = ejb.buscarDocumentoEstudiante(dtoCartaResponsivaCursoIMMSEstudiante.getSeguimientoVinculacionEstudiante(), claveDocumento);
         Boolean valor = resBuscarDoc.getValor().getValidado();
@@ -279,8 +285,8 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
     }
     
      /**
-     * Método que permite cancular el número de semanas entre la fecha de inicio y fin de la estadía
-     * @param event Evento al seleccionar una fecha de inicio y/o fin
+     * Método que permite guardar el comentario del documento del estudiante seleccionado
+     * @param event 
      */
     public void guardarComentarioDocumento(ValueChangeEvent event){
         String comentario = event.getNewValue().toString();
@@ -294,7 +300,7 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
     }
   
       /**
-     * Método que cambia el tipo de visualización de la información (todos los seguimientos o solo los que están validados por dirección de carrera)
+     * Método que cambia el tipo de visualización de la información (todos los seguimientos o solo los que están validados)
      * @param event Evento al tipo de visualización
      */
     public void cambiarMostrarSegValVinc(ValueChangeEvent event){
@@ -309,7 +315,7 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
     }
     
       /**
-     * Método que cambia el tipo de visualización de la información (todos los seguimientos o solo los que están validados por dirección de carrera)
+     * Método que cambia el tipo de visualización de la información (Mostrar u ocultar columnas)
      * @param event Evento al tipo de visualización
      */
     public void cambiarOcultarColumnas(ValueChangeEvent event){

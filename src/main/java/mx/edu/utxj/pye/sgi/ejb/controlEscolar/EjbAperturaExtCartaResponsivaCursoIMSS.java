@@ -50,7 +50,7 @@ public class EjbAperturaExtCartaResponsivaCursoIMSS {
     }
     
     /**
-     * Permite obtener la lista de actividades de eventos de estadía registrados de la generación y nivel educativo seleccionado
+     * Permite obtener la lista de actividades de eventos de vinculación registrados de la generación y nivel educativo seleccionado
      * @param generacion
      * @param nivelEducativo
      * @return Resultado del proceso
@@ -69,7 +69,7 @@ public class EjbAperturaExtCartaResponsivaCursoIMSS {
     }
     
      /**
-     * Permite identificar a una lista de posibles estudiante para asignar estadía, de la generación y nivel seleccionado, situación regular en el periodo actual
+     * Permite identificar a una lista de posibles estudiante para registrar apertura extemporánea, de la generación y nivel seleccionado, situación regular en el periodo actual
      * @param generacion
      * @param nivelEducativo
      * @param pista Contenido que la vista que puede incluir parte del nombre, apellidos o matricula del estudiante
@@ -82,7 +82,6 @@ public class EjbAperturaExtCartaResponsivaCursoIMSS {
                 listaGrados.add(5);
                 listaGrados.add(6);
             }else{
-                listaGrados.add(8);
                 listaGrados.add(10);
                 listaGrados.add(11);
             }
@@ -145,7 +144,7 @@ public class EjbAperturaExtCartaResponsivaCursoIMSS {
     }
     
      /**
-     * Permite obtener la lista de aperturas extemporáneas de eventos de estadía registradas
+     * Permite obtener la lista de aperturas extemporáneas de eventos de vinculación registradas
      * @param generacion
      * @param nivelEducativo
      * @return Resultado del proceso
@@ -171,9 +170,9 @@ public class EjbAperturaExtCartaResponsivaCursoIMSS {
                 listaAperturasExtemporaneas.add(dtoApertExtCartaResponsivaCursoIMSS);
             });
             
-            return ResultadoEJB.crearCorrecto(listaAperturasExtemporaneas, "Lista de aperturas extemporáneas de eventos de vinclación registradas.");
+            return ResultadoEJB.crearCorrecto(listaAperturasExtemporaneas, "Lista de aperturas extemporáneas de eventos de vinculación registradas.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aperturas extemporáneas de eventos de vinclación registradas. (EjbAperturaExtCartaResponsivaCursoIMSS.getListaAperturasExtemporaneas)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de aperturas extemporáneas de eventos de vinculación registradas. (EjbAperturaExtCartaResponsivaCursoIMSS.getListaAperturasExtemporaneas)", e, null);
         }
     }
     
@@ -213,7 +212,7 @@ public class EjbAperturaExtCartaResponsivaCursoIMSS {
                     .getResultStream()
                     .findFirst().orElse(null);
             
-            if(seguimiento == null) return ResultadoEJB.crearErroneo(2, "No se puede guardar apertura de estudiante que no tiene seguimiento de viculación registrado previamente en base de datos.", AperturaExtemporaneaEventoVinculacion.class);
+            if(seguimiento == null) return ResultadoEJB.crearErroneo(2, "No se puede guardar apertura de estudiante que no tiene seguimiento de vinculación registrado previamente en base de datos.", AperturaExtemporaneaEventoVinculacion.class);
             
              Date fechaFinCompleta = ejbPermisoAperturaExtemporanea.obtenerFechaFin(fechaFin);
             
@@ -233,7 +232,7 @@ public class EjbAperturaExtCartaResponsivaCursoIMSS {
     }
    
      /**
-     * Permite actualizar la apertura extemporánea de estadía seleccionada
+     * Permite actualizar la apertura extemporánea de vinculación seleccionada
      * @param dtoApertExtCartaResponsivaCursoIMSS
      * @return Resultado del proceso
      */
@@ -242,9 +241,9 @@ public class EjbAperturaExtCartaResponsivaCursoIMSS {
             em.merge(dtoApertExtCartaResponsivaCursoIMSS.getAperturaExtemporanea());
             em.flush();
            
-            return ResultadoEJB.crearCorrecto(dtoApertExtCartaResponsivaCursoIMSS.getAperturaExtemporanea(), "Se actualizó correctamente la apertura extemporánea de estadía seleccionada.");
+            return ResultadoEJB.crearCorrecto(dtoApertExtCartaResponsivaCursoIMSS.getAperturaExtemporanea(), "Se actualizó correctamente la apertura extemporánea de vinculación seleccionada.");
         }catch (Exception e){
-            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la apertura extemporánea de estadía seleccionada. (EjbAperturaExtCartaResponsivaCursoIMSS.actualizarAperturaExtemporanea)", e, null);
+            return ResultadoEJB.crearErroneo(1, "No se pudo actualizar la apertura extemporánea de vinculación seleccionada. (EjbAperturaExtCartaResponsivaCursoIMSS.actualizarAperturaExtemporanea)", e, null);
         }
     }
     

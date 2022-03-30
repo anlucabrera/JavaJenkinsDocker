@@ -102,9 +102,9 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
             rol.getInstrucciones().add("Seleccione nivel educativo.");
             rol.getInstrucciones().add("Ingrese la matricula o el nombre del estudiante para realizar la búsqueda.");
             rol.getInstrucciones().add("Seleccionar de la lista el registro del estudiante que corresponda.");
-            rol.getInstrucciones().add("Selecciona la actividad del evento de estadía que desea activar.");
-            rol.getInstrucciones().add("Seleccione las fechas de inicio y fin en que estará activa la actividad.");
-            rol.getInstrucciones().add("Si se equivocó puede eliminar el registro en la columna opciones.");
+            rol.getInstrucciones().add("Selecciona la actividad del evento de vinculación que desea activar.");
+            rol.getInstrucciones().add("Seleccione las fechas de inicio y fin en que estará activa la apertura.");
+            rol.getInstrucciones().add("Si se equivocó puede eliminar la apertura en la columna opciones.");
            
             generacionesEventosRegistrados();
             
@@ -119,7 +119,7 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
     }
     
      /**
-     * Permite obtener la lista de generaciones en los que existen eventos de estadía registrados
+     * Permite obtener la lista de generaciones en los que existen eventos de vinculación registrados
      */
     public void generacionesEventosRegistrados(){
         ResultadoEJB<List<Generaciones>> res = ejbCargaCartaResponsivaCursoIMSS.getGeneracionesSeguimientoRegistrados();
@@ -133,7 +133,7 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
     }
     
     /**
-     * Permite obtener la lista de bajas registradas en el periodo seleccionado
+     * Permite obtener la lista de niveles educativos en los que existen eventos de vinculación registrados de la generación seleccionada
      */
     public void listaNivelesGeneracion(){
         if(rol.getGeneracion()== null) return;
@@ -147,7 +147,7 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
     }
     
     /**
-     * Permite obtener la lista de bajas registradas en el periodo seleccionado
+     * Permite obtener la lista de actividades delos eventos de vinculación registrados
      */
     public void listaActividadesApertura(){
         ResultadoEJB<List<EventoVinculacion>> res = ejb.getActividadesEventoVinculacion(rol.getGeneracion(), rol.getNivelEducativo());
@@ -159,7 +159,7 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
     }
     
      /**
-     * Método para proporcionar lista de docentes sugeridos en un autocomplete donde se puede ingresar el número de nómina, nombre o área del docente
+     * Método para proporcionar lista de estudiantes sugeridos en un autocomplete donde se puede ingresar la matrícula o nombre
      * @param pista
      * @return Lista de sugerencias
      */
@@ -186,7 +186,10 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
         }else mostrarMensaje("El valor seleccionado como estudiante no es del tipo necesario.");
     }
     
-    
+     /**
+     * Permite buscar la información del estudiante seleccionado
+     * @param claveEstudiante
+     */
     public void buscarDatosEstudiante(Integer claveEstudiante){
         ResultadoEJB<DtoDatosEstudiante> res = ejb.buscarDatosEstudiante(claveEstudiante);
         if(res.getCorrecto()){
@@ -197,7 +200,7 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
     }
     
     /**
-     * Permite obtener la lista de estudiantes asignados al asesor academico y evento seleccionado
+     * Permite obtener la lista de aperturas extemporáneas registradas en la generación y nivel educativo seleccionado
      */
     public void listaAperturasExtemporaneas(){
         if(rol.getNivelEducativo()== null) return;
@@ -209,7 +212,7 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
     }
     
     /**
-     * Permite que al cambiar o seleccionar un periodo escolar se pueda actualizar la lista de bajas del periodo
+     * Permite que al cambiar o seleccionar una generación se actualice la lista de niveles educativos y las aperturas registradas
      * @param e Evento del cambio de valor
      */
     public void cambiarGeneracion(ValueChangeEvent e){
@@ -222,7 +225,7 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
     }
     
     /**
-     * Permite que al cambiar o seleccionar un programa educativo se pueda actualizar la lista de bajas por programa educativo
+     * Permite que al cambiar o seleccionar un nivel educativo se actualice la lista de aperturas registradas
      * @param e Evento del cambio de valor
      */
     public void cambiarNivelEducativo(ValueChangeEvent e){
@@ -235,7 +238,7 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
     }
     
     /**
-     * Permite que al cambiar o seleccionar un programa educativo se pueda actualizar la lista de bajas por programa educativo
+     * Permite que al cambiar o seleccionar la actividad del evento de vinculación se actualice su valor
      * @param e Evento del cambio de valor
      */
     public void cambiarActividadEvento(ValueChangeEvent e){
@@ -281,7 +284,7 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
     }
     
      /**
-     * Permite verificar si el estudiante tiene seguimiento de estadía registrado
+     * Permite verificar si el estudiante tiene seguimiento de vinculación registrado
      * @param estudiante
      */
     public void existeSeguimiento(DtoDatosEstudiante estudiante){
@@ -290,7 +293,7 @@ public class AperturaExtemporaneaCartaResponsivaCursoIMSS extends ViewScopedRol 
             rol.setDesactivarRegistro(Boolean.FALSE);
         }else{
             rol.setDesactivarRegistro(Boolean.TRUE);
-            Messages.addGlobalWarn("El estudiante no tiene seguimiento de estadía registrado, por eso no se puede aperturar evento");
+            Messages.addGlobalWarn("El estudiante no tiene seguimiento de vinculación registrado, por eso no se puede aperturar evento");
         }
     }
     
