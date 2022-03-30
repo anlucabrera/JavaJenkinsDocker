@@ -20,6 +20,7 @@ import javax.inject.Named;
 import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.omnifaces.cdi.ViewScoped;
 
 
 /**
@@ -27,7 +28,7 @@ import java.util.logging.Logger;
  * @author Planeación
  */
 @Named
-@SessionScoped
+@ViewScoped
 public class AdministracionEncuesta implements Serializable{
     
     private static final long serialVersionUID = 9051830636523223017L;

@@ -316,12 +316,12 @@
                                 </div>
                             </c:if>
                             <!-- Evaluacion Docente-->
-                            <c:if test="#{evaluacionDocenteEstudiante.cargada}">
-                                <div class="#{claseResumen}" style="max-height: 154px;">
+                            <!--c:if test="# {evaluacionDocenteEstudiante.cargada}">
+                                <div class="# {claseResumen}" style="max-height: 154px;">
                                     <div class="small-box bg-blue">
                                         <div class="inner" style="cursor: pointer;" onclick="docentes();">
                                             <h3>
-                                                <h:outputLabel value="#{evaluacionDocenteEstudiante.porcentaje}">
+                                                <h:outputLabel value="# {evaluacionDocenteEstudiante.porcentaje}">
                                                     <f:convertNumber pattern="###,###.##" />
                                                 </h:outputLabel>
                                                 <sup style="font-size: 20px">%</sup>
@@ -335,7 +335,7 @@
                                         <h:form><p:remoteCommand name="docentes" action="evaluaciones/evaluacion/evaluacionDocente" /></h:form>
                                     </div>
                                 </div>
-                            </c:if>
+                            </c:if-->
                             <!--
                             <c:if test="#{evaluacionDoncenteMateriaControler.cargada}">
                                 <div class="#{claseResumen}" style="max-height: 154px;">

@@ -312,7 +312,7 @@ public class EjbEvaluacionEstadia {
     }
     
     public ResultadoEJB<SeguimientoEstadiaEstudiante> obtenerAsesor(Integer matricula){
-         SeguimientoEstadiaEstudiante see = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante as s WHERE s.matricula.matricula = :matricula", SeguimientoEstadiaEstudiante.class)
+         SeguimientoEstadiaEstudiante see = em.createQuery("SELECT s FROM SeguimientoEstadiaEstudiante as s WHERE s.estudiante.matricula = :matricula", SeguimientoEstadiaEstudiante.class)
                  .setParameter("matricula", matricula)
                  .getResultStream()
                  .findFirst()
@@ -405,7 +405,7 @@ public class EjbEvaluacionEstadia {
         a1.getPreguntas().add(new Opciones(EvaluacionesTipo.EVALUACION_ESTADIA.getNumero() , 1f, 2f, "Te visitó periódicamente en la empresa donde realizaste tu estadía:", ""));
         a1.getPreguntas().add(new Opciones(EvaluacionesTipo.EVALUACION_ESTADIA.getNumero() , 1f, 3f, "Te asesoró durante el desarrollo del proyecto:", ""));
         a1.getPreguntas().add(new Opciones(EvaluacionesTipo.EVALUACION_ESTADIA.getNumero() , 1f, 4f, "Te proporcionó la asesoría de manera clara y precisa.:", ""));
-        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.EVALUACION_ESTADIA.getNumero() , 1f, 5f, "Te recibió para asesoría en las fechas y horarios establecidos:", ""));
+        a1.getPreguntas().add(new Opciones(EvaluacionesTipo.EVALUACION_ESTADIA.getNumero() , 1f, 5f, "Te recibió (física o virtual) para asesoría en las fechas y horarios establecidos:", ""));
         a1.getPreguntas().add(new Opciones(EvaluacionesTipo.EVALUACION_ESTADIA.getNumero() , 1f, 6f, "Se coordinó con el asesor de la empresa para apoyarte en la realización del proyecto:", ""));
         l.add(a1);
         

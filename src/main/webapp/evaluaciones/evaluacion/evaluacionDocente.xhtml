@@ -15,14 +15,6 @@
         <!-- Inicio estilos par proceso electoral -->
         <link rel="stylesheet" type="text/css" href="../../resources/css/estilosEvaluacion.css" media="screen"/>
         <!-- Fin estilos par proceso electoral -->
-    </ui:define>
-    <ui:define name="title">
-        Evaluación docente
-    </ui:define>
-    <ui:define name="description">
-        Desempeño docente por materia
-    </ui:define>
-    <ui:define name="body">
         <script>
             function contarcaracteres(t, idP, id) {
 
@@ -31,7 +23,7 @@
                 setTimeout(function () {
                     var valor = document.getElementById(idP);
                     var respuesta = document.getElementById(id);
-                    var cantidad = valor.value.length;
+                    var cantidad = valor.value.toString().trim().length;
                     if (cantidad > total) {
                         respuesta.style.color = "black";
                         document.getElementById(id).innerHTML = cantidad + ' caractere/s';
@@ -43,6 +35,14 @@
 
             }
         </script>
+    </ui:define>
+    <ui:define name="title">
+        Evaluación docente
+    </ui:define>
+    <ui:define name="description">
+        Desempeño docente por materia
+    </ui:define>
+    <ui:define name="body">
         <c:if test="#{evaluacionDocenteEstudiante.cargada}">
             <div class="contenedor">
                 <c:if test="#{evaluacionDocenteEstudiante.cargada}">
@@ -271,7 +271,7 @@
                                                                                                                     </c:if>
                                                                                                                     <c:if test="#{pregunta.numero eq 20.0}">
                                                                                                                         <p:inputTextarea  id="r#{pregunta.numero.intValue()}" value="#{evaluacionDocenteEstudiante.rol.respuestas[pos]}"
-                                                                                                                                          onkeyup="contarcaracteres(15, 'r20', 'out20')"
+                                                                                                                                          onkeyup="contarcaracteres(11, 'frmDatos:r#{pregunta.numero.intValue()}', 'out20')"
                                                                                                                                           valueChangeListener="#{evaluacionDocenteEstudiante.guardarRespuesta}">
                                                                                                                             <p:ajax process="@this" update="@form"/>
                                                                                                                         </p:inputTextarea>
@@ -288,7 +288,7 @@
                                                                                                                     </c:if>
                                                                                                                     <c:if test="#{pregunta.numero eq 22.0}">
                                                                                                                         <p:inputTextarea  id="r#{pregunta.numero.intValue()}" value="#{evaluacionDocenteEstudiante.rol.respuestas[pos]}"
-                                                                                                                                          onkeyup="contarcaracteres(15, 'r22', 'out22')"
+                                                                                                                                          onkeyup="contarcaracteres(11, 'frmDatos:r#{pregunta.numero.intValue()}', 'out22')"
                                                                                                                                           valueChangeListener="#{evaluacionDocenteEstudiante.guardarRespuesta}">
                                                                                                                             <p:ajax process="@this" update="@form"/>
                                                                                                                         </p:inputTextarea>

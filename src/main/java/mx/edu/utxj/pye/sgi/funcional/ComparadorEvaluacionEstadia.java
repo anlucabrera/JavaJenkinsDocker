@@ -15,7 +15,7 @@ public class ComparadorEvaluacionEstadia implements Comparador<EvaluacionEstadia
             return false;
         
         if(resultado.getR1() == null 
-                || resultado.getR2() == null
+//                || resultado.getR2() == null
                 || resultado.getR3() == null
                 || resultado.getR4() == null
                 || resultado.getR5() == null
