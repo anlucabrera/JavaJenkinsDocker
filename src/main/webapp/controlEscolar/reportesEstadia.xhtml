@@ -243,8 +243,9 @@
                                                             <p:column headerText="Cargado" style="width: 100px;"/>
                                                             <p:column headerText="Sin Cargar" style="width: 100px;"/>
                                                             <p:column headerText="Validado" style="width: 100px;"/>
+                                                            <p:column headerText="Sin validar" style="width: 100px;"/>
                                                             <p:column headerText="% Cumplimiento" style="width: 150px;"/>
-                                                            <p:column headerText="% Validacion" style="width: 150px;"/>
+                                                            <p:column headerText="% Validación" style="width: 150px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column groupRow="true" style="text-align: justify;">
@@ -267,6 +268,9 @@
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                          <h:outputText value="#{cumpDoc.documentoValidado}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                         <h:outputText value="#{cumpDoc.documentoNoValidado}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                          <h:outputText value="#{cumpDoc.porcentajeCumplimiento}"><f:convertNumber pattern="0.00" type="number" maxFractionDigits="2"/></h:outputText>

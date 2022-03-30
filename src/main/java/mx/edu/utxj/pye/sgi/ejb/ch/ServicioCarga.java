@@ -183,6 +183,7 @@ public class ServicioCarga implements EjbCarga {
     public static final String control_escolar = "control_escolar";
     public static final String psicopedagogia = "psicopedagogia";
     public static final String test_vocacional_plantillas = "test_vocacional_plantillas";
+    public static final String cartaResponsivaCursoIMSS = "cartaResponsivaCursoIMSS";
 
 //    Método que se encarga de crear la carpeta raíz en caso de que no exista para poder almacenar el archivo
     static {
@@ -536,7 +537,7 @@ public class ServicioCarga implements EjbCarga {
     }
 
      @Override
-    public String subirDocumentoEstadia(Part file, String tipoDoc, File rutaRelativa) {
+    public String subirDocumentoEstadia(Part file, String tipoDoc, String matricula, File rutaRelativa) {
         //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(): " + rutaRelativa);
         try {
             byte[] content = Utils.toByteArray(file.getInputStream());
@@ -568,7 +569,7 @@ public class ServicioCarga implements EjbCarga {
                     int numero = (int) Math.round(Math.random() * 35);
                     aleatorio = aleatorio + abecedario[numero];
                 }
-                String name = carpeta.toString().concat(File.separator).concat(tipoDoc).concat(extension);
+                String name = carpeta.toString().concat(File.separator).concat(tipoDoc).concat("_").concat(matricula).concat(extension);;
                 FileOutputStream fos = new FileOutputStream(name);
                 FileCopyUtils.copy(content, fos);
                 aleatorio = ""; 
@@ -692,6 +693,50 @@ public class ServicioCarga implements EjbCarga {
     @Override
     public String crearDirectorioReportePOACompleto(String area) {
         String rutaRelativa = genCarpetaRelativa(reportePOapre, plantillas, area, completo);
+        addCarpetaRelativa(rutaRelativa);
+        return rutaRelativa;
+    }
+    
+    @Override
+    public String subirCartaResponsivaCursoIMSS(Part file, String tipoDoc, String matricula, File rutaRelativa) {
+        //        System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(): " + rutaRelativa);
+        try {
+            byte[] content = Utils.toByteArray(file.getInputStream());
+            File carpeta = new File("C:/archivos/cartaResponsivaCursoIMSS/".concat(rutaRelativa.toString()));
+            addCarpetaRelativa(carpeta.toString());
+            nombreArchivo = file.getSubmittedFileName();
+            //extrae la extension y el nombre de archivo por separado
+            String tipo = file.getContentType();
+//            extension = ".pdf";
+            Pattern p = Pattern.compile("[^A-Za-z0-9-_.() ]+");
+            Matcher m = p.matcher(nombreArchivo);
+            StringBuffer sb = new StringBuffer();
+            valida = m.find();
+            while (valida) {
+                m.appendReplacement(sb, "");
+                valida = m.find();
+            }
+            m.appendTail(sb);
+            nombreArchivo = sb.toString();
+                for (int i = 1; i <= 10; i++) {
+                    int numero = (int) Math.round(Math.random() * 35);
+                    aleatorio = aleatorio + abecedario[numero];
+                }
+                String name = carpeta.toString().concat(File.separator).concat(tipoDoc).concat("_").concat(matricula).concat(".pdf");
+                FileOutputStream fos = new FileOutputStream(name);
+                FileCopyUtils.copy(content, fos);
+                aleatorio = ""; 
+//                System.out.println("mx.edu.utxj.pye.sgi.ejb.ch.ServicioCarga.subirDocExpTit(fin)");
+                return name;
+        } catch (IOException ex) {
+            Logger.getLogger(ServicioCarga.class.getName()).log(Level.SEVERE, null, ex);
+            return "Error: No se pudo leer el archivo";
+        }
+    }
+    
+    @Override
+    public String crearDirectorioReportesCartaResponsivaCursoIMSS(String generacion, String nivel) {
+        String rutaRelativa = genCarpetaRelativa(cartaResponsivaCursoIMSS, reportes, generacion, nivel);
         addCarpetaRelativa(rutaRelativa);
         return rutaRelativa;
     }

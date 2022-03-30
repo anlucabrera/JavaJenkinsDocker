@@ -383,6 +383,23 @@
                     <c:if test="#{cartaNoAdeudoRecursosMateriales.mostrarEnDesarrollo(request) and cartaNoAdeudoRecursosMateriales.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/recursosMateriales/cartaNoAdeudoRecursosMateriales.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
 
                     <!-- Coordinador de Estadías - Extensión y Vinculación -->
+                    <c:if test="#{registroEventosVinculacion.mostrarEnDesarrollo(request) and registroEventosVinculacion.tieneAcceso}">
+                        <li class="treeview">
+                            <a href="#">
+                                <i class="fa fa-book"></i><span style="color:#ffffff ;font-family: arial;font-weight: bold; text-align: center">Carta Responsiva y <br/> Cursos IMSS</span>
+                                <span class="pull-right-container">
+                                    <i class="fa fa-angle-left pull-right"></i>
+                                </span>
+                            </a>
+                            <ul class="treeview-menu" style="display: none;">
+                                <c:if test="#{registroEventosVinculacion.mostrarEnDesarrollo(request) and registroEventosVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/vinculacion/registroEventosVinculacion.xhtml"><i class="fa fa-calendar-check-o"></i><span>Registro de eventos</span></p:link></li></c:if>
+                                <c:if test="#{aperturaExtemporaneaCartaResponsivaCursoIMSS.mostrarEnDesarrollo(request) and aperturaExtemporaneaCartaResponsivaCursoIMSS.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/vinculacion/aperturaExtCartaResponsivaCursoIMSS.xhtml"><i class="fa fa-clock"></i><span>Aperturas extemporáneas</span></p:link></li></c:if>
+                                <c:if test="#{seguimientoCartaResponsivaCursoIMSSVinculacion.mostrarEnDesarrollo(request) and seguimientoCartaResponsivaCursoIMSSVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/vinculacion/seguimientoCartaResponsivaCursoIMSS.xhtml"><i class="fa fa-folder"></i><span>Seguimiento documentos</span></p:link></li></c:if>
+                                <c:if test="#{reportesCartaResponsivaCursoIMSSVinculacion.mostrarEnDesarrollo(request) and reportesCartaResponsivaCursoIMSSVinculacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/vinculacion/reportesCartaResponsivaCursoIMSS.xhtml"><i class="fa fa-table"></i><span>Reportes</span></p:link></li></c:if>
+                            </ul>
+                        </li>
+                    </c:if>
+                    
                     <c:if test="#{seguimientoEstadiaVinculacion.mostrarEnDesarrollo(request) and seguimientoEstadiaVinculacion.tieneAcceso}">
                         <li class="treeview">
                             <a href="#">
@@ -560,11 +577,12 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2022.pdf#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Presentación estadías 2022</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/cartaResponsivaCursoIMSS/Carta_Responsiva_2022.docx#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Carta responsiva</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2022.docx#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Carta de aceptación</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2022.docx#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Carta de liberación</span></p:link></li>
                                 <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Informe_Mensual_2019.doc#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Reporte mensual</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Aceptación_2021.docx#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Carta de aceptación</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Carta_Liberación_2021.docx#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Carta de liberación</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2021.docx#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Evaluación empresarial</span></p:link></li>
-                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Presentación_Estadías_2021.pdf#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Presentación estadías 2021</span></p:link></li>
+                                <li><p:link href="http://siip.utxicotepec.edu.mx/archivos/evidencias2/seguimientoEstadia/formatos/Evaluación_Asesor_Empresarial_2022.docx#toolbar=0" target="_blank"><i class="fa fa-download"></i><span>Evaluación empresarial</span></p:link></li>
                             </ul>
                         </li>
                     </c:if>

@@ -19,7 +19,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
  * @author UTXJ
  */
 @RequiredArgsConstructor @ToString
-public class DtoCumplimientoEstDocEstadia implements Serializable, Comparable<DtoCumplimientoEstDocEstadia>{
+public class DtoCumplimientoCartaResponsivaCursoIMSS implements Serializable, Comparable<DtoCumplimientoCartaResponsivaCursoIMSS>{
     @Getter @Setter @NonNull AreasUniversidad programaEducativo;
     @Getter @Setter @NonNull DocumentoProceso documentoProceso;
     @Getter @Setter Integer estudiantesIniciaron;
@@ -27,21 +27,20 @@ public class DtoCumplimientoEstDocEstadia implements Serializable, Comparable<Dt
     @Getter @Setter Integer conDocumento;
     @Getter @Setter Integer sinDocumento;
     @Getter @Setter Integer documentoValidado;
-    @Getter @Setter Integer documentoNoValidado;
     @Getter @Setter Double porcentajeCumplimiento;
     @Getter @Setter Double porcentajeValidacion;
 
-    public DtoCumplimientoEstDocEstadia() {
+    public DtoCumplimientoCartaResponsivaCursoIMSS() {
     }
     
-    
     @Override
-    public int compareTo(DtoCumplimientoEstDocEstadia o) {
+    public int compareTo(DtoCumplimientoCartaResponsivaCursoIMSS o) {
         return toLabel(this).compareTo(toLabel(o));
     }
 
-    public static String toLabel(DtoCumplimientoEstDocEstadia dtoCumplimientoEstDocEstadia){
-         return dtoCumplimientoEstDocEstadia.getProgramaEducativo().getNombre().concat(" ")
-                 .concat(String.valueOf(dtoCumplimientoEstDocEstadia.getDocumentoProceso().getDocumento().getDocumento()));
+    public static String toLabel(DtoCumplimientoCartaResponsivaCursoIMSS dtoCumplimientoCartaResponsivaCursoIMSS){
+         return dtoCumplimientoCartaResponsivaCursoIMSS.getProgramaEducativo().getNombre().concat(" ")
+                 .concat(String.valueOf(dtoCumplimientoCartaResponsivaCursoIMSS.getDocumentoProceso().getDocumento().getDocumento()));
     }
+    
 }

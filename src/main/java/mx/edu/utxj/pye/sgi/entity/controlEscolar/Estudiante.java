@@ -83,6 +83,8 @@ public class Estudiante implements Serializable {
     @Column(name = "tipo_registro")
     private String tipoRegistro;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
+    private List<SeguimientoVinculacionEstudiante> seguimientoVinculacionEstudianteList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "estudiante", fetch = FetchType.LAZY)
     private List<ExpedienteTitulacion> expedienteTitulacionList;
     @ManyToMany(mappedBy = "estudianteList", fetch = FetchType.LAZY)
     private List<Asesoria> asesoriaList;
@@ -517,4 +519,12 @@ public class Estudiante implements Serializable {
         this.expedienteTitulacionList = expedienteTitulacionList;
     }
     
+    @XmlTransient
+    public List<SeguimientoVinculacionEstudiante> getSeguimientoVinculacionEstudianteList() {
+        return seguimientoVinculacionEstudianteList;
+    }
+
+    public void setSeguimientoVinculacionEstudianteList(List<SeguimientoVinculacionEstudiante> seguimientoVinculacionEstudianteList) {
+        this.seguimientoVinculacionEstudianteList = seguimientoVinculacionEstudianteList;
+    }
 }

@@ -15,8 +15,11 @@ import javax.servlet.http.Part;
 
 import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.controladores.ch.CvEducacion;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCartaResponsivaCursoIMMSEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoAspirante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoEstadiaEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentosCartaRespCursoIMMSEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbCarga;
 import mx.edu.utxj.pye.sgi.entity.ch.Bitacoraacceso;
 import org.omnifaces.cdi.ViewScoped;
@@ -26,7 +29,6 @@ import mx.edu.utxj.pye.sgi.ejb.ch.EjbUtilidadesCH;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Aspirante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 
 @Named
 @ViewScoped
@@ -329,19 +331,86 @@ public class UtilidadesCH implements Serializable {
         }
     }
     
-     public String agregarDocumentoEstadia(Part file, SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante, DtoDocumentoEstadiaEstudiante docsSeg) {
-        String ruta = "";
+     public String agregarDocumentoEstadia(Part file, DtoSeguimientoEstadiaEstudiante dtoSeguimientoEstadiaEstudiante, DtoDocumentoEstadiaEstudiante docsSeg) {
+        String ruta = "", nivel ="";
         if (file == null) {
             return null;
         }
         
+        switch (dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEvento().getNivel()) {
+                case "TSU":
+                    nivel = "TSU";
+                    break;
+                case "5A":
+                    nivel = "ING";
+                    break;
+                case "5B":
+                    nivel = "LIC";
+                    break;
+                case "5B3":
+                    nivel = "IP";
+                    break;
+                default:
+                    break;
+        }
+        
+        String apellidoPaterno = dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno().replaceAll("\\s+","");
+        String apellidoMaterno = dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno().replaceAll("\\s+","");
+        String nombre = dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEstudiante().getAspirante().getIdPersona().getNombre().replaceAll("\\s+","");
+        
+        String nombreMatricula = apellidoPaterno.concat("_").concat(apellidoMaterno).concat("_").concat(nombre).concat("_").concat(Integer.toString(dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEstudiante().getMatricula()));
+        
+        String matricula = Integer.toString(dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEstudiante().getMatricula());
+        
         String nomenclaruta= docsSeg.getDocumentoProceso().getDocumento().getNomenclatura().concat("TSU");
         
-        if(!seguimientoEstadiaEstudiante.getEvento().getNivel().equals("TSU")){
+        if(!dtoSeguimientoEstadiaEstudiante.getSeguimientoEstadiaEstudiante().getEvento().getNivel().equals("TSU")){
             nomenclaruta= docsSeg.getDocumentoProceso().getDocumento().getNomenclatura().concat("IngLic");
         }
         
-        ruta = carga.subirDocumentoEstadia(file, nomenclaruta, new File(docsSeg.getGeneracion().concat(File.separator).concat(Integer.toString(seguimientoEstadiaEstudiante.getEstudiante().getMatricula())).concat(File.separator).concat(docsSeg.getDocumentoProceso().getProceso())));
+        ruta = carga.subirDocumentoEstadia(file, nomenclaruta, matricula, new File(docsSeg.getGeneracion().concat(File.separator).concat(nivel).concat(File.separator).concat(dtoSeguimientoEstadiaEstudiante.getDtoEstudiante().getProgramaEducativo().getSiglas()).concat(File.separator).concat(nombreMatricula)));
+        
+        if (!"Error: No se pudo leer el archivo".equals(ruta)) {
+            Messages.addGlobalInfo("El documento se ha guardado correctamente.");
+            return ruta;
+        } else {
+            Messages.addGlobalInfo("El documento no se ha podido guardar.");
+            return "";
+        }
+    }
+     
+     public String agregarCartaResponsivaCursoIMSS(Part file, DtoCartaResponsivaCursoIMMSEstudiante dtoCartaResponsivaCursoIMMSEstudiante, DtoDocumentosCartaRespCursoIMMSEstudiante docsSeg) {
+        String ruta = "", nivel= "";
+        if (file == null) {
+            return null;
+        }
+        
+        switch (dtoCartaResponsivaCursoIMMSEstudiante.getSeguimientoVinculacionEstudiante().getNivel()) {
+                case "TSU":
+                    nivel = "TSU";
+                    break;
+                case "5A":
+                    nivel = "ING";
+                    break;
+                case "5B":
+                    nivel = "LIC";
+                    break;
+                case "5B3":
+                    nivel = "IP";
+                    break;
+                default:
+                    break;
+        }
+        
+        String apellidoPaterno = dtoCartaResponsivaCursoIMMSEstudiante.getSeguimientoVinculacionEstudiante().getEstudiante().getAspirante().getIdPersona().getApellidoPaterno().replaceAll("\\s+","");
+        String apellidoMaterno = dtoCartaResponsivaCursoIMMSEstudiante.getSeguimientoVinculacionEstudiante().getEstudiante().getAspirante().getIdPersona().getApellidoMaterno().replaceAll("\\s+","");
+        String nombre = dtoCartaResponsivaCursoIMMSEstudiante.getSeguimientoVinculacionEstudiante().getEstudiante().getAspirante().getIdPersona().getNombre().replaceAll("\\s+","");
+        
+        String nombreMatricula = apellidoPaterno.concat("_").concat(apellidoMaterno).concat("_").concat(nombre).concat("_").concat(Integer.toString(dtoCartaResponsivaCursoIMMSEstudiante.getSeguimientoVinculacionEstudiante().getEstudiante().getMatricula()));
+        
+        String matricula = Integer.toString(dtoCartaResponsivaCursoIMMSEstudiante.getSeguimientoVinculacionEstudiante().getEstudiante().getMatricula());
+        
+        ruta = carga.subirCartaResponsivaCursoIMSS(file, docsSeg.getDocumentoProceso().getDocumento().getNomenclatura(), matricula ,new File(docsSeg.getGeneracion().concat(File.separator).concat(nivel).concat(File.separator).concat(dtoCartaResponsivaCursoIMMSEstudiante.getDtoEstudiante().getProgramaEducativo().getSiglas()).concat(File.separator).concat(nombreMatricula)));
         
         if (!"Error: No se pudo leer el archivo".equals(ruta)) {
             Messages.addGlobalInfo("El documento se ha guardado correctamente.");

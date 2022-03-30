@@ -42,6 +42,8 @@ public class DocumentoProceso implements Serializable {
     @NotNull
     @Column(name = "obligatorio")
     private boolean obligatorio;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "documentoProceso")
+    private List<EventoVinculacion> eventoVinculacionList;
     @JoinColumn(name = "documento", referencedColumnName = "documento")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Documento documento;
@@ -100,7 +102,15 @@ public class DocumentoProceso implements Serializable {
     public void setDocumentoEstudianteProcesoList(List<DocumentoEstudianteProceso> documentoEstudianteProcesoList) {
         this.documentoEstudianteProcesoList = documentoEstudianteProcesoList;
     }
+    
+    @XmlTransient
+    public List<EventoVinculacion> getEventoVinculacionList() {
+        return eventoVinculacionList;
+    }
 
+    public void setEventoVinculacionList(List<EventoVinculacion> eventoVinculacionList) {
+        this.eventoVinculacionList = eventoVinculacionList;
+    }
 
     @Override
     public int hashCode() {

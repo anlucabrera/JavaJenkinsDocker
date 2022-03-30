@@ -103,6 +103,10 @@ public enum ControlEscolarVistaControlador {
     CARTA_NO_ADUEDO_CORDINACION_ESTADIA("/controlEscolar/vinculacion/cartaNoAdeudoCordinacionEstadia.xhtml", CartaNoAdeudoCordinacionEstadia.class),
     CARTA_NO_ADUEDO_SEGUIMIENTO_EGRESADOS("/controlEscolar/vinculacion/cartaNoAdeudoSeguimientoEgresados.xhtml", CartaNoAdeudoSeguimientoEgresados.class),
     CONSULTA_EMPRESAS_ESTADIA("/controlEscolar/vinculacion/consultaEmpresasEstadia.xhtml", ConsultaEmpresasEstadiaVinculacion.class),
+    REGISTRO_EVENTOS_VINCULACION("/controlEscolar/vinculacion/registroEventosVinculacion.xhtml", RegistroEventosVinculacion.class),
+    SEGUIMIENTO_CARTARESPONSIVA_CURSOIMSS("/controlEscolar/vinculacion/seguimientoCartaResponsivaCursoIMSS.xhtml", SeguimientoCartaResponsivaCursoIMSSVinculacion.class),
+    APERTURA_EXTEMPORANEA_CARTARESPONSIVA_CURSOIMSS("/controlEscolar/vinculacion/aperturaExtCartaResponsivaCursoIMSS.xhtml",  AperturaExtemporaneaCartaResponsivaCursoIMSS.class),
+    REPORTES_CARTARESPONSIVA_CURSOIMSS("/controlEscolar/vinculacion/reportesCartaResponsivaCursoIMSS.xhtml",  ReportesCartaResponsivaCursoIMSSVinculacion.class),
 
     SEGUIMIENTO_EXPEDIENTE_GENERACION("/controlEscolar/titulacion/seguimientoMatricula.xhtml", SeguimientoExpedienteMatriculaTitulacion.class),
     SEGUIMIENTO_EXPEDIENTE_MATRICULA("/controlEscolar/titulacion/seguimientoGeneracion.xhtml", SeguimientoExpedienteGeneracionTitulacion.class),
@@ -187,6 +191,7 @@ public enum ControlEscolarVistaControlador {
     CARTA_NO_ADUEDO_ESTUDIANTE("/controlEscolar/estudiante/cartaNoAdeudoEstudiante.xhtml", CartaNoAdeudoEstudiante.class),
     REGISTRO_SEGURO_FACULTATIVO("/controlEscolar/estudiante/registro_seguro_facultativo.xhtml", RegistroSeguroFacultativoEstudiante.class),
     TEST_VOCACIONAL("/encuestas/Estudiantes/testVocacional.xhtml", TestVocacionalC.class),
+    CARGA_CARTARESPONSIVA_CURSOIMSS("/controlEscolar/estudiante/cartaResponsivaCursoIMSS.xhtml", CargaCartaResponsivaCursoIMSSEstudiante.class),
 
     REGISTRO_FICHA_ASPIRANTE("/controlEscolar/aspirante/registroFichaAspirante.xhtml", RegistroFichaAdmisionAspirante.class),
     CARGA_DOCUMENTOS_ASPIRANTE("/controlEscolar/aspirante/cargaDocumentos.xhtml", CargaDocumentosAspirante.class),

@@ -19,14 +19,13 @@ import javax.servlet.http.Part;
 import lombok.Getter;
 import lombok.Setter;
 import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
-import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoEstadiaEstudiante;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentosCartaRespCursoIMMSEstudiante;
 import org.omnifaces.cdi.ViewScoped;
-import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCargaCartaResponsivaCursoIMSS;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Documento;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoVinculacion;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoProceso;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoVinculacion;
 import mx.edu.utxj.pye.sgi.util.UtilidadesCH;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
@@ -36,49 +35,49 @@ import org.omnifaces.util.Messages;
  *
  * @author UTXJ
  */
-@Named(value = "cargaArchivosSeguimientoEstadia")
+@Named(value = "cargaArchivosSeguimientoVinculacion")
 @ManagedBean
 @ViewScoped
-public class CargaArchivosSeguimientoEstadia implements Serializable{
+public class CargaArchivosSeguimientoVinculacion implements Serializable{
 
-    private static final long serialVersionUID = 370815015509105840L;
-    
+    private static final long serialVersionUID = -1642035799829402005L;
+
     // Variable para documentos  
-    @Getter private DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante;
-    @Getter private List<DtoDocumentoEstadiaEstudiante> lista;
+    @Getter private DtoDocumentosCartaRespCursoIMMSEstudiante dtoDocumentosCartaRespCursoIMMSEstudiante;
+    @Getter private List<DtoDocumentosCartaRespCursoIMMSEstudiante> lista;
     @Getter @Setter private Part file;
     @Inject UtilidadesCH utilidadesCH;
-    @Inject SeguimientoEstadiaPorEstudiante seguimientoEstadiaPorEstudiante;
+    @Inject CargaCartaResponsivaCursoIMSSEstudiante cargaCartaResponsivaCursoIMSSEstudiante;
     @Getter private Documento documento;
     @Getter private DocumentoProceso documentoProceso;
-    @Getter private EventoEstadia eventoEstadia;
+    @Getter private EventoVinculacion eventoVinculacion;
     
-    @EJB private EjbSeguimientoEstadia ejbSeguimientoEstadia;
+    @EJB private EjbCargaCartaResponsivaCursoIMSS ejbCargaCartaResponsivaCursoIMSS;
    
    
-    public void editarDocumento(DtoDocumentoEstadiaEstudiante registro, EventoEstadia evento) {
-        dtoDocumentoEstadiaEstudiante = registro;
+    public void editarDocumento(DtoDocumentosCartaRespCursoIMMSEstudiante registro, EventoVinculacion evento) {
+        dtoDocumentosCartaRespCursoIMMSEstudiante = registro;
         if(evento==null){
-            eventoEstadia = ejbSeguimientoEstadia.buscarAperturaExtemporaneaDocumento(seguimientoEstadiaPorEstudiante.getRol().getDtoSeguimientoEstadiaEstudiante(), dtoDocumentoEstadiaEstudiante, "Estudiante").getValor();
+            eventoVinculacion = ejbCargaCartaResponsivaCursoIMSS.buscarAperturaExtemporaneaDocumento(cargaCartaResponsivaCursoIMSSEstudiante.getRol().getDtoCartaResponsivaCursoIMMSEstudiante(), dtoDocumentosCartaRespCursoIMMSEstudiante).getValor();
         }else{
-            eventoEstadia = evento;
+            eventoVinculacion = evento;
         }
     }
     
     public void subirDocumento() {
         try {
-            DocumentoSeguimientoEstadia nuevoDocumento = new DocumentoSeguimientoEstadia();
+            DocumentoSeguimientoVinculacion nuevoDocumento = new DocumentoSeguimientoVinculacion();
 
-            nuevoDocumento.setSeguimientoEstadia(seguimientoEstadiaPorEstudiante.getRol().getDtoSeguimientoEstadiaEstudiante().getSeguimientoEstadiaEstudiante());
-            nuevoDocumento.setEvento(eventoEstadia);
-            nuevoDocumento.setDocumento(dtoDocumentoEstadiaEstudiante.getDocumentoProceso().getDocumento());
-            nuevoDocumento.setRuta(utilidadesCH.agregarDocumentoEstadia(file, seguimientoEstadiaPorEstudiante.getRol().getDtoSeguimientoEstadiaEstudiante(), dtoDocumentoEstadiaEstudiante));
+            nuevoDocumento.setSeguimiento(cargaCartaResponsivaCursoIMSSEstudiante.getRol().getDtoCartaResponsivaCursoIMMSEstudiante().getSeguimientoVinculacionEstudiante());
+            nuevoDocumento.setEvento(eventoVinculacion);
+            nuevoDocumento.setDocumento(dtoDocumentosCartaRespCursoIMMSEstudiante.getDocumentoProceso().getDocumento());
+            nuevoDocumento.setRuta(utilidadesCH.agregarCartaResponsivaCursoIMSS(file, cargaCartaResponsivaCursoIMSSEstudiante.getRol().getDtoCartaResponsivaCursoIMMSEstudiante(), dtoDocumentosCartaRespCursoIMMSEstudiante));
             nuevoDocumento.setFechaCarga(new Date());
             nuevoDocumento.setObservaciones("Sin observaciones");
             nuevoDocumento.setValidado(false);
             nuevoDocumento.setFechaValidacion(null);
-            nuevoDocumento = ejbSeguimientoEstadia.guardarDocumentoSeguimientoEstadia(nuevoDocumento).getValor();
-            seguimientoEstadiaPorEstudiante.seguimientoEstudiante();
+            nuevoDocumento = ejbCargaCartaResponsivaCursoIMSS.guardarDocumentoSeguimientoVinculacion(nuevoDocumento).getValor();
+            cargaCartaResponsivaCursoIMSSEstudiante.seguimientoEstudiante();
             
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getMessage());
@@ -86,24 +85,24 @@ public class CargaArchivosSeguimientoEstadia implements Serializable{
         }
     }
     
-    public void eliminarDocumento(DtoDocumentoEstadiaEstudiante docsSeg){
-        ResultadoEJB<Integer> resEliminar =  ejbSeguimientoEstadia.eliminarDocumentoSeguimiento(docsSeg.getDocumentoSeguimientoEstadia());
+    public void eliminarDocumento(DtoDocumentosCartaRespCursoIMMSEstudiante docsSeg){
+        ResultadoEJB<Integer> resEliminar =  ejbCargaCartaResponsivaCursoIMSS.eliminarDocumentoSeguimiento(docsSeg.getDocumentoSeguimientoVinculacion());
         if(resEliminar.getCorrecto()){
         if(resEliminar.getValor() == 1){ 
-            seguimientoEstadiaPorEstudiante.seguimientoEstudiante();
+            cargaCartaResponsivaCursoIMSSEstudiante.seguimientoEstudiante();
             Ajax.update("frmDocsSegEst");
             Messages.addGlobalInfo("El documento se eliminó correctamente.");
         }else Messages.addGlobalError("El documento no ha podido eliminarse.");
         }else Messages.addGlobalError("El documento no ha podido eliminarse.");
     }
     
-    public void descargarDocumento(DtoDocumentoEstadiaEstudiante docsSeg) throws IOException{
-        File f = new File(docsSeg.getDocumentoSeguimientoEstadia().getRuta());
+    public void descargarDocumento(DtoDocumentosCartaRespCursoIMMSEstudiante docsSeg) throws IOException{
+        File f = new File(docsSeg.getDocumentoSeguimientoVinculacion().getRuta());
         Faces.sendFile(f, false);
     }
     
     public Boolean consultarExisteDocumento(Documento documento){
-        return ejbSeguimientoEstadia.consultarDocumento(documento, seguimientoEstadiaPorEstudiante.getRol().getDtoSeguimientoEstadiaEstudiante().getSeguimientoEstadiaEstudiante()).getValor();
+        return ejbCargaCartaResponsivaCursoIMSS.consultarDocumento(documento, cargaCartaResponsivaCursoIMSSEstudiante.getRol().getDtoCartaResponsivaCursoIMMSEstudiante().getSeguimientoVinculacionEstudiante()).getValor();
     }
     
 //    public void subirDocumentoPendiente() {
