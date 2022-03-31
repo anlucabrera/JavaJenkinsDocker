@@ -1556,7 +1556,11 @@ public class EjbSeguimientoEstadia {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
-             else if (p.getPersonal().getCategoriaOperativa().getCategoria()== 38 || p.getPersonal().getCategoriaOperativa().getCategoria()==43) {
+            else if (p.getPersonal().getCategoriaOperativa().getCategoria()== 18 || p.getPersonal().getAreaOperativa()==5 && p.getPersonal().getStatus()!='B') {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }
+            else if (p.getPersonal().getCategoriaOperativa().getCategoria()== 38 || p.getPersonal().getCategoriaOperativa().getCategoria()==43) {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
@@ -1629,6 +1633,9 @@ public class EjbSeguimientoEstadia {
             PersonalActivo p = ejbPersonalBean.pack(clave);
             Filter<PersonalActivo> filtro = new Filter<>();
             if (p.getPersonal().getCategoriaOperativa().getCategoria() == 15 && p.getPersonal().getStatus()!='B') {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }else if (p.getPersonal().getCategoriaOperativa().getCategoria() == 18 && p.getPersonal().getAreaOperativa() == 5 && p.getPersonal().getStatus()!='B') {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }

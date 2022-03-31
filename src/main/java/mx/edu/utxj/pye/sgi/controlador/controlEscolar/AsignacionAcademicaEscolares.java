@@ -112,7 +112,7 @@ public class AsignacionAcademicaEscolares extends ViewScopedRol implements Desar
             ResultadoEJB<List<PeriodosEscolares>> resPeriodos = ejb.getPeriodosDescendentes();
 //            System.out.println("resPeriodos = " + resPeriodos);
             if(!resPeriodos.getCorrecto()) mostrarMensajeResultadoEJB(resPeriodos);
-            rol.setPeriodos(resPeriodos.getValor());
+            rol.setPeriodos(resPeriodos.getValor().stream().filter(p->p.getPeriodo()<=rol.getPeriodoActivo()).collect(Collectors.toList()));
 
             ResultadoEJB<Map<AreasUniversidad, List<Grupo>>> resProgramas = ejb.getProgramasActivosEscolares(rol.getPeriodo());
 //            System.out.println("resProgramas = " + resProgramas);

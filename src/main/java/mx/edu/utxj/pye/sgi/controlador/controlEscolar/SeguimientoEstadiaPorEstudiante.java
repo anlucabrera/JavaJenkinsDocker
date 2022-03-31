@@ -33,11 +33,14 @@ import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoDocumentoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoSeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.SeguimientoEstadiaRolEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbSeguimientoEstadia;
+import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbAperturaExtCartaResponsivaCursoIMSS;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEstadia;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoVinculacionEstudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AperturaExtemporaneaEventoEstadia;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.omnifaces.util.Messages;
 
 /**
  *
@@ -50,6 +53,7 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
     
     @EJB EjbSeguimientoEstadia ejb;
     @EJB EjbAsignacionRolesEstadia ejbAsignacionRolesEstadia;
+    @EJB EjbAperturaExtCartaResponsivaCursoIMSS ejbAperturaExtCartaResponsivaCursoIMSS;
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
@@ -184,17 +188,34 @@ public class SeguimientoEstadiaPorEstudiante extends ViewScopedRol implements De
     
     public Boolean deshabilitarCarga(@NonNull DtoDocumentoEstadiaEstudiante dtoDocumentoEstadiaEstudiante){
         Boolean permiso= Boolean.FALSE;
-        ResultadoEJB<EventoEstadia> res = ejb.buscarEventoActivoDocumento(rol.getDtoSeguimientoEstadiaEstudiante(),dtoDocumentoEstadiaEstudiante, "Estudiante");
-        if(res.getCorrecto() && res.getValor() != null){
-            permiso= Boolean.TRUE;
+        if(rol.getGeneracion().getGeneracion() >= 32){
+            ResultadoEJB<SeguimientoVinculacionEstudiante> resSeg = ejbAperturaExtCartaResponsivaCursoIMSS.buscarSeguimientoEstudiante(rol.getGeneracion(), rol.getNivelEducativo(), rol.getDtoSeguimientoEstadiaEstudiante().getDtoEstudiante().getEstudiante());
+            if(resSeg.getCorrecto() && resSeg.getValor() != null){
+                Boolean validacionSegVinculacion = resSeg.getValor().getValidado();
+                if(validacionSegVinculacion){
+                    ResultadoEJB<EventoEstadia> res = ejb.buscarEventoActivoDocumento(rol.getDtoSeguimientoEstadiaEstudiante(),dtoDocumentoEstadiaEstudiante, "Estudiante");
+                    if(res.getCorrecto() && res.getValor() != null){
+                        permiso= Boolean.TRUE;
+                    }else{
+                        ResultadoEJB<EventoEstadia> resA = ejb.buscarAperturaExtemporaneaDocumento(rol.getDtoSeguimientoEstadiaEstudiante(),dtoDocumentoEstadiaEstudiante, "Estudiante");
+                        if (resA.getCorrecto() && resA.getValor() != null) {
+                            permiso = Boolean.TRUE;
+                        }
+                    }   
+                }else{
+                    Messages.addGlobalInfo("El estudiante no cuenta con Carta Responsiva y Curso(s) IMSS validados.");
+                }
+            }
+            Messages.addGlobalInfo("El estudiante no ha cargado la Carta Responsiva y Curso(s) IMSS.");
         }else{
-//            mostrarMensajeResultadoEJB(res);
-            ResultadoEJB<EventoEstadia> resA = ejb.buscarAperturaExtemporaneaDocumento(rol.getDtoSeguimientoEstadiaEstudiante(),dtoDocumentoEstadiaEstudiante, "Estudiante");
-            if (resA.getCorrecto() && resA.getValor() != null) {
+            ResultadoEJB<EventoEstadia> res = ejb.buscarEventoActivoDocumento(rol.getDtoSeguimientoEstadiaEstudiante(), dtoDocumentoEstadiaEstudiante, "Estudiante");
+            if (res.getCorrecto() && res.getValor() != null) {
                 permiso = Boolean.TRUE;
             } else {
-//                mostrarMensajeResultadoEJB(resA);
-
+                ResultadoEJB<EventoEstadia> resA = ejb.buscarAperturaExtemporaneaDocumento(rol.getDtoSeguimientoEstadiaEstudiante(), dtoDocumentoEstadiaEstudiante, "Estudiante");
+                if (resA.getCorrecto() && resA.getValor() != null) {
+                    permiso = Boolean.TRUE;
+                }
             }
         }
         return permiso;

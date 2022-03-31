@@ -214,7 +214,7 @@ public class EjbAperturaExtCartaResponsivaCursoIMSS {
             
             if(seguimiento == null) return ResultadoEJB.crearErroneo(2, "No se puede guardar apertura de estudiante que no tiene seguimiento de vinculación registrado previamente en base de datos.", AperturaExtemporaneaEventoVinculacion.class);
             
-             Date fechaFinCompleta = ejbPermisoAperturaExtemporanea.obtenerFechaFin(fechaFin);
+            Date fechaFinCompleta = ejbPermisoAperturaExtemporanea.obtenerFechaFin(fechaFin);
             
             AperturaExtemporaneaEventoVinculacion aperturaExtemporaneaEventoVinculacion = new AperturaExtemporaneaEventoVinculacion();
             aperturaExtemporaneaEventoVinculacion.setEvento(actividad);
