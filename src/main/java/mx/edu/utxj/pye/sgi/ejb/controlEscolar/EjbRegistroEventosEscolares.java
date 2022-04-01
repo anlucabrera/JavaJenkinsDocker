@@ -542,6 +542,25 @@ public class EjbRegistroEventosEscolares {
         }
     }
     
+    /**
+     * Permite buscar el jefe o encargado del departamento de servicios escolares
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<Personal> buscarJefeEncargadoServiciosEscolares(){
+        try{
+            
+            Personal personalServiciosEscolares = em.createQuery("SELECT p FROM Personal p WHERE p.areaOperativa=:areaOperativa AND p.areaSuperior=:areaSuperior AND p.status<>:status", Personal.class)
+                    .setParameter("areaOperativa", (short)10)
+                    .setParameter("areaSuperior", (short)2)
+                    .setParameter("status", 'B')
+                    .getResultStream().findFirst().orElse(null);
+                
+            return ResultadoEJB.crearCorrecto(personalServiciosEscolares, "Jefe o Encargado del Departamento de Servicios Escolares.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo buscar al Jefe o Encargado del Departamento de Servicios Escolares. (EjbRegistroEventosEscolares.buscarJefeEncargadoServiciosEscolares)", e, null);
+        }
+    }
+    
      /**
      * Permite registrar el evento de asignación académica para el jefe de servicios escolares
      * @param eventoEscolar
@@ -549,18 +568,13 @@ public class EjbRegistroEventosEscolares {
      */
     public ResultadoEJB<EventoEscolarDetalle> registroAsignacionAcademicaEscolares(EventoEscolar eventoEscolar){
         try{
-            
+            Personal personalServiciosEscolares = buscarJefeEncargadoServiciosEscolares().getValor();
             DtoPeriodoEscolarFechas periodoEscolarFechas = ejbAdministracionCiclosPeriodosEscolares.getPeriodosEscolares().getValor().stream().filter(p->p.getPeriodoEscolar().getPeriodo().equals(eventoEscolar.getPeriodo())).findFirst().orElse(null);
-            
-            System.err.println("registroAsignacionAcademicaEscolares - evento " + eventoEscolar.getEvento());
-            System.err.println("registroAsignacionAcademicaEscolares - fechaInicio " + periodoEscolarFechas.getFechasPeriodoEscolar().getInicio());
-            System.err.println("registroAsignacionAcademicaEscolares - fechaFin " + periodoEscolarFechas.getFechasPeriodoEscolar().getFin());
-            
-            
+           
             EventoEscolarDetalle eventoEscolarDetalle = new EventoEscolarDetalle();
             eventoEscolarDetalle.setEvento(eventoEscolar);
             eventoEscolarDetalle.setArea(null);
-            eventoEscolarDetalle.setPersona(287);
+            eventoEscolarDetalle.setPersona(personalServiciosEscolares.getClave());
             eventoEscolarDetalle.setInicio(periodoEscolarFechas.getFechasPeriodoEscolar().getInicio());
             eventoEscolarDetalle.setFin(periodoEscolarFechas.getFechasPeriodoEscolar().getFin());
             em.persist(eventoEscolarDetalle);
