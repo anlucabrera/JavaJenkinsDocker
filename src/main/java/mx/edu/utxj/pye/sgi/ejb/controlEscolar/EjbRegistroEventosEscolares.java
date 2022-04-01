@@ -22,6 +22,7 @@ import mx.edu.utxj.pye.sgi.dto.ResultadoEJB;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAperturaEventosEscolares;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCalendarioEventosEscolares;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoEventosEscolares;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoPeriodoEscolarFechas;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.EventoEscolar;
@@ -45,6 +46,7 @@ public class EjbRegistroEventosEscolares {
     private EntityManager em;
     
     @EJB EjbPermisoAperturaExtemporanea ejbPermisoAperturaExtemporanea;
+    @EJB EjbAdministracionCiclosPeriodosEscolares ejbAdministracionCiclosPeriodosEscolares;
     
     @PostConstruct
     public  void init(){
@@ -449,6 +451,8 @@ public class EjbRegistroEventosEscolares {
                     if(procesosInscripcion== null){
                        registroProcesoInscripcion(eventoEscolar);
                     }
+                }else if(eventoEscolar.getTipo().equals("Carga_académica")){
+                    registroAsignacionAcademicaEscolares(eventoEscolar);
                 }
             });
             
@@ -500,10 +504,12 @@ public class EjbRegistroEventosEscolares {
             em.persist(eventoEscolar);
             
             if(eventoEscolar.getTipo().equals("Registro_fichas_admision")||eventoEscolar.getTipo().equals("Reincorporaciones")){
-                    ProcesosInscripcion procesosInscripcion = buscarProcesoInscripcion(eventoEscolar).getValor();
-                    if(procesosInscripcion== null){
-                       registroProcesoInscripcion(eventoEscolar);
-                    }
+                ProcesosInscripcion procesosInscripcion = buscarProcesoInscripcion(eventoEscolar).getValor();
+                if(procesosInscripcion== null){
+                    registroProcesoInscripcion(eventoEscolar);
+                }
+            }else if(eventoEscolar.getTipo().equals("Carga_académica")){
+                registroAsignacionAcademicaEscolares(eventoEscolar);
             }
              
             return ResultadoEJB.crearCorrecto(eventoEscolar, "Evento escolar registrado en el periodo seleccionado.");
@@ -533,6 +539,36 @@ public class EjbRegistroEventosEscolares {
             return ResultadoEJB.crearCorrecto(delete, "Se eliminó correctamente el evento escolar del periodo seleccionado.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el evento escolar del periodo seleccionado. (EjbRegistroEventosEscolares.eliminarEventoEscolar)", e, null);
+        }
+    }
+    
+     /**
+     * Permite registrar el evento de asignación académica para el jefe de servicios escolares
+     * @param eventoEscolar
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<EventoEscolarDetalle> registroAsignacionAcademicaEscolares(EventoEscolar eventoEscolar){
+        try{
+            
+            DtoPeriodoEscolarFechas periodoEscolarFechas = ejbAdministracionCiclosPeriodosEscolares.getPeriodosEscolares().getValor().stream().filter(p->p.getPeriodoEscolar().getPeriodo().equals(eventoEscolar.getPeriodo())).findFirst().orElse(null);
+            
+            System.err.println("registroAsignacionAcademicaEscolares - evento " + eventoEscolar.getEvento());
+            System.err.println("registroAsignacionAcademicaEscolares - fechaInicio " + periodoEscolarFechas.getFechasPeriodoEscolar().getInicio());
+            System.err.println("registroAsignacionAcademicaEscolares - fechaFin " + periodoEscolarFechas.getFechasPeriodoEscolar().getFin());
+            
+            
+            EventoEscolarDetalle eventoEscolarDetalle = new EventoEscolarDetalle();
+            eventoEscolarDetalle.setEvento(eventoEscolar);
+            eventoEscolarDetalle.setArea(null);
+            eventoEscolarDetalle.setPersona(287);
+            eventoEscolarDetalle.setInicio(periodoEscolarFechas.getFechasPeriodoEscolar().getInicio());
+            eventoEscolarDetalle.setFin(periodoEscolarFechas.getFechasPeriodoEscolar().getFin());
+            em.persist(eventoEscolarDetalle);
+            em.flush();
+                
+            return ResultadoEJB.crearCorrecto(eventoEscolarDetalle, "Se registró correctamente el evento de asignación de carga académica para el jefe de servicios escolares.");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo registrar el evento de asignación de carga académica para el jefe de servicios escolares. (EjbRegistroEventosEscolares.registroAsignacionAcademicaEscolares)", e, null);
         }
     }
     
