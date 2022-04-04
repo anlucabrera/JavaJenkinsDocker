@@ -11,7 +11,7 @@
                 xmlns:pe="http://primefaces.org/ui/extensions"
                 xmlns:o="http://omnifaces.org/ui">
 
-    <ui:define name="head-end">
+    <ui:define name="head-end">       
         <h:outputStylesheet library="css" name="tablaDatos.css"/>
         <!-- Inicio estilos par proceso electoral -->
         <c:if test="#{utilidadesAcceso.procesoElectoralActivo}">
@@ -19,6 +19,16 @@
         </c:if>
         <link rel="stylesheet" type="text/css" href="../../resources/css/estilosGeneralesPrint.css" media="screen" />
         <!-- Fin estilos par proceso electoral -->
+        <style type="text/css">
+            .ui-selectonemenu-list-item {
+                border: 0 none;
+                margin: 1px 0;
+                padding: 3px 5px;
+                text-align: left;
+                white-space: pre-line;
+                max-width: calc(90vw);
+            }
+        </style>
     </ui:define>
 
     <ui:define name="title">
@@ -647,9 +657,9 @@
                                                     <p:autoUpdate/>
                                                     <div class="ui-g-12 ui-sm-12">
                                                         <div class="ui-material">
-                                                            <p:selectOneMenu id="competenciasR" value="#{administracionPlanEstudioDirector.rol.alineacionAcedemica.ide}">
-                                                                <f:selectItem itemValue="#{null}"/>
-                                                                <f:selectItems value="#{administracionPlanEstudioDirector.rol.alineacionesDescripociones}" var="competenciaR" itemValue="#{competenciaR.ide}" itemLabel="#{competenciaR.clave} -- #{competenciaR.descripcion}" />
+                                                            <p:selectOneMenu id="competenciasR" value="#{administracionPlanEstudioDirector.rol.alineacionAcedemica.ide}" autoWidth="false" panelStyle="max-width: calc(90vw) !important; white-space: break-spaces !important;">
+                                                                <f:selectItem itemValue="#{null}" />
+                                                                <f:selectItems value="#{administracionPlanEstudioDirector.rol.alineacionesDescripociones}" var="competenciaR" itemValue="#{competenciaR.ide}" itemLabel="#{competenciaR.clave} -- #{competenciaR.descripcion}"  />
                                                                 <p:ajax listener="#{administracionPlanEstudioDirector.comprobarClaveDeRegistro()}" update="regstroC" process="@this"/>
                                                             </p:selectOneMenu>
                                                             <p:outputLabel for="competenciasR" value="Competencia"/>
@@ -768,34 +778,49 @@
                                                                 </p:dataTable>
                                                             </p:tab>
                                                             <p:tab title="Alineacion">
-                                                                <p:dataTable id="unidadesResultados" var="com" value="#{administracionPlanEstudioDirector.rol.acedemicas}" sortBy="#{com.ide}"
-                                                                             editable="true" editMode="row">
+                                                                <p:remoteCommand name="actualizarTabla" actionListener="#{administracionPlanEstudioDirector.metodoBase()}" update="unidadesResultados" />
+                                                                <p:dataTable id="unidadesResultados" var="com" value="#{administracionPlanEstudioDirector.rol.acedemicas}" sortBy="#{com.planEstudioMateria.claveMateria}"
+                                                                             editable="true" editMode="row" widgetVar="dtbPoaEvaluacion" rowKey="#{com.ide}" expandableRowGroups="true">
+
                                                                     <f:facet name="header">
                                                                         #{administracionPlanEstudioDirector.rol.alineacionAcedemica.planEstudio.descripcion}
                                                                     </f:facet>
                                                                     <p:columnGroup type="header">
                                                                         <p:row class="success">
-                                                                            <p:column rowspan="2" headerText="Descripción" style="width: 40%;"/> 
-                                                                            <p:column rowspan="2" headerText="Clave" style="width: 10%;"/>
-                                                                            <p:column rowspan="2" headerText="Nivel" style="width: 10%;" rendered="#{administracionPlanEstudioDirector.rol.newRegiistroOe}"/>
-                                                                            <p:column rowspan="2" headerText="Meta" style="width: 10%;" rendered="#{administracionPlanEstudioDirector.rol.newRegiistroIn}"/>
-                                                                            <p:column rowspan="2" headerText="Grado" style="width: 10%;"/>
-                                                                            <p:column rowspan="2" headerText="Meteria" style="width: 30%;" />
+                                                                            <p:column rowspan="2" headerText="Clave" style="width: 5%;"/>
+                                                                            <p:column rowspan="2" headerText="Nivel Programa" style="width: 25%;" />
+                                                                            <p:column rowspan="2" headerText="Descripción" style="width: 59%;"/> 
+                                                                            <p:column rowspan="2" headerText="Nivel" style="width: 6%;" rendered="#{administracionPlanEstudioDirector.rol.newRegiistroOe}"/>
+                                                                            <p:column rowspan="2" headerText="Meta" style="width: 5%;" rendered="#{administracionPlanEstudioDirector.rol.newRegiistroIn}"/>
                                                                             <p:column rowspan="2" headerText="" style="width: 32px;"/> 
+                                                                            <!--p:column rowspan="2" headerText="" style="width: 50px;"/--> 
                                                                         </p:row>
                                                                     </p:columnGroup>
+
+
+                                                                    <p:headerRow>
+                                                                        <p:column colspan="#{administracionPlanEstudioDirector.rol.newRegiistroOe eq true ?'5':
+                                                                                             administracionPlanEstudioDirector.rol.newRegiistroIn eq true ?'5':'4'}" style="text-align: justify" styleClass="lac">
+                                                                            <!--p:column colspan="# {administracionPlanEstudioDirector.rol.newRegiistroOe eq true ?'6':
+                                                                                             administracionPlanEstudioDirector.rol.newRegiistroIn eq true ?'6':'5'}" style="text-align: justify" styleClass="lac"-->
+                                                                            <h:outputText value="#{com.planEstudioMateria.grado}° Cuatrimestre -- #{com.planEstudioMateria.claveMateria} -- #{com.planEstudioMateria.idMateria.nombre}"/>
+                                                                        </p:column>
+                                                                    </p:headerRow>
 
                                                                     <p:ajax event="rowEdit" listener="#{administracionPlanEstudioDirector.onRowEditAlineacion}" update="unidadesResultados" />
                                                                     <p:ajax event="rowEditCancel" listener="#{administracionPlanEstudioDirector.onRowCancel}" update="unidadesResultados" />
 
-                                                                    <p:column groupRow="true">
+                                                                    <p:column>
+                                                                        <h:outputText value="#{com.clave}" />
+                                                                    </p:column>
+                                                                    <p:column>
+                                                                        <h:outputText value="#{com.planEstudio.descripcion}" />
+                                                                    </p:column>
+                                                                    <p:column>
                                                                         <p:cellEditor>
                                                                             <f:facet name="output"><h:outputText value="#{com.descripcion}" /></f:facet>
                                                                             <f:facet name="input"><p:inputTextarea value="#{com.descripcion}" /></f:facet>
                                                                         </p:cellEditor>                                                            
-                                                                    </p:column>
-                                                                    <p:column>
-                                                                        <h:outputText value="#{com.clave}" />
                                                                     </p:column>
                                                                     <p:column rendered="#{administracionPlanEstudioDirector.rol.newRegiistroOe}">
                                                                         <p:cellEditor>
@@ -817,15 +842,21 @@
                                                                         </p:cellEditor>  
                                                                     </p:column>
                                                                     <p:column>
-                                                                        <h:outputText value="#{com.planEstudioMateria.grado}° Cuatrimestre" />
-                                                                    </p:column>
-                                                                    <p:column>
-                                                                        <h:outputText value="#{com.planEstudioMateria.claveMateria}--#{com.planEstudioMateria.idMateria.nombre}" />
-                                                                    </p:column>
-                                                                    <p:column>
                                                                         <p:rowEditor />
                                                                     </p:column>
+                                                                    <!--p:column>
+                                                                        <p:commandButton actionListener="# {administracionPlanEstudioDirector.eliminarAlineacionE(com)}" update="@this" oncomplete="actualizarTabla()" icon="fa fa-trash" 
+                                                                                         onsuccess="PF('alineacionFrm').update();" styleClass="btn-primary" title="Eliminar Alineación">
+                                                                            <p:confirm header="Confirmación" message="¿Confirma la eliminación de la alineacion del objetivo # {com.descripcion} de la materia # {com.planEstudioMateria.claveMateria}?" icon="ui-icon-alert" />
+                                                                        </p:commandButton>
+                                                                    </p:column-->
                                                                 </p:dataTable>
+
+
+                                                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                                                </p:confirmDialog>   
                                                             </p:tab>
                                                         </p:tabView>
                                                         <br/>

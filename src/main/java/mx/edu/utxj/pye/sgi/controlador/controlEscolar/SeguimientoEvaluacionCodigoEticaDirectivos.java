@@ -70,7 +70,7 @@ public class SeguimientoEvaluacionCodigoEticaDirectivos extends ViewScopedRol im
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
 
             rol.setDirectivo(directivo);
-            System.out.println("Rol directivo asignado");
+//            System.out.println("Rol directivo asignado");
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
             if(verificarInvocacionMenu()) return;//detener el flujo si la invocación es desde el menu para impedir que se ejecute todo el proceso y eficientar la  ejecución
             if(!tieneAcceso){mostrarMensajeNoAcceso();return;}

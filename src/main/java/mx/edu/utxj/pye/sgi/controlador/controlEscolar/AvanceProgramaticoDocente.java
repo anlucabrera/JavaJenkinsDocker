@@ -198,7 +198,7 @@ public class AvanceProgramaticoDocente extends ViewScopedRol implements Desarrol
         rol.setGrupoSelec(new Grupo());
         rol.setDvcs(new ArrayList<>());
         rol.setPlanEstudio((PlanEstudio) event.getNewValue());
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AvanceProgramaticoDocente.cambiarPlanestudio()"+rol.getPlanEstudio());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AvanceProgramaticoDocente.cambiarPlanestudio()"+rol.getPlanEstudio());
 //        ResultadoEJB<List<Grupo>> resgrupos = ejb.getListaGrupoPlanEstudio(rol.getPlanEstudio(),rol.getPeriodo());
 //        if(!resgrupos.getCorrecto()) mostrarMensajeResultadoEJB(resgrupos);
 //        rol.setGrupos(resgrupos.getValor());          

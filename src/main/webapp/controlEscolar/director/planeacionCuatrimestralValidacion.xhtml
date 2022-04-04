@@ -186,9 +186,9 @@
                                                                         </p:row>
                                                                         <p:row rendered="#{planeacionCuatrimestralValidacion.rol.render}">
                                                                             <p:column style="border-style: hidden !important;" colspan="6">
-                                                                                <p:dataTable id="atr" var="ae" value="#{planeacionCuatrimestralValidacion.rol.estudioMateria.atributoEgresoList}" styleClass="saltoDePagina">
+                                                                                <p:dataTable id="atr" var="ae" value="#{planeacionCuatrimestralValidacion.rol.estudioMateria.atributoEgresoPlanMateriaList}" styleClass="saltoDePagina">
                                                                                     <p:column >
-                                                                                        <h:outputText value="#{ae.clave} -- #{ae.descripcion}"  style="text-align: justify; font-size: small"/>
+                                                                                        <h:outputText value="#{ae.atributoEgreso1.clave} -- #{ae.atributoEgreso1.descripcion}"  style="text-align: justify; font-size: small"/>
                                                                                     </p:column>
                                                                                 </p:dataTable>  
                                                                             </p:column>     
@@ -200,9 +200,9 @@
                                                                         </p:row>
                                                                         <p:row rendered="#{planeacionCuatrimestralValidacion.rol.render}">
                                                                             <p:column style="border-style: hidden !important;" colspan="3">
-                                                                                <p:dataTable id="cri" var="cd" value="#{planeacionCuatrimestralValidacion.rol.estudioMateria.criterioDesempenioList}" styleClass="saltoDePagina">
+                                                                                <p:dataTable id="cri" var="cd" value="#{planeacionCuatrimestralValidacion.rol.estudioMateria.criterioDesempenioPlanMateriaList}" styleClass="saltoDePagina">
                                                                                     <p:column >
-                                                                                        <h:outputText value="#{cd.clave} -- #{cd.descripcion}"  style="text-align: justify; font-size: small"/>
+                                                                                        <h:outputText value="#{cd.criterioDesempenio1.clave} -- #{cd.criterioDesempenio1.descripcion}"  style="text-align: justify; font-size: small"/>
                                                                                     </p:column>
                                                                                 </p:dataTable>  
                                                                             </p:column>                                                                                    

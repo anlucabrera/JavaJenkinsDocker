@@ -45,6 +45,7 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.text.DecimalFormat;
 import java.util.Objects;
+import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoAlineacionAcedemica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoInformePlaneaciones;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoResultadosCargaAcademica;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.ResultadosPlaneacionesMultipleConsulta;
@@ -86,7 +87,6 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
     @EJB    private mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo ejbAreasLogeo;
     @Inject LogonMB logon;
     @Getter Boolean tieneAcceso = false;
-    @Getter    @Setter    private BarChartModel barModel2;
     Integer bt=0,bd=0,ri=0;
 
     /**
@@ -222,6 +222,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
             } else {
                 rol.setRender(Boolean.TRUE);
             }
+            rol.setDf(new DecimalFormat("#.00"));
         }catch (Exception e){mostrarExcepcion(e); }
     }
 
@@ -411,7 +412,9 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
     }
    
     public void calcularesultados() {  
-        DecimalFormat df = new DecimalFormat("#.##");
+        rol.setGraficaA(new ArrayList<>());
+        rol.setGraficaP(new ArrayList<>());
+        
         if(rol.getPlaneacioneses().isEmpty())return;
         rol.setDrcas(new ArrayList<>());
         rol.getPlaneacioneses().forEach((t) -> {
@@ -422,9 +425,6 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
                 rol.getDrcas().add(resc.getValor());
             }
         });    
-            
-        barModel2=new BarChartModel();
-        ChartData data = new ChartData();
         
         rol.setAutonomo(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),1));
         rol.setDestacado(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),2));
@@ -432,6 +432,7 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
         rol.setNoAcreditado(configuraciones.getestudiantesAlcanzaMeta(rol.getCarga().getCargaAcademica(),4));
         
         rol.getEstudioMateria().getIndicadorAlineacionPlanMateriaList().forEach((t) -> {
+            
             Double porcentaje=0D;
              ResultadoEJB<Double> resc = configuraciones.getCalificacionesIndicador(rol.getCarga().getCargaAcademica(), t.getMetaIndicador());
             if (!resc.getCorrecto()) {
@@ -439,47 +440,9 @@ public class ResultadosPlaneacionesConsulta extends ViewScopedRol implements Des
             } else {
                 porcentaje=resc.getValor();
             }
-            BarChartDataSet barDataSet = new BarChartDataSet();
-            barDataSet.setLabel(t.getIndicadorAlineacion().getClave() +" Meta esperada " + t.getMetaIndicador()+ " % " +" Meta alcanzada " + df.format(porcentaje)+ " % ");
-            if (porcentaje>t.getMetaIndicador()) {
-                barDataSet.setBackgroundColor("rgb(0,255,0)");
-                barDataSet.setBorderColor("rgb(0,255,0)");
-            } else {
-                barDataSet.setBackgroundColor("rgb(255,0,0)");
-                barDataSet.setBorderColor("rgb(255,0,0)");
-            }
-            barDataSet.setBorderWidth(1);
-            List<Number> values = new ArrayList<>();
-            values.add(porcentaje);
-            barDataSet.setData(values);
-            data.addChartDataSet(barDataSet);
+            rol.getGraficaP().add(new DtoAlineacionAcedemica.Grafica(t.getIndicadorAlineacion().getClave(), t.getMetaIndicador(), t.getMetaIndicador()));
+            rol.getGraficaA().add(new DtoAlineacionAcedemica.Grafica(t.getIndicadorAlineacion().getClave(), porcentaje,porcentaje));
         });
-        
-        List<String> labels = new ArrayList<>();
-        labels.add(rol.getEstudioMateria().getClaveMateria());
-
-        data.setLabels(labels);
-        barModel2.setData(data);
- 
-        
-
-        //Options
-        BarChartOptions options = new BarChartOptions();
-        CartesianScales cScales = new CartesianScales();
-        CartesianLinearAxes linearAxes = new CartesianLinearAxes();
-        linearAxes.setOffset(true);
-        CartesianLinearTicks ticks = new CartesianLinearTicks();
-        ticks.setBeginAtZero(true);
-        linearAxes.setTicks(ticks);
-        cScales.addYAxesData(linearAxes);
-        options.setScales(cScales);
-
-        Title title = new Title();
-        title.setDisplay(true);
-        title.setText("Metas");
-        options.setTitle(title);
-
-        barModel2.setOptions(options);
        
     }
 

@@ -6,6 +6,7 @@
                 xmlns:jsf="http://xmlns.jcp.org/jsf"
                 template="/WEB-INF/templates/template.xhtml"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:hf="http://highfaces.org"
                 xmlns:pe="http://primefaces.org/ui/extensions">
 
     <ui:define name="head-end">
@@ -14,15 +15,16 @@
                 console.log("ejemplo");
             }
             ;
-            
-             //<![CDATA[
-    function exportChart() {
-        //export image
-        $('#output').empty().append(PF('chart').exportAsImage());
 
-        //show the dialog
-    };
-    //]]>
+            //<![CDATA[
+            function exportChart() {
+                //export image
+                $('#output').empty().append(PF('chart').exportAsImage());
+
+                //show the dialog
+            }
+            ;
+            //]]>
 
         </script>
         <style type="text/css">
@@ -35,7 +37,7 @@
                 .ui-panelgrid .ui-panelgrid-cell{
                     border-style: hidden !important;
                 }
-                
+
                 .grafica grafica{
                     visibility: visible !important;
                 }
@@ -153,121 +155,123 @@
                                                             <div class="col-md-12">
                                                                 <div class="box box-widget widget-user-2">
                                                                     <div class="row" style="align-content:  center">
-                                                                        <p:panelGrid styleClass="saltoDePagina">
+                                                                        <p:panelGrid>
                                                                             <p:row>
                                                                                 <p:column colspan="2" style="border-style: hidden !important;">   
-                                                                                    <img src="../../resources/img/logoSep.jpg" alt="" height="80px"/>
+                                                                                    <img src="../../resources/img/logoSep.jpg" alt="" height="75px"/>
                                                                                 </p:column>
                                                                                 <p:column colspan="2" style="border-style: hidden !important; font-weight: bold; text-align: center; font-size: x-large;">
-                                                                                    <h4><strong>Universidad Tecnológica De</strong></h4>
-                                                                                    <h4><strong>Xicotepec de Juárez</strong></h4>
+                                                                                    <h4><strong>Universidad Tecnológica De Xicotepec de Juárez</strong></h4>
                                                                                     <h6>Organismo Público Descentralizado del Gobierno del Estado de Puebla</h6>       
                                                                                     <h5><strong>Análisis de Logro de Atributos</strong></h5>
                                                                                 </p:column>
                                                                                 <p:column colspan="2" style="border-style: hidden !important;">   
-                                                                                    <img src="../../resources/img/utxj.png" alt="" height="100px"/>
+                                                                                    <img src="../../resources/img/utxj.png" alt="" width="140px"/>
                                                                                 </p:column>
                                                                             </p:row>
+                                                                        </p:panelGrid>     
+                                                                        <p:panelGrid>
                                                                             <p:row>
-                                                                                <p:column style="border-style: hidden !important;"/>
-                                                                                <p:column style="border-style: hidden !important;"/>
-                                                                                <p:column style="border-style: hidden !important;"/>
+                                                                                <p:column colspan="7" style="border-style: hidden !important;"/>
                                                                                 <p:column colspan="2" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Fecha de Consulta</p:column>
                                                                                 <p:column style="border-style: hidden !important;"> <h:outputLabel value="#{resultadosPlaneacionesConsulta.rol.fechaInpresion}"><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputLabel></p:column>
                                                                             </p:row>
-                                                                            <p:row><p:column colspan="6" style="border-style: hidden !important;"/></p:row>
-                                                                            <p:row><p:column colspan="6" style="border-style: hidden !important;"/></p:row>
-                                                                            <p:row><p:column colspan="6" style="border-style: hidden !important;"/></p:row>
-                                                                            <p:row><p:column colspan="6" style="border-style: hidden !important;"/></p:row>
                                                                             <p:row>
                                                                                 <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">CARRERA:</p:column>
-                                                                                <p:column style="border-style: hidden !important;" colspan="5"> #{resultadosPlaneacionesConsulta.rol.carga.programa.nombre}  </p:column>
-                                                                            </p:row>
-                                                                            <p:row>
-                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">PERIODO:</p:column>
-                                                                                <p:column style="border-style: hidden !important;" colspan="5">#{resultadosPlaneacionesConsulta.rol.carga.periodo.mesInicio.mes} - #{resultadosPlaneacionesConsulta.rol.carga.periodo.mesFin.mes} #{resultadosPlaneacionesConsulta.rol.carga.periodo.anio} </p:column>
-                                                                            </p:row>
-                                                                            <p:row>
-                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">GRUPO:</p:column>
-                                                                                <p:column style="border-style: hidden !important;" colspan="5">#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.cveGrupo.grado}° #{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.cveGrupo.literal} </p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="9"> #{resultadosPlaneacionesConsulta.rol.carga.programa.nombre}  </p:column>
                                                                             </p:row>
                                                                             <p:row>
                                                                                 <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">ASIGNATURA:</p:column>
-                                                                                <p:column style="border-style: hidden !important;" colspan="5">(#{resultadosPlaneacionesConsulta.rol.carga.planEstudioMateria.claveMateria}) #{resultadosPlaneacionesConsulta.rol.carga.materia.nombre} </p:column>
-                                                                            </p:row>    
+                                                                                <p:column style="border-style: hidden !important;" colspan="9">(#{resultadosPlaneacionesConsulta.rol.carga.planEstudioMateria.claveMateria}) #{resultadosPlaneacionesConsulta.rol.carga.materia.nombre} </p:column>
+                                                                            </p:row> 
+                                                                            <p:row>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">PERIODO:</p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="3">#{resultadosPlaneacionesConsulta.rol.carga.periodo.mesInicio.mes} - #{resultadosPlaneacionesConsulta.rol.carga.periodo.mesFin.mes} #{resultadosPlaneacionesConsulta.rol.carga.periodo.anio} </p:column>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">GRUPO:</p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="2">#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.cveGrupo.grado}° #{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.cveGrupo.literal} </p:column>
+                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">NIVEL MÍNIMO DE LOGRO:</p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="1">8.0</p:column>
+                                                                            </p:row>
                                                                             <p:row>
                                                                                 <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">DOCENTE:</p:column>
-                                                                                <p:column style="border-style: hidden !important;" colspan="5">#{resultadosPlaneacionesConsulta.rol.carga.docente.personal.nombre} </p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="4">#{resultadosPlaneacionesConsulta.rol.carga.docente.personal.nombre} </p:column>
+                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">TUTOR</p:column>
+                                                                                <p:column style="border-style: hidden !important;" colspan="4">#{resultadosPlaneacionesConsulta.buscarPersonal(resultadosPlaneacionesConsulta.rol.grupoSelec.tutor)} </p:column>
+                                                                            </p:row>  
+                                                                            <p:row><p:column colspan="10" style="border-style: groove !important;"/></p:row>
+                                                                            <p:row><p:column colspan="10" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">ESTUDIANTES INSCRITOS</p:column></p:row>
+                                                                            <p:row >
+                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">ACTIVOS</p:column>
+                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">REINCORPORACIONES</p:column>
+                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">BAJAS TEMPORALES</p:column>
+                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">BAJAS DEFINITIVAS</p:column>
+                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">TOTAL</p:column>
                                                                             </p:row>  
                                                                             <p:row>
-                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: justify;">TUTOR</p:column>
-                                                                                <p:column style="border-style: hidden !important;" colspan="5">#{resultadosPlaneacionesConsulta.buscarPersonal(resultadosPlaneacionesConsulta.rol.grupoSelec.tutor)} </p:column>
+                                                                                <p:column colspan="2" style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esActivos}</p:column>
+                                                                                <p:column colspan="2" style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esRein}</p:column>      
+                                                                                <p:column colspan="2" style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esBajT}</p:column>
+                                                                                <p:column colspan="2" style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esBajD}</p:column>    
+                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.esInsc}</p:column>
                                                                             </p:row>  
-                                                                            <p:row><p:column colspan="6" style="border-style: groove !important;"/></p:row>
-                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
-                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">TOTAL DE ESTUDIANTES INSCRITOS</p:column>
-                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.esInsc}</p:column>
-                                                                                <p:column colspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">NIVEL MÍNIMO DE LOGRO</p:column>
-                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">8.0</p:column>
-                                                                            </p:row>  
-                                                                            <p:row >
-                                                                                <p:column colspan="2" rowspan="2" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">TOTAL DE ESTUDIANTES TENEMOS</p:column>
-                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">ACTIVOS</p:column>
-                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">REINCORPORACIONES</p:column>
-                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">BAJAS TEMPORALES</p:column>
-                                                                                <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">BAJAS DEFINITIVAS</p:column>
 
-                                                                            </p:row>  
-                                                                            <p:row >
-                                                                                <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esActivos}</p:column>
-                                                                                <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esRein}</p:column>      
-                                                                                <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esBajT}</p:column>
-                                                                                <p:column style="border-style: groove !important; text-align: center;" >#{resultadosPlaneacionesConsulta.rol.esBajD}</p:column>                                                                          
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render eq true?(resultadosPlaneacionesConsulta.rol.estudioMateria.atributoEgresoPlanMateriaList.size() eq 0?false:true):false}">
+                                                                                <p:column style="border-style: hidden !important;" colspan="10">
+                                                                                    <p:dataTable id="atr" var="ae" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.atributoEgresoPlanMateriaList}" styleClass="saltoDePagina">
+                                                                                        <p:column headerText="Atributos de Egreso">
+                                                                                            <h:outputText value="#{ae.atributoEgreso1.clave} -- #{ae.atributoEgreso1.descripcion}"  style="text-align: justify; font-size: x-small"/>
+                                                                                        </p:column>
+                                                                                    </p:dataTable>  
+                                                                                </p:column>     
                                                                             </p:row>
-
-                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
-                                                                                <p:column colspan="6" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">Atributos de Egreso</p:column>     
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render eq true?(resultadosPlaneacionesConsulta.rol.estudioMateria.criterioDesempenioPlanMateriaList.size() eq 0?false:true):false}">
+                                                                                <p:column style="border-style: hidden !important;" colspan="10">
+                                                                                    <p:dataTable id="cri" var="cd" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.criterioDesempenioPlanMateriaList}" styleClass="saltoDePagina">
+                                                                                        <p:column headerText="Criterios de desempeño">
+                                                                                            <h:outputText value="#{cd.criterioDesempenio1.clave} -- #{cd.criterioDesempenio1.descripcion}"  style="text-align: justify; font-size: x-small"/>
+                                                                                        </p:column>
+                                                                                    </p:dataTable>  
+                                                                                </p:column>     
                                                                             </p:row>
-                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
-                                                                                <p:column style="border-style: hidden !important;" colspan="6">
-                                                                                    <p:dataTable id="atr" var="ae" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.atributoEgresoList}" styleClass="saltoDePagina">
-                                                                                        <p:column >
-                                                                                            <h:outputText value="#{ae.clave} -- #{ae.descripcion}"  style="text-align: justify; font-size: small"/>
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render eq true?(resultadosPlaneacionesConsulta.rol.estudioMateria.indicadorAlineacionPlanMateriaList.size() eq 0?false:true):false}">
+                                                                                <p:column style="border-style: hidden !important;" colspan="10">
+                                                                                    <p:dataTable id="ind" var="in" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.indicadorAlineacionPlanMateriaList}" styleClass="saltoDePagina">
+                                                                                        <p:column headerText="Indicadores">
+                                                                                            <h:outputText value="#{in.indicadorAlineacion.clave} -- #{in.indicadorAlineacion.descripcion}" style="text-align: justify; font-size: x-small"/>
+                                                                                            <h:outputText value=" Meta propuesta "  style="text-align: justify; font-weight: bold;"/>
+                                                                                            <h:outputText value=" #{in.metaIndicador}"  style="text-align: justify; font-weight: bold; font-size: larger;"/>
                                                                                         </p:column>
                                                                                     </p:dataTable>  
                                                                                 </p:column>     
                                                                             </p:row>
 
-                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
+                                                                            <!--p:row rendered="# {resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column colspan="3" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Criterios de desempeño</p:column>                                                                                    
                                                                                 <p:column colspan="3" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Indicadores</p:column>
-                                                                            </p:row>
-                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
+                                                                            </p:row-->
+                                                                            <!--p:row rendered="# {resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column style="border-style: hidden !important;" colspan="3">
-                                                                                    <p:dataTable id="cri" var="cd" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.criterioDesempenioList}" styleClass="saltoDePagina">
+                                                                                    <p:dataTable id="cri" var="cd" value="# {resultadosPlaneacionesConsulta.rol.estudioMateria.criterioDesempenioPlanMateriaList}" styleClass="saltoDePagina">
                                                                                         <p:column >
-                                                                                            <h:outputText value="#{cd.clave} -- #{cd.descripcion}"  style="text-align: justify; font-size: small"/>
+                                                                                            <h:outputText value="# {cd.criterioDesempenio1.clave} --><!-- # {cd.criterioDesempenio1.descripcion}"  style="text-align: justify; font-size: small"/>
                                                                                         </p:column>
                                                                                     </p:dataTable>  
                                                                                 </p:column>                                                                                    
                                                                                 <p:column style="border-style: hidden !important;" colspan="3">
-                                                                                    <p:dataTable id="ind" var="in" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.indicadorAlineacionPlanMateriaList}" styleClass="saltoDePagina">
+                                                                                    <p:dataTable id="ind" var="in" value="# {resultadosPlaneacionesConsulta.rol.estudioMateria.indicadorAlineacionPlanMateriaList}" styleClass="saltoDePagina">
                                                                                         <p:column >
-                                                                                            <h:outputText value="#{in.indicadorAlineacion.clave} -- #{in.indicadorAlineacion.descripcion}" style="text-align: justify; font-size: small"/>
+                                                                                            <h:outputText value="# {in.indicadorAlineacion.clave} --><!-- # {in.indicadorAlineacion.descripcion}" style="text-align: justify; font-size: small"/>
                                                                                             <h:outputText value=" Meta propuesta "  style="text-align: justify; font-weight: bold;"/>
-                                                                                            <h:outputText value=" #{in.metaIndicador}"  style="text-align: justify; font-weight: bold; font-size: larger;"/>
+                                                                                            <h:outputText value=" # {in.metaIndicador}"  style="text-align: justify; font-weight: bold; font-size: larger;"/>
                                                                                         </p:column>
                                                                                     </p:dataTable>  
                                                                                 </p:column>
-                                                                            </p:row>
-                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
-                                                                                <p:column colspan="6" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Objetivos Educacionales</p:column>     
-                                                                            </p:row>
-                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
-                                                                                <p:column style="border-style: hidden !important;" colspan="6">
+                                                                            </p:row-->
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render eq true?(resultadosPlaneacionesConsulta.rol.estudioMateria.objetivoEducacionalPlanMateriaList.size() eq 0?false:true):false}">
+                                                                                <p:column style="border-style: hidden !important;" colspan="10">
                                                                                     <p:dataTable id="obj" var="oe" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.objetivoEducacionalPlanMateriaList}" styleClass="saltoDePagina">
-                                                                                        <p:column >
-                                                                                            <h:outputText value="#{oe.objetivoEducacional1.clave} -- #{oe.objetivoEducacional1.descripcion} Nivel de aportación #{oe.nivelAportacion}"  style="text-align: justify; font-size: small"/>
+                                                                                        <p:column headerText="Objetivos Educacionales" >
+                                                                                            <h:outputText value="#{oe.objetivoEducacional1.clave} -- #{oe.objetivoEducacional1.descripcion} Nivel de aportación #{oe.nivelAportacion}"  style="text-align: justify; font-size: x-small"/>
                                                                                             <h:outputText value=" Nivel de aportación "  style="text-align: justify; font-weight: bold;"/>
                                                                                             <h:outputText value=" #{oe.nivelAportacion}"  style="text-align: justify; font-weight: bold; font-size: larger;"/>
                                                                                         </p:column>
@@ -276,7 +280,6 @@
                                                                             </p:row>
                                                                         </p:panelGrid>
                                                                     </div>
-                                                                    <br/>
                                                                 </div>
                                                             </div>
                                                         </div>         
@@ -305,18 +308,18 @@
                                                                             </p:row>
                                                                         </p:columnGroup>
                                                                         <p:headerRow >
-                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?6:3):1}" style="border: #000000  !important;font-size: small;" >
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?6:3):1}" style="border: #000000  !important;font-size: x-small;" >
                                                                                 <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'Tarea Integradora: ':asignacionIndCA.informe.unidad} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':'-'} #{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?asignacionIndCA.informe.objetivo:asignacionIndCA.informe.nombreUnidad}" style="text-align: center;"/>
                                                                             </p:column>
-                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:1):1}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
-                                                                                <h:outputText value="#{asignacionIndCA.informe.fechaInicio}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
-                                                                                <h:outputText value=" al " style="text-align: center;" />
-                                                                                <h:outputText value="#{asignacionIndCA.informe.fechaFin}" style="text-align: center;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:1):1}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: x-small;">
+                                                                                <h:outputText value="#{asignacionIndCA.informe.fechaInicio}" style="text-align: center; font-size: x-small;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
+                                                                                <h:outputText value=" al " style="text-align: center; font-size: x-small;" />
+                                                                                <h:outputText value="#{asignacionIndCA.informe.fechaFin}" style="text-align: center; font-size: x-small;" ><f:convertDateTime pattern="dd/MM/yyyy"/></h:outputText>
                                                                             </p:column>
-                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?6:1}" style="border: #000000  !important;font-size: small; text-align: justify">
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?6:1}" style="border: #000000  !important;font-size: x-small; text-align: justify">
                                                                                 <h:outputText value="#{asignacionIndCA.informe.nombreUnidad eq 'T.I.'?'':asignacionIndCA.informe.objetivo}" style="text-align: justify" />
                                                                             </p:column>
-                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:2):1}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: small;">
+                                                                            <p:column colspan="#{resultadosPlaneacionesConsulta.rol.render eq true?(asignacionIndCA.informe.nombreUnidad eq 'T.I.'?3:2):1}" groupRow="true" style="border: #000000  !important;text-align: center;font-size: x-small;">
                                                                                 <h:outputText value="#{asignacionIndCA.informe.porUnidad}%" style="text-align: center; "/>
                                                                             </p:column> 
                                                                         </p:headerRow> 
@@ -387,10 +390,10 @@
                                                                             <p:column rowspan="2" colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">Total</p:column>                                                                                    
                                                                         </p:row>                                                                                                                                               
                                                                         <p:row>                                                                                  
-                                                                            <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; text-align: justify;">#{resultadosPlaneacionesConsulta.rol.metasPropuestas.autonomo}</p:column>                                                                                    
-                                                                            <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; text-align: justify;">#{resultadosPlaneacionesConsulta.rol.metasPropuestas.destacado}</p:column>                                                                                    
-                                                                            <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; text-align: justify;">#{resultadosPlaneacionesConsulta.rol.metasPropuestas.satisfactorio}</p:column>                                                                                    
-                                                                            <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; text-align: justify;">#{resultadosPlaneacionesConsulta.rol.metasPropuestas.noAcreditado}</p:column>                                                                                    
+                                                                            <p:column colspan="1" styleClass="actividad" style="font-size: x-small; border-style: groove !important; text-align: justify;">#{resultadosPlaneacionesConsulta.rol.metasPropuestas.autonomo}</p:column>                                                                                    
+                                                                            <p:column colspan="1" styleClass="actividad" style="font-size: x-small; border-style: groove !important; text-align: justify;">#{resultadosPlaneacionesConsulta.rol.metasPropuestas.destacado}</p:column>                                                                                    
+                                                                            <p:column colspan="1" styleClass="actividad" style="font-size: x-small; border-style: groove !important; text-align: justify;">#{resultadosPlaneacionesConsulta.rol.metasPropuestas.satisfactorio}</p:column>                                                                                    
+                                                                            <p:column colspan="1" styleClass="actividad" style="font-size: x-small; border-style: groove !important; text-align: justify;">#{resultadosPlaneacionesConsulta.rol.metasPropuestas.noAcreditado}</p:column>                                                                                    
                                                                         </p:row>
                                                                         <p:row>
                                                                             <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">Estudiantes por nivel</p:column>                                                                                    
@@ -400,6 +403,15 @@
                                                                             <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.noAcreditado}</p:column>                                                                                    
                                                                             <p:column colspan="1" styleClass="actividad" style="border-style: groove !important; font-weight: bold; text-align: center;">#{resultadosPlaneacionesConsulta.rol.esActivos}</p:column>                                                                                    
                                                                         </p:row>
+                                                                        <p:row>
+                                                                            <p:column colspan="6" style="align-content: center">
+                                                                                <hf:chart type="line" height="400px" width="650px"  rendered="#{resultadosPlaneacionesConsulta.rol.render eq true?(resultadosPlaneacionesConsulta.rol.graficaP.size() eq 0?false:true):false}" updateMethod="true"
+                                                                                          xaxisLabel="Metas" yaxisLabel="Alcance" colors="gray,mediumspringgreen,gray,mediumspringgreen">
+                                                                                    <hf:chartSerie type="column" name="Meta Programada" value="#{resultadosPlaneacionesConsulta.rol.graficaP}" var="point" point="#{resultadosPlaneacionesConsulta.rol.df.format(point.avance)}" tickLabel="#{point.indicador}" dataLabel="#{point.avanceOF}"  />
+                                                                                    <hf:chartSerie type="column" name="Meta Alcanzada" colorByPoint="true" value="#{resultadosPlaneacionesConsulta.rol.graficaA}" var="point" point="#{resultadosPlaneacionesConsulta.rol.df.format(point.avance)}" tickLabel="#{point.indicador}" dataLabel="#{point.avanceOF}"  />
+                                                                                </hf:chart>
+                                                                            </p:column>
+                                                                        </p:row>
                                                                     </p:panelGrid>
                                                                 </div>
                                                             </div>
@@ -408,15 +420,7 @@
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="description-block">
-                                                                    <p:barChart model="#{resultadosPlaneacionesConsulta.barModel2}" style="width: 100%; height: 500px;"  rendered="#{resultadosPlaneacionesConsulta.rol.render}"/>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="row">
-                                                            <div class="col-sm-12">
-                                                                <div class="description-block">
-                                                                    <p:commandButton icon="fa fa-comment" value="Registrar Análisis Final de Logros" styleClass="btn-primary" rendered="#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq null?true:(resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq ''?true:false)}"
+                                                                    <p:commandButton icon="fa fa-comment" value="Registrar Análisis Final de Logros" styleClass="btn-primary" rendered="#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq null?(resultadosPlaneacionesConsulta.rol.tipoUser eq 3?true:false):(resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq ''?(resultadosPlaneacionesConsulta.rol.tipoUser eq 3?true:false):false)}"
                                                                                      oncomplete="PF('dlgAnalisisFina').show()" process="@this" update=":frmAnalisisFinal:pnlAgregarComentario"/>
 
                                                                     <p:outputLabel value="Análisis de Valoración de los Resultados Alcanzados" style="font-weight: bold; text-align: center; font-size: x-large" rendered="#{resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq null?false:(resultadosPlaneacionesConsulta.rol.carga.cargaAcademica.analisisDeResultados eq ''?false:true)}"/>

@@ -31,8 +31,12 @@ import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbAreasLogeo;
 import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AreaConocimiento;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AtributoEgreso;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AtributoEgresoPlanMateria;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AtributoEgresoPlanMateriaPK;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Competencia;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioDesempenio;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioDesempenioPlanMateria;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.CriterioDesempenioPlanMateriaPK;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.Grupo;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.IndicadorAlineacion;
@@ -809,54 +813,58 @@ public class EjbRegistroPlanEstudio {
         }
     }
     
-    public List<DtoAlineacionAcedemica.Presentacion> generarDtoAlineacionAcedemica(PlanEstudio estudio,String tipo) {
+    public List<DtoAlineacionAcedemica.Presentacion> generarDtoAlineacionAcedemica(PlanEstudio estudio, String tipo) {
         List<DtoAlineacionAcedemica.Presentacion> daas = new ArrayList<>();
-        List<PlanEstudioMateria> pems = em.createQuery("SELECT pem FROM PlanEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", PlanEstudioMateria.class)
-                .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
-                .getResultList();
         AreasUniversidad auv = em.createQuery("SELECT au FROM AreasUniversidad au WHERE au.area = :area", AreasUniversidad.class)
                 .setParameter("area", estudio.getIdPe())
                 .getSingleResult();
-        
-        if (!pems.isEmpty()) {
-            pems.forEach((t) -> {
-                switch (tipo) {
-                    case "Ob":
-                        if (!t.getObjetivoEducacionalPlanMateriaList().isEmpty()) {
-                            t.getObjetivoEducacionalPlanMateriaList().forEach((ob) -> {
-                                ObjetivoEducacional oe = ob.getObjetivoEducacional1();
-                                daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getObjetivoEducacional(), oe.getClave(), oe.getDescripcion(), ob.getNivelAportacion(), 0D, oe.getPlanEstudio(), t,auv,tipo));
-                            });
-                        }
-                        break;
-                    case "Ae":
-                        if (!t.getAtributoEgresoList().isEmpty()) {
-                            t.getAtributoEgresoList().forEach((ob) -> {
-                                daas.add(new DtoAlineacionAcedemica.Presentacion(ob.getAtributoEgreso(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t,auv,tipo));
-                            });
-                        }
-                        break;
-                    case "Cr":
-                        if (!t.getCriterioDesempenioList().isEmpty()) {
-                            t.getCriterioDesempenioList().forEach((ob) -> {
-                                daas.add(new DtoAlineacionAcedemica.Presentacion(ob.getCriteriDesempenio(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t,auv,tipo));
-                            });
-                        }
-                        break;
-                    case "In":
-                        if (!t.getIndicadorAlineacionPlanMateriaList().isEmpty()) {
-                            t.getIndicadorAlineacionPlanMateriaList().forEach((ob) -> {
-                                IndicadorAlineacion oe = ob.getIndicadorAlineacion();
-                                daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getIndicadorPem(), oe.getClave(), oe.getDescripcion(), "", ob.getMetaIndicador(), oe.getPlanEstudio(), t,auv,tipo));
-                            });
-                        }
-                        break;
+        switch (tipo) {
+            case "Ob":
+                List<ObjetivoEducacionalPlanMateria> objs = em.createQuery("SELECT ob FROM ObjetivoEducacionalPlanMateria ob INNER JOIN ob.planEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", ObjetivoEducacionalPlanMateria.class)
+                .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
+                .getResultList();
+                if (!objs.isEmpty()) {
+                    objs.forEach((ob) -> {
+                        ObjetivoEducacional oe = ob.getObjetivoEducacional1();
+                        daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getObjetivoEducacional(), oe.getClave(), oe.getDescripcion(), ob.getNivelAportacion(), 0D, oe.getPlanEstudio(), ob.getPlanEstudioMateria(), auv, tipo));
+                    });
                 }
-            });
-            return daas;
-        } else {
-            return new ArrayList<>();
+                break;
+            case "Ae":
+                List<AtributoEgresoPlanMateria> atrs = em.createQuery("SELECT ob FROM AtributoEgresoPlanMateria ob INNER JOIN ob.planEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", AtributoEgresoPlanMateria.class)
+                .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
+                .getResultList();
+                if (!atrs.isEmpty()) {
+                    atrs.forEach((ob) -> {
+                        AtributoEgreso oe = ob.getAtributoEgreso1();
+                        daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getAtributoEgreso(), oe.getClave(), oe.getDescripcion(), "", 0D, oe.getPlanEstudio(), ob.getPlanEstudioMateria(), auv, tipo));
+                    });
+                }
+                break;
+            case "Cr":
+                List<CriterioDesempenioPlanMateria> crit = em.createQuery("SELECT ob FROM CriterioDesempenioPlanMateria ob INNER JOIN ob.planEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", CriterioDesempenioPlanMateria.class)
+                .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
+                .getResultList();
+                if (!crit.isEmpty()) {
+                    crit.forEach((ob) -> {
+                        CriterioDesempenio oe = ob.getCriterioDesempenio1();
+                        daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getCriteriDesempenio(), oe.getClave(), oe.getDescripcion(), "", 0D, oe.getPlanEstudio(), ob.getPlanEstudioMateria(), auv, tipo));
+                    });
+                }
+                break;
+            case "In":
+                List<IndicadorAlineacionPlanMateria> indi = em.createQuery("SELECT ob FROM IndicadorAlineacionPlanMateria ob INNER JOIN ob.planEstudioMateria pem INNER JOIN pem.idPlan plan WHERE plan.idPlanEstudio = :idPlanEstudio", IndicadorAlineacionPlanMateria.class)
+                .setParameter("idPlanEstudio", estudio.getIdPlanEstudio())
+                .getResultList();
+                if (!indi.isEmpty()) {
+                    indi.forEach((ob) -> {
+                        IndicadorAlineacion oe = ob.getIndicadorAlineacion();
+                        daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getIndicadorPem(), oe.getClave(), oe.getDescripcion(), "", ob.getMetaIndicador(), oe.getPlanEstudio(), ob.getPlanEstudioMateria(), auv, tipo));
+                    });
+                }
+                break;
         }
+        return daas;
     }
     
     public List<DtoAlineacionAcedemica.Presentacion> generarDtoAlineacionAcedemicaIdiomas(PlanEstudio estudio,String tipo) {
@@ -884,16 +892,18 @@ public class EjbRegistroPlanEstudio {
                         }
                         break;
                     case "Ae":
-                        if (!t.getAtributoEgresoList().isEmpty()) {
-                            t.getAtributoEgresoList().forEach((ob) -> {
-                                daas.add(new DtoAlineacionAcedemica.Presentacion(ob.getAtributoEgreso(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t,auv,tipo));
+                        if (!t.getAtributoEgresoPlanMateriaList().isEmpty()) {
+                            t.getAtributoEgresoPlanMateriaList().forEach((ob) -> {
+                                AtributoEgreso oe = ob.getAtributoEgreso1();
+                                daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getAtributoEgreso(), oe.getClave(), oe.getDescripcion(), ob.getNotas(), 0D , oe.getPlanEstudio(), t,auv,tipo));
                             });
                         }
                         break;
                     case "Cr":
-                        if (!t.getCriterioDesempenioList().isEmpty()) {
-                            t.getCriterioDesempenioList().forEach((ob) -> {
-                                daas.add(new DtoAlineacionAcedemica.Presentacion(ob.getCriteriDesempenio(), ob.getClave(), ob.getDescripcion(), "", 0D, ob.getPlanEstudio(), t,auv,tipo));
+                        if (!t.getCriterioDesempenioPlanMateriaList().isEmpty()) {
+                            t.getCriterioDesempenioPlanMateriaList().forEach((ob) -> {
+                                CriterioDesempenio oe = ob.getCriterioDesempenio1();
+                                daas.add(new DtoAlineacionAcedemica.Presentacion(oe.getCriteriDesempenio(), oe.getClave(), oe.getDescripcion(), ob.getNotas(), 0D , oe.getPlanEstudio(), t,auv,tipo));
                             });
                         }
                         break;
@@ -1186,9 +1196,9 @@ public class EjbRegistroPlanEstudio {
                 .getSingleResult();
         if (!oes.isEmpty()) {
             oes.forEach((t) -> {
-                if (!t.getPlanEstudioMateriaList().isEmpty()) {
-                    t.getPlanEstudioMateriaList().forEach((o) -> {
-                        daas.add(new DtoAlineacionAcedemica.Presentacion(t.getCriteriDesempenio(), t.getClave(), t.getDescripcion(),"", 0D, t.getPlanEstudio(), o,auv,"Cr"));
+                if (!t.getCriterioDesempenioPlanMateriaList().isEmpty()) {
+                    t.getCriterioDesempenioPlanMateriaList().forEach((o) -> {
+                        daas.add(new DtoAlineacionAcedemica.Presentacion(t.getCriteriDesempenio(), t.getClave(), t.getDescripcion(),"", 0D, t.getPlanEstudio(), o.getPlanEstudioMateria(),auv,"Cr"));
                     });
                 } else {
                     daas.add(new DtoAlineacionAcedemica.Presentacion(t.getCriteriDesempenio(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria(),new AreasUniversidad(),"Cr"));
@@ -1228,9 +1238,9 @@ public class EjbRegistroPlanEstudio {
                 .getSingleResult();
         if (!oes.isEmpty()) {
             oes.forEach((t) -> {
-                if (!t.getPlanEstudioMateriaList().isEmpty()) {
-                    t.getPlanEstudioMateriaList().forEach((o) -> {
-                        daas.add(new DtoAlineacionAcedemica.Presentacion(t.getAtributoEgreso(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), o,auv,"Ae"));
+                if (!t.getAtributoEgresoPlanMateriaList().isEmpty()) {
+                    t.getAtributoEgresoPlanMateriaList().forEach((o) -> {
+                        daas.add(new DtoAlineacionAcedemica.Presentacion(t.getAtributoEgreso(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), o.getPlanEstudioMateria(),auv,"Ae"));
                     });
                 } else {
                     daas.add(new DtoAlineacionAcedemica.Presentacion(t.getAtributoEgreso(), t.getClave(), t.getDescripcion(), "", 0D, t.getPlanEstudio(), new PlanEstudioMateria(),new AreasUniversidad(),"Ae"));
@@ -1311,8 +1321,19 @@ public class EjbRegistroPlanEstudio {
                         f.flush();
                         if (!pem.isEmpty()) {
                             pem.forEach((t) -> {
-                                egreso.getPlanEstudioMateriaList().add(t);
-                                em.merge(egreso);
+                                f.setEntityClass(AtributoEgresoPlanMateria.class);
+                                AtributoEgresoPlanMateriaPK materiaPK = new AtributoEgresoPlanMateriaPK();
+                                materiaPK.setIdPlanMateria(t.getIdPlanMateria());
+                                materiaPK.setAtributoEgreso(egreso.getAtributoEgreso());
+                                AtributoEgresoPlanMateria ateg = new AtributoEgresoPlanMateria();
+                                ateg.setNotas(daa.getNivelA());
+                                ateg.setAtributoEgreso1(new AtributoEgreso());
+                                ateg.setAtributoEgreso1(egreso);
+                                ateg.setPlanEstudioMateria(new PlanEstudioMateria());
+                                ateg.setPlanEstudioMateria(t);
+                                ateg.setAtributoEgresoPlanMateriaPK(new AtributoEgresoPlanMateriaPK());
+                                ateg.setAtributoEgresoPlanMateriaPK(materiaPK);
+                                em.persist(ateg);
                                 f.flush();
                             });
                         }
@@ -1365,8 +1386,19 @@ public class EjbRegistroPlanEstudio {
                         f.flush();
                         if (!pem.isEmpty()) {
                             pem.forEach((t) -> {
-                                desempenio.getPlanEstudioMateriaList().add(t);
-                                em.merge(desempenio);
+                                f.setEntityClass(CriterioDesempenioPlanMateria.class);
+                                CriterioDesempenioPlanMateriaPK materiaPK = new CriterioDesempenioPlanMateriaPK();
+                                materiaPK.setIdPlanMateria(t.getIdPlanMateria());
+                                materiaPK.setCriterioDesempenio(desempenio.getCriteriDesempenio());
+                                CriterioDesempenioPlanMateria crde = new CriterioDesempenioPlanMateria();
+                                crde.setNotas(daa.getNivelA());
+                                crde.setCriterioDesempenio1(new CriterioDesempenio());
+                                crde.setCriterioDesempenio1(desempenio);
+                                crde.setPlanEstudioMateria(new PlanEstudioMateria());
+                                crde.setPlanEstudioMateria(t);
+                                crde.setCriterioDesempenioPlanMateriaPK(new CriterioDesempenioPlanMateriaPK());
+                                crde.setCriterioDesempenioPlanMateriaPK(materiaPK);
+                                em.persist(crde);
                                 f.flush();
                             });
                         }
@@ -1405,6 +1437,15 @@ public class EjbRegistroPlanEstudio {
                         egreso.setDescripcion(daa.getDescripcion());
                         em.merge(egreso);
                         f.flush();
+                        f.setEntityClass(AtributoEgresoPlanMateria.class);                      
+                        AtributoEgresoPlanMateriaPK atrPK = new AtributoEgresoPlanMateriaPK();
+                        atrPK.setIdPlanMateria(daa.getPlanEstudioMateria().getIdPlanMateria());
+                        atrPK.setAtributoEgreso(egreso.getAtributoEgreso());
+                        AtributoEgresoPlanMateria oepmUp = new AtributoEgresoPlanMateria();                        
+                        oepmUp=em.find(AtributoEgresoPlanMateria.class, atrPK);
+                        oepmUp.setNotas(daa.getNivelA());                        
+                        em.merge(oepmUp);
+                        f.flush();
                         break;
                     case "In":
                         f.setEntityClass(IndicadorAlineacion.class);
@@ -1431,11 +1472,86 @@ public class EjbRegistroPlanEstudio {
                         desempenio.setDescripcion(daa.getDescripcion());
                         em.persist(desempenio);
                         f.flush();
+                        f.setEntityClass(CriterioDesempenioPlanMateria.class);                      
+                        CriterioDesempenioPlanMateriaPK crtPK = new CriterioDesempenioPlanMateriaPK();
+                        crtPK.setIdPlanMateria(daa.getPlanEstudioMateria().getIdPlanMateria());
+                        crtPK.setCriterioDesempenio(desempenio.getCriteriDesempenio());
+                        CriterioDesempenioPlanMateria ctrUp = new CriterioDesempenioPlanMateria();                        
+                        ctrUp=em.find(CriterioDesempenioPlanMateria.class, crtPK);
+                        ctrUp.setNotas(daa.getNivelA());                        
+                        em.merge(ctrUp);
+                        f.flush();
                         break;
                 }
                 break;
             
-            case ELIMINAR: break;
+            case ELIMINAR:
+                switch (tipo) {
+                    case "Ob":
+                        f.setEntityClass(ObjetivoEducacional.class);
+                        educacional = new ObjetivoEducacional();
+                        educacional = em.find(ObjetivoEducacional.class, daa.getIde());
+                        
+                        f.setEntityClass(ObjetivoEducacionalPlanMateria.class);
+                        ObjetivoEducacionalPlanMateriaPK materiaPK = new ObjetivoEducacionalPlanMateriaPK();
+                        materiaPK.setIdPlanMateria(daa.getPlanEstudioMateria().getIdPlanMateria());
+                        materiaPK.setObjetivoEducacional(educacional.getObjetivoEducacional());
+                        
+                        ObjetivoEducacionalPlanMateria oepm = new ObjetivoEducacionalPlanMateria();
+                        oepm = em.find(ObjetivoEducacionalPlanMateria.class, materiaPK);
+                        em.remove(em.merge(oepm));
+                        em.flush();
+                        break;
+                    case "Ae":
+                        f.setEntityClass(AtributoEgreso.class);
+                        egreso = new AtributoEgreso();
+                        egreso = em.find(AtributoEgreso.class, daa.getIde());
+                       
+                        f.setEntityClass(AtributoEgresoPlanMateria.class);
+                        AtributoEgresoPlanMateriaPK atrPK = new AtributoEgresoPlanMateriaPK();
+                        atrPK.setIdPlanMateria(daa.getPlanEstudioMateria().getIdPlanMateria());
+                        atrPK.setAtributoEgreso(egreso.getAtributoEgreso());
+                        
+                        AtributoEgresoPlanMateria oepmUp = new AtributoEgresoPlanMateria();
+                        oepmUp = em.find(AtributoEgresoPlanMateria.class, atrPK);
+                        oepmUp.setNotas(daa.getNivelA());
+                        em.remove(em.merge(oepmUp));
+                        em.flush();
+                        break;
+                    case "In":
+                        f.setEntityClass(IndicadorAlineacion.class);
+                        indicadorAlineacion = new IndicadorAlineacion();
+                        indicadorAlineacion = em.find(IndicadorAlineacion.class, daa.getIde());
+                        
+                        f.setEntityClass(IndicadorAlineacion.class);
+                        IndicadorAlineacionPlanMateriaPK iapmpk = new IndicadorAlineacionPlanMateriaPK();
+                        iapmpk.setIdPlanMateria(daa.getPlanEstudioMateria().getIdPlanMateria());
+                        iapmpk.setIndicador(indicadorAlineacion.getIndicadorPem());
+
+                        IndicadorAlineacionPlanMateria iapm = new IndicadorAlineacionPlanMateria();
+                        iapm = em.find(IndicadorAlineacionPlanMateria.class, iapmpk);
+                        iapm.setMetaIndicador(daa.getMeta());
+                        em.remove(em.merge(iapm));
+                        em.flush();
+                        break;
+                    case "Cr":
+                        f.setEntityClass(CriterioDesempenio.class);
+                        desempenio = new CriterioDesempenio();
+                        desempenio = em.find(CriterioDesempenio.class, daa.getIde());
+                       
+                        f.setEntityClass(CriterioDesempenioPlanMateria.class);
+                        CriterioDesempenioPlanMateriaPK crtPK = new CriterioDesempenioPlanMateriaPK();
+                        crtPK.setIdPlanMateria(daa.getPlanEstudioMateria().getIdPlanMateria());
+                        crtPK.setCriterioDesempenio(desempenio.getCriteriDesempenio());
+                        
+                        CriterioDesempenioPlanMateria ctrUp = new CriterioDesempenioPlanMateria();
+                        ctrUp = em.find(CriterioDesempenioPlanMateria.class, crtPK);
+                        ctrUp.setNotas(daa.getNivelA());
+                        em.remove(em.merge(ctrUp));
+                        em.flush();
+                        break;
+                }
+                break;
         }
     }
 

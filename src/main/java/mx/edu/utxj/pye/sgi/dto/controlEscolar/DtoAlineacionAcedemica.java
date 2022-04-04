@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 import java.io.Serializable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.AtributoEgreso;
@@ -186,6 +187,20 @@ public class DtoAlineacionAcedemica implements Serializable {
 //            this.continuidad = continuidad;
 //            this.nivel = nivel;
 //            this.cvl = cvl;
+        }
+    }
+    
+    @RequiredArgsConstructor @ToString @EqualsAndHashCode
+    public static class Grafica {
+
+        @Getter        @Setter        private String indicador;
+        @Getter        @Setter        private Double avance;
+        @Getter        @Setter        private Double avanceOF;
+
+        public Grafica(String indicador, Double avance, Double avanceOF) {
+            this.indicador = indicador;
+            this.avance = avance;
+            this.avanceOF = avanceOF;
         }
     }
 }

@@ -80,7 +80,7 @@ public class PersonalAdmin implements Serializable {
             listaPersonal = ep.mostrarListaPersonalsPorEstatus(1);
             
             periodo=edea.getPeriodoActual();
-            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.PersonalAdmin.mostrarSubordinados()"+periodo);
+//            System.out.println("mx.edu.utxj.pye.sgi.controladores.ch.PersonalAdmin.mostrarSubordinados()"+periodo);
             estudiantes.clear();
             estudiantes = edea.buscaEstudiantes(periodo.getPeriodo());
             

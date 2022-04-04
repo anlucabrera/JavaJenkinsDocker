@@ -8,6 +8,7 @@ package mx.edu.utxj.pye.sgi.entity.controlEscolar;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -15,12 +16,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -55,11 +55,8 @@ public class AtributoEgreso implements Serializable {
     @Size(max = 65535)
     @Column(name = "descripcion")
     private String descripcion;
-    @JoinTable(name = "control_escolar.atributo_egreso_plan_materia", joinColumns = {
-        @JoinColumn(name = "atributo_egreso", referencedColumnName = "atributo_egreso")}, inverseJoinColumns = {
-        @JoinColumn(name = "id_plan_materia", referencedColumnName = "id_plan_materia")})
-    @ManyToMany
-    private List<PlanEstudioMateria> planEstudioMateriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "atributoEgreso1")
+    private List<AtributoEgresoPlanMateria> atributoEgresoPlanMateriaList;
     @JoinColumn(name = "plan_estudio", referencedColumnName = "id_plan_estudio")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private PlanEstudio planEstudio;
@@ -100,15 +97,6 @@ public class AtributoEgreso implements Serializable {
         this.descripcion = descripcion;
     }
 
-    @XmlTransient
-    public List<PlanEstudioMateria> getPlanEstudioMateriaList() {
-        return planEstudioMateriaList;
-    }
-
-    public void setPlanEstudioMateriaList(List<PlanEstudioMateria> planEstudioMateriaList) {
-        this.planEstudioMateriaList = planEstudioMateriaList;
-    }
-
     public PlanEstudio getPlanEstudio() {
         return planEstudio;
     }
@@ -140,6 +128,15 @@ public class AtributoEgreso implements Serializable {
     @Override
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.AtributoEgreso[ atributoEgreso=" + atributoEgreso + " ]";
+    }
+
+    @XmlTransient
+    public List<AtributoEgresoPlanMateria> getAtributoEgresoPlanMateriaList() {
+        return atributoEgresoPlanMateriaList;
+    }
+
+    public void setAtributoEgresoPlanMateriaList(List<AtributoEgresoPlanMateria> atributoEgresoPlanMateriaList) {
+        this.atributoEgresoPlanMateriaList = atributoEgresoPlanMateriaList;
     }
     
 }

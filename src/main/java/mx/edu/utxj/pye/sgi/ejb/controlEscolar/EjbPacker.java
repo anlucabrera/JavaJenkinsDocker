@@ -1064,7 +1064,7 @@ public class EjbPacker {
                         .findFirst()
                         .orElse(null);
                 if(matriculaPeriodosEscolares == null) return ResultadoEJB.crearErroneo(2, "La matrícula no está asociada al period en la BD", DtoEstudiantePeriodo.class);
-                System.out.println("matriculaPeriodosEscolares = " + matriculaPeriodosEscolares);
+//                System.out.println("matriculaPeriodosEscolares = " + matriculaPeriodosEscolares);
             }
 
             final short programaEducativo = matriculaPeriodosEscolares.getProgramaEducativo();

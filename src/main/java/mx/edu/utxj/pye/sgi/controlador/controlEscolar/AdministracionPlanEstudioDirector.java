@@ -492,6 +492,15 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
         }
     }
     
+    public void eliminarAlineacionE(DtoAlineacionAcedemica.Presentacion c) {
+        try {
+            ejb.accionesAlineacion(new ArrayList<>(), c, rol.getTipoReg(), Operacion.ELIMINAR);
+            comprobarTipoRegistro();
+         } catch (Throwable ex) {
+            Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
+            Logger.getLogger(AdministracionPlanEstudioDirector.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 // Eventos Ajax en interfaz
 //    public void materiasRegistradasConsulta() {
 //        ResultadoEJB<List<Materia>> resMaterias = ejb.getListadoMaterias();
@@ -613,9 +622,9 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
         rol.setAcedemicas(new ArrayList<>());
         rol.setPlanestudioMateriasSelect(new ArrayList<>());
         rol.getAlineacionAcedemica().setIde(0);
-        System.out.println("comprobarTipoRegistro()"+rol.getTipoReg());
+//        System.out.println("comprobarTipoRegistro()"+rol.getTipoReg());
         String cvN="";
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AdministracionPlanEstudioDirector.comprobarTipoRegistro()"+rol.getAlineacionAcedemica().getPlanEstudio().getIdPe());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AdministracionPlanEstudioDirector.comprobarTipoRegistro()"+rol.getAlineacionAcedemica().getPlanEstudio().getIdPe());
         
         AreasUniversidad au = ejbAreasLogeo.mostrarAreasUniversidad(rol.getAlineacionAcedemica().getPlanEstudio().getIdPe());
         if (au.getNivelEducativo().getNivel().equals("TSU")) {
@@ -684,7 +693,7 @@ public class AdministracionPlanEstudioDirector extends ViewScopedRol implements 
                 });
             }
         }
-        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AdministracionPlanEstudioDirector.continuidades()"+estudios.size());
+//        System.out.println("mx.edu.utxj.pye.sgi.controlador.controlEscolar.AdministracionPlanEstudioDirector.continuidades()"+estudios.size());
         return estudios;
     }
     

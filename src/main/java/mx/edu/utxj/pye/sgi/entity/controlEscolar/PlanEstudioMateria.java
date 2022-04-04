@@ -83,14 +83,14 @@ public class PlanEstudioMateria implements Serializable {
     private List<CargaAcademica> cargaAcademicaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlanMateria", fetch = FetchType.LAZY)
     private List<PermisosCapturaExtemporaneaGrupal> permisosCapturaExtemporaneaGrupalList;
-    @ManyToMany(mappedBy = "planEstudioMateriaList", fetch = FetchType.LAZY)
-    private List<CriterioDesempenio> criterioDesempenioList;
-    @ManyToMany(mappedBy = "planEstudioMateriaList", fetch = FetchType.LAZY)
-    private List<AtributoEgreso> atributoEgresoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudioMateria", fetch = FetchType.LAZY)
     private List<ObjetivoEducacionalPlanMateria> objetivoEducacionalPlanMateriaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudioMateria", fetch = FetchType.LAZY)
     private List<IndicadorAlineacionPlanMateria> indicadorAlineacionPlanMateriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudioMateria")
+    private List<CriterioDesempenioPlanMateria> criterioDesempenioPlanMateriaList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "planEstudioMateria")
+    private List<AtributoEgresoPlanMateria> atributoEgresoPlanMateriaList;
 
     public PlanEstudioMateria() {
     }
@@ -124,7 +124,7 @@ public class PlanEstudioMateria implements Serializable {
     public int getGrado() {
         return grado;
     }
-
+    
     public void setGrado(int grado) {
         this.grado = grado;
     }
@@ -238,24 +238,6 @@ public class PlanEstudioMateria implements Serializable {
     public String toString() {
         return "mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria[ idPlanMateria=" + idPlanMateria + " ]";
     }
-    
-    @XmlTransient
-    public List<CriterioDesempenio> getCriterioDesempenioList() {
-        return criterioDesempenioList;
-}
-
-    public void setCriterioDesempenioList(List<CriterioDesempenio> criterioDesempenioList) {
-        this.criterioDesempenioList = criterioDesempenioList;
-    }
-
-    @XmlTransient
-    public List<AtributoEgreso> getAtributoEgresoList() {
-        return atributoEgresoList;
-    }
-
-    public void setAtributoEgresoList(List<AtributoEgreso> atributoEgresoList) {
-        this.atributoEgresoList = atributoEgresoList;
-    }
 
     @XmlTransient
     public List<ObjetivoEducacionalPlanMateria> getObjetivoEducacionalPlanMateriaList() {
@@ -282,6 +264,24 @@ public class PlanEstudioMateria implements Serializable {
 
     public void setCalificacionesHistorialTsuList(List<CalificacionesHistorialTsu> calificacionesHistorialTsuList) {
         this.calificacionesHistorialTsuList = calificacionesHistorialTsuList;
+    }
+
+    @XmlTransient
+    public List<CriterioDesempenioPlanMateria> getCriterioDesempenioPlanMateriaList() {
+        return criterioDesempenioPlanMateriaList;
+    }
+
+    public void setCriterioDesempenioPlanMateriaList(List<CriterioDesempenioPlanMateria> criterioDesempenioPlanMateriaList) {
+        this.criterioDesempenioPlanMateriaList = criterioDesempenioPlanMateriaList;
+    }
+
+    @XmlTransient
+    public List<AtributoEgresoPlanMateria> getAtributoEgresoPlanMateriaList() {
+        return atributoEgresoPlanMateriaList;
+    }
+
+    public void setAtributoEgresoPlanMateriaList(List<AtributoEgresoPlanMateria> atributoEgresoPlanMateriaList) {
+        this.atributoEgresoPlanMateriaList = atributoEgresoPlanMateriaList;
     }
     
 }

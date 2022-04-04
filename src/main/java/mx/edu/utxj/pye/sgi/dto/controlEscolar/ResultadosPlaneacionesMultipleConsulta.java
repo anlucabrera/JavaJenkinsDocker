@@ -6,6 +6,7 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
 import com.github.adminfaces.starter.infra.model.Filter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -109,6 +110,9 @@ public class ResultadosPlaneacionesMultipleConsulta extends AbstractRol{
      * Representa la clave
      */
     @Getter @Setter private List<DtoGraficaCronograma> cronograma;
+    @Getter @Setter private List<DtoAlineacionAcedemica.Grafica> graficaP;
+    @Getter @Setter private List<DtoAlineacionAcedemica.Grafica> graficaA;    
+    @Getter @Setter private DecimalFormat df;
     @Getter @Setter private Integer cuatrimestre;    
     @Getter @Setter Integer autonomo;
     @Getter @Setter Integer destacado;
