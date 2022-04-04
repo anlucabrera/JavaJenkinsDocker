@@ -58,6 +58,7 @@ public class EjbRegistroBajas {
     @EJB EjbSeguimientoEstadia ejbSeguimientoEstadia;
     @EJB EjbIntegracionExpedienteTitulacion ejbIntegracionExpedienteTitulacion;
     @EJB EjbSeguimientoExpedienteGeneracion ejbSeguimientoExpedienteGeneracion;
+    @EJB EjbCargaCartaResponsivaCursoIMSS ejbCargaCartaResponsivaCursoIMSS;
     @EJB Facade f;
     private EntityManager em;
     
@@ -263,6 +264,28 @@ public class EjbRegistroBajas {
         }
     }
     
+    /**
+     * Permite desactivar o activar seguimiento de vinculación, en caso de que exista un registro del estudiante
+     * @param estudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<SeguimientoVinculacionEstudiante> desactivarActivarSeguimientoVinculacionBaja(Estudiante estudiante){
+         try{
+            
+            SeguimientoVinculacionEstudiante  seguimientoVinculacionEstudiante = em.createQuery("SELECT s FROM SeguimientoVinculacionEstudiante s WHERE s.estudiante.idEstudiante =:estudiante", SeguimientoVinculacionEstudiante.class)
+                    .setParameter("estudiante", estudiante.getIdEstudiante())
+                    .getResultStream().findFirst().orElse(null);
+            
+            if(seguimientoVinculacionEstudiante != null){
+                ejbCargaCartaResponsivaCursoIMSS.desactivarSeguimientoVinculacion(seguimientoVinculacionEstudiante).getValor();
+            }
+            
+            
+            return ResultadoEJB.crearCorrecto(seguimientoVinculacionEstudiante, "El seguimiento de vinculación se ha desactivado o activado correctamente");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo desactivar o activar el seguimiento de vinculación correctamente. (EjbRegistroBajas.desactivarActivarSeguimientoVinculacionBaja)", e, null);
+        }
+    }
     
      /**
      * Permite desactivar o activar seguimiento de estadía, en caso de que exista un registro del estudiante
@@ -349,6 +372,7 @@ public class EjbRegistroBajas {
                         .executeUpdate();
             }
             
+            desactivarActivarSeguimientoVinculacionBaja(registroBaja.getEstudiante());
             desactivarActivarSeguimientoEstadiaBaja(registroBaja.getEstudiante());
             desactivarActivarExpedienteTitulacionBaja(registroBaja.getEstudiante());
             
@@ -446,6 +470,7 @@ public class EjbRegistroBajas {
                         .setParameter("estudiante", registro.getEstudiante().getIdEstudiante())
                         .executeUpdate();
                
+               desactivarActivarSeguimientoVinculacionBaja(registro.getEstudiante());
                desactivarActivarSeguimientoEstadiaBaja(registro.getEstudiante());
                desactivarActivarExpedienteTitulacionBaja(registro.getEstudiante());
            }
@@ -1268,6 +1293,7 @@ public class EjbRegistroBajas {
                 Integer actualizarStatus = resetearStatusEstudiante(registro).getValor();
             }
             
+            desactivarActivarSeguimientoVinculacionBaja(registro.getEstudiante());
             desactivarActivarSeguimientoEstadiaBaja(registro.getEstudiante());
             desactivarActivarExpedienteTitulacionBaja(registro.getEstudiante());
                        

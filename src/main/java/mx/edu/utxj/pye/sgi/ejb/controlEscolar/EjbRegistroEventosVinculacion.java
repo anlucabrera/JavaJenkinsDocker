@@ -43,6 +43,7 @@ public class EjbRegistroEventosVinculacion {
     private EntityManager em;
     
     @EJB EjbCarga ejbCarga;
+    @EJB EjbPermisoAperturaExtemporanea ejbPermisoAperturaExtemporanea;
 
     @PostConstruct
     public  void init(){
@@ -166,6 +167,7 @@ public class EjbRegistroEventosVinculacion {
      */
     public ResultadoEJB<EventoVinculacion> agregarEventoVinculacion(Generaciones generacion, ProgramasEducativosNiveles nivel, String actividad, Date fechaInicio, Date fechaFin){
         try{
+            Date fechaFinCompleta = ejbPermisoAperturaExtemporanea.obtenerFechaFin(fechaFin);
             
             EventoVinculacion eventoVinculacion = new EventoVinculacion();
             eventoVinculacion.setGeneracion(generacion.getGeneracion());
@@ -179,7 +181,7 @@ public class EjbRegistroEventosVinculacion {
                 eventoVinculacion.setDocumentoProceso(documentoCIMSS);
             }
             eventoVinculacion.setFechaInicio(fechaInicio);
-            eventoVinculacion.setFechaFin(fechaFin);
+            eventoVinculacion.setFechaFin(fechaFinCompleta);
             em.persist(eventoVinculacion);
             em.flush();
              

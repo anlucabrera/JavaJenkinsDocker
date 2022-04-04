@@ -729,4 +729,32 @@ public class EjbCargaCartaResponsivaCursoIMSS {
         }
     }
     
+     /**
+     * Permite desactivar o activar un seguimiento de vinculación de un estudiante con situación académica de baja temporal o definitiva
+     * @param seguimientoVinculacionEstudiante
+     * @return Resultado del proceso
+     */
+    public ResultadoEJB<SeguimientoVinculacionEstudiante> desactivarSeguimientoVinculacion(SeguimientoVinculacionEstudiante seguimientoVinculacionEstudiante){
+        try{
+            if(seguimientoVinculacionEstudiante.getSeguimientoVinculacion()== null) return ResultadoEJB.crearErroneo(2, "La clave del seguimiento de vinculación no puede ser nula.", SeguimientoVinculacionEstudiante.class);
+
+            String mensaje = "La situación del seguimiento de vinculación es " + seguimientoVinculacionEstudiante.getActivo();
+            if (seguimientoVinculacionEstudiante.getActivo()) {
+                seguimientoVinculacionEstudiante.setActivo(false);
+                em.merge(seguimientoVinculacionEstudiante);
+                f.flush();
+                mensaje="El seguimiento de vinculación se ha desactivado correctamente.";
+            } else if(!seguimientoVinculacionEstudiante.getActivo()){
+                seguimientoVinculacionEstudiante.setActivo(true);
+                em.merge(seguimientoVinculacionEstudiante);
+                f.flush();
+                mensaje="El seguimiento de vinculación se ha activado correctamente.";
+            }
+
+            return ResultadoEJB.crearCorrecto(seguimientoVinculacionEstudiante, mensaje);
+        }catch (Throwable e){
+            return ResultadoEJB.crearErroneo(1, "No se pudo desactivar o activar el seguimiento de vinculación seleccionado. (EjbCargaCartaResponsivaCursoIMSS.desactivarSeguimientoVinculacion)", e, null);
+        }
+    }
+    
 }

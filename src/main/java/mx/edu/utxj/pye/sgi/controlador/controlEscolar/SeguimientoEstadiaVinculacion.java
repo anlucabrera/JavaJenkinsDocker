@@ -153,7 +153,8 @@ public class SeguimientoEstadiaVinculacion extends ViewScopedRol implements Desa
      */
     public void listaProgramasNivelGeneracion(){
         if(rol.getNivelEducativo()== null) return;
-        ResultadoEJB<List<AreasUniversidad>> res = ejbAsignacionRolesEstadia.getProgramasNivelesGeneracionEventosRegistrados(rol.getGeneracion(), rol.getNivelEducativo(), rol.getCoordinadorEstadia().getAreaSuperior().getArea());
+        Short area = (short) 5;
+        ResultadoEJB<List<AreasUniversidad>> res = ejbAsignacionRolesEstadia.getProgramasNivelesGeneracionEventosRegistrados(rol.getGeneracion(), rol.getNivelEducativo(), area);
         if(res.getCorrecto()){
             rol.setProgramasEducativos(res.getValor());
             rol.setProgramaEducativo(rol.getProgramasEducativos().get(0));

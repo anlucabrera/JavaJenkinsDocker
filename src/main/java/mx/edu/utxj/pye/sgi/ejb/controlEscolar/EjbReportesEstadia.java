@@ -107,6 +107,10 @@ public class EjbReportesEstadia {
                 filtro.setEntity(p);
                 filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
             }
+            else if (p.getPersonal().getCategoriaOperativa().getCategoria()== 18 || p.getPersonal().getAreaOperativa()==5 && p.getPersonal().getStatus()!='B') {
+                filtro.setEntity(p);
+                filtro.addParam(PersonalFiltro.CLAVE.getLabel(), String.valueOf(clave));
+            }
             return ResultadoEJB.crearCorrecto(filtro, "El usuario ha sido comprobado como personal con rol asignado en el proceso de estadía.");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "El personal no se pudo validar. (EjbSeguimientoEstadia.validarRolesEstadia)", e, null);
