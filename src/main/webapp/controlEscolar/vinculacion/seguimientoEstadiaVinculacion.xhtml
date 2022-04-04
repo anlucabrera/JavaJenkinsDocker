@@ -154,7 +154,7 @@
                                                             <p:column headerText="* Comentarios" style="width: 150px;"/>
                                                             <p:column headerText="* Carta de Acreditación" style="width: 100px;"/>
                                                             <p:column headerText="* Comentarios" style="width: 150px;"/>
-                                                            <p:column headerText="* Validación Estadía" style="width: 100px;"/>
+                                                            <p:column headerText="* Validación Estadía" style="width: 100px;" sortBy="#{segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'Validado':'No validado'}" filterBy="#{segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'Validado':'No validado'}" filterOptions="contains"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: center;">
@@ -173,7 +173,7 @@
                                                         <h:outputText value="#{segEst.dtoEstudiante.programaEducativo.siglas}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'Si':'No'}"/>
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'Sí':'No'}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <p:commandLink class="btn btn-sm #{seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaVinculacion.descargarDocumento(33, segEst)}" target="_blank" title="#{seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)}"><i class="fa fa-download" /></p:commandLink>
@@ -331,7 +331,7 @@
                                                             <p:column headerText="Validación" style="width: 100px;"/>
                                                             <p:column headerText="Archivo" style="width: 100px;"/>
                                                             <p:column headerText="Validación" style="width: 100px;"/>
-                                                            <p:column headerText="Situación" style="width: 200px;"/>
+                                                            <p:column headerText="Situación" style="width: 200px;" sortBy="#{segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'Validado':'No validado'}" filterBy="#{segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'Validado':'No validado'}" filterMatchMode="contains"/>
                                                             <p:column headerText="Acción" style="width: 200px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
@@ -366,7 +366,7 @@
                                                         <h:outputText value="#{segEst.asesorEstadia.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
-                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'Si':'No'}"/>
+                                                        <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.validacionDirector?'Sí':'No'}"/>
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <p:commandLink class="btn btn-sm #{seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)?'btn-info':'btn-danger'}" ajax="false" action="#{seguimientoEstadiaVinculacion.descargarDocumento(33, segEst)}" target="_blank" title="#{seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)?'Descargar documento.':'Documento no cargado.'}" disabled="#{!seguimientoEstadiaVinculacion.consultarExisteDocumento(33, segEst)}"><i class="fa fa-download" /></p:commandLink>
@@ -492,7 +492,7 @@
                                                     </c:if>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                                    <p:commandButton value="Sí" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                                                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                                                 </p:confirmDialog> 
                                             </center>

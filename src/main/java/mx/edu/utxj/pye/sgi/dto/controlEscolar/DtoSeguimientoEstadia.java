@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mx.edu.utxj.pye.sgi.entity.ch.Personal;
+import mx.edu.utxj.pye.sgi.entity.controlEscolar.AsesorEmpresarialEstadia;
 import mx.edu.utxj.pye.sgi.entity.pye2.OrganismosVinculados;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoEstadiaEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -28,6 +29,7 @@ public class DtoSeguimientoEstadia implements Serializable, Comparable<DtoSeguim
     @Getter @Setter @NonNull AreasUniversidad areaSuperior;
     @Getter @Setter @NonNull Personal director;
     @Getter @Setter OrganismosVinculados empresa;
+    @Getter @Setter AsesorEmpresarialEstadia asesorEmpresarialEstadia;
     @Getter @Setter Double semanasEstadia;
 
 
@@ -35,13 +37,14 @@ public class DtoSeguimientoEstadia implements Serializable, Comparable<DtoSeguim
         
     }
 
-    public DtoSeguimientoEstadia(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante, DtoDatosEstudiante dtoEstudiante, Personal asesorEstadia, AreasUniversidad areaSuperior, Personal director, OrganismosVinculados empresa, Double semanasEstadia) {
+    public DtoSeguimientoEstadia(SeguimientoEstadiaEstudiante seguimientoEstadiaEstudiante, DtoDatosEstudiante dtoEstudiante, Personal asesorEstadia, AreasUniversidad areaSuperior, Personal director, OrganismosVinculados empresa, AsesorEmpresarialEstadia asesorEmpresarialEstadia, Double semanasEstadia) {
         this.seguimientoEstadiaEstudiante = seguimientoEstadiaEstudiante;
         this.dtoEstudiante = dtoEstudiante;
         this.asesorEstadia = asesorEstadia;
         this.areaSuperior = areaSuperior;
         this.director = director;
         this.empresa = empresa;
+        this.asesorEmpresarialEstadia = asesorEmpresarialEstadia;
         this.semanasEstadia = semanasEstadia;
     }
 
