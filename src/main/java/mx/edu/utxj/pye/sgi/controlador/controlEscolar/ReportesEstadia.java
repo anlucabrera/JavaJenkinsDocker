@@ -165,7 +165,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             rol.setReportes(listaReportes);
             rol.setReporte(rol.getReportes().get(0));
             generarReportesDireccionAcademica();
-        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15){
+        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getAreaOperativa().getArea()==5)){
             listaReportes.add("Cumplimiento estudiante documentos");
             listaReportes.add("Porcentaje de cumplimiento y validación");
             listaReportes.add("Eficiencia estadía técnica");
@@ -295,7 +295,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
      * Permite generar el listado de cumplimiento de carga por documento y programa educativo
      */
     public void generarCumpDocumentoPrograma(){
-        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15){
+        if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getAreaOperativa().getArea()==5)){
             ResultadoEJB<List<DtoCumplimientoEstDocEstadia>> res = ejb.getCumplimientoDocumentoVinculacionPE(rol.getGeneracion(), rol.getNivelEducativo());
             if(res.getCorrecto()){
                 rol.setListaCumplimientoEstudiante(res.getValor());
@@ -459,7 +459,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             rol.setNivelEducativo(nivel);
             if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48 || rol.getCoordinadorEstadiaArea()){
                 generarReportesDireccionAcademica();
-            }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){
+            }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43 || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getAreaOperativa().getArea()==5)){
                 generarReportes();
             }
             Ajax.update("frm");
@@ -476,7 +476,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             rol.setReporte(reporte);
             if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==48 || rol.getCoordinadorEstadiaArea()){
                 generarReportesDireccionAcademica();
-            }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43){
+            }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || rol.getUsuario().getPersonal().getAreaOperativa()==10 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()== 38 || rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==43 || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getAreaOperativa().getArea()==5)){
                 generarReportes();
             }
             Ajax.update("frm");
@@ -520,7 +520,7 @@ public class ReportesEstadia extends ViewScopedRol implements Desarrollable{
             generarZonaInfluenciaPrograma();
             File f = new File(ejb.getReportesEstadia(rol.getListaSegActEstadia(), rol.getListaAsigAsesorAcad(), rol.getListaCumplimientoEstudiante(), rol.getEficienciaEstadia(), rol.getListadoEstudiantesPromedio(), rol.getListaZonaInfluenciaIns(), rol.getListaZonaInfluenciaPrograma(), rol.getGeneracion(), rol.getNivelEducativo()));
             Faces.sendFile(f, true);
-        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15){     
+        }else if(rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==15 || (rol.getUsuario().getPersonal().getCategoriaOperativa().getCategoria()==18 && rol.getUsuario().getAreaOperativa().getArea()==5)){     
             generarCumpDocumentoPrograma();
             generarReporteDocumentosVinculacion();
             generarEficienciaEstadia();

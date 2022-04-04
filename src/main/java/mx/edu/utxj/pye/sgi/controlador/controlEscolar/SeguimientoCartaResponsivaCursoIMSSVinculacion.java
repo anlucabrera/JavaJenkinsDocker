@@ -31,12 +31,11 @@ import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.stream.Collectors;
-import lombok.NonNull;
 import mx.edu.utxj.pye.sgi.dto.controlEscolar.DtoCartaResponsivaCursoIMMSEstudiante;
 import mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbCargaCartaResponsivaCursoIMSS;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.DocumentoSeguimientoVinculacion;
-import mx.edu.utxj.pye.sgi.entity.controlEscolar.Estudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosNiveles;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.SeguimientoVinculacionEstudiante;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
@@ -155,8 +154,14 @@ public class SeguimientoCartaResponsivaCursoIMSSVinculacion extends ViewScopedRo
         ResultadoEJB<List<AreasUniversidad>> res = ejb.getProgramasEducativosSeguimientoRegistrados(rol.getGeneracion(), rol.getNivelEducativo());
         if(res.getCorrecto()){
             rol.setProgramasEducativos(res.getValor());
-            rol.setProgramaEducativo(rol.getProgramasEducativos().get(0));
-            listaEstudiantesSeguimiento();
+            if(!rol.getProgramasEducativos().isEmpty()){
+                rol.setProgramaEducativo(rol.getProgramasEducativos().get(0));
+                listaEstudiantesSeguimiento();
+            }else{
+                rol.setProgramaEducativo(null);
+                rol.setEstudiantesSeguimiento(Collections.emptyList());
+            }
+            Ajax.update("frm");
         }else mostrarMensajeResultadoEJB(res);
     
     }
