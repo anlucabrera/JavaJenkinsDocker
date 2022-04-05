@@ -281,63 +281,63 @@ public class ControladorComisionDictaminadora implements Serializable {
                                 if (t.getEvidenciaNombremiento() != null) {
                                     rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta41(Boolean.TRUE);
-                                    experiencia.getRuta41().add(t.getEvidenciaNombremiento());
+                                    experiencia.getRuta41().add(new CurriculumRIPPPA.Registros(t.getEmpleo().toString(), "ExperienciasLaborales", "41", t.getEvidenciaNombremiento()));
                                 }
                                 break;
                             case "42":
                                 if (t.getEvidenciaNombremiento() != null) {
                                     rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta42(Boolean.TRUE);
-                                    experiencia.getRuta42().add(t.getEvidenciaNombremiento());
+                                    experiencia.getRuta42().add(new CurriculumRIPPPA.Registros(t.getEmpleo().toString(), "ExperienciasLaborales", "42", t.getEvidenciaNombremiento()));
                                 }
                                 break;
                             case "43":
                                 if (t.getEvidenciaNombremiento() != null) {
                                     rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta43(Boolean.TRUE);
-                                    experiencia.getRuta43().add(t.getEvidenciaNombremiento());
+                                    experiencia.getRuta43().add(new CurriculumRIPPPA.Registros(t.getEmpleo().toString(), "ExperienciasLaborales", "43", t.getEvidenciaNombremiento()));
                                 }
                                 break;
                             case "44":
                                 if (t.getEvidenciaNombremiento() != null) {
                                     rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta44(Boolean.TRUE);
-                                    experiencia.getRuta44().add(t.getEvidenciaNombremiento());
+                                    experiencia.getRuta44().add(new CurriculumRIPPPA.Registros(t.getEmpleo().toString(), "ExperienciasLaborales", "44", t.getEvidenciaNombremiento()));
                                 }
                                 break;
                             case "45":
                                 if (t.getEvidenciaNombremiento() != null) {
                                     rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta45(Boolean.TRUE);
-                                    experiencia.getRuta45().add(t.getEvidenciaNombremiento());
+                                    experiencia.getRuta45().add(new CurriculumRIPPPA.Registros(t.getEmpleo().toString(), "ExperienciasLaborales", "45", t.getEvidenciaNombremiento()));
                                 }
                                 break;
                             case "46":
                                 if (t.getEvidenciaNombremiento() != null) {
                                     rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta46(Boolean.TRUE);
-                                    experiencia.getRuta46().add(t.getEvidenciaNombremiento());
+                                    experiencia.getRuta46().add(new CurriculumRIPPPA.Registros(t.getEmpleo().toString(), "ExperienciasLaborales", "46", t.getEvidenciaNombremiento()));
                                 }
                                 break;
                             case "47":
                                 if (t.getEvidenciaNombremiento() != null) {
                                     rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta47(Boolean.TRUE);
-                                    experiencia.getRuta47().add(t.getEvidenciaNombremiento());
+                                    experiencia.getRuta47().add(new CurriculumRIPPPA.Registros(t.getEmpleo().toString(), "ExperienciasLaborales", "47", t.getEvidenciaNombremiento()));
                                 }
                                 break;
                             case "48":
                                 if (t.getEvidenciaNombremiento() != null) {
                                     rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta48(Boolean.TRUE);
-                                    experiencia.getRuta48().add(t.getEvidenciaNombremiento());
+                                    experiencia.getRuta48().add(new CurriculumRIPPPA.Registros(t.getEmpleo().toString(), "ExperienciasLaborales", "48", t.getEvidenciaNombremiento()));
                                 }
                                 break;
                             case "49":
                                 if (t.getEvidenciaNombremiento() != null) {
                                     rutasEvidenciasBD.add(t.getEvidenciaNombremiento());
                                     experiencia.setCuenta49(Boolean.TRUE);
-                                    experiencia.getRuta49().add(t.getEvidenciaNombremiento());
+                                    experiencia.getRuta49().add(new CurriculumRIPPPA.Registros(t.getEmpleo().toString(), "ExperienciasLaborales", "49", t.getEvidenciaNombremiento()));
                                 }
                                 break;
                         }
@@ -351,11 +351,11 @@ public class ControladorComisionDictaminadora implements Serializable {
                         if (!t.getRipppa().equals("No Aplica")) {
                             if (t.getRipppa().equals("48")) {
                                 experiencia.setCuenta48(Boolean.TRUE);
-                                experiencia.getRuta48().add(t.getEvidenciaCapacitacion());
+                                experiencia.getRuta48().add(new CurriculumRIPPPA.Registros(t.getCursoClave().toString(), "Capacitacionespersonal", "48", t.getEvidenciaCapacitacion()));
                             } else {
                                 capAceptadas.add(t);
                                 capacitacion.setCuentaEv(Boolean.TRUE);
-                                capacitacion.getRutasEv().add(t.getEvidenciaCapacitacion());
+                                capacitacion.getRutasEv().add(new CurriculumRIPPPA.Registros(t.getCursoClave().toString(), "Capacitacionespersonal", "51", t.getEvidenciaCapacitacion()));
                                 rutasEvidenciasBD.add(t.getEvidenciaCapacitacion());
                             }
                         }

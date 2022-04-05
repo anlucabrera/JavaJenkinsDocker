@@ -740,8 +740,25 @@
                                                                     <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta41.get(i)}"/>
                                                                     <p:tab title="Evidencia #{i+1}">
                                                                         <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Alineación  RIPPPA" />
+                                                                                <p:selectOneMenu id="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{t.alineacion}" >
+                                                                                    <f:selectItem itemValue="No Aplica" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="41" itemLabel="4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado 'B' y/o experiencia docente en el nivel superior"/>
+                                                                                    <f:selectItem itemValue="42" itemLabel="4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito"/>
+                                                                                    <f:selectItem itemValue="43" itemLabel="4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento"/>
+                                                                                    <f:selectItem itemValue="44" itemLabel="4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos"/>
+                                                                                    <f:selectItem itemValue="45" itemLabel="4.5 Constancia o evidencia en la dirección de estudiantes en estadías"/>
+                                                                                    <f:selectItem itemValue="46" itemLabel="4.6 Constancia o evidencia de haber producido material didáctico"/>
+                                                                                    <f:selectItem itemValue="47" itemLabel="4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio"/>
+                                                                                    <f:selectItem itemValue="48" itemLabel="4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores"/>
+                                                                                    <f:selectItem itemValue="49" itemLabel="4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="ripppa" display="tooltip" />                                                             
+                                                                                <hr/>
+                                                                            </div>        
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t.ruta)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
@@ -756,8 +773,25 @@
                                                                     <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta42.get(i)}"/>
                                                                     <p:tab title="Evidencia #{i+1}">
                                                                         <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Alineación  RIPPPA" />
+                                                                                <p:selectOneMenu id="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{t.alineacion}" >
+                                                                                    <f:selectItem itemValue="No Aplica" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="41" itemLabel="4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado 'B' y/o experiencia docente en el nivel superior"/>
+                                                                                    <f:selectItem itemValue="42" itemLabel="4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito"/>
+                                                                                    <f:selectItem itemValue="43" itemLabel="4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento"/>
+                                                                                    <f:selectItem itemValue="44" itemLabel="4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos"/>
+                                                                                    <f:selectItem itemValue="45" itemLabel="4.5 Constancia o evidencia en la dirección de estudiantes en estadías"/>
+                                                                                    <f:selectItem itemValue="46" itemLabel="4.6 Constancia o evidencia de haber producido material didáctico"/>
+                                                                                    <f:selectItem itemValue="47" itemLabel="4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio"/>
+                                                                                    <f:selectItem itemValue="48" itemLabel="4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores"/>
+                                                                                    <f:selectItem itemValue="49" itemLabel="4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="ripppa" display="tooltip" />                                                             
+                                                                                <hr/>
+                                                                            </div>        
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t.ruta)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
@@ -772,8 +806,25 @@
                                                                     <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta43.get(i)}"/>
                                                                     <p:tab title="Evidencia #{i+1}">
                                                                         <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Alineación  RIPPPA" />
+                                                                                <p:selectOneMenu id="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{t.alineacion}" >
+                                                                                    <f:selectItem itemValue="No Aplica" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="41" itemLabel="4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado 'B' y/o experiencia docente en el nivel superior"/>
+                                                                                    <f:selectItem itemValue="42" itemLabel="4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito"/>
+                                                                                    <f:selectItem itemValue="43" itemLabel="4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento"/>
+                                                                                    <f:selectItem itemValue="44" itemLabel="4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos"/>
+                                                                                    <f:selectItem itemValue="45" itemLabel="4.5 Constancia o evidencia en la dirección de estudiantes en estadías"/>
+                                                                                    <f:selectItem itemValue="46" itemLabel="4.6 Constancia o evidencia de haber producido material didáctico"/>
+                                                                                    <f:selectItem itemValue="47" itemLabel="4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio"/>
+                                                                                    <f:selectItem itemValue="48" itemLabel="4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores"/>
+                                                                                    <f:selectItem itemValue="49" itemLabel="4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="ripppa" display="tooltip" />                                                             
+                                                                                <hr/>
+                                                                            </div>        
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t.ruta)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
@@ -788,8 +839,25 @@
                                                                     <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta44.get(i)}"/>
                                                                     <p:tab title="Evidencia #{i+1}">
                                                                         <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Alineación  RIPPPA" />
+                                                                                <p:selectOneMenu id="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{t.alineacion}" >
+                                                                                    <f:selectItem itemValue="No Aplica" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="41" itemLabel="4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado 'B' y/o experiencia docente en el nivel superior"/>
+                                                                                    <f:selectItem itemValue="42" itemLabel="4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito"/>
+                                                                                    <f:selectItem itemValue="43" itemLabel="4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento"/>
+                                                                                    <f:selectItem itemValue="44" itemLabel="4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos"/>
+                                                                                    <f:selectItem itemValue="45" itemLabel="4.5 Constancia o evidencia en la dirección de estudiantes en estadías"/>
+                                                                                    <f:selectItem itemValue="46" itemLabel="4.6 Constancia o evidencia de haber producido material didáctico"/>
+                                                                                    <f:selectItem itemValue="47" itemLabel="4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio"/>
+                                                                                    <f:selectItem itemValue="48" itemLabel="4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores"/>
+                                                                                    <f:selectItem itemValue="49" itemLabel="4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="ripppa" display="tooltip" />                                                             
+                                                                                <hr/>
+                                                                            </div>        
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t.ruta)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
@@ -804,8 +872,25 @@
                                                                     <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta45.get(i)}"/>
                                                                     <p:tab title="Evidencia #{i+1}">
                                                                         <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Alineación  RIPPPA" />
+                                                                                <p:selectOneMenu id="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{t.alineacion}" >
+                                                                                    <f:selectItem itemValue="No Aplica" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="41" itemLabel="4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado 'B' y/o experiencia docente en el nivel superior"/>
+                                                                                    <f:selectItem itemValue="42" itemLabel="4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito"/>
+                                                                                    <f:selectItem itemValue="43" itemLabel="4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento"/>
+                                                                                    <f:selectItem itemValue="44" itemLabel="4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos"/>
+                                                                                    <f:selectItem itemValue="45" itemLabel="4.5 Constancia o evidencia en la dirección de estudiantes en estadías"/>
+                                                                                    <f:selectItem itemValue="46" itemLabel="4.6 Constancia o evidencia de haber producido material didáctico"/>
+                                                                                    <f:selectItem itemValue="47" itemLabel="4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio"/>
+                                                                                    <f:selectItem itemValue="48" itemLabel="4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores"/>
+                                                                                    <f:selectItem itemValue="49" itemLabel="4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="ripppa" display="tooltip" />                                                             
+                                                                                <hr/>
+                                                                            </div>        
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t.ruta)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
@@ -820,8 +905,25 @@
                                                                     <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta46.get(i)}"/>
                                                                     <p:tab title="Evidencia #{i+1}">
                                                                         <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Alineación  RIPPPA" />
+                                                                                <p:selectOneMenu id="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{t.alineacion}" >
+                                                                                    <f:selectItem itemValue="No Aplica" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="41" itemLabel="4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado 'B' y/o experiencia docente en el nivel superior"/>
+                                                                                    <f:selectItem itemValue="42" itemLabel="4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito"/>
+                                                                                    <f:selectItem itemValue="43" itemLabel="4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento"/>
+                                                                                    <f:selectItem itemValue="44" itemLabel="4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos"/>
+                                                                                    <f:selectItem itemValue="45" itemLabel="4.5 Constancia o evidencia en la dirección de estudiantes en estadías"/>
+                                                                                    <f:selectItem itemValue="46" itemLabel="4.6 Constancia o evidencia de haber producido material didáctico"/>
+                                                                                    <f:selectItem itemValue="47" itemLabel="4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio"/>
+                                                                                    <f:selectItem itemValue="48" itemLabel="4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores"/>
+                                                                                    <f:selectItem itemValue="49" itemLabel="4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="ripppa" display="tooltip" />                                                             
+                                                                                <hr/>
+                                                                            </div>        
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t.ruta)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
@@ -836,8 +938,25 @@
                                                                     <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta47.get(i)}"/>
                                                                     <p:tab title="Evidencia #{i+1}">
                                                                         <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                           <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Alineación  RIPPPA" />
+                                                                                <p:selectOneMenu id="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{t.alineacion}" >
+                                                                                    <f:selectItem itemValue="No Aplica" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="41" itemLabel="4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado 'B' y/o experiencia docente en el nivel superior"/>
+                                                                                    <f:selectItem itemValue="42" itemLabel="4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito"/>
+                                                                                    <f:selectItem itemValue="43" itemLabel="4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento"/>
+                                                                                    <f:selectItem itemValue="44" itemLabel="4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos"/>
+                                                                                    <f:selectItem itemValue="45" itemLabel="4.5 Constancia o evidencia en la dirección de estudiantes en estadías"/>
+                                                                                    <f:selectItem itemValue="46" itemLabel="4.6 Constancia o evidencia de haber producido material didáctico"/>
+                                                                                    <f:selectItem itemValue="47" itemLabel="4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio"/>
+                                                                                    <f:selectItem itemValue="48" itemLabel="4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores"/>
+                                                                                    <f:selectItem itemValue="49" itemLabel="4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="ripppa" display="tooltip" />                                                             
+                                                                                <hr/>
+                                                                            </div>        
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t.ruta)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
@@ -852,8 +971,25 @@
                                                                     <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta48.get(i)}"/>
                                                                     <p:tab title="Evidencia #{i+1}">
                                                                         <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Alineación  RIPPPA" />
+                                                                                <p:selectOneMenu id="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{t.alineacion}" >
+                                                                                    <f:selectItem itemValue="No Aplica" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="41" itemLabel="4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado 'B' y/o experiencia docente en el nivel superior"/>
+                                                                                    <f:selectItem itemValue="42" itemLabel="4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito"/>
+                                                                                    <f:selectItem itemValue="43" itemLabel="4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento"/>
+                                                                                    <f:selectItem itemValue="44" itemLabel="4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos"/>
+                                                                                    <f:selectItem itemValue="45" itemLabel="4.5 Constancia o evidencia en la dirección de estudiantes en estadías"/>
+                                                                                    <f:selectItem itemValue="46" itemLabel="4.6 Constancia o evidencia de haber producido material didáctico"/>
+                                                                                    <f:selectItem itemValue="47" itemLabel="4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio"/>
+                                                                                    <f:selectItem itemValue="48" itemLabel="4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores"/>
+                                                                                    <f:selectItem itemValue="49" itemLabel="4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="ripppa" display="tooltip" />                                                             
+                                                                                <hr/>
+                                                                            </div>        
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t.ruta)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
@@ -868,8 +1004,25 @@
                                                                     <c:set var="t" value="#{controladorComisionDictaminadora.experiencia.ruta49.get(i)}"/>
                                                                     <p:tab title="Evidencia #{i+1}">
                                                                         <p:outputPanel id="evidencias41" style="text-align:center;width: 100%;height: 100%">
+                                                                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                                                                <p:outputLabel for="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="Alineación  RIPPPA" />
+                                                                                <p:selectOneMenu id="ripppa" style="height:100%; width: 100%; object-fit: contain; font-size: large" value="#{t.alineacion}" >
+                                                                                    <f:selectItem itemValue="No Aplica" itemLabel="No Aplica"/>
+                                                                                    <f:selectItem itemValue="41" itemLabel="4.1 Constancia o evidencia que acredite su antigüedad como Profesor de Tiempo Completo Asociado 'B' y/o experiencia docente en el nivel superior"/>
+                                                                                    <f:selectItem itemValue="42" itemLabel="4.2 Constancia o evidencia que acredite su antigüedad y experiencia laboral relacionada con su ejercicio profesional y con el programa educativo al que este adscrito"/>
+                                                                                    <f:selectItem itemValue="43" itemLabel="4.3 Constancia o evidencia que acredite su antigüedad de haber brindado tutoria al estudiante en la aplicación pertinente del conocimiento"/>
+                                                                                    <f:selectItem itemValue="44" itemLabel="4.4 Constancia o evidencia que acredite su antigüedad de la prestación de servicios y estudios tecnológicos"/>
+                                                                                    <f:selectItem itemValue="45" itemLabel="4.5 Constancia o evidencia en la dirección de estudiantes en estadías"/>
+                                                                                    <f:selectItem itemValue="46" itemLabel="4.6 Constancia o evidencia de haber producido material didáctico"/>
+                                                                                    <f:selectItem itemValue="47" itemLabel="4.7 Constancia o evidencia de haber participado en la actualización de planes y programas de estudio"/>
+                                                                                    <f:selectItem itemValue="48" itemLabel="4.8 Constancia o evidencia de haber aprobado cursos de formación de profesores"/>
+                                                                                    <f:selectItem itemValue="49" itemLabel="4.9 Constancia o evidencia de experiencia profesional en áreas relacionadas con los talleres o laboratorios a su cargo"/>
+                                                                                </p:selectOneMenu> 
+                                                                                <p:message for="ripppa" display="tooltip" />                                                             
+                                                                                <hr/>
+                                                                            </div>        
                                                                             <p:panelGrid  columns="1" style="width: 100%;height: 100%" >
-                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
+                                                                                <embed type="application/pdf"  src="#{request.contextPath}/media/#{utilidadesCH.convertirRutaVistaL(t.ruta)}#toolbar=0" style="width: 100%;height: 800px;#{utilidadesAcceso.procesoElectoralActivo eq true?'-webkit-filter: grayscale(100%);filter: grayscale(100%);':''}" />       
                                                                             </p:panelGrid>
                                                                         </p:outputPanel>
                                                                     </p:tab>
