@@ -470,19 +470,26 @@
                                                             <p:column headerText="Matrícula" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterBy="#{segEst.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/>
                                                             <p:column headerText="Estudiante" style="width: 180px;" sortBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{segEst.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Grupo" style="width: 80px;" sortBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterBy="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Correo electrónico" style="width: 200px;" sortBy="#{segEst.dtoEstudiante.aspirante.idPersona.medioComunicacion.email}" filterBy="#{segEst.dtoEstudiante.aspirante.idPersona.medioComunicacion.email}" filterMatchMode="contains"/>
                                                             <p:column headerText="Situación académica" style="width: 100px;" sortBy="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterBy="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Programa educativo" style="width: 200px;" sortBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Programa educativo" style="width: 180px;" sortBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterBy="#{segEst.dtoEstudiante.programaEducativo.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Empresa" style="width: 200px;" sortBy="#{segEst.empresa.nombre}" filterBy="#{segEst.empresa.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Correo electrónico" style="width: 200px;" sortBy="#{segEst.empresa.emailPrincipal}" filterBy="#{segEst.empresa.emailPrincipal}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Teléfono" style="width: 120px;" sortBy="#{segEst.empresa.telefonoPrincipal}" filterBy="#{segEst.empresa.telefonoPrincipal}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Asesor empresarial" style="width: 150px;" sortBy="#{segEst.asesorEmpresarialEstadia.apellidoPaterno} #{segEst.asesorEmpresarialEstadia.apellidoMaterno} #{segEst.asesorEmpresarialEstadia.nombre}" filterBy="#{segEst.asesorEmpresarialEstadia.apellidoPaterno} #{segEst.asesorEmpresarialEstadia.apellidoMaterno} #{segEst.asesorEmpresarialEstadia.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Cargo asesor empresarial" style="width: 100px;" sortBy="#{segEst.asesorEmpresarialEstadia.puesto}" filterBy="#{segEst.asesorEmpresarialEstadia.puesto}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Asesor académico" style="width: 150px;" sortBy="#{segEst.asesorEstadia.nombre}" filterBy="#{segEst.asesorEstadia.nombre}" filterMatchMode="contains"/>
                                                             <p:column headerText="Proyecto" style="width: 200px;" sortBy="#{segEst.seguimientoEstadiaEstudiante.proyecto}"  filterBy="#{segEst.seguimientoEstadiaEstudiante.proyecto}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Dirección" style="width: 200px;" sortBy="#{segEst.empresa.direccion}"  filterBy="#{segEst.empresa.direccion}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Estado" style="width: 150px;" sortBy="#{segEst.empresa.localidad.municipio.estado.nombre}"  filterBy="#{segEst.empresa.localidad.municipio.estado.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Municipio" style="width: 180px;" sortBy="#{segEst.empresa.localidad.municipio.nombre}" filterBy="#{segEst.empresa.localidad.municipio.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Localidad" style="width: 180px;" sortBy="#{segEst.empresa.localidad.nombre}" filterBy="#{segEst.empresa.localidad.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="País" style="width: 150px;" sortBy="#{segEst.empresa.localidad.municipio.estado.idpais.nombre}" filterBy="#{segEst.empresa.localidad.municipio.estado.idpais.nombre}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Evaluación Interna" style="width: 150px;" sortBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno}" filterBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Evaluación Externa" style="width: 150px;"  sortBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno}" filterBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Aprobó Evaluaciones" style="width: 150px;" sortBy="#{!reportesEstadia.aproboEstadia(segEst)?'No':'Sí'}" filterBy="#{!reportesEstadia.aproboEstadia(segEst)?'No':'Sí'}" filterMatchMode="contains"/>
-                                                            <p:column headerText="Validado Vinculación" style="width: 150px;" sortBy="#{!segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'No acreditado(a)':'Acreditado(a)'}" filterBy="#{!segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'No acreditado(a)':'Acreditado(a)'}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Dirección" style="width: 180px;" sortBy="#{segEst.empresa.direccion}"  filterBy="#{segEst.empresa.direccion}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Estado" style="width: 120px;" sortBy="#{segEst.empresa.localidad.municipio.estado.nombre}"  filterBy="#{segEst.empresa.localidad.municipio.estado.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Municipio" style="width: 120px;" sortBy="#{segEst.empresa.localidad.municipio.nombre}" filterBy="#{segEst.empresa.localidad.municipio.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="C.P." style="width: 80px;" sortBy="#{segEst.empresa.cp}" filterBy="#{segEst.empresa.cp}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Localidad" style="width: 120px;" sortBy="#{segEst.empresa.localidad.nombre}" filterBy="#{segEst.empresa.localidad.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="País" style="width: 80px;" sortBy="#{segEst.empresa.localidad.municipio.estado.idpais.nombre}" filterBy="#{segEst.empresa.localidad.municipio.estado.idpais.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Evaluación Interna" style="width: 120px;" sortBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno}" filterBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorInterno}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Evaluación Externa" style="width: 120px;"  sortBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno}" filterBy="#{segEst.seguimientoEstadiaEstudiante.promedioAsesorExterno}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Aprobó Evaluaciones" style="width: 120px;" sortBy="#{!reportesEstadia.aproboEstadia(segEst)?'No':'Sí'}" filterBy="#{!reportesEstadia.aproboEstadia(segEst)?'No':'Sí'}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Validado Vinculación" style="width: 120px;" sortBy="#{!segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'No acreditado(a)':'Acreditado(a)'}" filterBy="#{!segEst.seguimientoEstadiaEstudiante.validacionVinculacion?'No acreditado(a)':'Acreditado(a)'}" filterMatchMode="contains"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <p:column style="text-align: center;">
@@ -494,6 +501,9 @@
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{segEst.dtoEstudiante.estudiante.grupo.grado}° #{segEst.dtoEstudiante.estudiante.grupo.literal} #{segEst.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
                                                     </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.dtoEstudiante.estudiante.aspirante.idPersona.medioComunicacion.email}"/>
+                                                    </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{segEst.dtoEstudiante.estudiante.tipoEstudiante.descripcion}"/>
                                                     </p:column>
@@ -502,6 +512,21 @@
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{segEst.empresa.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.empresa.emailPrincipal}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.empresa.telefonoPrincipal}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.asesorEmpresarialEstadia.apellidoPaterno} #{segEst.asesorEmpresarialEstadia.apellidoMaterno} #{segEst.asesorEmpresarialEstadia.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.asesorEmpresarialEstadia.puesto}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;">
+                                                        <h:outputText value="#{segEst.asesorEstadia.nombre}"/>
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{segEst.seguimientoEstadiaEstudiante.proyecto}"/>
@@ -514,6 +539,9 @@
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{segEst.empresa.localidad.municipio.nombre}"/>
+                                                    </p:column>
+                                                    <p:column style="text-align: center;">
+                                                        <h:outputText value="#{segEst.empresa.cp}"/>
                                                     </p:column>
                                                     <p:column style="text-align: justify;">
                                                         <h:outputText value="#{segEst.empresa.localidad.nombre}"/>

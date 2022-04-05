@@ -574,6 +574,11 @@ public class EjbSeguimientoEstadia {
             SeguimientoEstadiaEstudiante segEstBD = em.find(SeguimientoEstadiaEstudiante.class, seguimientoEstadiaEstudiante.getSeguimiento());
             if(segEstBD == null) return ResultadoEJB.crearErroneo(4, "No se puede empaquetar seguimiento no registrado previamente en base de datos.", DtoSeguimientoEstadia.class);
 
+            AsesorEmpresarialEstadia  asesorEmpresarialEstadia = em.createQuery("SELECT a FROM AsesorEmpresarialEstadia a WHERE a.seguimiento.seguimiento=:seguimiento", AsesorEmpresarialEstadia.class)
+                    .setParameter("seguimiento", seguimientoEstadiaEstudiante.getSeguimiento())
+                    .getResultStream().findFirst().orElse(new AsesorEmpresarialEstadia());
+            
+            
             DtoDatosEstudiante dtoDatosEstudiante = packEstudiante(seguimientoEstadiaEstudiante, eventoSeleccionado).getValor();
             
                 Personal asesorEstadia = em.find(Personal.class, seguimientoEstadiaEstudiante.getAsesor().getPersonal());
@@ -597,7 +602,7 @@ public class EjbSeguimientoEstadia {
                     semanas = calcularSemanasEstadia(seguimientoEstadiaEstudiante.getFechaInicio(), seguimientoEstadiaEstudiante.getFechaFin()).getValor();
                 }
 
-            DtoSeguimientoEstadia dtoSeguimientoEstadia = new DtoSeguimientoEstadia(seguimientoEstadiaEstudiante, dtoDatosEstudiante, asesorEstadia, area, director, empresa, semanas);
+            DtoSeguimientoEstadia dtoSeguimientoEstadia = new DtoSeguimientoEstadia(seguimientoEstadiaEstudiante, dtoDatosEstudiante, asesorEstadia, area, director, empresa, asesorEmpresarialEstadia, semanas);
             
             return ResultadoEJB.crearCorrecto(dtoSeguimientoEstadia, "Seguimiento de estadía empaquetado.");
         }catch (Exception e){
