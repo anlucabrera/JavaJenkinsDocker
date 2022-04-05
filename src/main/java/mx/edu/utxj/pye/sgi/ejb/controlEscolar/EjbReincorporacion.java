@@ -1792,8 +1792,8 @@ public class EjbReincorporacion {
     
     public void enviarConfirmacionCorreoElectronico(String correoDestino, String titulo, String asunto, String mensaje) {
         // El correo gmail de envío
-        String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";//correo del arrea de desarrollo
-        String claveCorreo = "DServiciosEscolares19";//contraseña del correo del arrea de desarrollo
+        String correoEnvia = ep.leerPropiedad("correoElectronicoEscolares").getValorCadena();    
+        String claveCorreo = ep.leerPropiedad("passwordCorreoElectronicoEscolares").getValorCadena();
         Properties properties = new Properties();
 
         properties.put("mail.smtp.host", "smtp.gmail.com");

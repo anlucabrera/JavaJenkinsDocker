@@ -33,6 +33,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 
 @Stateless(name = "EjbCitaInscripcionAspirante")
 public class EjbCitaInscripcionAspirante {
@@ -40,6 +41,7 @@ public class EjbCitaInscripcionAspirante {
     private EntityManager em;
     @EJB EjbRegistroFichaAdmision ejbRegistroFichaAdmision;
     @EJB EjbEventoEscolar ejbEventoEscolar;
+    @EJB EjbPropiedades ep;
     @Inject UtilidadesCH util;
 
     @PostConstruct
@@ -446,15 +448,15 @@ public class EjbCitaInscripcionAspirante {
         if(dto.getAspirante().getIdPersona().getMedioComunicacion().getEmail()!=null){
             String  mail= dto.getAspirante().getIdPersona().getMedioComunicacion().getEmail();
             // El correo gmail de envío
-            String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "DServiciosEscolares21";
+            String correoEnvia = ep.leerPropiedad("correoElectronicoEscolares").getValorCadena();    
+            String claveCorreo = ep.leerPropiedad("passwordCorreoElectronicoEscolares").getValorCadena();
             String mensaje = "Estimado(a)"+ dto.getAspirante().getIdPersona().getNombre() + ", haz realizado tu registro de tu cita con éxito"+
                     "\n\n Para continuar descarga el comprobante de tu cita y leé con atención las indicaciones.\n\n"
                     + "Recuerda que al asistir a tu cita debes tener todas las medidas sanitarias, por lo cual el uso de cobre bocas es obligatorio.\n"
                     + "ATENTAMENTE \n" +
                     "Departamento de Servicios Escolares";
 
-            String identificador = "Agenda tu cita UTXJ 2020";
+            String identificador = "Agenda tu cita UTXJ " +  new SimpleDateFormat("yyyy").format(fecha) + " ";
             String asunto = "Registro de cita éxitoso";
             if(mail != null){
                 try {

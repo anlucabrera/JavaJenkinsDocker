@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ConfiguracionPropiedades;
 
 /**
  *
@@ -768,9 +769,21 @@ public class ServiceProcesoInscripcion implements EjbProcesoInscripcion {
             else {return ResultadoEJB.crearCorrecto(tutor,"Tutor de grupo");}
         }catch (Exception e){return  ResultadoEJB.crearErroneo(1, "Error al obtener al tutor de grupo(EJBProcesoInscripcion.getTutor).", e, null);}
     }
-
-
-
-
+    
+    @Override
+    public ResultadoEJB<String> actualizarConfiguracionPropiedadCorreo(String clave, String valorNuevo) {
+        try {
+            ConfiguracionPropiedades configuracionPropiedad = em.find(ConfiguracionPropiedades.class, clave);
+            if(configuracionPropiedad != null){
+                configuracionPropiedad.setValorCadena(valorNuevo);
+                em.merge(configuracionPropiedad);
+                return ResultadoEJB.crearCorrecto(configuracionPropiedad.getValorCadena(), "Se ha actualizado la información correctamente");
+            }else{
+                return ResultadoEJB.crearErroneo(2, null, "No se ha podido encontrar el dato para realizar la actualización");
+            }
+        } catch (Exception e) {
+            return ResultadoEJB.crearErroneo(1, "Error al modificar los datos del correo electrónico (EJBProcesoInscripcion.actualizarConfiguracionPropiedadCorreo)", e, null);
+        }
+    }
 
 }

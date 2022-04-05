@@ -208,7 +208,7 @@
                                                    size="9"
                                                    title="Favor de ingresar el valor correspondiente a la cantidad de proyección de fichas validadas"
                                                    onkeydown="if (event.keyCode === 13) {editarProyeccionFichasValidadas();return;}"
-                                                   readonly="#{!fichaAdmisionReporte.rol.personalEscolares}"
+                                                   readonly="#{!fichaAdmisionReporte.rol.personalEscolares and !fichaAdmisionReporte.rol.personalPye}"
                                                    >
                                         <p:remoteCommand name="editarProyeccionFichasValidadas"
                                                          process="@this"
@@ -231,7 +231,7 @@
                                                    size="9"
                                                    title="Favor de ingresar el valor correspondiente a la cantidad de proyección de matricula"
                                                    onkeydown="if (event.keyCode === 13) {editarProyeccionMatricula();return;}"
-                                                   readonly="#{!fichaAdmisionReporte.rol.personalEscolares}"
+                                                   readonly="#{!fichaAdmisionReporte.rol.personalEscolares and !fichaAdmisionReporte.rol.personalPye}"
                                                    >
                                         <p:remoteCommand name="editarProyeccionMatricula"
                                                          process="@this"

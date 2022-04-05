@@ -38,6 +38,8 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.text.SimpleDateFormat;
+import javax.faces.event.ValueChangeEvent;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -81,9 +83,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
     @EJB EjbSeguimientoCitasSE ejbSeguimientoCitasSE;
 
     @Inject LogonMB login;
-
-
-
+    
     @Getter private Boolean cargado = false;
 
     @PostConstruct
@@ -132,6 +132,7 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
             getTipoSangre();
             getTramiteCitaActivo();
             if(rol.getEventoIncripcion()!=null){ listaEstudiantes = ejbProcesoInscripcion.listaEstudiantesXPeriodo(rol.getEventoIncripcion().getPeriodo());}
+            asginarValoresCorreoAcceso();
         }catch (Exception e){
             mostrarExcepcion(e);
         }
@@ -190,13 +191,13 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         Date fechaval= new Date();
         aspirante.setFechaValidacion(fechaval);
         ejbFichaAdmision.actualizaAspirante(aspirante);
-        String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-        String claveCorreo = "DeptoEscolares21";
+        String correoEnvia = ep.leerPropiedad("correoElectronicoEscolares").getValorCadena();    
+        String claveCorreo = ep.leerPropiedad("passwordCorreoElectronicoEscolares").getValorCadena();
         String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Se le informa que su ficha de admisión ha sido validada correctamente, para continuar con el tu proceso de inscripción se le pide de favor que continúes con tu exámen institucional y ceneval.\n\n" +
                 "Los datos de acceso se les enviará vía correo electrónico. \n\n"
                 + "ATENTAMENTE \n" +
                 "Departamento de Servicios Escolares";
-        String identificador = "Registro de Ficha de Admisión 2021 UTXJ";
+        String identificador = "Registro de Ficha de Admisión " + new SimpleDateFormat("yyyy").format(aspirante.getFechaValidacion()) + " UTXJ";
         String asunto = "Validación Ficha de Admisión";
         if(aspirante.getIdPersona().getMedioComunicacion().getEmail() != null){
             EnvioCorreos.EnviarCorreoTxt(correoEnvia, claveCorreo, identificador,asunto,aspirante.getIdPersona().getMedioComunicacion().getEmail(),mensaje);
@@ -680,5 +681,32 @@ public class ProcesoInscripcion extends ViewScopedRol implements Desarrollable {
         ResultadoEJB<Vistapagosprimercuatrimestre> resActualizaPago= ejbFinanzas.saveCambios(dtoAlumnoFinanzas);
         if(resActualizaPago.getCorrecto()!=true){mostrarMensajeResultadoEJB(resActualizaPago);}
         else {mostrarMensajeResultadoEJB(resActualizaPago);}
+    }
+    
+    public void actualizar(){
+        repetirUltimoMensaje();
+    }
+    
+    public void asginarValoresCorreoAcceso() {
+        rol.setCorreoElectronico(ep.leerPropiedad("correoElectronicoEscolares").getValorCadena());
+        rol.setPasswordCorreoElectronico(ep.leerPropiedad("passwordCorreoElectronicoEscolares").getValorCadena());
+    }
+
+    public void actualizarCorreoElectronico(ValueChangeEvent event){
+        if(event.getNewValue() == null){mostrarMensaje("El correo no puede ser nulo");return;}
+        if(event.getNewValue().equals("")){mostrarMensaje("Debe de ingresar un valor para poder actualizar el campo de correo electrónico");return;}
+        rol.setCorreoElectronico(event.getNewValue().toString());
+        ResultadoEJB<String> res = ejbProcesoInscripcion.actualizarConfiguracionPropiedadCorreo("correoElectronicoEscolares", rol.getCorreoElectronico());    
+        mostrarMensajeResultadoEJB(res);
+        if(res.getCorrecto()) asginarValoresCorreoAcceso();
+    }
+    
+    public void actualizarPasswordCorreoElectronico(ValueChangeEvent event){
+        if(event.getNewValue() == null){mostrarMensaje("La contraseña no puede ser nula");return;}
+        if(event.getNewValue().equals("")){mostrarMensaje("Debe de ingresar un valor para poder actualizar el campo de contraseña");return;}
+        rol.setPasswordCorreoElectronico(event.getNewValue().toString());
+        ResultadoEJB<String> res = ejbProcesoInscripcion.actualizarConfiguracionPropiedadCorreo("passwordCorreoElectronicoEscolares", rol.getPasswordCorreoElectronico());
+        mostrarMensajeResultadoEJB(res);
+        if(res.getCorrecto()) asginarValoresCorreoAcceso();
     }
 }
