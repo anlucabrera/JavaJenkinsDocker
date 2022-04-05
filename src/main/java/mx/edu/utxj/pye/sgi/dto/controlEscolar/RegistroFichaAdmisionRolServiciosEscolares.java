@@ -77,7 +77,8 @@ public class RegistroFichaAdmisionRolServiciosEscolares extends AbstractRol {
     @Getter @Setter @NonNull private List<AreasUniversidad> areasAcademicas;
     @Getter @Setter @NonNull private List<AreasUniversidad> programasEducativosPo,programasEducativosSo,carrerasEv;
     @Getter @Setter @NonNull private  List<Generos> generos;
-
+    @Getter @Setter Boolean forzarAperturaDialogo;
+    
     public void setEventoEscolar(EventoEscolar eventoEscolar) {
         this.eventoEscolar = eventoEscolar;
     }
@@ -91,6 +92,7 @@ public class RegistroFichaAdmisionRolServiciosEscolares extends AbstractRol {
         super(filtro);
         this.serviciosEscolares = serviciosEscolares;
         this.programa = programa;
+        setForzarAperturaDialogo(false);
     }
 
 }

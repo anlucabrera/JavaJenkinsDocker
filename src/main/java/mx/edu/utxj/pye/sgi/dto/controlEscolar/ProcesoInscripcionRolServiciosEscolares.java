@@ -11,6 +11,7 @@ import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
 
 import java.util.List;
 import java.util.Objects;
+import lombok.Setter;
 
 public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
 
@@ -50,6 +51,9 @@ public class ProcesoInscripcionRolServiciosEscolares extends AbstractRol {
     @Getter @NonNull private  Sistema sPoA, sSoA;
     @Getter @NonNull private  List<Sistema> sistemasAspirante;
     @Getter @NonNull private DatosAcademicos datosAcademicosAspiranteSelect;
+    
+    @Getter @Setter private String correoElectronico;
+    @Getter @Setter private String passwordCorreoElectronico;
 
     public ProcesoInscripcionRolServiciosEscolares(Filter<PersonalActivo> filtro, PersonalActivo serviciosEscolares, AreasUniversidad programa) {
         super(filtro);

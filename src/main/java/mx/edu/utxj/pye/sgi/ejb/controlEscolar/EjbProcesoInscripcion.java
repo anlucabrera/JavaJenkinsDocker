@@ -15,7 +15,6 @@ import mx.edu.utxj.pye.sgi.entity.pye2.Iems;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 
 import javax.ejb.Local;
-import javax.persistence.NamedStoredProcedureQueries;
 import java.util.List;
 
 /**
@@ -48,4 +47,5 @@ public interface EjbProcesoInscripcion {
     public ResultadoEJB<Estudiante> saveEstudiante(@NonNull Estudiante estudiante, @NonNull Boolean opcionIn, @NonNull DtoGrupo grupo, @NonNull Documentosentregadosestudiante documentos, @NonNull Operacion operacion, @NonNull EventoEscolar eventoEscolar);
     public ResultadoEJB<Documentosentregadosestudiante> getDocEstudiante (@NonNull Estudiante estudiante);
     public ResultadoEJB<Login> getLoginbyPersona(@NonNull Persona persona);
+    public ResultadoEJB<String> actualizarConfiguracionPropiedadCorreo(@NonNull String clave, @NonNull String valorNuevo);
 }

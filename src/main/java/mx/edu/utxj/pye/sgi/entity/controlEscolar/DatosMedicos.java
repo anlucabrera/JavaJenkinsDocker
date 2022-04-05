@@ -76,7 +76,7 @@ public class DatosMedicos implements Serializable {
     @NotNull
     @Column(name = "nss_vigente")
     private boolean nssVigente;
-    @Size(max = 20)
+    @Size(max = 100)
     @Column(name = "nss")
     private String nss;
     @Size(max = 8)

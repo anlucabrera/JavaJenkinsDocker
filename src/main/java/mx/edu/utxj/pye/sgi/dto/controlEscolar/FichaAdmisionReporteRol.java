@@ -1,13 +1,9 @@
 package mx.edu.utxj.pye.sgi.dto.controlEscolar;
 
-import com.github.adminfaces.starter.infra.model.Filter;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import mx.edu.utxj.pye.sgi.controlador.controlEscolar.ProcesoInscripcion;
-import mx.edu.utxj.pye.sgi.dto.AbstractRol;
 import mx.edu.utxj.pye.sgi.dto.PersonalActivo;
-import mx.edu.utxj.pye.sgi.entity.ch.Personal;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.ProcesosInscripcion;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
@@ -20,7 +16,7 @@ public class FichaAdmisionReporteRol {
 
     @Getter @NonNull private PersonalActivo personalActivo;
     @Getter @NonNull private AreasUniversidad programa;
-    @Getter @Setter @NonNull protected NivelRol nivelRol = NivelRol.CONSULTA;
+    @Getter @NonNull protected NivelRol nivelRol = NivelRol.CONSULTA;
 
     //Ultimo proceso de inscripción
     @Getter @NonNull private String tipoReporte;
@@ -53,6 +49,7 @@ public class FichaAdmisionReporteRol {
     @Getter     @Setter     private     List<Persona>       listaEstudiantes;
     
     @Getter     @Setter     private     Boolean             personalEscolares;
+    @Getter     @Setter     private     Boolean             personalPye;
     
     public Boolean tieneAcceso(PersonalActivo personalActivo, UsuarioTipo usuarioTipo){
         if(personalActivo == null) return false;
