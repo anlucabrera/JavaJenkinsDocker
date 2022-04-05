@@ -49,6 +49,7 @@ import javax.persistence.EntityManager;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import mx.edu.utxj.pye.sgi.ejb.ch.EjbPersonal;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 import mx.edu.utxj.pye.sgi.entity.ch.Generos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.facade.Facade;
@@ -67,6 +68,7 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
     @EJB EjbPersonal ejbPersonal;
     @EJB EjbEventoEscolar ejbEventoEscolar;
     @EJB EjbProcesoInscripcion ejbProcesoInscripcion;
+    @EJB EjbPropiedades ep;
 //    @EJB Facade2 f;
     private EntityManager em;
 
@@ -543,8 +545,8 @@ public class ServicioFichaAdmision implements EjbFichaAdmision {
         
         if(uso.equals("Alumno")){
             // El correo gmail de envío
-            String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "DServiciosEscolares19";
+            String correoEnvia = ep.leerPropiedad("correoElectronicoEscolares").getValorCadena();    
+            String claveCorreo = ep.leerPropiedad("passwordCorreoElectronicoEscolares").getValorCadena();
             String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
                             "\n\n Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria\n\n"
                             + "* Formato de Ficha de Admisión.\n"

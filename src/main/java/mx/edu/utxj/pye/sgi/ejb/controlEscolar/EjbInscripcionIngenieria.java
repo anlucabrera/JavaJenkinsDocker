@@ -976,14 +976,14 @@ public class EjbInscripcionIngenieria {
 
         if(uso.equals("Alumno")){
             // El correo gmail de envío
-            String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "DeptoEscolares21";
+            String correoEnvia = ep.leerPropiedad("correoElectronicoEscolares").getValorCadena();    
+            String claveCorreo = ep.leerPropiedad("passwordCorreoElectronicoEscolares").getValorCadena();
             String mensaje = "Estimado(a)"+ estudiante.getAspirante().getIdPersona().getNombre() + ", se te notifica que se ha realizado con éxito tu inscripción."+
                     "\n\n Matricula: " + estudiante.getEstudianteIncrito().getMatricula()+"\n"
                     + "Grupo : "+estudiante.getEstudianteIncrito().getGrupo().getGrado() +"-"+estudiante.getEstudianteIncrito().getGrupo().getLiteral() + " de la carrera "+ estudiante.getPeIncrito().getNombre()+"\n\n"
                     + "ATENTAMENTE \n" +
                     "Departamento de Servicios Escolares";
-            String identificador = "Inscripciones UTXJ 2021";
+            String identificador = "Inscripciones UTXJ " + new SimpleDateFormat("yyyy").format(new Date()) + " ";
             String asunto = "Inscripción Ingeniería - Licenciatura";
             // System.out.println(medioComunicacion.getEmail());
             if(mc.getEmail() != null){

@@ -566,6 +566,7 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
                 getRegistro();
                 // comprobarPaso();
                 mostrarMensajeResultadoEJB(resPersona);
+//                abrirFormularioDatosAcceso();
             }
             else {mostrarMensajeResultadoEJB(resPersona);}
         }catch (Exception e){mostrarExcepcion(e);}
@@ -1083,6 +1084,24 @@ public class RegistroFichaAdmisionAspirante extends ViewScopedRol implements Des
             rol.setForzarAperturaDialogo(Boolean.FALSE);
         }
     }
+    
+    public void abrirFormularioDatosAcceso(){
+        try {
+            rol.setForzarAperturaDialogoDatosAcceso(Boolean.TRUE);
+            forzarAperturaDatosAcceso();
+        } catch (Exception e) {
+            mostrarMensaje("Ocurrio un error al abrir el formulario para los datos de acceso: " + e.getMessage());
+        }
+    }
+    
+    public void forzarAperturaDatosAcceso(){
+        if(rol.getForzarAperturaDialogo()){
+            PrimeFaces current = PrimeFaces.current();
+            current.executeScript("PF('modalPwd').show();");
+            rol.setForzarAperturaDialogoDatosAcceso(Boolean.FALSE);
+        }
+    }
+    
     
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {

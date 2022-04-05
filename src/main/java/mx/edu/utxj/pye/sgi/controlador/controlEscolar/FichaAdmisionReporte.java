@@ -87,10 +87,16 @@ public class FichaAdmisionReporte extends ViewScopedRol implements Desarrollable
             getProcesos();
             
             ResultadoEJB<PersonalActivo> resJefeEscolares = ejb.validarJefeEscolares(rol.getPersonalActivo());
+            ResultadoEJB<PersonalActivo> resJefePye = ejb.validarDirPlaneacion(rol.getPersonalActivo());
             if(resJefeEscolares.getCorrecto()){
                 rol.setPersonalEscolares(Boolean.TRUE);
             }else{
                 rol.setPersonalEscolares(Boolean.FALSE);
+            }
+            if(resJefePye.getCorrecto()){
+                rol.setPersonalPye(Boolean.TRUE);
+            }else{
+                rol.setPersonalPye(Boolean.FALSE);
             }
             
             Persona personaAuto = new Persona();

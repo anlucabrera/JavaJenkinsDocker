@@ -543,25 +543,27 @@ public class EjbRegistroFichaAdmision {
         try{
             if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,new Integer(0),"El proceso de inscripción no debe ser nulo");}
             String folio = "";
-            int folioUlizable = 0;
-            String anyo2 = new SimpleDateFormat("yy").format(new Date());
+            int folioUtilizable = 0;
+            String anyo2 = new SimpleDateFormat("yy").format(procesosInscripcion.getFechaFin());
             folio = anyo2.concat(String.valueOf(procesosInscripcion.getIdPeriodo())).concat("0000");
-
             TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(p.folioAspirante) FROM Aspirante AS p WHERE p.idProcesoInscripcion.idProcesosInscripcion =:idPE and (p.tipoAspirante.idTipoAspirante=:tipo or p.tipoAspirante.idTipoAspirante=:tipo2) ")
                     .setParameter("idPE", procesosInscripcion.getIdProcesosInscripcion())
                     .setParameter("tipo", 1)
-                    .setParameter("tipo2",3)
-                    ;
+                    .setParameter("tipo2",3);
             if(v.getSingleResult() == null){
-                folioUlizable = Integer.valueOf(folio);
+                folioUtilizable = Integer.valueOf(folio);
             }else{
-                folioUlizable = v.getSingleResult()+1;
+                String folioBD = String.valueOf(v.getSingleResult()).substring(0, 4);
+                String folioGenerico = folio.substring(0, 4);
+                if(folioBD.equals(folioGenerico)){
+                    folioUtilizable = v.getSingleResult() + 1;
+                }else{
+                    folioUtilizable = Integer.valueOf(folio);
+                }
             }
-            return ResultadoEJB.crearCorrecto(folioUlizable,"Folio generado correctamente");
-
+            return ResultadoEJB.crearCorrecto(folioUtilizable,"Folio generado correctamente");
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Error al generar el folio del aspirate (EjbRegistroFichaAdmision.generarFolio).", e, null);
-
         }
     }
 
@@ -693,10 +695,10 @@ public class EjbRegistroFichaAdmision {
 
         if(uso.equals("Alumno")){
             // El correo gmail de envío
-            String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "DeptoEscolares21";
+            String correoEnvia = ep.leerPropiedad("correoElectronicoEscolares").getValorCadena();
+            String claveCorreo = ep.leerPropiedad("passwordCorreoElectronicoEscolares").getValorCadena();
             String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
-                    "\n\n Para continuar descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria\n\n"
+                    "\n\n Para continuar, descarga la ficha la admisión y asiste a las instalaciones de la UTXJ y entregar la documentación necesaria\n\n"
                     + "* Formato de Ficha de Admisión.\n"
                     + "* Copia de CURP (nuevo formato).\n"
                     + "* Copia de Acta de Nacimiento.\n"
@@ -705,7 +707,7 @@ public class EjbRegistroFichaAdmision {
                     "ATENTAMENTE \n" +
                     "Departamento de Servicios Escolares";
 
-            String identificador = "Registro de Ficha de Admisión 2022 UTXJ";
+            String identificador = "Registro de Ficha de Admisión " + new SimpleDateFormat("yyyy").format(aspirante.getIdProcesoInscripcion().getFechaFin()) + " UTXJ";
             String asunto = "Registro Exitoso";
             // System.out.println(medioComunicacion.getEmail());
             if(medioComunicacion.getEmail() != null){

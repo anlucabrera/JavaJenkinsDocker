@@ -37,6 +37,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import mx.edu.utxj.pye.sgi.ejb.prontuario.EjbPropiedades;
 
 @Stateless(name = "EjbRegistroFichaIngenieria")
 public class EjbRegistroFichaIngenieria {
@@ -44,6 +45,7 @@ public class EjbRegistroFichaIngenieria {
     @EJB Facade2 f2;
     @EJB EjbEventoEscolar ejbEventoEscolar;
     @EJB EjbRegistroFichaAdmision ejbRegistroFichaAdmision;
+    @EJB EjbPropiedades ep;
 
     private EntityManager em;
     private  EntityManager emS;
@@ -715,8 +717,8 @@ public class EjbRegistroFichaIngenieria {
         try{
             if(procesosInscripcion==null){return ResultadoEJB.crearErroneo(2,new Integer(0),"El proceso de inscripción no debe ser nulo");}
             String folio = "";
-            int folioUlizable = 0;
-            String anyo2 = new SimpleDateFormat("yy").format(new Date());
+            int folioUtilizable = 0;
+            String anyo2 = new SimpleDateFormat("yy").format(procesosInscripcion.getFechaFin());
             folio = anyo2.concat(String.valueOf(procesosInscripcion.getIdPeriodo())).concat("0000");
 
             TypedQuery<Integer> v = (TypedQuery<Integer>) em.createQuery("SELECT MAX(p.folioAspirante) FROM Aspirante AS p WHERE p.idProcesoInscripcion.idProcesosInscripcion =:idPE and (p.tipoAspirante.idTipoAspirante=:tipo or p.tipoAspirante.idTipoAspirante=:tipo2) ")
@@ -725,11 +727,17 @@ public class EjbRegistroFichaIngenieria {
                     .setParameter("tipo2",3)
                     ;
             if(v.getSingleResult() == null){
-                folioUlizable = Integer.valueOf(folio);
+                folioUtilizable = Integer.valueOf(folio);
             }else{
-                folioUlizable = v.getSingleResult()+1;
+                String folioBD = String.valueOf(v.getSingleResult()).substring(0, 4);
+                String folioGenerico = folio.substring(0, 4);
+                if(folioBD.equals(folioGenerico)){
+                    folioUtilizable = v.getSingleResult() + 1;
+                }else{
+                    folioUtilizable = Integer.valueOf(folio);
+                }
             }
-            return ResultadoEJB.crearCorrecto(folioUlizable,"Folio generado correctamente");
+            return ResultadoEJB.crearCorrecto(folioUtilizable,"Folio generado correctamente");
 
         }catch (Exception e){
             return ResultadoEJB.crearErroneo(1, "Error al generar el folio del aspirate (EjbRegistroFichaAdmision.generarFolio).", e, null);
@@ -1015,8 +1023,8 @@ public class EjbRegistroFichaIngenieria {
 
         if(uso.equals("Alumno")){
             // El correo gmail de envío
-            String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "DeptoEscolares21";
+            String correoEnvia = ep.leerPropiedad("correoElectronicoEscolares").getValorCadena();
+            String claveCorreo = ep.leerPropiedad("passwordCorreoElectronicoEscolares").getValorCadena();
             String mensaje = "Estimado(a) "+persona.getNombre()+"\n\n Gracias por elegir a la Universidad Tecnologica de Xicotepec de Juárez como opción para continuar con tus estudios de nivel superior." +
                     "\n\n Si eres egresado de generación reciente (2019 -2021), valida tu ficha en la plataforma SII, realiza el pago de colegiatura y de pago de seguro facultativo, envia los comprobantes al correo finanzas@utxicotepec.edu.mx identificándolos con tu matricula y el cuatrimestre de pago, para que se realice la inscripción automática." +
                     ".\n\n"
@@ -1024,7 +1032,7 @@ public class EjbRegistroFichaIngenieria {
                     "ATENTAMENTE \n" +
                     "Departamento de Servicios Escolares";
 
-            String identificador = "Pre registro Ingenierías y Licenciaturas 2022 UTXJ";
+            String identificador = "Pre registro Ingenierías y Licenciaturas " + new SimpleDateFormat("yyyy").format(aspirante.getIdProcesoInscripcion().getFechaFin()) + " UTXJ";
             String asunto = "Pre registo Exitoso";
             // System.out.println(medioComunicacion.getEmail());
             if(medioComunicacion.getEmail() != null){
@@ -1098,15 +1106,15 @@ public class EjbRegistroFichaIngenieria {
         if(dto.getAspirante().getIdPersona().getMedioComunicacion().getEmail()!=null){
             String  mail= dto.getAspirante().getIdPersona().getMedioComunicacion().getEmail();
             // El correo gmail de envío
-            String correoEnvia = "servicios.escolares@utxicotepec.edu.mx";
-            String claveCorreo = "DServiciosEscolares21";
+            String correoEnvia = ep.leerPropiedad("correoElectronicoEscolares").getValorCadena();
+            String claveCorreo = ep.leerPropiedad("passwordCorreoElectronicoEscolares").getValorCadena();
             String mensaje = "Estimado(a)"+ dto.getAspirante().getIdPersona().getNombre() + ", haz realizado tu registro de tu cita con éxito"+
                     "\n\n Para continuar descarga el comprobante de tu cita y leé con atención las indicaciones.\n\n"
                     + "Recuerda que al asistir a tu cita debes tener todas las medidas sanitarias, por lo cual el uso de cobre bocas es obligatorio.\n"
                     + "ATENTAMENTE \n" +
                     "Departamento de Servicios Escolares";
 
-            String identificador = "Agenda tu cita UTXJ 2021";
+            String identificador = "Agenda tu cita UTXJ " + new SimpleDateFormat("yyyy").format(new Date()) + " ";
             String asunto = "Registro de cita éxitoso";
             if(mail != null){
                 try {

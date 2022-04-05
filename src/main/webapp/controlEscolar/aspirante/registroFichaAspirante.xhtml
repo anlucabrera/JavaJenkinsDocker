@@ -39,7 +39,7 @@
                 <c:if test="#{registroFichaAdmisionAspirante.tieneAcceso}">
                     <div class="box box-primary">
                         <div class="box-header with-border">
-                            <div id="main-buttons" class="hidden-sm hidden-xs">
+                            <div id="main-buttons">
                                 <h:form id="frmAviso">
                                     <p:toolbar id="tb">
                                         <f:facet name="left">
@@ -49,6 +49,11 @@
                                             <p:spacer width="15px"/>
                                             <span class="label label-warning"><i class="fa fa-info-circle" />
                                                 Los campos marcados con un <b><strong style="color : red;">*</strong></b> son obligatorios.
+                                            </span>
+                                            
+                                            <p:spacer width="15px"/>
+                                            <span class="label label-warning"><i class="fa fa-info-circle" />
+                                                Te recomendamos iniciar y completar tu registro en un equipo de escritorio o portatíl.
                                             </span>
                                             <p:spacer width="5" />
 
@@ -68,21 +73,36 @@
                             </div>
                         </div>
                         <br/>
-                        <h:form id="frmGetR">
-                            <p:panel id="toggleable-solid" header="Deseas recuperar tu registro da clic en icono +" toggleable="true" toggleSpeed="500"
-                                     closeSpeed="500" widgetVar="panel-solid" collapsed="true">
+                        <h:form id="frmGetR" class="hidden-sm hidden-xs">
+                            <p:panel id="toggleable-solid" 
+                                     header="Deseas recuperar tu registro da clic en icono +" 
+                                     toggleable="true" 
+                                     toggleSpeed="500"
+                                     closeSpeed="500" 
+                                     widgetVar="panel-solid" 
+                                     collapsed="true">
                                 <div class="row" ondragstart="return false" onselectstart="return false" oncontextmenu="return false">
                                     <div class="col-sm-12 col-md-12 col-lg-12">
                                         <div class="box box-widget widget-user-2">
                                             <div class="row">
                                                 <div class="form-group">
                                                     <div class="col-sm-12 col-md-12 col-lg-12">
-                                                        <p:outputLabel for="curpRegistrada" style="font-size: large" value="Ingresa tu CURP" />
+                                                        <p:outputLabel for="curpRegistrada" 
+                                                                       style="font-size: large" 
+                                                                       value="Ingresa tu CURP" />
                                                         <p></p>
-                                                        <p:inputText id="curpRegistrada" class="form-control" placeholder="CURP" size="45" value="#{registroFichaAdmisionAspirante.rol.personaD.persona.curp}" required="true" requiredMessage="Debe de Ingresar su CURP"/>
+                                                        <p:inputText id="curpRegistrada" 
+                                                                     class="form-control" 
+                                                                     placeholder="CURP" 
+                                                                     size="45" 
+                                                                     value="#{registroFichaAdmisionAspirante.rol.personaD.persona.curp}" 
+                                                                     required="true" 
+                                                                     requiredMessage="Debe de Ingresar su CURP"/>
                                                         <p:message for="curpRegistrada"/>
                                                         <br/>
-                                                        <p:outputLabel for="pwdPer" style="font-size: large" value="Contraseña:" />
+                                                        <p:outputLabel for="pwdPer" 
+                                                                       style="font-size: large" 
+                                                                       value="Contraseña:" />
                                                         <p></p>
                                                         <p:inputText id="pwdPer" 
                                                                      class="form-control" 
@@ -101,8 +121,14 @@
                                                 <div class="form-group">
                                                     <div class="col-sm-4 col-md-4 col-lg-4"/>
                                                     <div class="col-sm-4 col-md-4 col-lg-4" style="margin-bottom: 20px">
-                                                        <p:commandButton id="btnBuscaRegistro" value="Buscar Registro" icon="fa fa-search"
-                                                                         class="btn-primary btn-block col-md-3" process="@form" update="@form,:tbv,:frmStep " actionListener="#{registroFichaAdmisionAspirante.verificaRegistro}" onclick="PF('panel-solid').toggle()" ajax="false"/>
+                                                        <p:commandButton id="btnBuscaRegistro" 
+                                                                         value="Buscar Registro" 
+                                                                         icon="fa fa-search"
+                                                                         class="btn-primary btn-block col-md-3" 
+                                                                         process="@form" update="@form,:tbv,:frmStep " 
+                                                                         actionListener="#{registroFichaAdmisionAspirante.verificaRegistro}" 
+                                                                         onclick="PF('panel-solid').toggle()" 
+                                                                         ajax="false"/>
                                                     </div>
                                                 </div>
                                             </div>
@@ -150,7 +176,7 @@
                                 <p:tabView id="tbv" activeIndex="#{registroFichaAdmisionAspirante.rol.step}" >
                                     <p:tab disabled="#{registroFichaAdmisionAspirante.rol.tab1}">
                                         <f:facet name="title"><i class="fa fa-upload"> </i><span> Carga tu CURP</span></f:facet>
-                                        <div class="row margin-bottom" style="margin-bottom: 20px">
+                                        <div class="row margin-bottom hidden-sm hidden-xs" style="margin-bottom: 20px">
                                             <h:form id="frmCurp" enctype="multipart/form-data" >
                                                 <div class="row">
                                                     <div  class="col-sm-12 col-md-12">
@@ -334,8 +360,11 @@
                                                                 <div class="row">
                                                                     <div class="#{casilla5}" style="margin-top: 30px">
                                                                         <div class="ui-material">
-                                                                            <p:selectOneMenu id="pais" value="#{registroFichaAdmisionAspirante.rol.personaD.paisOr}"
-                                                                                             filter="true" filterMatchMode="startsWith" required="true"
+                                                                            <p:selectOneMenu id="pais" 
+                                                                                             value="#{registroFichaAdmisionAspirante.rol.personaD.paisOr}"
+                                                                                             filter="true" 
+                                                                                             filterMatchMode="startsWith" 
+                                                                                             required="true"
                                                                                              requiredMessage="País requerido"
                                                                                              converter="entityConverter"
                                                                                              disabled="true"
@@ -418,33 +447,52 @@
                                                             <div class="col-sm-5 col-md-5 col-lg-5"/>
                                                             <div class="#{casilla5}">
                                                                 <c:if test="#{registroFichaAdmisionAspirante.rol.personaD.econtrado==false}">
-                                                                    <p:commandButton id="bt-destroySR" value="Guarda Información" styleClass="btn-primary btn-block col-md-3"
-                                                                                     actionListener="#{registroFichaAdmisionAspirante.savePersona()}" icon="fa fa-pencil-square-o" update="@form,:tbv, :frmStep, :frmPwd" process="@this"  oncomplete="#{registroFichaAdmisionAspirante.getPersonaByCurp()}"
+                                                                    <p:commandButton id="bt-destroySR" 
+                                                                                     value="Guarda Información" 
+                                                                                     styleClass="btn-primary btn-block col-md-3"
+                                                                                     actionListener="#{registroFichaAdmisionAspirante.savePersona()}" 
+                                                                                     icon="fa fa-pencil-square-o" 
+                                                                                     update="@form,:tbv, :frmStep, :frmPwd" 
+                                                                                     process="@this"  
+                                                                                     oncomplete="#{registroFichaAdmisionAspirante.getPersonaByCurp()}"
                                                                                      onsuccess="PF('modalPwd').show();"
                                                                                      >
-                                                                        <p:confirm header="Confirmación de Aviso de Privacidad Integral" message="Aviso de Privacidad Integral" icon="ui-icon-alert" />
+                                                                        <p:confirm header="Confirmación de Aviso de Privacidad Integral" 
+                                                                                   message="Aviso de Privacidad Integral" 
+                                                                                   icon="ui-icon-alert" />
                                                                     </p:commandButton>
 
                                                                 </c:if>
                                                                 <c:if test="#{registroFichaAdmisionAspirante.rol.personaD.econtrado==true}">
-                                                                    <p:commandButton id="btnActualizar" value="Actualizar información" styleClass="btn-primary btn-block col-md-3"
-                                                                                     actionListener="#{registroFichaAdmisionAspirante.savePersona()}" icon="fa fa-pencil-square-o" update="@form,:tbv, :frmStep, :frmPwd" process="@this"  oncomplete="#{registroFichaAdmisionAspirante.getPersonaByCurp()}"
+                                                                    <p:commandButton id="btnActualizar" 
+                                                                                     value="Actualizar información" 
+                                                                                     styleClass="btn-primary btn-block col-md-3"
+                                                                                     actionListener="#{registroFichaAdmisionAspirante.savePersona()}" 
+                                                                                     icon="fa fa-pencil-square-o" 
+                                                                                     update="@form,:tbv, :frmStep, :frmPwd" 
+                                                                                     process="@this"  
+                                                                                     oncomplete="#{registroFichaAdmisionAspirante.getPersonaByCurp()}"
                                                                                      onsuccess="PF('modalPwd').show();"
-
                                                                                      >
-                                                                        <p:confirm header="Confirmación de Aviso de Privacidad Integral" message="Aviso de Privacidad Integral" icon="ui-icon-alert" />
+                                                                        <p:confirm header="Confirmación de Aviso de Privacidad Integral" 
+                                                                                   message="Aviso de Privacidad Integral" 
+                                                                                   icon="ui-icon-alert" />
                                                                     </p:commandButton>
                                                                 </c:if>
 
-                                                                <p:confirmDialog global="true" 
-                                                                                 showEffect="fade" 
-                                                                                 hideEffect="fade" 
-                                                                                 styleClass="box-solid box-danger" 
-                                                                                 responsive="true" 
-                                                                                 width="80%" 
+                                                                <p:confirmDialog id="modalAvisoDatosPersonales" 
+                                                                                 global="true"
+                                                                                 showEffect="fade"
+                                                                                 hideEffect="fade"
+                                                                                 styleClass="panel panel-primary box-solid box-danger"
+                                                                                 responsive="true"
+                                                                                 width="80%"
+                                                                                 height="auto"
                                                                                  closable="false"
                                                                                  closeOnEscape="false"
                                                                                  header="Confirmación de Aviso de Privacidad"
+                                                                                 widgetVar="confirm-prueba"
+                                                                                 visible="false"
                                                                                  >
                                                                     <div>
                                                                         <p style="text-align: justify">
@@ -610,7 +658,7 @@
 
                                                                     </div>
                                                                     <p:commandButton value="Acepto" type="button" styleClass="btn-material btn-primary ui-confirmdialog-yes"
-                                                                                     icon="fa fa-check" 
+                                                                                     icon="fa fa-check"
 
                                                                                      />
                                                                     <p:commandButton value="No Acepto" type="button" styleClass="btn-material btn-danger ui-confirmdialog-no"
@@ -1003,7 +1051,7 @@
                                                                             <p:inputText id="nss" class="form-control" placeholder="Número de Seguro Social" value="#{registroFichaAdmisionAspirante.rol.dmedico.datosMedicos.nss}"
                                                                                          required="#{registroFichaAdmisionAspirante.rol.dmedico.datosMedicos.nssVigente ? 'true' : 'false'}"
                                                                                          requiredMessage="Favor de ingresar el número de seguro ó si no cuentas con él, escribir en la caja de texto 'Pendiente de registro'"
-                                                                                         maxlength="30"
+                                                                                         maxlength="50"
                                                                                          title="Ingrese el número de su seguro social"
                                                                                          />
                                                                             <p:outputLabel id="lblnss" for="nss" value="Número de seguro social #{registroFichaAdmisionAspirante.rol.dmedico.datosMedicos.nssVigente ? '* Requerido' : '(No requerido)'}"/>
@@ -1996,7 +2044,7 @@
                                                 <div class="row">
                                                     <div class="box box-primary">
                                                         <div class="box-header with-border">
-                                                            <div id="main-buttons" class="hidden-sm hidden-xs" >
+                                                            <div id="main-buttons">
                                                                 <p:outputPanel >
                                                                     <p:toolbar id="tb1" >
                                                                         <f:facet name="right">
@@ -2347,23 +2395,25 @@
                             </div>
                         </div>
                     </div>
+
                     <p:dialog id="modalPwd"
                               widgetVar="modalPwd"
-                              closeOnEscape="false" 
+                              closeOnEscape="false"
                               visible="#{false}" 
                               blockScroll="true"
-                              showEffect="fade" 
+                              showEffect="fade"
                               hideEffect="fade"
-                              modal="true" 
-                              draggable="true" 
-                              header="¡Aviso importante!" 
-                              position="center" 
-                              styleClass="panel panel-primary" 
+                              modal="true"
+                              draggable="true"
+                              header="¡Aviso importante!"
+                              position="center"
+                              styleClass="panel panel-primary"
                               resizable="false"
                               maximizable="false"
                               closable="false"
                               width="80%"
-                              height="30em"
+                              height="auto"
+                              responsive="true"
                               >
                         <div class="box box-primary">
                             <center>
@@ -2396,6 +2446,8 @@
                             </center>
                         </div>
                     </p:dialog>
+
+
                     <p:dialog id="modalRes"
                               widgetVar="modalRes"
                               width="30%"
@@ -2447,19 +2499,23 @@
 
                     <p:dialog id="modalAccesoDatos" 
                               widgetVar="modalAccesoDatos" 
-                              width="900" 
-                              height="auto" 
                               closeOnEscape="false"
-                              closable="false"
                               visible="#{registroFichaAdmisionAspirante.rol.forzarAperturaDialogo}"
+                              blockScroll="true"
                               showEffect="fade"
-                              modal="true" 
+                              hideEffect="fade"
+                              modal="true"
                               draggable="true"
                               header="Acceso a datos personales."
-                              styleClass="panel panel-primary" 
-                              responsive="true" 
-                              resizable="false" 
-                              maximizable="false">                        
+                              position="center"
+                              styleClass="panel panel-primary"
+                              resizable="false"
+                              maximizable="false"
+                              closable="false"
+                              width="80%" 
+                              height="auto"
+                              responsive="true"
+                              >                        
                         <h:form id="frmAccesoDatos" >
                             <div class="row">
                                 <div class="col-md-12">

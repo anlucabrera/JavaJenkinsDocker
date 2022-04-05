@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.primefaces.PrimeFaces;
 
 @Named(value = "registroFichaAdmisionSE")
 @ViewScoped
@@ -1012,7 +1013,49 @@ public class RegistroFichaAdmisionSE extends ViewScopedRol implements Desarrolla
         }catch (Exception e){}
     }
 
-
+    public void actualizarElementoSeguroImss(ValueChangeEvent event){
+        try {
+            rol.getDmedico().getDatosMedicos().setNssVigente((Boolean) event.getNewValue());
+//            System.err.println("Seguro: " + cuentaSeguro);
+        } catch (Exception e) {
+            mostrarMensaje("Ha ocurrido un error al seleccionar 'Cuenta seguro médico del IMSS'");
+        }
+    }
+    
+    public void actualizarElementoTelefonoPadre(ValueChangeEvent event){
+        try {
+            rol.getDfamiliares().setOcupacionP((Ocupacion) event.getNewValue());
+//            System.err.println("Ocupacion; " + rol.getDfamiliares().getOcupacionP().getDescripcion());
+        } catch (Exception e) {
+            mostrarMensaje("Ha ocurrido un error al seleccionar la 'Ocupación' del Padre");
+        }
+    }
+    
+    public void actualizarElementoTelefonoMadre(ValueChangeEvent event){
+        try {
+            rol.getDfamiliares().setOcupacionM((Ocupacion) event.getNewValue());
+//            System.err.println("Ocupacion; " + rol.getDfamiliares().getOcupacionM().getDescripcion());
+        } catch (Exception e) {
+            mostrarMensaje("Ha ocurrido un error al seleccionar la 'Ocupación' de la Madre");
+        }
+    }
+    
+    public void abrirFormularioAccesoInformacion(){
+        try {
+            rol.setForzarAperturaDialogo(Boolean.TRUE);
+            forzarAperturaAccesoInformacion();
+        } catch (Exception e) {
+            mostrarMensaje("Ocurrio un error al abrir el formulario para el acceso a información: " + e.getMessage() + " Causa: " + e.getCause());
+        }
+    }
+    
+    public void forzarAperturaAccesoInformacion(){
+        if(rol.getForzarAperturaDialogo()){
+            PrimeFaces current = PrimeFaces.current();
+            current.executeScript("PF('modalAccesoDatos').show();");
+            rol.setForzarAperturaDialogo(Boolean.FALSE);
+        }
+    }
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {

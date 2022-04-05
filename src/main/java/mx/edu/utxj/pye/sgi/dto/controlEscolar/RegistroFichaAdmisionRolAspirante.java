@@ -71,10 +71,11 @@ public class RegistroFichaAdmisionRolAspirante {
     @Getter @Setter @NonNull private List<AreasUniversidad> areasAcademicas;
     @Getter @Setter @NonNull private List<AreasUniversidad> programasEducativosPo,programasEducativosSo,carrerasEv;
     @Getter @Setter @NonNull private  List<Generos> generos;
-    @Getter @Setter Boolean forzarAperturaDialogo;
+    @Getter @Setter Boolean forzarAperturaDialogo, forzarAperturaDialogoDatosAcceso;
 
     public RegistroFichaAdmisionRolAspirante() {
         setForzarAperturaDialogo(false);
+        setForzarAperturaDialogoDatosAcceso(false);
     }
 
     public void setEventoEscolar(EventoEscolar eventoEscolar) {
