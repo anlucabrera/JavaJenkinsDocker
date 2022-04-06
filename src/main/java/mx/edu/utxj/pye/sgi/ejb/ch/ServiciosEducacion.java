@@ -70,6 +70,12 @@ public class ServiciosEducacion implements EjbEducacion {
         List<ExperienciasLaborales> pr = q.getResultList();
         return pr;
     }
+    
+    @Override
+    public ExperienciasLaborales mostrarExperienciasLabora(Integer id) throws Throwable {
+        ExperienciasLaborales laborales = em.find(ExperienciasLaborales.class, id);
+        return laborales;
+    }
 
     @Override
     public ExperienciasLaborales crearNuevoExperienciasLaborales(ExperienciasLaborales nuevoExperienciasLaborales) throws Throwable {
@@ -136,9 +142,7 @@ public class ServiciosEducacion implements EjbEducacion {
                 });
                 }
             });
-        });
-
-        
+        });        
         return pr;
     }
     
@@ -166,6 +170,12 @@ public class ServiciosEducacion implements EjbEducacion {
         q.setParameter("tipoCapacitacion", Tipo);
         List<Capacitacionespersonal> pr = q.getResultList();
         return pr;
+    }
+    
+    @Override
+    public Capacitacionespersonal mostrarCapacitacionpersonal(Integer id) throws Throwable {
+        Capacitacionespersonal capacitacionespersonal = em.find(Capacitacionespersonal.class, id);
+        return capacitacionespersonal;
     }
 
     @Override

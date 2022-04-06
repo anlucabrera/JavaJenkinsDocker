@@ -28,10 +28,13 @@ public class CurriculumRIPPPA {
     
     @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
     public static class CurriculumRIPPPAReportes {
-        @Getter        @Setter        @NonNull        Personales personales;
-        @Getter        @Setter        @NonNull        Escolaridad escolaridad;
-        @Getter        @Setter        @NonNull        Experiencia experiencia;  
-        @Getter        @Setter        @NonNull        Capacitacion capacitacion; 
+        @Getter        @Setter        @NonNull        Personal personal;
+        @Getter        @Setter        @NonNull        Boolean cv;
+        @Getter        @Setter        @NonNull        Boolean personales;
+        @Getter        @Setter        @NonNull        Boolean escolaridad;
+        @Getter        @Setter        @NonNull        Boolean experiencia;  
+        @Getter        @Setter        @NonNull        Boolean capacitacion; 
+        @Getter        @Setter        @NonNull        String semaforo;        
     } 
    
     @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
@@ -65,29 +68,29 @@ public class CurriculumRIPPPA {
    
     @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
     public static class Experiencia {
-        @Getter        @Setter        @NonNull        List<Registros> ruta41;
+        @Getter        @Setter        @NonNull        List<RegistrosRIPPPA> ruta41;
         @Getter        @Setter        @NonNull        Boolean cuenta41;        
-        @Getter        @Setter        @NonNull        List<Registros> ruta42;  
+        @Getter        @Setter        @NonNull        List<RegistrosRIPPPA> ruta42;  
         @Getter        @Setter        @NonNull        Boolean cuenta42;        
-        @Getter        @Setter        @NonNull        List<Registros> ruta43;
+        @Getter        @Setter        @NonNull        List<RegistrosRIPPPA> ruta43;
         @Getter        @Setter        @NonNull        Boolean cuenta43;        
-        @Getter        @Setter        @NonNull        List<Registros> ruta44;  
+        @Getter        @Setter        @NonNull        List<RegistrosRIPPPA> ruta44;  
         @Getter        @Setter        @NonNull        Boolean cuenta44;        
-        @Getter        @Setter        @NonNull        List<Registros> ruta45;
+        @Getter        @Setter        @NonNull        List<RegistrosRIPPPA> ruta45;
         @Getter        @Setter        @NonNull        Boolean cuenta45;        
-        @Getter        @Setter        @NonNull        List<Registros> ruta46;  
+        @Getter        @Setter        @NonNull        List<RegistrosRIPPPA> ruta46;  
         @Getter        @Setter        @NonNull        Boolean cuenta46;        
-        @Getter        @Setter        @NonNull        List<Registros> ruta47;
+        @Getter        @Setter        @NonNull        List<RegistrosRIPPPA> ruta47;
         @Getter        @Setter        @NonNull        Boolean cuenta47;        
-        @Getter        @Setter        @NonNull        List<Registros> ruta48;  
+        @Getter        @Setter        @NonNull        List<RegistrosRIPPPA> ruta48;  
         @Getter        @Setter        @NonNull        Boolean cuenta48;        
-        @Getter        @Setter        @NonNull        List<Registros> ruta49;  
+        @Getter        @Setter        @NonNull        List<RegistrosRIPPPA> ruta49;  
         @Getter        @Setter        @NonNull        Boolean cuenta49; 
     } 
    
     @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
     public static class Capacitacion {
-        @Getter        @Setter        @NonNull        List<Registros> rutasEv;
+        @Getter        @Setter        @NonNull        List<RegistrosRIPPPA> rutasEv;
         @Getter        @Setter        @NonNull        Boolean cuentaEv;
     }
     
@@ -109,6 +112,7 @@ public class CurriculumRIPPPA {
         @Getter        @Setter        @NonNull        List<Capacitacionespersonal> listaCapacitacionespersonal;
         @Getter        @Setter        @NonNull        List<HabilidadesInformaticas> listaHabilidadesInformaticas;
         @Getter        @Setter        @NonNull        List<DesarrollosTecnologicos> listaDesarrollosTecnologicos;
+        @Getter        @Setter        @NonNull        Boolean completo; 
     }
     
     @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
@@ -119,7 +123,7 @@ public class CurriculumRIPPPA {
     }
     
     @RequiredArgsConstructor    @ToString    @EqualsAndHashCode    
-    public static class Registros {
+    public static class RegistrosRIPPPA {
         @Getter        @Setter        @NonNull        String idr;
         @Getter        @Setter        @NonNull        String tabla;
         @Getter        @Setter        @NonNull        String alineacion;

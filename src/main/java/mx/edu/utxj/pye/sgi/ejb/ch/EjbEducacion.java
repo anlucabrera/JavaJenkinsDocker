@@ -24,6 +24,8 @@ public interface EjbEducacion {
 ////////////////////////////////////////////////////////////////////////////////Experiencia Laboral
 
     public List<ExperienciasLaborales> mostrarExperienciasLaborales(Integer claveTrabajador) throws Throwable;
+    
+    public ExperienciasLaborales mostrarExperienciasLabora(Integer id) throws Throwable;
 
     public ExperienciasLaborales crearNuevoExperienciasLaborales(ExperienciasLaborales nuevoExperienciasLaborales) throws Throwable;
 
@@ -35,6 +37,8 @@ public interface EjbEducacion {
     public List<Capacitacionespersonal> mostrarCapacitacionespersonal(Integer claveTrabajador) throws Throwable;
 
     public List<Capacitacionespersonal> mostrarCapacitacionespersonalTipo(Integer claveTrabajador, String tipo) throws Throwable;
+    
+    public Capacitacionespersonal mostrarCapacitacionpersonal(Integer id) throws Throwable;
 
     public Capacitacionespersonal crearNuevoCapacitacionespersonal(Capacitacionespersonal nuevoCapacitacionespersonal) throws Throwable;
 
