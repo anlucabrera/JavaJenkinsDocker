@@ -403,15 +403,20 @@ public class EjbReportesEstadia {
                                     conDocumento = listaDocumento.size();
                                 }
                                 
+                                Double div1 = 0.0, porcentajeCumplimiento = 0.0, div2 = 0.0, porcentajeValidacion = 0.0;
                                 
-                                    sinDocumento = listaEstudiantes.size()-listaDocumento.size();
-                                    docValidado = (int) (long) listaDocumento.stream().filter(d->d.getValidado()).count();
-                                    docNoValidado = (int) (long) listaDocumento.stream().filter(d->!d.getValidado()).count();
-                                 
-                                Double div1 = (double)listaDocumento.size()/listaEstudiantes.size();
-                                Double porcentajeCumplimiento = div1 * 100;
-                                Double div2 = (double)docValidado/listaEstudiantes.size();
-                                Double procentajeValidacion = div2 * 100;
+                                if(!listaDocumento.isEmpty()){
+                                
+                                    sinDocumento = listaEstudiantes.size() - listaDocumento.size();
+                                    docValidado = (int) (long) listaDocumento.stream().filter(d -> d.getValidado()).count();
+                                    docNoValidado = (int) (long) listaDocumento.stream().filter(d -> !d.getValidado()).count();
+
+                                    div1 = (double) listaDocumento.size() / listaEstudiantes.size();
+                                    porcentajeCumplimiento = div1 * 100;
+                                    div2 = (double) docValidado / listaEstudiantes.size();
+                                    porcentajeValidacion = div2 * 100;
+                                
+                                }
 
                                 DtoCumplimientoEstDocEstadia  dtoCumplimientoEstDocEstadia = new DtoCumplimientoEstDocEstadia();
                                 dtoCumplimientoEstDocEstadia.setProgramaEducativo(programaEducativo);
@@ -423,7 +428,7 @@ public class EjbReportesEstadia {
                                 dtoCumplimientoEstDocEstadia.setDocumentoValidado(docValidado);
                                 dtoCumplimientoEstDocEstadia.setDocumentoNoValidado(docNoValidado);
                                 dtoCumplimientoEstDocEstadia.setPorcentajeCumplimiento(porcentajeCumplimiento);
-                                dtoCumplimientoEstDocEstadia.setPorcentajeValidacion(procentajeValidacion);
+                                dtoCumplimientoEstDocEstadia.setPorcentajeValidacion(porcentajeValidacion);
                                 listaCumplimientoDocumentos.add(dtoCumplimientoEstDocEstadia);
                         });
                     });
@@ -525,16 +530,20 @@ public class EjbReportesEstadia {
                                     conDocumento = listaDocumento.size();
                                 }
                                 
+                                Double div1 = 0.0, porcentajeCumplimiento = 0.0, div2 = 0.0, porcentajeValidacion = 0.0;
+                                
+                                if(!listaDocumento.isEmpty()){
                                 
                                     sinDocumento = listaEstudiantes.size()-listaDocumento.size();
                                     docValidado = (int) (long) listaDocumento.stream().filter(d->d.getValidado()).count();
                                     docNoValidado = (int) (long) listaDocumento.stream().filter(d->!d.getValidado()).count();
-                                 
-                                Double div1 = (double)listaDocumento.size()/listaEstudiantes.size();
-                                Double porcentajeCumplimiento = div1 * 100;
-                                Double div2 = (double)docValidado/listaEstudiantes.size();
-                                Double procentajeValidacion = div2 * 100;
 
+                                    div1 = (double)listaDocumento.size()/listaEstudiantes.size();
+                                    porcentajeCumplimiento = div1 * 100;
+                                    div2 = (double)docValidado/listaEstudiantes.size();
+                                    porcentajeValidacion = div2 * 100;
+                                }
+                                
                                 DtoCumplimientoEstDocEstadia  dtoCumplimientoEstDocEstadia = new DtoCumplimientoEstDocEstadia();
                                 dtoCumplimientoEstDocEstadia.setProgramaEducativo(programaEducativo);
                                 dtoCumplimientoEstDocEstadia.setDocumentoProceso(documento);
@@ -545,7 +554,7 @@ public class EjbReportesEstadia {
                                 dtoCumplimientoEstDocEstadia.setDocumentoValidado(docValidado);
                                 dtoCumplimientoEstDocEstadia.setDocumentoNoValidado(docNoValidado);
                                 dtoCumplimientoEstDocEstadia.setPorcentajeCumplimiento(porcentajeCumplimiento);
-                                dtoCumplimientoEstDocEstadia.setPorcentajeValidacion(procentajeValidacion);
+                                dtoCumplimientoEstDocEstadia.setPorcentajeValidacion(porcentajeValidacion);
                                 listaCumplimientoDocumentos.add(dtoCumplimientoEstDocEstadia);
                         });
                     });
