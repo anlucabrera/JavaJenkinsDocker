@@ -35,6 +35,8 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -70,8 +72,8 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
 @PostConstruct
     public void init(){
         try{
- if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
- cargado = true;
+            if(!logonMB.getUsuarioTipo().equals(UsuarioTipo.TRABAJADOR)) return;
+            cargado = true;
             setVistaControlador(ControlEscolarVistaControlador.DICTAMEN_BAJAS);
             ResultadoEJB<Filter<PersonalActivo>> resAcceso = ejb.validarPsicopedagogia(logon.getPersonal().getClave());//validar si es personal del área de psicopedagogía
             if(!resAcceso.getCorrecto()){ mostrarMensajeResultadoEJB(resAcceso);return;}//cortar el flujo si no se pudo verificar el acceso
@@ -81,6 +83,9 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
             rol = new DictamenBajaRolPsicopedagogia(filtro, personalPsicopedagogia);
             tieneAcceso = rol.tieneAcceso(personalPsicopedagogia);
             if(!tieneAcceso){mostrarMensajeNoAcceso(); return;} //cortar el flujo si no tiene acceso
+            
+            rol.setPendientes(false);
+            verificarDictamenesPendientes(ejb.getPeriodoActual());
 
             rol.setPersonalPsicopedagogia(personalPsicopedagogia);
             // ----------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -99,6 +104,8 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
             rol.getInstrucciones().add("Para generar el formato de baja de clic en el botón Generar formato.");
             rol.getInstrucciones().add("Puede modificar la información el dictamen de la baja siempre y cuando no haya sido validada por el director de carrera.");
            
+            rol.setMostrarRegDicInstitucional(false);
+            rol.setMostrarRegDicPendientes(false);
             periodosBajasRegistradas();
             
         }catch (Exception e){mostrarExcepcion(e); }
@@ -110,6 +117,38 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
         Map<Integer, String> map = ep.leerPropiedadMapa(getClave(), valor);
         return mostrar(request, map.containsValue(valor));
     }
+    
+    /**
+     * Permite verificar dictamenes pendientes por registrar
+     * @param periodoEscolar
+     */
+    public void verificarDictamenesPendientes(PeriodosEscolares periodoEscolar){
+        List<DtoTramitarBajas> bajasPeriodo = new ArrayList<>();
+        ResultadoEJB<List<DtoTramitarBajas>> res = ejb.obtenerListaBajasPeriodo(periodoEscolar);
+        if(res.getCorrecto()){
+           bajasPeriodo = res.getValor();
+           if(!bajasPeriodo.isEmpty()){
+               Integer bajas = bajasPeriodo.size();
+               Integer dictamenesPendientes = (int) bajasPeriodo.stream().filter(p -> p.getDtoRegistroBaja().getRegistroBaja().getValidoPsicopedagogia() == 0).count();
+               if(bajas.equals(dictamenesPendientes)){
+                   rol.setPendientes(true);
+                   rol.setMensajePendientes("No se ha registrado ningún dictamen de " + bajas + " trámites de baja");
+               }else{
+                   if (dictamenesPendientes == 0) {
+                       rol.setPendientes(false);
+                       rol.setMensajePendientes("No hay registros de dictamen pendientes");
+                   } else {
+                       rol.setPendientes(true);
+                       rol.setMensajePendientes("Faltan " + dictamenesPendientes + " dictamenes por registrar de " + bajas + " trámites de baja");
+                   }
+               }
+           }else{
+                rol.setPendientes(false);
+                rol.setMensajePendientes("No hay trámites de bajas");
+           }
+        }else mostrarMensajeResultadoEJB(res);
+    }
+    
     
      /**
      * Permite obtener la lista de periodo escolares en lo que se hay bajas registradas
@@ -172,6 +211,8 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
         if(e.getNewValue() instanceof PeriodosEscolares){
             PeriodosEscolares periodo = (PeriodosEscolares)e.getNewValue();
             rol.setPeriodo(periodo);
+            rol.setMostrarRegDicInstitucional(false);
+            rol.setMostrarRegDicPendientes(false);
             listaBajasPeriodo();
             Ajax.update("frm");
         }else mostrarMensaje("");
@@ -185,9 +226,41 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
         if(e.getNewValue() instanceof  AreasUniversidad){
             AreasUniversidad programa = (AreasUniversidad)e.getNewValue();
             rol.setProgramaEducativo(programa);
+            rol.setMostrarRegDicInstitucional(false);
+            rol.setMostrarRegDicPendientes(false);
             listaBajasProgramaEducativo();
             Ajax.update("frm");
         }else mostrarMensaje("");
+    }
+    
+     /**
+     * Método que cambia el tipo de visualización de la información (todos los trámites de baja registrados o por programa educativo)
+     * @param event Evento al tipo de visualización
+     */
+    public void cambiarMostrarRegDicInstitucional(ValueChangeEvent event){
+        if(rol.getMostrarRegDicInstitucional()){
+            rol.setMostrarRegDicInstitucional(false);
+            listaBajasProgramaEducativo();
+        }else{
+            rol.setMostrarRegDicInstitucional(true);
+            rol.setBajasProgramaEducativo(rol.getBajas());
+        }
+        Ajax.update("frm");
+    }
+    
+     /**
+     * Método que cambia el tipo de visualización de la información (todos los trámites de baja registrados o solo los que están pendientes de registro de dictamen)
+     * @param event Evento al tipo de visualización
+     */
+    public void cambiarMostrarRegDicPendientes(ValueChangeEvent event){
+        if(rol.getMostrarRegDicPendientes()){
+            rol.setMostrarRegDicPendientes(false);
+            rol.setBajasProgramaEducativo(rol.getBajas());
+        }else{
+            rol.setMostrarRegDicPendientes(true);
+            rol.setBajasProgramaEducativo(rol.getBajas().stream().filter(p->p.getDtoRegistroBaja().getRegistroBaja().getValidoPsicopedagogia()==0).collect(Collectors.toList()));
+        }
+        Ajax.update("frm");
     }
     
     /**

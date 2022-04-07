@@ -96,6 +96,26 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
      */
     @Getter @NonNull private DtoValidacionesBaja dtoValidacionesBaja;
     
+     /**
+     * Existe o no dictamenes pendientes de registrar
+     */
+    @Getter @NonNull private Boolean pendientes;
+    
+      /**
+     * Mensaje de dictamenes pendientes por registrar
+     */
+    @Getter @NonNull private String mensajePendientes;
+    
+     /**
+     * Verifica si se muestran los trámites de baja institucional o por programa educativo
+     */
+    @Getter @NonNull private Boolean mostrarRegDicInstitucional;
+    
+     /**
+     * Verifica si se muestran todos los trámites de baja o solamente los que están pendientes de registrar dictamen
+     */
+    @Getter @NonNull private Boolean mostrarRegDicPendientes;
+    
     public DictamenBajaRolPsicopedagogia(Filter<PersonalActivo> filtro, PersonalActivo personalPsicopedagogia) {
         super(filtro);
         this.personalPsicopedagogia = personalPsicopedagogia;
@@ -160,4 +180,20 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
     public void setDtoValidacionesBaja(DtoValidacionesBaja dtoValidacionesBaja) {
         this.dtoValidacionesBaja = dtoValidacionesBaja;
     }   
+
+    public void setPendientes(Boolean pendientes) {
+        this.pendientes = pendientes;
+    }
+
+    public void setMensajePendientes(String mensajePendientes) {
+        this.mensajePendientes = mensajePendientes;
+    }
+
+    public void setMostrarRegDicInstitucional(Boolean mostrarRegDicInstitucional) {
+        this.mostrarRegDicInstitucional = mostrarRegDicInstitucional;
+    }
+
+    public void setMostrarRegDicPendientes(Boolean mostrarRegDicPendientes) {
+        this.mostrarRegDicPendientes = mostrarRegDicPendientes;
+    }
 }
