@@ -53,7 +53,9 @@ import mx.edu.utxj.pye.sgi.entity.controlEscolar.PlanEstudioMateria;
 import mx.edu.utxj.pye.sgi.entity.controlEscolar.UnidadMateria;
 import mx.edu.utxj.pye.sgi.entity.prontuario.AreasUniversidad;
 import mx.edu.utxj.pye.sgi.entity.prontuario.PeriodosEscolares;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativos;
 import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosContinuidad;
+import mx.edu.utxj.pye.sgi.entity.prontuario.ProgramasEducativosOrganismosEvaluadores;
 import mx.edu.utxj.pye.sgi.enums.Operacion;
 import mx.edu.utxj.pye.sgi.facade.Facade;
 import net.sf.jxls.transformer.XLSTransformer;
@@ -655,6 +657,26 @@ public class EjbRegistroPlanEstudio {
             return ResultadoEJB.crearCorrecto(pems, "Listado de materias registrados para este Plan de estudios");
         } catch (Exception e) {
             return ResultadoEJB.crearErroneo(1, "No se pudo obtener la lista de Planes de estudio(EjbRegistroPlanEstudio)", e, null);
+        }
+    }
+    
+    public String getOrganismoAcreditador(PlanEstudio estudio) {
+        AreasUniversidad au = em.find(AreasUniversidad.class, estudio.getIdPe());
+        
+        List<ProgramasEducativos> pes=em.createQuery("SELECT pro FROM ProgramasEducativos pro WHERE pro.siglas = :siglas", ProgramasEducativos.class)
+                .setParameter("siglas", au.getSiglas())
+                .getResultList();
+        System.out.println("mx.edu.utxj.pye.sgi.ejb.controlEscolar.EjbRegistroPlanEstudio.getOrganismoAcreditador()" + pes.size());
+        if (pes.isEmpty()) {
+            return "SN";
+        } else {
+            ProgramasEducativos pe = pes.get(0);
+            if (pe.getProgramasEducativosOrganismosEvaluadoresList().isEmpty()) {
+                return "SN";
+            } else {
+                ProgramasEducativosOrganismosEvaluadores peoe = pe.getProgramasEducativosOrganismosEvaluadoresList().get(0);
+                return peoe.getOrganismo().getSiglas();
+            }
         }
     }
 

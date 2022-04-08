@@ -49,7 +49,8 @@ public class ResultadosPlaneacionesMultipleConsulta extends AbstractRol{
     @Getter @Setter private Boolean esDi;
     @Getter @Setter private Boolean esDo;
     @Getter @Setter private Boolean esEn;
-    @Getter @Setter private Boolean esSa;    
+    @Getter @Setter private Boolean esSa; 
+    @Getter @Setter private Boolean cacei;       
     @Getter @Setter private Integer tipoUser;
     
     //Representa la referencia hacia personal director

@@ -114,14 +114,15 @@
                                             <p:tab title="Concentrado" rendered="#{controladorComisionDictaminadora.concentrado}">                                            
                                                 <p:outputPanel>       
                                                     <p:dataTable id="dtbPoaEvaluacion" value="#{controladorComisionDictaminadora.cripppar}" var="rip" emptyMessage="No hay actividades a evaluar en este mes"
-                                                                 lazy="true" widgetVar="dtbPoaEvaluacion" rowKey="#{rip.personal.clave}" 
+                                                                 widgetVar="dtbPoaEvaluacion" rowKey="#{rip.personal.clave}" filteredValue="#{controladorComisionDictaminadora.crippparFilter}"
                                                                  paginator="true" rows="20" style="margin-bottom:20px" rowsPerPageTemplate="5,10,15,20,25,30" 
                                                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                                                  sortBy="#{rip.personal.categoriaOficial.nombre}" expandableRowGroups="true">
 
                                                         <p:columnGroup type="header" class="hederTablesTitle">
                                                             <p:row class="success">
-                                                                <p:column style="font-weight: bold; text-align: center; width: 30%" headerText="Trabajador"/>
+                                                                <p:column style="font-weight: bold; text-align: center; width: 5%" headerText="Clave" sortBy="#{rip.personal.clave}" filterBy="#{rip.personal.clave}" filterMatchMode="contains"/>
+                                                                <p:column style="font-weight: bold; text-align: center; width: 25%" headerText="Nombre" sortBy="#{rip.personal.nombre}"     filterBy="#{rip.personal.nombre}" filterMatchMode="contains"/>
                                                                 <p:column style="font-weight: bold; text-align: center; width: 10%" headerText="1.0 Curriculum Vitae"/>
                                                                 <p:column style="font-weight: bold; text-align: center; width: 10%" headerText="2.0 DOCUMENTOS PERSONALES"/>
                                                                 <p:column style="font-weight: bold; text-align: center; width: 10%" headerText="3.0 ESCOLARIDAD"/>
@@ -133,12 +134,13 @@
                                                         </p:columnGroup>
 
                                                         <p:headerRow>
-                                                            <p:column colspan="8" style="text-align: justify" styleClass="lac">
+                                                            <p:column colspan="9" style="text-align: justify" styleClass="lac">
                                                                 <h:outputText value="#{rip.personal.categoriaOficial.nombre}"/>
                                                             </p:column>
                                                         </p:headerRow>
 
-                                                        <p:column ><h:outputText value="#{rip.personal.clave} -- #{rip.personal.nombre}" /></p:column>
+                                                        <p:column style="text-align: center;"><h:outputText value="#{rip.personal.clave}" /></p:column>
+                                                        <p:column ><h:outputText value="#{rip.personal.nombre}" /></p:column>
                                                         <p:column style="font-weight: bold; text-align: center;"><i class="fa #{rip.cv ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
                                                         <p:column style="font-weight: bold; text-align: center;"><i class="fa #{rip.personales ?'fa-check-square-o':'fa-times-circle'}"/></p:column>
                                                         <p:column style="font-weight: bold; text-align: center;"><i class="fa #{rip.escolaridad ?'fa-check-square-o':'fa-times-circle'}"/></p:column>

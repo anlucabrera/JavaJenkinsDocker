@@ -216,18 +216,22 @@
                                                                             </p:row>  
 
                                                                             <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render eq true?(resultadosPlaneacionesConsulta.rol.estudioMateria.atributoEgresoPlanMateriaList.size() eq 0?false:true):false}">
-                                                                                <p:column style="border-style: hidden !important;" colspan="10">
+                                                                                <p:column style="border-style: hidden !important;" colspan="10">                           
                                                                                     <p:dataTable id="atr" var="ae" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.atributoEgresoPlanMateriaList}" styleClass="saltoDePagina">
                                                                                         <p:column headerText="Atributos de Egreso">
+                                                                                            <!--h:outputText value="# {ae.atributoEgreso1.planEstudio.descripcion} :"  style="font-weight: bold; text-align: justify; font-size: x-small"/-->
                                                                                             <h:outputText value="#{ae.atributoEgreso1.clave} -- #{ae.atributoEgreso1.descripcion}"  style="text-align: justify; font-size: x-small"/>
+                                                                                            <!--h:outputText value=" -- Nivel de aportación : # {oe.nivelAportacion}"  style="text-align: justify; font-weight: bold;" rendered="# {resultadosPlaneacionesConsulta.rol.cacei}"/-->
                                                                                         </p:column>
                                                                                     </p:dataTable>  
                                                                                 </p:column>     
                                                                             </p:row>
+
                                                                             <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render eq true?(resultadosPlaneacionesConsulta.rol.estudioMateria.criterioDesempenioPlanMateriaList.size() eq 0?false:true):false}">
                                                                                 <p:column style="border-style: hidden !important;" colspan="10">
                                                                                     <p:dataTable id="cri" var="cd" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.criterioDesempenioPlanMateriaList}" styleClass="saltoDePagina">
                                                                                         <p:column headerText="Criterios de desempeño">
+                                                                                            <!--h:outputText value="# {cd.criterioDesempenio1.planEstudio.descripcion} :"  style="font-weight: bold; text-align: justify; font-size: x-small"/-->
                                                                                             <h:outputText value="#{cd.criterioDesempenio1.clave} -- #{cd.criterioDesempenio1.descripcion}"  style="text-align: justify; font-size: x-small"/>
                                                                                         </p:column>
                                                                                     </p:dataTable>  
@@ -237,18 +241,20 @@
                                                                                 <p:column style="border-style: hidden !important;" colspan="10">
                                                                                     <p:dataTable id="ind" var="in" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.indicadorAlineacionPlanMateriaList}" styleClass="saltoDePagina">
                                                                                         <p:column headerText="Indicadores">
+                                                                                            <!--h:outputText value="# {in.indicadorAlineacion.planEstudio.descripcion} :"  style="font-weight: bold; text-align: justify; font-size: x-small"/-->
                                                                                             <h:outputText value="#{in.indicadorAlineacion.clave} -- #{in.indicadorAlineacion.descripcion}" style="text-align: justify; font-size: x-small"/>
                                                                                             <h:outputText value=" Meta propuesta "  style="text-align: justify; font-weight: bold;"/>
                                                                                             <h:outputText value=" #{in.metaIndicador}"  style="text-align: justify; font-weight: bold; font-size: larger;"/>
+                                                                                            <!--h:outputText value=" -- Meta propuesta : # {in.metaIndicador}"  style="text-align: justify; font-weight: bold; font-size: larger;"/-->
                                                                                         </p:column>
                                                                                     </p:dataTable>  
                                                                                 </p:column>     
                                                                             </p:row>
 
-                                                                            <!--p:row rendered="# {resultadosPlaneacionesConsulta.rol.render}">
+                                                                            <p:row rendered="#{resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column colspan="3" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Criterios de desempeño</p:column>                                                                                    
                                                                                 <p:column colspan="3" styleClass="actividad" style="border-style: hidden !important; font-weight: bold; text-align: center;">Indicadores</p:column>
-                                                                            </p:row-->
+                                                                            </p:row>
                                                                             <!--p:row rendered="# {resultadosPlaneacionesConsulta.rol.render}">
                                                                                 <p:column style="border-style: hidden !important;" colspan="3">
                                                                                     <p:dataTable id="cri" var="cd" value="# {resultadosPlaneacionesConsulta.rol.estudioMateria.criterioDesempenioPlanMateriaList}" styleClass="saltoDePagina">
@@ -271,9 +277,13 @@
                                                                                 <p:column style="border-style: hidden !important;" colspan="10">
                                                                                     <p:dataTable id="obj" var="oe" value="#{resultadosPlaneacionesConsulta.rol.estudioMateria.objetivoEducacionalPlanMateriaList}" styleClass="saltoDePagina">
                                                                                         <p:column headerText="Objetivos Educacionales" >
+                                                                                            <!--h:outputText value="# {oe.objetivoEducacional1.planEstudio.descripcion} :"  style="font-weight: bold; text-align: justify; font-size: x-small"/-->
                                                                                             <h:outputText value="#{oe.objetivoEducacional1.clave} -- #{oe.objetivoEducacional1.descripcion} Nivel de aportación #{oe.nivelAportacion}"  style="text-align: justify; font-size: x-small"/>
                                                                                             <h:outputText value=" Nivel de aportación "  style="text-align: justify; font-weight: bold;"/>
                                                                                             <h:outputText value=" #{oe.nivelAportacion}"  style="text-align: justify; font-weight: bold; font-size: larger;"/>
+
+                                                                                            <!--h:outputText value="# {oe.objetivoEducacional1.clave} -- # {oe.objetivoEducacional1.descripcion}"  style="text-align: justify; font-size: x-small"/>
+                                                                                            <h:outputText value=" -- Nivel de aportación : # {oe.nivelAportacion}"  style="text-align: justify; font-weight: bold;" rendered="# {!resultadosPlaneacionesConsulta.rol.cacei}"/-->
                                                                                         </p:column>
                                                                                     </p:dataTable>  
                                                                                 </p:column>     
@@ -289,7 +299,7 @@
                                                                 <div class="description-block">
                                                                     <p:dataTable id="tbAsigInd1" var="asignacionIndCA" value="#{resultadosPlaneacionesConsulta.rol.drcas}" 
                                                                                  sortBy="#{asignacionIndCA.informe.unidad}" rowStyleClass="subactiviades"
-                                                                                 styleClass="saltoDePagina">
+                                                                                 styleClass="saltoDePagina" rendered="#{resultadosPlaneacionesConsulta.rol.drcas.size() eq 0?false:true}">
                                                                         <f:facet name="header">
                                                                         </f:facet>
                                                                         <p:columnGroup type="header">

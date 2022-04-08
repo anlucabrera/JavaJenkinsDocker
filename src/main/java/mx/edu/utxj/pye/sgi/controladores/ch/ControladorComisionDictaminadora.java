@@ -93,6 +93,7 @@ public class ControladorComisionDictaminadora implements Serializable {
     @Getter    @Setter    private Personal nuevOBJPersonalSubordinado;
     
     @Getter    @Setter    private List<CurriculumRIPPPA.CurriculumRIPPPAReportes> cripppar; 
+    @Getter    @Setter    private List<CurriculumRIPPPA.CurriculumRIPPPAReportes> crippparFilter; 
     @Getter    @Setter    private CurriculumRIPPPA.Personales personales;
     @Getter    @Setter    private CurriculumRIPPPA.Escolaridad escolaridad;
     @Getter    @Setter    private CurriculumRIPPPA.Experiencia experiencia;  
@@ -222,6 +223,7 @@ public class ControladorComisionDictaminadora implements Serializable {
             escolaridad = new CurriculumRIPPPA.Escolaridad("", Boolean.FALSE, "", Boolean.FALSE, "", Boolean.FALSE, "", Boolean.FALSE, "", Boolean.FALSE, "", Boolean.FALSE, "", Boolean.FALSE);
             experiencia = new CurriculumRIPPPA.Experiencia(new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE, new ArrayList<>(), Boolean.FALSE);
             capacitacion = new CurriculumRIPPPA.Capacitacion(new ArrayList<>(), Boolean.FALSE);            
+            crippparFilter= new ArrayList<>();
         } catch (Throwable ex) {
             Messages.addGlobalFatal("Ocurrió un error (" + (new Date()) + "): " + ex.getCause().getMessage());
             Logger.getLogger(ControladorComisionDictaminadora.class.getName()).log(Level.SEVERE, null, ex);

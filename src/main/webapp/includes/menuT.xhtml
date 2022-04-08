@@ -232,6 +232,7 @@
                                 <c:if test="#{administracionAlineacionEducativaIdiomas.mostrarEnDesarrollo(request) and administracionAlineacionEducativaIdiomas.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/aleneacionEducativa.xhtml"><i class="fa fa-users"></i><span>Consulta Alineación<br/> Educativa</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                                 <c:if test="#{registroEvidInstEvalMateriasDireccion.mostrarEnDesarrollo(request) and registroEvidInstEvalMateriasDireccion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/registroEvidInstEvalMateria.xhtml"><i class="fa fa-percent"></i><span>Registro de evidencias e<br/>instrumentos de evaluación</span></p:link></li></c:if>
                                 <c:if test="#{planeacionCuatrimestralValidacion.mostrarEnDesarrollo(request) and planeacionCuatrimestralValidacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/planeacionCuatrimestralValidacion.xhtml"><i class="fa fa-check-square-o"></i><span>Validación planeación<br/>docente</span> <span class="pull-right-container"></span></p:link></li></c:if>
+                                <!--c:if test="# {resultadosPlaneacionesConsulta.mostrarEnDesarrollo(request) and resultadosPlaneacionesConsulta.tieneAcceso}"><li><p:link href="# {request.contextPath}/controlEscolar/reportesMu/resultadosPlaneaciones.xhtml"><i class="fa fa-list-ol"></i><span>Resultado de Planeaciones</span><span class="pull-right-container"><small class="label pull-right bg-blue">Actualizado</small></span></p:link></li></c:if-->
                             </ul>
                         </li>
                     </c:if>
@@ -292,7 +293,7 @@
                                 <c:if test="#{eliminarInscripcionServiciosEscolares.mostrarEnDesarrollo(request) and eliminarInscripcionServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/eliminarInscripcion.xhtml"><i class="fa fa-times"></i><span>Eliminar inscripción y<br/>reinscripción activa</span></p:link></li></c:if>
                                 <c:if test="#{registrarBajaServiciosEscolares.mostrarEnDesarrollo(request) and registrarBajaServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registrarBajas.xhtml"><i class="fa fa-user-times"></i><span>Registrar baja</span></p:link></li></c:if>
                                 <c:if test="#{reporteBajasServiciosEscolares.mostrarEnDesarrollo(request) and reporteBajasServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reporteBajas.xhtml"><i class="fa fa-file-text-o"></i><span>Reporte por periodo escolar<br/>y programa educativo</span></p:link></li></c:if>
-<!--                                <c:if test="# {registrarDictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and registrarDictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="# {request.contextPath}/controlEscolar/psicopedagogia/registrarDictamenBaja.xhtml"><i class="fa fa-user-plus"></i><span>Registrar Dictamen por Baja</span></p:link></li></c:if>-->
+                                <!--                                <c:if test="# {registrarDictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and registrarDictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="# {request.contextPath}/controlEscolar/psicopedagogia/registrarDictamenBaja.xhtml"><i class="fa fa-user-plus"></i><span>Registrar Dictamen por Baja</span></p:link></li></c:if>-->
                                 <c:if test="#{dictamenBajaPsicopedagogia.mostrarEnDesarrollo(request) and dictamenBajaPsicopedagogia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/psicopedagogia/dictamenBaja.xhtml"><i class="fa fa-edit"></i><span>Dictamen Baja</span></p:link></li></c:if>
                                 <c:if test="#{validacionBajaDirector.mostrarEnDesarrollo(request) and validacionBajaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacionBaja.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Baja</span></p:link></li></c:if>
                                 <c:if test="#{concentradoBajasAreasVarias.mostrarEnDesarrollo(request) and concentradoBajasAreasVarias.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/concentradoBajas.xhtml"><i class="fa fa-table"></i><span>Concentrado por categoría<br/>tipo y causas</span></p:link></li></c:if>
@@ -399,7 +400,7 @@
                             </ul>
                         </li>
                     </c:if>
-                    
+
                     <c:if test="#{seguimientoEstadiaVinculacion.mostrarEnDesarrollo(request) and seguimientoEstadiaVinculacion.tieneAcceso}">
                         <li class="treeview">
                             <a href="#">
