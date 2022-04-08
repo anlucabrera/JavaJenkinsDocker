@@ -30,6 +30,7 @@
     <ui:define name="body">
         <c:if test="#{dictamenBajaPsicopedagogia.cargado}">
         <adm:breadcrumb title="Dictamen Baja"/>
+        <adm:sidebar collapsed="true"/>
         <div class="contenedor">
             <c:if test="#{dictamenBajaPsicopedagogia.tieneAcceso}">
                 <c:if test="#{dictamenBajaPsicopedagogia.rol.periodos ne null}">
@@ -58,10 +59,11 @@
                             </div>
                             <div class="box box-solid">
                                 <div class="box-body">
-                                    <c:set var="casilla" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
-                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-8 col-lg-8'}" />
+                                    <c:set var="casilla2" value="#{'col-sm-12 col-md-4 col-lg-2'}" />
+                                    <c:set var="casilla3" value="#{'col-sm-12 col-md-4 col-lg-3'}" />
+                                    <c:set var="casilla4" value="#{'col-sm-12 col-md-4 col-lg-4'}" />
                                     <div class="row margin-bottom" style="margin-top: 20px;">
-                                        <div class="#{casilla}">
+                                        <div class="#{casilla2}">
                                             <div class="ui-material">
                                                 <p:selectOneMenu id="periodo" value="#{dictamenBajaPsicopedagogia.rol.periodo}" converter="entityConverter" styleClass="form-control" valueChangeListener="#{dictamenBajaPsicopedagogia.cambiarPeriodo}">
                                                     <f:selectItems value="#{dictamenBajaPsicopedagogia.rol.periodos}" var="periodo" itemValue="#{periodo}" itemLabel="#{caster.periodoToString(periodo)}" />
@@ -72,15 +74,35 @@
                                                 <p:message for="periodo" />
                                             </div>
                                         </div>
-                                        <div class="#{casilla2}">
+                                        <div class="#{casilla4}">
                                             <div class="ui-material">
-                                                <p:selectOneMenu id="programa" value="#{dictamenBajaPsicopedagogia.rol.programaEducativo}" converter="entityConverter" valueChangeListener="#{dictamenBajaPsicopedagogia.cambiarProgramaEducativo}">
+                                                <p:selectOneMenu id="programa" value="#{dictamenBajaPsicopedagogia.rol.programaEducativo}" converter="entityConverter" valueChangeListener="#{dictamenBajaPsicopedagogia.cambiarProgramaEducativo}" disabled="#{dictamenBajaPsicopedagogia.rol.mostrarRegDicInstitucional}">
                                                     <f:selectItems value="#{dictamenBajaPsicopedagogia.rol.programasEducativos}" var="programa" itemValue="#{programa}" itemLabel="#{programa.nombre}" />
                                                     <p:ajax update="@this" process="@this" />
                                                     <p:autoUpdate />
                                                 </p:selectOneMenu>
                                                 <p:outputLabel value="Programa" for="programa"/>
                                                 <p:message for="programa" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                                <p:inputSwitch id="mostrarRegDicInstitucional" value="#{dictamenBajaPsicopedagogia.rol.mostrarRegDicInstitucional}" valueChangeListener="#{dictamenBajaPsicopedagogia.cambiarMostrarRegDicInstitucional}"> 
+                                                    <p:ajax update="tbListaRegistroBajas" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="mostrarRegDicInstitucional" value="#{!dictamenBajaPsicopedagogia.rol.mostrarRegDicInstitucional?'Trámites por programa educativo':'Trámites de todos los programas'}" />
+                                                <p:message for="mostrarRegDicInstitucional" display="tooltip" />
+                                            </div>
+                                        </div>
+                                        <div class="#{casilla3}">
+                                            <div class="ui-material">
+                                                <p:inputSwitch id="mostrarRegDicPendientes" value="#{dictamenBajaPsicopedagogia.rol.mostrarRegDicPendientes}" valueChangeListener="#{dictamenBajaPsicopedagogia.cambiarMostrarRegDicPendientes}" rendered="#{dictamenBajaPsicopedagogia.rol.mostrarRegDicInstitucional}"> 
+                                                    <p:ajax update="tbListaRegistroBajas" process="@this" />
+                                                    <p:autoUpdate />
+                                                </p:inputSwitch>
+                                                <p:outputLabel for="mostrarRegDicPendientes" value="#{!dictamenBajaPsicopedagogia.rol.mostrarRegDicPendientes?'Ver todos':'Sin dictamen'}" rendered="#{dictamenBajaPsicopedagogia.rol.mostrarRegDicInstitucional}"/>
+                                                <p:message for="mostrarRegDicPendientes" display="tooltip" />
                                             </div>
                                         </div>
                                     </div>
@@ -92,27 +114,27 @@
                                                              tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                     <f:facet name="header">
-                                                        Bajas registradas de #{dictamenBajaPsicopedagogia.rol.programaEducativo.nombre}
+                                                       <p:commandButton id="toggler" type="button" value="Seleccionar columnas" icon="pi pi-align-justify" class="btn btn-info"/>
+                                                       <p:columnToggler datasource="tbListaRegistroBajas" trigger="toggler"/>
+                                                       #{fn:length(dictamenBajaPsicopedagogia.rol.bajasProgramaEducativo)} trámite(s) de baja
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
-                                                            <p:column rowspan="2" headerText="Opciones" style="width: 120px;"/>
-                                                            <p:column rowspan="2" headerText="Clave" style="width: 80px;"/>
-                                                            <p:column colspan="2" headerText="Validación" style="width: 400px;"/>
-                                                            <p:column rowspan="2" headerText="Fecha de Baja" style="width: 100px;"/>
-                                                            <p:column rowspan="2" headerText="Grupo" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Matrícula" style="width: 80px;"/> 
-                                                            <p:column rowspan="2" headerText="Nombre" style="width: 250px;"/>
-                                                            <p:column rowspan="2" headerText="Género" style="width: 80px;"/>
-                                                            <p:column rowspan="2" headerText="Situación" style="width: 100px;"/>
-                                                            <p:column rowspan="2" headerText="Tipo de Baja" style="width: 100px;"/>
-                                                            <p:column rowspan="2" headerText="Causa Baja" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Acciones tomadas por el tutor" style="width: 300px;"/>
-                                                            <p:column rowspan="2" headerText="Dictamen Psicopedagogía" style="width: 300px;"/>
-                                                        </p:row>
-                                                        <p:row>
-                                                            <p:column headerText="Baja" style="width: 300px;"/>
-                                                            <p:column headerText="Psicopedagogía" style="width: 100px;"/>
+                                                            <p:column headerText="Opciones" style="width: 100px;"/>
+                                                            <p:column headerText="Clave" style="width: 80px;"/>
+                                                            <p:column headerText="Validación Baja" style="width: 150px;"/>
+                                                            <p:column headerText="Validación Psicopedagogía" style="width: 150px;"/>
+                                                            <p:column headerText="Fecha de Baja" style="width: 100px;"/>
+                                                            <p:column headerText="Programa educativo" style="width: 150px;" rendered="#{dictamenBajaPsicopedagogia.rol.mostrarRegDicInstitucional}" sortBy="#{baja.dtoRegistroBaja.programaEducativo.nombre}" filterBy="#{baja.dtoRegistroBaja.programaEducativo.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Grupo" style="width: 100px;"/>
+                                                            <p:column headerText="Matrícula" style="width: 80px;" sortBy="#{baja.dtoEstudiante.estudiante.matricula}" filterBy="#{baja.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains"/> 
+                                                            <p:column headerText="Nombre" style="width: 200px;" sortBy="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Género" style="width: 80px;"/>
+                                                            <p:column headerText="Situación" style="width: 100px;"/>
+                                                            <p:column headerText="Tipo de Baja" style="width: 100px;"/>
+                                                            <p:column headerText="Causa Baja" style="width: 150px;" sortBy="#{baja.dtoRegistroBaja.causaBaja.causa}" filterBy="#{baja.dtoRegistroBaja.causaBaja.causa}" filterMatchMode="contains"/>
+                                                            <p:column headerText="Acciones tomadas por el tutor" style="width: 300px;"/>
+                                                            <p:column headerText="Dictamen Psicopedagogía" style="width: 300px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
                                                     <c:set var="statusBaja" value="#{dictamenBajaPsicopedagogia.consultarStatusBaja(baja)}" />
@@ -148,6 +170,9 @@
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.fechaBaja}"><f:convertDateTime type="date" pattern="dd-MM-yyyy"/></h:outputText>
+                                                    </p:column>
+                                                    <p:column style="text-align: justify;" rendered="#{dictamenBajaPsicopedagogia.rol.mostrarRegDicInstitucional}">
+                                                        <h:outputText value="#{baja.dtoRegistroBaja.programaEducativo.nombre}"/>
                                                     </p:column>
                                                      <p:column style="text-align: center;">
                                                         <h:outputText value="#{baja.dtoEstudiante.estudiante.grupo.grado}° #{baja.dtoEstudiante.estudiante.grupo.literal} #{baja.dtoEstudiante.estudiante.grupo.idSistema.nombre}"/>
