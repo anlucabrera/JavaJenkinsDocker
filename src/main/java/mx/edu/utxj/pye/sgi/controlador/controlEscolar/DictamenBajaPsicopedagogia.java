@@ -38,6 +38,8 @@ import com.github.adminfaces.starter.infra.security.LogonMB;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 
 
 
@@ -195,11 +197,23 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
      * Permite obtener la lista de estudiantes con registro de baja del periodo y programa educativo seleccionado previamente
      */
     public void listaBajasProgramaEducativo(){
-        ResultadoEJB<List<DtoTramitarBajas>> res = ejb.obtenerListaBajasProgramaEducativo(rol.getBajas(), rol.getProgramaEducativo());
-        if(res.getCorrecto()){
-            rol.setBajasProgramaEducativo(res.getValor());
+        ResultadoEJB<List<DtoTramitarBajas>> resPE = ejb.obtenerListaBajasProgramaEducativo(rol.getBajas(), rol.getProgramaEducativo());
+        if(resPE.getCorrecto()){
+            if(!rol.getMostrarRegDicInstitucional()){
+                rol.setBajasProgramaEducativo(resPE.getValor());
+            }else{
+                ResultadoEJB<List<DtoTramitarBajas>> resIns = ejb.obtenerListaBajasPeriodo(rol.getPeriodo());
+                if (resIns.getCorrecto()) {
+                    if(!rol.getMostrarRegDicPendientes()){
+                        rol.setBajasProgramaEducativo(resIns.getValor());
+                    }else{
+                        rol.setBajasProgramaEducativo(resIns.getValor().stream().filter(p->p.getDtoRegistroBaja().getRegistroBaja().getValidoPsicopedagogia()==0).collect(Collectors.toList()));
+                    }
+                }else mostrarMensajeResultadoEJB(resIns);
+            }
+            rol.setNumeroRegistros(rol.getBajasProgramaEducativo().size());
             Ajax.update("tbListaRegistroBajas");
-        }else mostrarMensajeResultadoEJB(res);
+        }else mostrarMensajeResultadoEJB(resPE);
     
     }
    
@@ -240,11 +254,10 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
     public void cambiarMostrarRegDicInstitucional(ValueChangeEvent event){
         if(rol.getMostrarRegDicInstitucional()){
             rol.setMostrarRegDicInstitucional(false);
-            listaBajasProgramaEducativo();
         }else{
             rol.setMostrarRegDicInstitucional(true);
-            rol.setBajasProgramaEducativo(rol.getBajas());
         }
+        listaBajasProgramaEducativo();
         Ajax.update("frm");
     }
     
@@ -255,11 +268,10 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
     public void cambiarMostrarRegDicPendientes(ValueChangeEvent event){
         if(rol.getMostrarRegDicPendientes()){
             rol.setMostrarRegDicPendientes(false);
-            rol.setBajasProgramaEducativo(rol.getBajas());
         }else{
             rol.setMostrarRegDicPendientes(true);
-            rol.setBajasProgramaEducativo(rol.getBajas().stream().filter(p->p.getDtoRegistroBaja().getRegistroBaja().getValidoPsicopedagogia()==0).collect(Collectors.toList()));
         }
+        listaBajasProgramaEducativo();
         Ajax.update("frm");
     }
     
@@ -329,7 +341,7 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
              rol.setBajaRegistrada(res.getValor());
              mostrarMensajeResultadoEJB(res);
         }else mostrarMensajeResultadoEJB(res);
-        listaBajasPeriodo();
+        listaBajasProgramaEducativo();
         Ajax.update("frm");
     } 
      
@@ -351,5 +363,14 @@ public class DictamenBajaPsicopedagogia extends ViewScopedRol implements Desarro
         return rol.getDtoValidacionesBaja();
     }
     
-    
+     /**
+     * Método que actualiza el dictamen del trámite de baja registrado
+     * @param event Evento 
+     */
+    public void onCellEdit(CellEditEvent event) {
+        DataTable dataTable = (DataTable) event.getSource();
+        DtoTramitarBajas registroNew = (DtoTramitarBajas) dataTable.getRowData();
+        ejb.actualizarDictamenBaja(registroNew.getDtoRegistroBaja().getRegistroBaja(), registroNew.getDtoRegistroBaja().getRegistroBaja().getDictamenPsicopedagogia());
+        listaBajasProgramaEducativo();
+    }
 }

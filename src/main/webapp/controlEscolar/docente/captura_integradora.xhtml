@@ -245,7 +245,10 @@
                                                                             </h:outputLabel>
                                                                         </td>
                                                                         <td role="gridcell" class="promedio">
-                                                                            <p:selectOneMenu disabled="#{capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor) and !capturaTareaIntegradoraDocente.existeAperIndNiv}" value="#{capturaTareaIntegradoraDocente.getNivelacion(carga, estudiante).calificacionNivelacion.valor}"
+                                                                            <h:outputLabel value="#{capturaTareaIntegradoraDocente.faltaUnidad}" />
+                                                                            <h:outputLabel value="#{capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor)}" />
+                                                                            <h:outputLabel value="#{!capturaTareaIntegradoraDocente.existeAperIndNiv}" />
+                                                                            <p:selectOneMenu disabled="#{capturaTareaIntegradoraDocente.faltaUnidad or (capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor) and !capturaTareaIntegradoraDocente.existeAperIndNiv)}" value="#{capturaTareaIntegradoraDocente.getNivelacion(carga, estudiante).calificacionNivelacion.valor}"
                                                                                              valueChangeListener="#{capturaTareaIntegradoraDocente.guardarNivelacionAlineacion}">
                                                                                 <f:selectItems value="#{tareaIntegradoraParametro.parametros}" var="par" itemLabel="#{par.label}" itemValue="#{par.valor}" />
                                                                                 <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />
@@ -254,7 +257,7 @@
                                                                             </p:selectOneMenu>
                                                                         </td>
                                                                         <td role="gridcell" class="promedio">
-                                                                            <p:selectOneMenu disabled="#{(capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor) and !capturaTareaIntegradoraDocente.existeAperIndNiv)}" value="#{capturaTareaIntegradoraDocente.getNivelacion(carga, estudiante).indicador}" converter="entityConverter"
+                                                                            <p:selectOneMenu disabled="#{capturaTareaIntegradoraDocente.faltaUnidad or (capturaTareaIntegradoraDocente.deshabilitarCaptura(carga, valor) and !capturaTareaIntegradoraDocente.existeAperIndNiv)}" value="#{capturaTareaIntegradoraDocente.getNivelacion(carga, estudiante).indicador}" converter="entityConverter"
                                                                                              valueChangeListener="#{capturaTareaIntegradoraDocente.guardarNivelacionAlineacion}">
                                                                                 <f:selectItems value="#{capturaTareaIntegradoraDocente.rol.indicadores}" var="indicador" itemLabel="#{indicador.nombre}" itemValue="#{indicador}" />
                                                                                 <p:ajax process="@this" update="@this @(.promedio) @(.tabla)" oncomplete="actualizar();" />

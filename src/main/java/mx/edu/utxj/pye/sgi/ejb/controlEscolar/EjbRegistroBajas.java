@@ -1279,24 +1279,26 @@ public class EjbRegistroBajas {
         try{
             String mensaje;
             Integer validar;
+            
+            Baja bajaBD = em.find(Baja.class, registro.getIdBajas());
 
-            if (registro.getValidada()== 0) {
-                validar = em.createQuery("update Baja b set b.validada =:valor, b.fechaValidacion =:fecha where b.idBajas =:baja").setParameter("valor", (int)1).setParameter("baja", registro.getIdBajas()).setParameter("fecha", new Date())
+            if (bajaBD.getValidada()== 0) {
+                validar = em.createQuery("update Baja b set b.validada =:valor, b.fechaValidacion =:fecha where b.idBajas =:baja").setParameter("valor", (int)1).setParameter("baja", bajaBD.getIdBajas()).setParameter("fecha", new Date())
                         .executeUpdate();
                 
-                Integer actualizarStatus = cambiarStatusEstudiante(registro).getValor();
+                Integer actualizarStatus = cambiarStatusEstudiante(bajaBD).getValor();
                 mensaje ="La baja se ha validado correctamente";
             } else {
-                validar = em.createQuery("update Baja b set b.validada =:valor, b.fechaValidacion =:fecha where b.idBajas =:baja").setParameter("valor", (int)0).setParameter("baja", registro.getIdBajas()).setParameter("fecha", null)
+                validar = em.createQuery("update Baja b set b.validada =:valor, b.fechaValidacion =:fecha where b.idBajas =:baja").setParameter("valor", (int)0).setParameter("baja", bajaBD.getIdBajas()).setParameter("fecha", null)
                         .executeUpdate();
                 mensaje ="La baja se ha invalidado correctamente";
-                Integer actualizarStatus = resetearStatusEstudiante(registro).getValor();
+                Integer actualizarStatus = resetearStatusEstudiante(bajaBD).getValor();
             }
             
-            desactivarActivarSeguimientoVinculacionBaja(registro.getEstudiante());
-            desactivarActivarSeguimientoEstadiaBaja(registro.getEstudiante());
-            desactivarActivarExpedienteTitulacionBaja(registro.getEstudiante());
-                       
+            desactivarActivarSeguimientoVinculacionBaja(bajaBD.getEstudiante());
+            desactivarActivarSeguimientoEstadiaBaja(bajaBD.getEstudiante());
+            desactivarActivarExpedienteTitulacionBaja(bajaBD.getEstudiante());
+            
             return ResultadoEJB.crearCorrecto(validar, mensaje);
         }catch (Throwable e){
             return ResultadoEJB.crearErroneo(1, "No se pudo eliminar el registro de la baja. (EjbRegistroBajas.eliminarRegistroBaja)", e, null);

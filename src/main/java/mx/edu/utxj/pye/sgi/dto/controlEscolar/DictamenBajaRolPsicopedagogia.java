@@ -116,6 +116,11 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
      */
     @Getter @NonNull private Boolean mostrarRegDicPendientes;
     
+    /**
+     * Valor número de registros que se muestran dependiendo de los filtros seleccionados
+     */
+    @Getter @NonNull private Integer numeroRegistros;
+    
     public DictamenBajaRolPsicopedagogia(Filter<PersonalActivo> filtro, PersonalActivo personalPsicopedagogia) {
         super(filtro);
         this.personalPsicopedagogia = personalPsicopedagogia;
@@ -195,5 +200,9 @@ public class DictamenBajaRolPsicopedagogia extends AbstractRol{
 
     public void setMostrarRegDicPendientes(Boolean mostrarRegDicPendientes) {
         this.mostrarRegDicPendientes = mostrarRegDicPendientes;
+    }
+
+    public void setNumeroRegistros(Integer numeroRegistros) {
+        this.numeroRegistros = numeroRegistros;
     }
 }

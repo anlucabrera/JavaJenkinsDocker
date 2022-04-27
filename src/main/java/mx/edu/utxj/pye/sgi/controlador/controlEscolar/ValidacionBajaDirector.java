@@ -35,6 +35,7 @@ import org.omnifaces.util.Ajax;
 
 import javax.inject.Inject;
 import com.github.adminfaces.starter.infra.security.LogonMB;
+import java.util.Collections;
 import mx.edu.utxj.pye.sgi.enums.UsuarioTipo;
 
 
@@ -233,8 +234,7 @@ public class ValidacionBajaDirector extends ViewScopedRol implements Desarrollab
      */
     public void validarBaja(Baja baja){
         ResultadoEJB<Integer> resValidar = ejb.validarBaja(baja);
-        mostrarMensajeResultadoEJB(resValidar);
-        periodosBajasRegistradas();
+        listaBajasProgramaEducativo();
         Ajax.update("frm");
     }
    

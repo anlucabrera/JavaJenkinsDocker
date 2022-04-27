@@ -50,7 +50,7 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
     @EJB EjbPropiedades ep;
     @Inject LogonMB logon;
     @Inject Caster caster;
-    @Getter @Setter Boolean tieneAcceso = false, existeAperIndNiv = false, existeAperGrupalTI = false, existeAperIndTI = false;
+    @Getter @Setter Boolean tieneAcceso = false, faltaUnidad = false, existeAperIndNiv = false, existeAperGrupalTI = false, existeAperIndTI = false;
 
     @Override
     public Boolean mostrarEnDesarrollo(HttpServletRequest request) {
@@ -211,6 +211,8 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             ResultadoEJB<BigDecimal> res = ejb.promediarAsignatura(getContenedor(dtoCargaAcademica), dtoCargaAcademica, dtoEstudiante);
             if(res.getCorrecto()){
                 setExisteAperIndNiv(existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante));
+                setFaltaUnidad(faltaCapturaUnidad(dtoCargaAcademica, dtoEstudiante));
+                System.err.println("getPromedioAsignaturaEstudiante - faltaUnidad " + getFaltaUnidad());
                 return res.getValor();
             }else{
                 mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", dtoEstudiante.getPersona().getApellidoPaterno(), dtoEstudiante.getPersona().getApellidoMaterno(), dtoEstudiante.getPersona().getNombre(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula()));
@@ -220,12 +222,15 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             ResultadoEJB<BigDecimal> res = ejb.promediarAsignaturaAlineacion(getContenedorAlineacion(dtoCargaAcademica), dtoCargaAcademica, dtoEstudiante);
             if(res.getCorrecto()){
                 setExisteAperIndNiv(existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante));
+                setFaltaUnidad(faltaCapturaUnidad(dtoCargaAcademica, dtoEstudiante));
+                System.err.println("getPromedioAsignaturaEstudiante - faltaUnidad " + getFaltaUnidad());
                 return res.getValor();
             }else{
                 mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", dtoEstudiante.getPersona().getApellidoPaterno(), dtoEstudiante.getPersona().getApellidoMaterno(), dtoEstudiante.getPersona().getNombre(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula()));
                 return BigDecimal.ZERO;
             }
         }
+       
     }
 
     public BigDecimal getPromedioUnidad(@NonNull DtoEstudiante dtoEstudiante, @NonNull DtoUnidadConfiguracion dtoUnidadConfiguracion){
@@ -298,23 +303,28 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
         @NonNull DtoCargaAcademica dtoCargaAcademica = (DtoCargaAcademica)event.getComponent().getAttributes().get("carga");
         @NonNull DtoEstudiante dtoEstudiante = (DtoEstudiante) event.getComponent().getAttributes().get("estudiante");
         @NonNull Double valor = Double.parseDouble(event.getNewValue().toString());
+        Boolean validarCapturaUnidades = faltaCapturaUnidad(dtoCargaAcademica, dtoEstudiante);
         Boolean validarReins = existeReinscripcion(dtoCargaAcademica, dtoEstudiante);
         Boolean validarNivelacion = existeNivelacion(dtoCargaAcademica, dtoEstudiante);
-        if (!validarReins) {
-            if (!validarNivelacion) {
-                getContenedorAlineacion(dtoCargaAcademica).getTareaIntegradoraPromedioMap().get(dtoEstudiante).setValor(valor);
-                ResultadoEJB<TareaIntegradoraPromedio> guardarCalificacion = ejb.guardarCalificacionAlineacion(rol.getTareaIntegradoraMap().get(dtoCargaAcademica), getContenedorAlineacion(dtoCargaAcademica), dtoEstudiante);
-                ResultadoEJB<BigDecimal> promediarAsignatura = ejb.promediarAsignaturaAlineacion(getContenedorAlineacion(dtoCargaAcademica), rol.getCargaAcademicaSeleccionada(), dtoEstudiante);
-                if (guardarCalificacion.getCorrecto() && promediarAsignatura.getCorrecto()) {
-                    getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().put(dtoEstudiante, guardarCalificacion.getValor());
+        if (!validarCapturaUnidades) {
+            if (!validarReins) {
+                if (!validarNivelacion) {
+                    getContenedorAlineacion(dtoCargaAcademica).getTareaIntegradoraPromedioMap().get(dtoEstudiante).setValor(valor);
+                    ResultadoEJB<TareaIntegradoraPromedio> guardarCalificacion = ejb.guardarCalificacionAlineacion(rol.getTareaIntegradoraMap().get(dtoCargaAcademica), getContenedorAlineacion(dtoCargaAcademica), dtoEstudiante);
+                    ResultadoEJB<BigDecimal> promediarAsignatura = ejb.promediarAsignaturaAlineacion(getContenedorAlineacion(dtoCargaAcademica), rol.getCargaAcademicaSeleccionada(), dtoEstudiante);
+                    if (guardarCalificacion.getCorrecto() && promediarAsignatura.getCorrecto()) {
+                        getContenedor(dtoCargaAcademica).getTareaIntegradoraPromedioMap().put(dtoEstudiante, guardarCalificacion.getValor());
+                    } else {
+                        mostrarMensajeResultadoEJB(guardarCalificacion);
+                    }
                 } else {
-                    mostrarMensajeResultadoEJB(guardarCalificacion);
+                    Messages.addGlobalFatal("El estudiante ya tiene nivelación final registrada, no se puede actualizar calificación tarea integradora");
                 }
-           } else {
-            Messages.addGlobalFatal("El estudiante ya tiene nivelación final registrada, no se puede actualizar calificación tarea integradora");
+            } else {
+                Messages.addGlobalFatal("El estudiante ya se reinscribió al siguiente cuatrimestre, no se puede actualizar el resultado de tarea integradora");
             }
         } else {
-            Messages.addGlobalFatal("El estudiante ya se reinscribió al siguiente cuatrimestre, no se puede actualizar el resultado de tarea integradora");
+            Messages.addGlobalFatal("No se puede guardar debe de registrarle calificaciones al estudiante en todas las unidades");
         }
     }
 
@@ -550,6 +560,15 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             }else{
                 return Boolean.FALSE;
             }
+    }
+     
+    public Boolean faltaCapturaUnidad(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){
+        ResultadoEJB<Boolean> faltaCapturaUnidad = ejb.faltaCapturaCalificacionUnidad(dtoCargaAcademica, dtoEstudiante);
+        if(faltaCapturaUnidad.getValor()){
+                return Boolean.TRUE;
+            }else{
+                return Boolean.FALSE;
+        }
     }
      
     public Boolean existeAperIndNivelacion(@NonNull DtoCargaAcademica dtoCargaAcademica, @NonNull DtoEstudiante dtoEstudiante){

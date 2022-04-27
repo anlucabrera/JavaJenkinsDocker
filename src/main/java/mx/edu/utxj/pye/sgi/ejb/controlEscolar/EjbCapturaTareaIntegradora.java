@@ -467,6 +467,42 @@ public class EjbCapturaTareaIntegradora {
      * @param dtoEstudiante estudiante
      * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
      */
+    public ResultadoEJB<Boolean> faltaCapturaCalificacionUnidad(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante){
+        try{
+            Boolean faltaUnidad = false;
+            
+            System.err.println("faltaCapturaCalificacionUnidad - carga " + dtoCargaAcademica.getCargaAcademica().getCarga() + " y estudiante " + dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula());
+            
+            List<CalificacionEvidenciaInstrumento> calificaciones = em.createQuery("select c from CalificacionEvidenciaInstrumento c inner join c.configuracionEvidencia.configuracion conf inner join conf.carga ca where ca.carga=:carga AND c.idEstudiante.idEstudiante=:estudiante ",CalificacionEvidenciaInstrumento.class)
+                    .setParameter("carga", dtoCargaAcademica.getCargaAcademica().getCarga())
+                    .setParameter("estudiante", dtoEstudiante.getInscripcionActiva().getInscripcion().getIdEstudiante())
+                    .getResultStream()
+                    .collect(Collectors.toList());
+            
+            System.err.println("faltaCapturaCalificacionUnidad - calificaciones " + calificaciones.size());
+            
+            long faltan = calificaciones.stream().filter(p->p.getValor() == null).count();
+            
+            System.err.println("faltaCapturaCalificacionUnidad - faltan " + faltan);
+            
+            if(faltan>0){
+                faltaUnidad = true;
+            }
+            
+            System.err.println("faltaCapturaCalificacionUnidad - faltaUnidad " + faltaUnidad);
+            
+            return ResultadoEJB.crearCorrecto(faltaUnidad, "Se comprobó que el estudiante tiene apertura extemporánea de nivelación final");
+        }catch (Exception e){
+            return ResultadoEJB.crearErroneo(1, "", e, Boolean.TYPE);
+        }
+    }
+    
+      /**
+     * Permite comprobar si existe apertura extemporánea de nivelación final de un estudiante
+     * @param dtoCargaAcademica carga académica
+     * @param dtoEstudiante estudiante
+     * @return Regresa TRUE/FALSE según la comprobación o código de error en caso de no poder realizar la comprobación
+     */
     public ResultadoEJB<Boolean> existeAperIndNivelacion(DtoCargaAcademica dtoCargaAcademica, DtoEstudiante dtoEstudiante){
         try{
             String tipoEval ="Nivelación Final";

@@ -570,7 +570,7 @@ public class EjbReportesExpedientesTitulacion {
         Map beans = new HashMap();
         beans.put("tipoLista", "activos");
         beans.put("generacion", gen);
-        beans.put("est", getListadoEstudiantesActivos(generacion, nivel).getValor());
+        beans.put("inf", getListadoEstudiantesActivos(generacion, nivel).getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 
@@ -594,7 +594,7 @@ public class EjbReportesExpedientesTitulacion {
         Map beans = new HashMap();
         beans.put("tipoLista", "que concluyeron estadía");
         beans.put("generacion", gen);
-        beans.put("est", getListadoConcluyeronEstadia(generacion, nivel).getValor());
+        beans.put("inf", getListadoConcluyeronEstadia(generacion, nivel).getValor());
         XLSTransformer transformer = new XLSTransformer();
         transformer.transformXLS(rutaPlantilla, beans, plantillaC);
 

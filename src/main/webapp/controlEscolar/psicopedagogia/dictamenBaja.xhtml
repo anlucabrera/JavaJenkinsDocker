@@ -110,13 +110,13 @@
                                             <center>
                                                 <p:remoteCommand name="actualizar" update="@form:tbListaRegistroBajas" />
                                                 <p:dataTable id="tbListaRegistroBajas" var="baja" value="#{dictamenBajaPsicopedagogia.rol.bajasProgramaEducativo}"
-                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla"
+                                                             tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" editable="true" editMode="cell"
                                                              tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                     <f:facet name="header">
                                                        <p:commandButton id="toggler" type="button" value="Seleccionar columnas" icon="pi pi-align-justify" class="btn btn-info"/>
                                                        <p:columnToggler datasource="tbListaRegistroBajas" trigger="toggler"/>
-                                                       #{fn:length(dictamenBajaPsicopedagogia.rol.bajasProgramaEducativo)} trámite(s) de baja
+                                                       #{dictamenBajaPsicopedagogia.rol.numeroRegistros} trámite(s) de baja
                                                     </f:facet>
                                                     <p:columnGroup type="header">
                                                         <p:row class="success">
@@ -137,6 +137,7 @@
                                                             <p:column headerText="Dictamen Psicopedagogía" style="width: 300px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
+                                                    <p:ajax event="cellEdit" listener="#{dictamenBajaPsicopedagogia.onCellEdit}" onsuccess="actualizar();"/>
                                                     <c:set var="statusBaja" value="#{dictamenBajaPsicopedagogia.consultarStatusBaja(baja)}" />
                                                     <c:set var="baja" value="#{baja}"/>
                                                     <c:set var="registro" value="#{baja.dtoRegistroBaja.registroBaja}"/>
@@ -199,7 +200,10 @@
                                                          <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.accionesTutor}"/>
                                                     </p:column>
                                                     <p:column>
-                                                        <h:outputText value="#{baja.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}"/>
+                                                        <p:cellEditor>
+                                                             <f:facet name="output"><h:outputText value="#{baja.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}"/></f:facet>
+                                                             <f:facet name="input"><p:inputTextarea value="#{baja.dtoRegistroBaja.registroBaja.dictamenPsicopedagogia}" maxlength="500" style="width: 650px;"/></f:facet>
+                                                        </p:cellEditor>  
                                                     </p:column>
                                                 </p:dataTable>
                                                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">

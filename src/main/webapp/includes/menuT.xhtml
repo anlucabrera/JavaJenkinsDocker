@@ -184,7 +184,7 @@
 
                         <li class="treeview">
                             <a href="#">
-                                <i class="fa fa-calendar"></i> <span>Eventos escolares<small class="label pull-right bg-green">Nuevo</small></span>
+                                <i class="fa fa-calendar"></i> <span>Eventos escolares</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
@@ -210,7 +210,7 @@
                             </ul>
                         </li>
                     </c:if>
-                    <c:if test="#{reporteAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and reporteAperturaExtemporaneaAdministrador.tieneAcceso}"> <li><p:link href="#{request.contextPath}/controlEscolar/pye/reporteAperturaExtemporanea.xhtml"><i class="fa fa-calendar-check-o"></i><span>Reporte Aperturas<small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{reporteAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and reporteAperturaExtemporaneaAdministrador.tieneAcceso}"> <li><p:link href="#{request.contextPath}/controlEscolar/pye/reporteAperturaExtemporanea.xhtml"><i class="fa fa-calendar-check-o"></i><span>Reporte Aperturas</span></p:link></li></c:if>
                     <c:if test="#{cartaNoAdeudoEstadistica.mostrarEnDesarrollo(request) and cartaNoAdeudoEstadistica.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/pye/cartaNoAdeudoEstadistica.xhtml"><i class="fa fa-check-square-o"></i><span>Liberación carta no adeudo</span></p:link></li></c:if>
 
                     <!--                    <c:if test="# {validacionAperturaExtemporaneaAdministrador.mostrarEnDesarrollo(request) and validacionAperturaExtemporaneaAdministrador.tieneAcceso}"> <li><p:link href="# {request.contextPath}/controlEscolar/pye/validacionAperturaExtemporanea.xhtml"><i class="fa fa-check-square-o"></i><span>Validación Aperturas</span></p:link></li></c:if>-->
@@ -261,7 +261,7 @@
                     <c:if test="#{validacionPlanAccionTutorialDirector.mostrarEnDesarrollo(request) and validacionPlanAccionTutorialDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/validacion_plan_accion_tutorial.xhtml"><i class="fa fa-check-square-o"></i><span>Validación de Plan de<br/> Acción Tutoríal</span><span class="pull-right-container"></span></p:link></li></c:if>
                     <c:if test="#{seguimientoEvaluacionEstadiaDirector.mostrarEnDesarrollo(request) and seguimientoEvaluacionEstadiaDirector.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/director/seguimientoEvaluacionEstadia.xhtml"><i class="fa fa-check-square-o"></i><span>Seguimiento Evaluación Estadía</span></p:link></li></c:if>
                     <!-- Servicios Escolares -->
-                    <c:if test="#{asignacionAcademicaEscolares.mostrarEnDesarrollo(request) and asignacionAcademicaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/asignacion_academica.xhtml"><i class="fa fa-tags"></i><span>Asignación académica</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{asignacionAcademicaEscolares.mostrarEnDesarrollo(request) and asignacionAcademicaEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/asignacion_academica.xhtml"><i class="fa fa-tags"></i><span>Asignación académica</span><span class="pull-right-container"></span></p:link></li></c:if>
                     <c:if test="#{generacionGruposServiciosEscolares.mostrarEnDesarrollo(request) and generacionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/generacionGrupos.xhtml"><i class="fa fa-users"></i><span>Generación de grupos</span></p:link></li></c:if>
                     <c:if test="#{procesoInscripcion.mostrarEnDesarrollo(request) and procesoInscripcion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/procesoInscripcion.xhtml"><i class="fa fa-users"></i><span>Proceso de inscripción</span></p:link></li></c:if>
                     <c:if test="#{inscripcionIngenieriaSE.mostrarEnDesarrollo(request) and inscripcionIngenieriaSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/inscripcionIngenieria.xhtml"><i class="fa fa-users"></i><span>Inscripción Ing | Lic</span></p:link></li></c:if>
@@ -304,13 +304,13 @@
                     <c:if test="#{fusionGruposServiciosEscolares.mostrarEnDesarrollo(request) and fusionGruposServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/fusion_grupos.xhtml"><i class="fa fa-exchange"></i><span>Fusión de grupos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{cedulaIdentificacionSE.mostrarEnDesarrollo(request) and cedulaIdentificacionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/cedulaIdentificacionSE.xhtml"><i class="fa fa-address-book"></i><span>Cédula de Identificación</span></p:link></li></c:if>
                     <c:if test="#{prestamoDocumentoServiciosEscolares.mostrarEnDesarrollo(request) and prestamoDocumentoServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/prestamoDocumentos.xhtml"><i class="fa fa-folder-open"></i><span>Préstamo de documentos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                    <c:if test="#{registroDocumentosOficialesEscolares.mostrarEnDesarrollo(request) and registroDocumentosOficialesEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroDocumentosOficiales.xhtml"><i class="fa fa-folder"></i><span>Registro documentos<br/>oficiales</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{registroDocumentosOficialesEscolares.mostrarEnDesarrollo(request) and registroDocumentosOficialesEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroDocumentosOficiales.xhtml"><i class="fa fa-folder"></i><span>Registro documentos<br/>oficiales</span><span class="pull-right-container"></span></p:link></li></c:if>
                     <c:if test="#{reinscripcionExtemporaneaSE.mostrarEnDesarrollo(request) and reinscripcionExtemporaneaSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/reinscripcionSeguimientoSE.xhtml"><i class="fa fa-history"></i><span>Reinscripciones</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{registroFichaAdmisionSE.mostrarEnDesarrollo(request) and registroFichaAdmisionSE.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroFichaSE.xhtml"><i class="fa fa-graduation-cap"></i><span>Registro de ficha de admisión</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
                     <c:if test="#{registroEgresadoTerminacionEstudioServiciosEscolares.mostrarEnDesarrollo(request) and registroEgresadoTerminacionEstudioServiciosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/se/registroEgresados.xhtml"><i class="fa fa-print"></i><span>Impresión de Documentos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
 
                     <!-- Titulación -->
-                    <c:if test="#{registroEventosTitulacion.mostrarEnDesarrollo(request) and registroEventosTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/registroEventosTitulacion.xhtml"><i class="fa fa-calendar-check-o"></i><span>Registro eventos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                    <c:if test="#{registroEventosTitulacion.mostrarEnDesarrollo(request) and registroEventosTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/registroEventosTitulacion.xhtml"><i class="fa fa-calendar-check-o"></i><span>Registro eventos</span><span class="pull-right-container"></span></p:link></li></c:if>
                     <c:if test="#{seguimientoExpedienteGeneracionTitulacion.mostrarEnDesarrollo(request) and seguimientoExpedienteGeneracionTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/seguimientoGeneracion.xhtml"><i class="fa fa-group"></i><span>Expedientes por Generación</span></p:link></li></c:if>
                     <c:if test="#{seguimientoExpedienteMatriculaTitulacion.mostrarEnDesarrollo(request) and seguimientoExpedienteMatriculaTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/seguimientoMatricula.xhtml"><i class="fa fa-user"></i><span>Expedientes por Matricula</span></p:link></li></c:if>
                     <c:if test="#{registroExpedienteTitulacion.mostrarEnDesarrollo(request) and registroExpedienteTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/titulacion/registrarExpediente.xhtml"><i class="fa fa-user-plus"></i><span>Registrar Expediente</span></p:link></li></c:if>
@@ -344,8 +344,8 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <c:if test="#{reportesAcademicos.mostrarEnDesarrollo(request) and reportesAcademicos.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesAcademicos.xhtml"><i class="fa fa-book"></i><span>Académicos</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                                <c:if test="#{reportesExpedientesTitulacion.mostrarEnDesarrollo(request) and reportesExpedientesTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesTitulacion.xhtml"><i class="fa fa-graduation-cap"></i><span>Titulación</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                                <c:if test="#{reportesAcademicos.mostrarEnDesarrollo(request) and reportesAcademicos.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesAcademicos.xhtml"><i class="fa fa-book"></i><span>Académicos</span><span class="pull-right-container"></span></p:link></li></c:if>
+                                <c:if test="#{reportesExpedientesTitulacion.mostrarEnDesarrollo(request) and reportesExpedientesTitulacion.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/reportesTitulacion.xhtml"><i class="fa fa-graduation-cap"></i><span>Titulación</span><span class="pull-right-container"><small class="label pull-right bg-green">Actualizado</small></span></p:link></li></c:if>
                             </ul>
                         </li>
                     </c:if>
@@ -599,7 +599,7 @@
                                 </span>
                             </a>
                             <ul class="treeview-menu" style="display: none;">
-                                <c:if test="#{calendarioEventosEscolares.mostrarEnDesarrollo(request) and calendarioEventosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEscolares.xhtml"><i class="fa fa-list"></i><span>Eventos escolares<small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                                <c:if test="#{calendarioEventosEscolares.mostrarEnDesarrollo(request) and calendarioEventosEscolares.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEscolares.xhtml"><i class="fa fa-list"></i><span>Eventos escolares</span></p:link></li></c:if>
                                 <c:if test="#{calendarioEventosEstadia.mostrarEnDesarrollo(request) and calendarioEventosEstadia.tieneAcceso}"><li><p:link href="#{request.contextPath}/controlEscolar/calendarioEventosEstadia.xhtml"><i class="fa fa-graduation-cap"></i><span>Eventos estadía</span></p:link></li></c:if>
                             </ul>
                         </li>
@@ -803,8 +803,8 @@
                     </c:if>
                 </c:if>
                 <li class="header" style="color: #ffffff;background: #040404;font-family: arial;font-weight: bold">Registros de información</li>
-                <c:if test="#{gestionModulosRegistroUsuario.tieneAcceso}"><li><p:link href="#{request.contextPath}/siip/modulosRegistro/gestionModulosUsuario.xhtml"><i class="fa fa-lock"></i><span>Gestión de usuarios<br/>módulos registro</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
-                <c:if test="#{gestionModulosRegistroEvento.tieneAcceso}"><li><p:link href="#{request.contextPath}/siip/modulosRegistro/gestionModulosRegistro.xhtml"><i class="fa fa-gears"></i><span>Gestión de módulos<br/>registro</span><span class="pull-right-container"><small class="label pull-right bg-green">Nuevo</small></span></p:link></li></c:if>
+                <c:if test="#{gestionModulosRegistroUsuario.tieneAcceso}"><li><p:link href="#{request.contextPath}/siip/modulosRegistro/gestionModulosUsuario.xhtml"><i class="fa fa-lock"></i><span>Gestión de usuarios<br/>módulos registro</span><span class="pull-right-container"></span></p:link></li></c:if>
+                <c:if test="#{gestionModulosRegistroEvento.tieneAcceso}"><li><p:link href="#{request.contextPath}/siip/modulosRegistro/gestionModulosRegistro.xhtml"><i class="fa fa-gears"></i><span>Gestión de módulos<br/>registro</span><span class="pull-right-container"></span></p:link></li></c:if>
                 <li>
                     <p:link href="#{request.contextPath}/siip/modulosRegistro/menu_general.xhtml">
                         <i class="fa fa-archive"></i>

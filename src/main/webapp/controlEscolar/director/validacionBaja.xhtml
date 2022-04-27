@@ -90,7 +90,7 @@
                                                 <p:remoteCommand name="actualizar" update="@form:tbListaRegistroBajas" />
                                                 <p:dataTable id="tbListaRegistroBajas" var="baja" value="#{validacionBajaDirector.rol.bajasProgramaEducativo}"
                                                              tableStyleClass="table table-condensed table-bordered table-hover table-responsive tabla" emptyMessage="No existen registros de bajas en el periodo escolar seleccionado"
-                                                             tableStyle="vertical-align: middle;" paginator="true" rows="10" rowsPerPageTemplate="10,20,30,40,50" 
+                                                             tableStyle="vertical-align: middle;" paginator="true" rows="5" rowsPerPageTemplate="5,10,15,20,25,30,35,40,45,50" 
                                                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {PageLinks} {RowsPerPageDropdown} {NextPageLink} {LastPageLink}">
                                                     <f:facet name="header">
                                                         Bajas registradas
@@ -102,8 +102,8 @@
                                                             <p:column colspan="2" headerText="Validación" style="width: 400px;"/>
                                                             <p:column rowspan="2" headerText="Fecha de Baja" style="width: 120px;"/>
                                                             <p:column rowspan="2" headerText="Grupo" style="width: 150px;"/>
-                                                            <p:column rowspan="2" headerText="Matrícula" style="width: 80px;"/> 
-                                                            <p:column rowspan="2" headerText="Nombre" style="width: 250px;"/>
+                                                            <p:column rowspan="2" headerText="Matrícula" style="width: 80px;" sortBy="#{baja.dtoEstudiante.estudiante.matricula}" filterBy="#{baja.dtoEstudiante.estudiante.matricula}" filterMatchMode="contains" /> 
+                                                            <p:column rowspan="2" headerText="Nombre" style="width: 250px;" sortBy="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterBy="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoPaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.apellidoMaterno} #{baja.dtoEstudiante.estudiante.aspirante.idPersona.nombre}" filterMatchMode="contains"/>
                                                             <p:column rowspan="2" headerText="Género" style="width: 80px;"/>
                                                             <p:column rowspan="2" headerText="Situación" style="width: 80px;"/>
                                                             <p:column rowspan="2" headerText="Tipo de Baja" style="width: 100px;"/>
@@ -116,7 +116,6 @@
                                                             <p:column headerText="Psicopedagogía" style="width: 100px;"/>
                                                         </p:row>
                                                     </p:columnGroup>
-                                                    <c:set var="baja" value="#{baja}"/>
                                                     <c:set var="registro" value="#{baja.dtoRegistroBaja.registroBaja}"/>
                                                     <p:column>
                                                         <center>
@@ -165,7 +164,7 @@
                                                         <h:outputText value="#{baja.dtoEstudiante.estudiante.aspirante.idPersona.genero eq 1?'F':'M'}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;"> 
-                                                        <h:outputText value="#{baja.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />
+                                                        <h:outputText id="tipEst" value="#{baja.dtoEstudiante.estudiante.tipoEstudiante.descripcion}" />
                                                     </p:column>
                                                     <p:column style="text-align: center;">
                                                         <h:outputText value="#{baja.dtoRegistroBaja.tipoBaja.descripcion}"/>
