@@ -212,7 +212,6 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             if(res.getCorrecto()){
                 setExisteAperIndNiv(existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante));
                 setFaltaUnidad(faltaCapturaUnidad(dtoCargaAcademica, dtoEstudiante));
-                System.err.println("getPromedioAsignaturaEstudiante - faltaUnidad " + getFaltaUnidad());
                 return res.getValor();
             }else{
                 mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", dtoEstudiante.getPersona().getApellidoPaterno(), dtoEstudiante.getPersona().getApellidoMaterno(), dtoEstudiante.getPersona().getNombre(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula()));
@@ -223,7 +222,6 @@ public class CapturaTareaIntegradoraDocente  extends ViewScopedRol implements De
             if(res.getCorrecto()){
                 setExisteAperIndNiv(existeAperIndNivelacion(dtoCargaAcademica, dtoEstudiante));
                 setFaltaUnidad(faltaCapturaUnidad(dtoCargaAcademica, dtoEstudiante));
-                System.err.println("getPromedioAsignaturaEstudiante - faltaUnidad " + getFaltaUnidad());
                 return res.getValor();
             }else{
                 mostrarMensaje(String.format("El promedio del estudiante %s %s %s con matrícula %s, no se pudo calcular.", dtoEstudiante.getPersona().getApellidoPaterno(), dtoEstudiante.getPersona().getApellidoMaterno(), dtoEstudiante.getPersona().getNombre(), dtoEstudiante.getInscripcionActiva().getInscripcion().getMatricula()));
